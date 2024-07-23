@@ -3,18 +3,25 @@
   "version": "0.0.1",
   "description": "Convert Soup to SVG",
   "main": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepublish": "npm run build",
     "build": "tsup ./src/index.ts --dts --sourcemap",
-    "format": "biome format . --write"
+    "format": "biome format . --write",
+    "test:generate-svg": "bun run.js"
   },
   "license": "ISC",
   "devDependencies": {
-    "@tscircuit/plop": "^0.0.10",
     "@biomejs/biome": "^1.8.3",
+    "@tscircuit/plop": "^0.0.10",
     "esbuild": "^0.20.2",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@tscircuit/routing": "^1.3.5",
+    "@tscircuit/soup": "^0.0.39"
   }
 }

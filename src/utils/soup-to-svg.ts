@@ -1,4 +1,6 @@
-function soupToSvg(soup: any[]): string {
+import type { AnySoupElement } from "@tscircuit/soup";
+
+function soupToSvg(soup: AnySoupElement[]): string {
   const svgContent: string[] = [];
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
@@ -6,28 +8,40 @@ function soupToSvg(soup: any[]): string {
   let maxY = Number.NEGATIVE_INFINITY;
 
   // Process components
-  for (const component of soup.filter(item => item.type === "schematic_component")) {
+  for (const component of soup.filter(
+    (item) => item.type === "schematic_component"
+  )) {
     const svg = createSchematicComponent(component);
     svgContent.push(svg);
-    updateBounds(component.center, component.size, component.rotation);
+    if (
+      "center" in component &&
+      "size" in component &&
+      "rotation" in component
+    ) {
+      updateBounds(component.center, component.size, component.rotation);
+    }
   }
 
   // Process traces
-  for (const trace of soup.filter(item => item.type === "schematic_trace")) {
+  for (const trace of soup.filter((item) => item.type === "schematic_trace")) {
     const svg = createSchematicTrace(trace);
     svgContent.push(svg);
     updateTraceBounds(trace.edges);
   }
 
   // Process text
-  for (const text of soup.filter(item => item.type === "schematic_text")) {
+  for (const text of soup.filter((item) => item.type === "schematic_text")) {
     const svg = createSchematicText(text);
     svgContent.push(svg);
-    updateTextBounds(text.position);
+    if ("position" in text) {
+      updateTextBounds(text.position);
+    }
   }
 
   // Process net labels
-  for (const label of soup.filter(item => item.type === "schematic_net_label")) {
+  for (const label of soup.filter(
+    (item) => item.type === "schematic_net_label"
+  )) {
     const svg = createSchematicNetLabel(label);
     svgContent.push(svg);
     const width = label.text.length * 0.15 + 0.3;
@@ -77,7 +91,7 @@ function soupToSvg(soup: any[]): string {
       minY = Math.min(minY, rotatedY);
       maxX = Math.max(maxX, rotatedX);
       maxY = Math.max(maxY, rotatedY);
-    };
+    }
   }
 
   function updateTraceBounds(edges: any[]) {
@@ -86,10 +100,10 @@ function soupToSvg(soup: any[]): string {
       minY = Math.min(minY, edge.from.y, edge.to.y);
       maxX = Math.max(maxX, edge.from.x, edge.to.x);
       maxY = Math.max(maxY, edge.from.y, edge.to.y);
-    };
+    }
   }
 
-  function updateTextBounds(position: any) {
+  function updateTextBounds(position: { x: number; y: number }) {
     minX = Math.min(minX, position.x);
     minY = Math.min(minY, position.y);
     maxX = Math.max(maxX, position.x);
@@ -132,16 +146,15 @@ function createSchematicComponent(component: any): string {
 }
 
 function createSchematicTrace(trace: any): string {
-  const path =
-    `${trace.edges
-      .map((edge: any, index: number) => {
-        return index === 0
-          ? `M ${edge.from.x} ${edge.from.y}`
-          : `L ${edge.from.x} ${edge.from.y}`;
-      })
-      .join(" ")} L ${trace.edges[trace.edges.length - 1].to.x} ${
-      trace.edges[trace.edges.length - 1].to.y
-    }`;
+  const path = `${trace.edges
+    .map((edge: any, index: number) => {
+      return index === 0
+        ? `M ${edge.from.x} ${edge.from.y}`
+        : `L ${edge.from.x} ${edge.from.y}`;
+    })
+    .join(" ")} L ${trace.edges[trace.edges.length - 1].to.x} ${
+    trace.edges[trace.edges.length - 1].to.y
+  }`;
   return `<path class="trace" d="${path}" />`;
 }
 
@@ -160,8 +173,18 @@ function createSchematicNetLabel(label: any): string {
   const width = label.text.length * 0.15 + 0.3; // Adjust based on text length
   const height = 0.3;
   const arrowTip = 0.15;
+  const isLeftAnchor = label.anchor_side === "left";
 
-  const path = `
+  const path = isLeftAnchor
+    ? `
+      M ${label.center.x + width},${label.center.y - height / 2}
+      L ${label.center.x + arrowTip},${label.center.y - height / 2}
+      L ${label.center.x},${label.center.y}
+      L ${label.center.x + arrowTip},${label.center.y + height / 2}
+      L ${label.center.x + width},${label.center.y + height / 2}
+      Z
+    `
+    : `
       M ${label.center.x},${label.center.y - height / 2}
       L ${label.center.x + width - arrowTip},${label.center.y - height / 2}
       L ${label.center.x + width},${label.center.y}
@@ -170,11 +193,15 @@ function createSchematicNetLabel(label: any): string {
       Z
     `;
 
+  const textX = isLeftAnchor
+    ? label.center.x + width / 2 + arrowTip / 2
+    : label.center.x + width / 2 - arrowTip / 2;
+
   return `
       <g class="net-label">
         <path d="${path}" fill="white" stroke="black" stroke-width="0.02"/>
         <text 
-          x="${label.center.x + width / 2 - arrowTip / 2}" 
+          x="${textX}" 
           y="${label.center.y}" 
           text-anchor="middle" 
           dominant-baseline="central"
