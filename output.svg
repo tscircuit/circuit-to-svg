@@ -1,5 +1,5 @@
 
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 -3.5 5.3 7" width="800" height="600">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 -3.5 5.3 7" width="1200" height="600">
       <style>
       .component { fill: none; stroke: red; stroke-width: 0.05; }
       .component-pin { fill: none; stroke: blue; stroke-width: 0.05; }
@@ -83,7 +83,7 @@
       </g>
     
 <path class="trace" d="M -0.5 0 L -0.32 0" />
-<path class="trace" d="M 0 1.4 L 0 0.19999999999999973 L 0.9000000000000001 0.19999999999999973 L 0.9000000000000001 -1.3000000000000003 L -3.061616997868383e-17 1.5 L -3.061616997868383e-17 -1.5 L 0 -1.3000000000000003" />
+<path class="trace" d="M 0 1.4 L 0 0.19999999999999973 L 0.9000000000000001 0.19999999999999973 L 0.9000000000000001 -1.3000000000000003 L 0 -1.3000000000000003 M -3.061616997868383e-17 1.5 L 0 1.4 M -3.061616997868383e-17 -1.5 L 0 -1.3000000000000003" />
 
       <text 
         class="text" 
@@ -133,23 +133,33 @@
       >100</text>
     
 
-      <g class="net-label">
-        <path d="
-      M 1.8,-0.15
-      L 0.45000000000000007,-0.15
-      L 0.30000000000000004,0
-      L 0.45000000000000007,0.15
-      L 1.8,0.15
+    <g class="net-label">
+      
+    <line 
+      x1="1.1" 
+      y1="0" 
+      x2="0.30000000000000004" 
+      y2="0" 
+      stroke="green" 
+      stroke-width="0.05"
+    />
+  
+      <path d="
+      M 1.1,-0.15
+      L -0.24999999999999997,-0.15
+      L -0.39999999999999997,0
+      L -0.24999999999999997,0.15
+      L 1.1,0.15
       Z
     " fill="white" stroke="black" stroke-width="0.02"/>
-        <text 
-          x="1.125" 
-          y="0" 
-          text-anchor="middle" 
-          dominant-baseline="central"
-          fill="black"
-        >LONGLONG</text>
-      </g>
-    
+      <text 
+        x="0.35000000000000003" 
+        y="0" 
+        text-anchor="middle" 
+        dominant-baseline="central"
+        fill="black"
+      >LONGLONG</text>
+    </g>
+  
       </svg>
     

@@ -58,7 +58,7 @@ function soupToSvg(soup: AnySoupElement[]): string {
   const viewBox = `${minX - padding} ${minY - padding} ${width} ${height}`;
 
   return `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="800" height="600">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="1200" height="600">
       <style>
       .component { fill: none; stroke: red; stroke-width: 0.05; }
       .component-pin { fill: none; stroke: blue; stroke-width: 0.05; }
@@ -146,15 +146,22 @@ function createSchematicComponent(component: any): string {
 }
 
 function createSchematicTrace(trace: any): string {
-  const path = `${trace.edges
-    .map((edge: any, index: number) => {
-      return index === 0
-        ? `M ${edge.from.x} ${edge.from.y}`
-        : `L ${edge.from.x} ${edge.from.y}`;
-    })
-    .join(" ")} L ${trace.edges[trace.edges.length - 1].to.x} ${
-    trace.edges[trace.edges.length - 1].to.y
-  }`;
+  const path = trace.edges.map((edge: any, index: number) => {
+    const fromPoint = `${edge.from.x} ${edge.from.y}`;
+    const toPoint = `${edge.to.x} ${edge.to.y}`;
+    
+    if (index === 0) {
+      return `M ${fromPoint} L ${toPoint}`;
+    }
+      // Check if this is a 90-degree turn
+      const prevEdge = trace.edges[index - 1];
+      if (prevEdge.to.x === edge.from.x && prevEdge.to.y === edge.from.y) {
+        return `L ${toPoint}`;
+      }
+        // Insert a move command for discontinuous segments
+        return `M ${fromPoint} L ${toPoint}`;
+  }).join(' ');
+
   return `<path class="trace" d="${path}" />`;
 }
 
@@ -170,45 +177,60 @@ function createSchematicText(text: any): string {
 }
 
 function createSchematicNetLabel(label: any): string {
-  const width = label.text.length * 0.15 + 0.3; // Adjust based on text length
+  const width = label.text.length * 0.15 + 0.3;
   const height = 0.3;
   const arrowTip = 0.15;
   const isLeftAnchor = label.anchor_side === "left";
 
+  // Move the entire label to the left
+  const labelCenterX = isLeftAnchor ? label.center.x - width / 3 - 0.2 : label.center.x;
+
   const path = isLeftAnchor
     ? `
-      M ${label.center.x + width},${label.center.y - height / 2}
-      L ${label.center.x + arrowTip},${label.center.y - height / 2}
-      L ${label.center.x},${label.center.y}
-      L ${label.center.x + arrowTip},${label.center.y + height / 2}
-      L ${label.center.x + width},${label.center.y + height / 2}
+      M ${labelCenterX + width},${label.center.y - height / 2}
+      L ${labelCenterX + arrowTip},${label.center.y - height / 2}
+      L ${labelCenterX},${label.center.y}
+      L ${labelCenterX + arrowTip},${label.center.y + height / 2}
+      L ${labelCenterX + width},${label.center.y + height / 2}
       Z
     `
     : `
-      M ${label.center.x},${label.center.y - height / 2}
-      L ${label.center.x + width - arrowTip},${label.center.y - height / 2}
-      L ${label.center.x + width},${label.center.y}
-      L ${label.center.x + width - arrowTip},${label.center.y + height / 2}
-      L ${label.center.x},${label.center.y + height / 2}
+      M ${labelCenterX},${label.center.y - height / 2}
+      L ${labelCenterX + width - arrowTip},${label.center.y - height / 2}
+      L ${labelCenterX + width},${label.center.y}
+      L ${labelCenterX + width - arrowTip},${label.center.y + height / 2}
+      L ${labelCenterX},${label.center.y + height / 2}
       Z
     `;
 
-  const textX = isLeftAnchor
-    ? label.center.x + width / 2 + arrowTip / 2
-    : label.center.x + width / 2 - arrowTip / 2;
+  // Keep text centered within the label
+  const textX = labelCenterX + width / 2;
+
+  // Add a line to connect the label to the resistor
+  const connectingLine = `
+    <line 
+      x1="${labelCenterX + width}" 
+      y1="${label.center.y}" 
+      x2="${label.center.x}" 
+      y2="${label.center.y}" 
+      stroke="green" 
+      stroke-width="0.05"
+    />
+  `;
 
   return `
-      <g class="net-label">
-        <path d="${path}" fill="white" stroke="black" stroke-width="0.02"/>
-        <text 
-          x="${textX}" 
-          y="${label.center.y}" 
-          text-anchor="middle" 
-          dominant-baseline="central"
-          fill="black"
-        >${label.text}</text>
-      </g>
-    `;
+    <g class="net-label">
+      ${connectingLine}
+      <path d="${path}" fill="white" stroke="black" stroke-width="0.02"/>
+      <text 
+        x="${textX}" 
+        y="${label.center.y}" 
+        text-anchor="middle" 
+        dominant-baseline="central"
+        fill="black"
+      >${label.text}</text>
+    </g>
+  `;
 }
 
 function getTextAnchor(anchor: string): string {
