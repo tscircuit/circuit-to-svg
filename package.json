@@ -10,13 +10,24 @@
     "prepublish": "npm run build",
     "build": "tsup ./src/index.ts --dts --sourcemap",
     "format": "biome format . --write",
-    "test:generate-svg": "bun run.js"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
+    "@chromatic-com/storybook": "^1.6.1",
+    "@storybook/addon-essentials": "^8.2.5",
+    "@storybook/addon-interactions": "^8.2.5",
+    "@storybook/addon-links": "^8.2.5",
+    "@storybook/addon-onboarding": "^8.2.5",
+    "@storybook/blocks": "^8.2.5",
+    "@storybook/react": "^8.2.5",
+    "@storybook/react-vite": "^8.2.5",
+    "@storybook/test": "^8.2.5",
     "@tscircuit/plop": "^0.0.10",
     "esbuild": "^0.20.2",
+    "storybook": "^8.2.5",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
