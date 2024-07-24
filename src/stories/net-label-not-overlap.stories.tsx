@@ -1,7 +1,8 @@
-import fs from 'fs';
-import { soupToSvg } from './src/index.js';
+import React from "react";
+import { soupToSvg } from "../utils/soup-to-svg.js";
 
-const soup = [
+export const NetLabelNotOverlap = () => {
+  const soup = [
     {
         type: "source_component",
         source_component_id: "simple_resistor_0",
@@ -500,8 +501,17 @@ const soup = [
         ],
         source: null,
     },
-];
+  ];
+  const svg = soupToSvg(soup);
 
-const svg = soupToSvg(soup);
+  return (
+    <div
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+};
 
-fs.writeFileSync('output.svg', svg);
+export default {
+    title: 'Net Label Not Overlap',
+    component: NetLabelNotOverlap,
+}

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     // Base Options recommended for all projects
     "esModuleInterop": true,
     "skipLibCheck": true,
