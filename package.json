@@ -1,7 +1,7 @@
 {
-  "name": "@tscircuit/soup-to-svg",
+  "name": "circuit-to-svg",
   "version": "0.0.1",
-  "description": "Convert Soup to SVG",
+  "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
   "files": [
     "dist"
