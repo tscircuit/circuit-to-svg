@@ -1,1 +1,1 @@
-# @tscircuit/soup-to-svg
+# @tscircuit/circuit-to-svg
