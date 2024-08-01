@@ -31,8 +31,11 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
+  "peerDependencies": {
+    "@tscircuit/soup": "^0.0.47"
+  },
   "dependencies": {
     "@tscircuit/routing": "^1.3.5",
-    "@tscircuit/soup": "^0.0.39"
+    "transformation-matrix": "^2.16.1"
   }
 }
