@@ -1,4 +1,4 @@
-# @tscircuit/circuit-to-svg
+# circuit-to-svg
 
 A TypeScript library for converting circuit descriptions (soup) to SVG representations.
 
