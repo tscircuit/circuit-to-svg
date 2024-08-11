@@ -1051,7 +1051,9 @@
           "y": 0
         }
       }
-    ]
+    ],
+    "from_schematic_port_id": "schematic_port_8",
+    "to_schematic_port_id": "schematic_port_0"
   },
   {
     "type": "pcb_trace",
