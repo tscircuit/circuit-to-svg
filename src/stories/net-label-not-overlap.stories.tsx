@@ -1,9 +1,9 @@
 import React from "react";
-import { pcbSoupToSvg } from "../lib/pcb-soup-to-svg.js";
+import { pcbSoupToSvg, soupToSvg } from "../lib/index.js";
 import soup from "../utils/soup.json";
 
 export const NetLabelNotOverlap = () => {
-  const svg = pcbSoupToSvg(soup);
+  const svg = soupToSvg(soup);
 
   return (
     <div
