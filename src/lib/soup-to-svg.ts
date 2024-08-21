@@ -1,4 +1,5 @@
 import type { AnySoupElement } from "@tscircuit/soup";
+import { stringify } from "svgson";
 
 function soupToSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
@@ -24,7 +25,7 @@ function soupToSvg(soup: AnySoupElement[]): string {
   const height = maxY - minY;
   const flipY = (y: number) => height - (y - minY) + minY;
 
-  const svgContent: string[] = [];
+  const svgChildren: any[] = [];
 
   // Process components
   const componentMap = new Map();
@@ -40,7 +41,7 @@ function soupToSvg(soup: AnySoupElement[]): string {
       component.size,
       component.rotation || 0
     );
-    svgContent.push(svg);
+    svgChildren.push(svg);
     componentMap.set(component.schematic_component_id, component);
   }
 
@@ -48,48 +49,67 @@ function soupToSvg(soup: AnySoupElement[]): string {
   for (const port of soup.filter((item) => item.type === "schematic_port")) {
     const flippedCenter = { x: port.center.x, y: flipY(port.center.y) };
     const svg = createSchematicPort(flippedCenter);
-    svgContent.push(svg);
+    svgChildren.push(svg);
 
     const component = componentMap.get(port.schematic_component_id);
     if (component) {
       const line = createPortToComponentLine(
         flippedCenter,
         component,
-        port.facing_direction
+        port.facing_direction || "right"
       );
-      svgContent.push(line);
+      svgChildren.push(line);
     }
   }
 
   // Process schematic traces
   for (const trace of soup.filter((item) => item.type === "schematic_trace")) {
     const svg = createSchematicTrace(trace, flipY, portPositions);
-    svgContent.push(svg);
+    if (svg) svgChildren.push(svg);
   }
 
   // Process text
   for (const text of soup.filter((item) => item.type === "schematic_text")) {
     const flippedPosition = { x: text.position.x, y: flipY(text.position.y) };
     const svg = createSchematicText(text, flippedPosition);
-    svgContent.push(svg);
+    svgChildren.push(svg);
   }
 
   const padding = 1;
   const width = maxX - minX + 2 * padding;
   const viewBox = `${minX - padding} ${minY - padding} ${width} ${height + 2 * padding}`;
 
-  return `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="1200" height="600">
-      <style>
-        .component { fill: none; stroke: red; stroke-width: 0.03; }
-        .component-pin { fill: none; stroke: red; stroke-width: 0.03; }
-        .trace { stroke: green; stroke-width: 0.03; fill: none; }
-        .text { font-family: Arial, sans-serif; font-size: 0.2px; }
-        .port { fill: none; stroke: blue; stroke-width: 0.03; }
-      </style>
-      ${svgContent.join("\n")}
-    </svg>
-  `;
+  const svgObject = {
+    name: 'svg',
+    type: 'element',
+    attributes: {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox,
+      width: '1200',
+      height: '600',
+    },
+    children: [
+      {
+        name: 'style',
+        type: 'element',
+        children: [
+          {
+            type: 'text',
+            value: `
+              .component { fill: none; stroke: red; stroke-width: 0.03; }
+              .component-pin { fill: none; stroke: red; stroke-width: 0.03; }
+              .trace { stroke: green; stroke-width: 0.03; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: 0.2px; }
+              .port { fill: none; stroke: blue; stroke-width: 0.03; }
+            `
+          }
+        ]
+      },
+      ...svgChildren
+    ]
+  };
+
+  return stringify({ value: '', ...svgObject});
 
   function updateBounds(center: any, size: any, rotation: number) {
     const corners = [
@@ -120,43 +140,52 @@ function createSchematicComponent(
   center: { x: number; y: number },
   size: { width: number; height: number },
   rotation: number
-): string {
+): any {
   const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`;
 
-  return `
-    <g transform="${transform}">
-      <rect 
-        class="component" 
-        x="${-size.width / 2}" 
-        y="${-size.height / 2}" 
-        width="${size.width}" 
-        height="${size.height}" 
-      />
-    </g>
-  `;
+  return {
+    name: 'g',
+    type: 'element',
+    attributes: { transform },
+    children: [
+      {
+        name: 'rect',
+        type: 'element',
+        attributes: {
+          class: 'component',
+          x: (-size.width / 2).toString(),
+          y: (-size.height / 2).toString(),
+          width: size.width.toString(),
+          height: size.height.toString(),
+        }
+      }
+    ]
+  };
 }
 
-function createSchematicPort(center: { x: number; y: number }): string {
+function createSchematicPort(center: { x: number; y: number }): any {
   const portSize = 0.2;
   const x = center.x - portSize / 2;
   const y = center.y - portSize / 2;
 
-  return `
-    <rect 
-      class="port" 
-      x="${x}" 
-      y="${y}" 
-      width="${portSize}" 
-      height="${portSize}" 
-    />
-  `;
+  return {
+    name: 'rect',
+    type: 'element',
+    attributes: {
+      class: 'port',
+      x: x.toString(),
+      y: y.toString(),
+      width: portSize.toString(),
+      height: portSize.toString(),
+    }
+  };
 }
 
 function createPortToComponentLine(
   portCenter: { x: number; y: number },
   component: any,
   facingDirection: string
-): string {
+): any {
   const componentCenter = { x: component.center.x, y: portCenter.y };
   const halfWidth = component.size.width / 2;
   const halfHeight = component.size.height / 2;
@@ -179,24 +208,26 @@ function createPortToComponentLine(
       break;
   }
 
-  return `
-    <line 
-      class="component-pin"
-      x1="${portCenter.x}" 
-      y1="${portCenter.y}" 
-      x2="${endX}" 
-      y2="${endY}"
-    />
-  `;
+  return {
+    name: 'line',
+    type: 'element',
+    attributes: {
+      class: 'component-pin',
+      x1: portCenter.x.toString(),
+      y1: portCenter.y.toString(),
+      x2: endX.toString(),
+      y2: endY.toString(),
+    }
+  };
 }
 
 function createSchematicTrace(
   trace: any,
   flipY: (y: number) => number,
   portPositions: Map<string, { x: number; y: number }>
-): string {
+): any {
   const edges = trace.edges;
-  if (edges.length === 0) return "";
+  if (edges.length === 0) return null;
 
   let path = "";
 
@@ -226,7 +257,6 @@ function createSchematicTrace(
     const finalPort = portPositions.get(trace.to_schematic_port_id);
     if (finalPort) {
       const lastFromPoint = path.split("M")[1]?.split("L")[0];
-      console.log(`Last from coord: ${lastFromPoint}`);
       const lastEdge = edges[edges.length - 1];
       const lastPoint =
         lastEdge.to.ti !== undefined
@@ -239,22 +269,37 @@ function createSchematicTrace(
     }
   }
 
-  return path ? `<path class="trace" d="${path}" />` : "";
+  return path ? {
+    name: 'path',
+    type: 'element',
+    attributes: {
+      class: 'trace',
+      d: path,
+    }
+  } : null;
 }
 
 function createSchematicText(
   text: any,
   position: { x: number; y: number }
-): string {
-  return `
-    <text 
-      class="text" 
-      x="${position.x}" 
-      y="${position.y}" 
-      text-anchor="${getTextAnchor(text.anchor)}"
-      dominant-baseline="middle"
-    >${text.text ? text.text : ""}</text>
-  `;
+): any {
+  return {
+    name: 'text',
+    type: 'element',
+    attributes: {
+      class: 'text',
+      x: position.x.toString(),
+      y: position.y.toString(),
+      'text-anchor': getTextAnchor(text.anchor),
+      'dominant-baseline': 'middle',
+    },
+    children: [
+      {
+        type: 'text',
+        value: text.text ? text.text : "",
+      }
+    ]
+  };
 }
 
 function getTextAnchor(anchor: string): string {
