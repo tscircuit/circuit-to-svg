@@ -1,7 +1,7 @@
 import type { AnySoupElement } from "@tscircuit/soup";
 import { stringify } from "svgson";
 
-function soupToSvg(soup: AnySoupElement[]): string {
+function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -313,4 +313,4 @@ function getTextAnchor(anchor: string): string {
   }
 }
 
-export { soupToSvg };
+export { circuitJsonToSchematicSvg };

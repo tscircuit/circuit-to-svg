@@ -10,7 +10,7 @@ interface SvgObject {
   value?: string;
 }
 
-function pcbSoupToSvg(soup: AnySoupElement[]): string {
+function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -249,4 +249,4 @@ function createPcbBoundary(transform: any, minX: number, minY: number, maxX: num
   };
 }
 
-export { pcbSoupToSvg };
+export { circuitJsonToPcbSvg };
