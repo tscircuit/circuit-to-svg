@@ -135,7 +135,8 @@ function createSvgElement(item: AnySoupElement, transform: any): any {
     case 'pcb_plated_hole':
       return createPcbHole(item, transform);
     case 'pcb_smtpad':
-      return createSMTPad(item, transform);
+      return function createPcbSMTPad(pad: any, transform: any): any {
+        (item, transform);
     default:
       return null;
   }
@@ -194,7 +195,7 @@ function createPcbHole(hole: any, transform: any): any {
     };
 }
 
-function createSMTPad(pad: any, transform: any): any {
+function createPcbSMTPad(pad: any, transform: any): any {
   const [x, y] = applyToPoint(transform, [pad.x, pad.y]);
   const width = pad.width * Math.abs(transform.a);
   const height = pad.height * Math.abs(transform.d);
