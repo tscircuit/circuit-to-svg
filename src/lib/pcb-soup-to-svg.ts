@@ -135,8 +135,7 @@ function createSvgElement(item: AnySoupElement, transform: any): any {
     case 'pcb_plated_hole':
       return createPcbHole(item, transform);
     case 'pcb_smtpad':
-      return function createPcbSMTPad(pad: any, transform: any): any {
-        (item, transform);
+      return createPcbSMTPad(item, transform);
     default:
       return null;
   }
