@@ -1,6 +1,14 @@
 import type { AnySoupElement } from "@tscircuit/soup";
+import { stringify, type INode } from "svgson";
 import { applyToPoint, compose, scale, translate } from "transformation-matrix";
-import { stringify } from "svgson";
+
+interface SvgObject {
+  name: string;
+  type: 'element' | 'text';
+  attributes?: { [key: string]: string };
+  children?: SvgObject[];
+  value?: string;
+}
 
 function pcbSoupToSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
@@ -48,7 +56,7 @@ function pcbSoupToSvg(soup: AnySoupElement[]): string {
     return element;
   }).filter(element => element !== null);
 
-  const svgObject = {
+  const svgObject: SvgObject = {
     name: 'svg',
     type: 'element',
     attributes: {
@@ -92,7 +100,7 @@ function pcbSoupToSvg(soup: AnySoupElement[]): string {
   console.log('SVG Object:', JSON.stringify(svgObject, null, 2));
 
   try {
-    return stringify({ value: '', ...svgObject});
+    return stringify(svgObject as INode);
   } catch (error) {
     console.error('Error stringifying SVG object:', error);
     console.log('Problematic SVG object:', JSON.stringify(svgObject, null, 2));
@@ -125,8 +133,9 @@ function createSvgElement(item: AnySoupElement, transform: any): any {
     case 'pcb_trace':
       return createPcbTrace(item, transform);
     case 'pcb_plated_hole':
-    case 'pcb_smtpad':
       return createPcbHole(item, transform);
+    case 'pcb_smtpad':
+      return createSMTPad(item, transform);
     default:
       return null;
   }
@@ -172,7 +181,6 @@ function createPcbComponent(component: any, transform: any): any {
 
 function createPcbHole(hole: any, transform: any): any {
   const [x, y] = applyToPoint(transform, [hole.x, hole.y]);
-  if (hole.type === "pcb_plated_hole") {
     const scaledRadius = (hole.outer_diameter / 2) * Math.abs(transform.a);
     return {
       name: 'circle',
@@ -184,23 +192,23 @@ function createPcbHole(hole: any, transform: any): any {
         r: scaledRadius.toString(),
       }
     };
-  }
-  if (hole.type === "pcb_smtpad") {
-    const scaledWidth = hole.width * Math.abs(transform.a);
-    const scaledHeight = hole.height * Math.abs(transform.d);
-    return {
-      name: 'rect',
-      type: 'element',
-      attributes: {
-        class: 'pcb-pad',
-        x: (x - scaledWidth / 2).toString(),
-        y: (y - scaledHeight / 2).toString(),
-        width: scaledWidth.toString(),
-        height: scaledHeight.toString(),
-      }
-    };
-  }
-  return null;
+}
+
+function createSMTPad(pad: any, transform: any): any {
+  const [x, y] = applyToPoint(transform, [pad.x, pad.y]);
+  const width = pad.width * Math.abs(transform.a);
+  const height = pad.height * Math.abs(transform.d);
+  return {
+    name: 'rect',
+    type: 'element',
+    attributes: {
+      class: 'pcb-pad',
+      x: (x - width / 2).toString(),
+      y: (y - height / 2).toString(),
+      width: width.toString(),
+      height: height.toString(),
+    }
+  };
 }
 
 function createPcbTrace(trace: any, transform: any): any {

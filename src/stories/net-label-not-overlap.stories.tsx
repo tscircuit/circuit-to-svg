@@ -3,7 +3,7 @@ import { pcbSoupToSvg, soupToSvg } from "../lib/index.js";
 import soup from "../utils/soup.json";
 
 export const NetLabelNotOverlap = () => {
-  const svg = soupToSvg(soup);
+  const svg = pcbSoupToSvg(soup);
 
   return (
     <div
