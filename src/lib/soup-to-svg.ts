@@ -87,6 +87,7 @@ function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
       viewBox,
       width: '1200',
       height: '600',
+      style: 'background-color: #fff;',
     },
     children: [
       {
