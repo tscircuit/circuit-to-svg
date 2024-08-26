@@ -1,7 +1,8 @@
 import type { AnySoupElement } from "@tscircuit/soup";
-import { stringify } from "svgson";
+import { getSvg, symbols } from "schematic-symbols";
+import { parse, stringify } from "svgson";
 
-function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
+async function circuitJsonToSchematicSvg(soup: AnySoupElement[]): Promise<string> {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -36,10 +37,11 @@ function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
       x: component.center.x,
       y: flipY(component.center.y),
     };
-    const svg = createSchematicComponent(
+    const svg = await createSchematicComponent(
       flippedCenter,
       component.size,
-      component.rotation || 0
+      component.rotation || 0,
+      component.symbol_name
     );
     svgChildren.push(svg);
     componentMap.set(component.schematic_component_id, component);
@@ -140,9 +142,18 @@ function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
 function createSchematicComponent(
   center: { x: number; y: number },
   size: { width: number; height: number },
-  rotation: number
+  rotation: number,
+  symbolName?: string
 ): any {
   const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`;
+
+  if(symbolName) {
+    // TODO: Change the types in soup from string
+    return parse(getSvg((symbols as any)[symbolName], {
+      width: size.width,
+      height: size.height,
+    })).then(json => json)
+  }
 
   return {
     name: 'g',
