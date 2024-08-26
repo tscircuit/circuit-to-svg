@@ -1,6 +1,6 @@
 import type { AnySoupElement } from "@tscircuit/soup";
 import { getSvg, symbols } from "schematic-symbols";
-import { parse, parseSync, stringify } from "svgson";
+import { parseSync, stringify } from "svgson";
 
 function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
