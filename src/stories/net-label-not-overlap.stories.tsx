@@ -3,26 +3,9 @@ import { circuitJsonToSchematicSvg, circuitJsonToPcbSvg } from "../lib/index.js"
 import soup from "../utils/soup.json";
 
 export const NetLabelNotOverlap = () => {
-  const [svg, setSvg] = useState("");
+  const result = circuitJsonToSchematicSvg(soup);
 
-  useEffect(() => {
-    const fetchSvg = async () => {
-      try {
-        const result = await circuitJsonToSchematicSvg(soup);
-        setSvg(result);
-      } catch (error) {
-        console.error("Error generating SVG:", error);
-      }
-    };
-
-    fetchSvg();
-  }, []);
-
-  if (!svg) {
-    return <div>Loading...</div>;
-  }
-
-  return <div dangerouslySetInnerHTML={{ __html: svg }} />;
+  return <div dangerouslySetInnerHTML={{ __html: result }} />;
 };
 
 export default {

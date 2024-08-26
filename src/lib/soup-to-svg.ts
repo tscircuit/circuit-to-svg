@@ -1,8 +1,8 @@
 import type { AnySoupElement } from "@tscircuit/soup";
 import { getSvg, symbols } from "schematic-symbols";
-import { parse, stringify } from "svgson";
+import { parse, parseSync, stringify } from "svgson";
 
-async function circuitJsonToSchematicSvg(soup: AnySoupElement[]): Promise<string> {
+function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -37,7 +37,7 @@ async function circuitJsonToSchematicSvg(soup: AnySoupElement[]): Promise<string
       x: component.center.x,
       y: flipY(component.center.y),
     };
-    const svg = await createSchematicComponent(
+    const svg = createSchematicComponent(
       flippedCenter,
       component.size,
       component.rotation || 0,
@@ -149,10 +149,10 @@ function createSchematicComponent(
 
   if(symbolName) {
     // TODO: Change the types in soup from string
-    return parse(getSvg((symbols as any)[symbolName], {
+    return parseSync(getSvg((symbols as any)[symbolName], {
       width: size.width,
       height: size.height,
-    })).then(json => json)
+    }))
   }
 
   return {
