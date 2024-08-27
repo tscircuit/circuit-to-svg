@@ -1,18 +1,14 @@
-import React from "react";
-import { pcbSoupToSvg, soupToSvg } from "../lib/index.js";
+import React, { useEffect, useState } from "react";
+import { circuitJsonToSchematicSvg, circuitJsonToPcbSvg } from "../lib/index.js";
 import soup from "../utils/soup.json";
 
 export const NetLabelNotOverlap = () => {
-  const svg = pcbSoupToSvg(soup);
+  const result = circuitJsonToSchematicSvg(soup);
 
-  return (
-    <div
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
-  );
+  return <div dangerouslySetInnerHTML={{ __html: result }} />;
 };
 
 export default {
-    title: 'Net Label Not Overlap',
-    component: NetLabelNotOverlap,
-}
+  title: "Net Label Not Overlap",
+  component: NetLabelNotOverlap,
+};
