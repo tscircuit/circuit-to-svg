@@ -147,12 +147,57 @@ function createSchematicComponent(
 ): any {
   const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`;
 
-  if(symbolName) {
-    // TODO: Change the types in soup from string
-    return parseSync(getSvg((symbols as any)[symbolName], {
+  if (symbolName) {
+    const svg = parseSync(getSvg((symbols as any)[symbolName], {
       width: size.width,
       height: size.height,
-    }))
+    }));
+
+    // Filter out non-path elements and modify path colors
+    const pathElements = svg.children
+    .filter((child: any) => child.name === 'path' && child.attributes.fill !== 'green')
+    .map((path: any) => {
+      const currentStrokeWidth = Number.parseFloat(path.attributes['stroke-width'] || '0.02');
+      const newStrokeWidth = (currentStrokeWidth * 1.5).toString();
+      
+      return {
+        ...path,
+        attributes: {
+          ...path.attributes,
+          stroke: path.attributes.stroke === 'black' ? 'red' : path.attributes.stroke,
+          'stroke-width': newStrokeWidth
+        }
+      };
+    });
+    
+    // Check if viewBox attribute exists
+    const viewBoxAttr = svg.attributes.viewBox;
+    if (typeof viewBoxAttr === 'undefined') {
+      throw new Error("SVG does not have a viewBox attribute.");
+    }
+
+    // Extract viewBox values
+    const viewBox = viewBoxAttr.split(' ').map(Number);
+    if (viewBox.length < 4) {
+      throw new Error("Invalid viewBox attribute.");
+    }
+    const [minX, minY, width = 0, height = 0] = viewBox;
+    
+    // Calculate scale factors
+    const scaleX = size.width / (width || 1);
+    const scaleY = size.height / (height || 1);
+
+    const scale = Math.min(scaleX, scaleY);
+    
+    // Adjust transformation to include scaling and centering
+    const adjustedTransform = `${transform} scale(${scale}) translate(${-(minX ?? 0) - width / 2}, ${-(minY ?? 0) - height / 2})`;
+
+    return {
+      name: 'g',
+      type: 'element',
+      attributes: { transform: adjustedTransform },
+      children: pathElements
+    };
   }
 
   return {
