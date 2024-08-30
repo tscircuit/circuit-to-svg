@@ -60,9 +60,6 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   const svgElements = soup
     .map((item) => {
       const element = createSvgElement(item, transform)
-      if (element === null) {
-        console.warn("Null element created for item:", item)
-      }
       return element
     })
     .filter((element) => element !== null)
