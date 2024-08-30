@@ -116,13 +116,10 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
     ].filter((child) => child !== null),
   }
 
-  console.log("SVG Object:", JSON.stringify(svgObject, null, 2))
-
   try {
     return stringify(svgObject as INode)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
-    console.log("Problematic SVG object:", JSON.stringify(svgObject, null, 2))
     throw error
   }
 
