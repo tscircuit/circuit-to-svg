@@ -37,8 +37,6 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   for (const item of soup) {
     if ("route" in item && item.route !== undefined) {
       paths.push(item.route as PointObjectNotation[])
-    } else {
-      console.warn("No route found for item:")
     }
   }
 
@@ -97,7 +95,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
               .pcb-trace { stroke: #FF0000; stroke-width: 0.3; fill: none; }
               .pcb-hole { fill: #FF00FF; }
               .pcb-pad { fill: #FF0000; }
-              .pcb-boundary { fill: none; stroke: #FFFFFF; stroke-width: 0.5; }
+              .pcb-boundary { fill: none; stroke: #f2eda1; stroke-width: ${strokeWidth}; }
             `,
           },
         ],
