@@ -82,37 +82,37 @@ function circuitJsonToSchematicSvg(soup: AnySoupElement[]): string {
   const viewBox = `${minX - padding} ${minY - padding} ${width} ${height + 2 * padding}`;
 
   const svgObject = {
-    name: 'svg',
-    type: 'element',
+    name: "svg",
+    type: "element",
     attributes: {
-      xmlns: 'http://www.w3.org/2000/svg',
+      xmlns: "http://www.w3.org/2000/svg",
       viewBox,
-      width: '1200',
-      height: '600',
-      style: 'background-color: #fff;',
+      width: "1200",
+      height: "600",
+      style: "background-color: #fff;",
     },
     children: [
       {
-        name: 'style',
-        type: 'element',
+        name: "style",
+        type: "element",
         children: [
           {
-            type: 'text',
+            type: "text",
             value: `
               .component { fill: none; stroke: red; stroke-width: 0.03; }
               .component-pin { fill: none; stroke: red; stroke-width: 0.03; }
               .trace { stroke: green; stroke-width: 0.03; fill: none; }
               .text { font-family: Arial, sans-serif; font-size: 0.2px; }
               .port { fill: none; stroke: blue; stroke-width: 0.03; }
-            `
-          }
-        ]
+            `,
+          },
+        ],
       },
-      ...svgChildren
-    ]
+      ...svgChildren,
+    ],
   };
 
-  return stringify({ value: '', ...svgObject});
+  return stringify({ value: "", ...svgObject });
 
   function updateBounds(center: any, size: any, rotation: number) {
     const corners = [
@@ -147,31 +147,92 @@ function createSchematicComponent(
 ): any {
   const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`;
 
-  if(symbolName) {
-    // TODO: Change the types in soup from string
-    return parseSync(getSvg((symbols as any)[symbolName], {
-      width: size.width,
-      height: size.height,
-    }))
+  if (symbolName) {
+    const symbol = (symbols as any)[symbolName];
+    const paths = symbol.primitives.filter((p: any) => p.type === "path");
+    const updatedSymbol = {
+      ...symbol,
+      primitives: paths,
+    };
+    const svg = parseSync(
+      getSvg(updatedSymbol, {
+        width: size.width,
+        height: size.height,
+      })
+    );
+
+    // Filter out non-path elements and modify path colors
+    const pathElements = svg.children
+      .filter(
+        (child: any) =>
+          child.name === "path" && child.attributes.fill !== "green"
+      )
+      .map((path: any) => {
+        const currentStrokeWidth = Number.parseFloat(
+          path.attributes["stroke-width"] || "0.02"
+        );
+        const newStrokeWidth = (currentStrokeWidth * 1.5).toString();
+
+        return {
+          ...path,
+          attributes: {
+            ...path.attributes,
+            stroke:
+              path.attributes.stroke === "black"
+                ? "red"
+                : path.attributes.stroke,
+            "stroke-width": newStrokeWidth,
+          },
+        };
+      });
+
+    // Check if viewBox attribute exists
+    const viewBoxAttr = svg.attributes.viewBox;
+    if (typeof viewBoxAttr === "undefined") {
+      throw new Error("SVG does not have a viewBox attribute.");
+    }
+
+    // Extract viewBox values
+    const viewBox = viewBoxAttr.split(" ").map(Number);
+    if (viewBox.length < 4) {
+      throw new Error("Invalid viewBox attribute.");
+    }
+    const [minX, minY, width = 0, height = 0] = viewBox;
+
+    // Calculate scale factors
+    const scaleX = size.width / (width || 1);
+    const scaleY = size.height / (height || 1);
+
+    const scale = Math.min(scaleX, scaleY);
+
+    // Adjust transformation to include scaling and centering
+    const adjustedTransform = `${transform} scale(${scale}) translate(${-(minX ?? 0) - width / 2}, ${-(minY ?? 0) - height / 2})`;
+
+    return {
+      name: "g",
+      type: "element",
+      attributes: { transform: adjustedTransform },
+      children: pathElements,
+    };
   }
 
   return {
-    name: 'g',
-    type: 'element',
+    name: "g",
+    type: "element",
     attributes: { transform },
     children: [
       {
-        name: 'rect',
-        type: 'element',
+        name: "rect",
+        type: "element",
         attributes: {
-          class: 'component',
+          class: "component",
           x: (-size.width / 2).toString(),
           y: (-size.height / 2).toString(),
           width: size.width.toString(),
           height: size.height.toString(),
-        }
-      }
-    ]
+        },
+      },
+    ],
   };
 }
 
@@ -181,15 +242,15 @@ function createSchematicPort(center: { x: number; y: number }): any {
   const y = center.y - portSize / 2;
 
   return {
-    name: 'rect',
-    type: 'element',
+    name: "rect",
+    type: "element",
     attributes: {
-      class: 'port',
+      class: "port",
       x: x.toString(),
       y: y.toString(),
       width: portSize.toString(),
       height: portSize.toString(),
-    }
+    },
   };
 }
 
@@ -221,15 +282,15 @@ function createPortToComponentLine(
   }
 
   return {
-    name: 'line',
-    type: 'element',
+    name: "line",
+    type: "element",
     attributes: {
-      class: 'component-pin',
+      class: "component-pin",
       x1: portCenter.x.toString(),
       y1: portCenter.y.toString(),
       x2: endX.toString(),
       y2: endY.toString(),
-    }
+    },
   };
 }
 
@@ -281,14 +342,16 @@ function createSchematicTrace(
     }
   }
 
-  return path ? {
-    name: 'path',
-    type: 'element',
-    attributes: {
-      class: 'trace',
-      d: path,
-    }
-  } : null;
+  return path
+    ? {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "trace",
+          d: path,
+        },
+      }
+    : null;
 }
 
 function createSchematicText(
@@ -296,21 +359,21 @@ function createSchematicText(
   position: { x: number; y: number }
 ): any {
   return {
-    name: 'text',
-    type: 'element',
+    name: "text",
+    type: "element",
     attributes: {
-      class: 'text',
+      class: "text",
       x: position.x.toString(),
       y: position.y.toString(),
-      'text-anchor': getTextAnchor(text.anchor),
-      'dominant-baseline': 'middle',
+      "text-anchor": getTextAnchor(text.anchor),
+      "dominant-baseline": "middle",
     },
     children: [
       {
-        type: 'text',
+        type: "text",
         value: text.text ? text.text : "",
-      }
-    ]
+      },
+    ],
   };
 }
 
