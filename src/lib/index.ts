@@ -1,3 +1,3 @@
-export * from "./pcb-soup-to-svg"
-export * from "./soup-to-svg"
+export * from "./circuit-to-pcb-svg"
+export * from "./circuit-to-schematic-svg"
 

@@ -33,7 +33,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
 
   const svgWidth = 800
   const svgHeight = 600
-  let paths: PointObjectNotation[][] = []
+  const paths: PointObjectNotation[][] = []
   for (const item of soup) {
     if ("route" in item && item.route !== undefined) {
       paths.push(item.route as PointObjectNotation[])
