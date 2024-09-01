@@ -89,10 +89,10 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
             type: "text",
             value: `
               .pcb-board { fill: #000; }
-              .pcb-trace { stroke: #FF0000; stroke-width: 0.3; fill: none; }
-              .pcb-hole-outer { fill: #FF0000; }
-              .pcb-hole-inner { fill: #FF00FF; }
-              .pcb-pad { fill: #FF0000; }
+              .pcb-trace { stroke: rgb(200, 52, 52); stroke-width: 0.3; fill: none; }
+              .pcb-hole-outer { fill: rgb(200, 52, 52); }
+              .pcb-hole-inner { fill: rgb(255, 38, 226); }
+              .pcb-pad { fill: rgb(200, 52, 52); }
               .pcb-boundary { fill: none; stroke: #f2eda1; stroke-width: ${strokeWidth}; }
             `,
           },
