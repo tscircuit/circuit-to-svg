@@ -90,7 +90,8 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
             value: `
               .pcb-board { fill: #000; }
               .pcb-trace { stroke: #FF0000; stroke-width: 0.3; fill: none; }
-              .pcb-hole { fill: #FF00FF; }
+              .pcb-hole-outer { fill: #FF0000; }
+              .pcb-hole-inner { fill: #FF00FF; }
               .pcb-pad { fill: #FF0000; }
               .pcb-boundary { fill: none; stroke: #f2eda1; stroke-width: ${strokeWidth}; }
             `,
@@ -193,18 +194,35 @@ function createPcbComponent(component: any, transform: any): any {
 }
 
 function createPcbHole(hole: any, transform: any): any {
-  const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledRadius = (hole.outer_diameter / 2) * Math.abs(transform.a)
+  const [x, y] = applyToPoint(transform, [hole.x, hole.y]);
+  const scaledOuterRadius = (hole.outer_diameter / 2) * Math.abs(transform.a);
+  const scaledInnerRadius = (hole.hole_diameter / 2) * Math.abs(transform.a);
   return {
-    name: "circle",
+    name: "g",
     type: "element",
-    attributes: {
-      class: "pcb-hole",
-      cx: x.toString(),
-      cy: y.toString(),
-      r: scaledRadius.toString(),
-    },
-  }
+    children: [
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer",
+          cx: x.toString(),
+          cy: y.toString(),
+          r: scaledOuterRadius.toString(),
+        },
+      },
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          cx: x.toString(),
+          cy: y.toString(),
+          r: scaledInnerRadius.toString(),
+        },
+      },
+    ],
+  };
 }
 
 function createPcbSMTPad(pad: any, transform: any): any {
