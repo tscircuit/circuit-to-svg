@@ -136,7 +136,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
           height: svgHeight.toString(),
         },
       },
-      createPcbBoundary(transform, minX, minY, maxX, maxY, paths),
+      createPcbBoundary(transform, minX, minY, maxX, maxY),
       {
         name: "g",
         type: "element",
