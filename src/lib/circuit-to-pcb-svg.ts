@@ -146,12 +146,6 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
       {
         name: "g",
         type: "element",
-        attributes: { id: "silkscreen" },
-        children: silkscreenElements,
-      },
-      {
-        name: "g",
-        type: "element",
         attributes: { id: "traces" },
         children: traceElements,
       },
@@ -160,6 +154,12 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
         type: "element",
         attributes: { id: "holes" },
         children: holeElements,
+      },
+      {
+        name: "g",
+        type: "element",
+        attributes: { id: "silkscreen" },
+        children: silkscreenElements,
       },
     ].filter((child) => child !== null),
   }
