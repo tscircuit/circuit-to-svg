@@ -342,8 +342,6 @@ const pcbData: any[] = [
     }
   ]
 
-test("pcbData", () => {
-  expect(circuitJsonToPcbSvg(pcbData)).toMatchSvgSnapshot(import.meta.path, {
-    updateSnapshot: true,
+  test("pcbData bounds and layout", () => {
+    expect(circuitJsonToPcbSvg(pcbData)).toMatchSvgSnapshot(import.meta.path, 'pcb_layout_bounds_with_components_and_holes')
   });
-});
