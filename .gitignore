@@ -180,3 +180,4 @@ dist
 .vercel
 *.diff.png
 storybook-static
+package-lock.json
