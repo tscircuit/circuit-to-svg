@@ -7,7 +7,8 @@ import {
   translate,
   type Matrix,
 } from "transformation-matrix"
-import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-object-from-pcb-trace"
+import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
+import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 
 interface PointObjectNotation {
   x: number
@@ -62,22 +63,22 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   )
 
   const traceElements = soup
-    .filter((item) => item.type === "pcb_trace")
-    .flatMap((item) => createSvgObjects(item, transform))
+    .filter((elm) => elm.type === "pcb_trace")
+    .flatMap((elm) => createSvgObjects(elm, transform))
 
   const holeElements = soup
-    .filter((item) => item.type === "pcb_plated_hole")
-    .flatMap((item) => createSvgObjects(item, transform))
+    .filter((elm) => elm.type === "pcb_plated_hole")
+    .flatMap((elm) => createSvgObjects(elm, transform))
 
   const silkscreenElements = soup
-    .filter((item) => item.type === "pcb_silkscreen_path")
-    .flatMap((item) => createPcbSilkscreenPath(item, transform))
+    .filter((elm) => elm.type === "pcb_silkscreen_path")
+    .flatMap((elm) => createPcbSilkscreenPath(elm, transform))
 
   const otherElements = soup
     .filter(
-      (item) =>
+      (elm) =>
         !["pcb_trace", "pcb_plated_hole", "pcb_silkscreen_path"].includes(
-          item.type,
+          elm.type,
         ),
     )
     .flatMap((item) => createSvgObjects(item, transform))
@@ -112,7 +113,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
               .pcb-trace { fill: none; }
               .pcb-hole-outer { fill: rgb(200, 52, 52); }
               .pcb-hole-inner { fill: rgb(255, 38, 226); }
-              .pcb-pad { fill: rgb(200, 52, 52); }
+              .pcb-pad { }
               .pcb-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
               .pcb-silkscreen { fill: none; }
               .pcb-silkscreen-top { stroke: #f2eda1; }
@@ -195,7 +196,7 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
     case "pcb_plated_hole":
       return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
     case "pcb_smtpad":
-      return [createSvgObjectsFromSmtPad(elm, transform)].filter(Boolean)
+      return createSvgObjectsFromSmtPad(elm, transform)
     default:
       return []
   }
@@ -268,23 +269,6 @@ function createSvgObjectsFromPcbHole(hole: any, transform: any): any {
         },
       },
     ],
-  }
-}
-
-function createSvgObjectsFromSmtPad(pad: any, transform: any): any {
-  const [x, y] = applyToPoint(transform, [pad.x, pad.y])
-  const width = pad.width * Math.abs(transform.a)
-  const height = pad.height * Math.abs(transform.d)
-  return {
-    name: "rect",
-    type: "element",
-    attributes: {
-      class: "pcb-pad",
-      x: (x - width / 2).toString(),
-      y: (y - height / 2).toString(),
-      width: width.toString(),
-      height: height.toString(),
-    },
   }
 }
 
