@@ -9,14 +9,6 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-object-from-pcb-trace"
 
-/**
- * TODO use @tscircuit/pcb-colors when it's published
- */
-const LAYER_NAME_TO_COLOR = {
-  top: "rgb(200, 52, 52)",
-  bottom: "rgb(77, 127, 196)",
-}
-
 interface PointObjectNotation {
   x: number
   y: number
@@ -117,7 +109,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
             type: "text",
             value: `
               .pcb-board { fill: #000; }
-              .pcb-trace { stroke: rgb(200, 52, 52); stroke-width: ${strokeWidth}; fill: none; }
+              .pcb-trace { fill: none; }
               .pcb-hole-outer { fill: rgb(200, 52, 52); }
               .pcb-hole-inner { fill: rgb(255, 38, 226); }
               .pcb-pad { fill: rgb(200, 52, 52); }
