@@ -176,3 +176,6 @@ dist
 .aider*
 
 *storybook.log
+.vscode
+.vercel
+*.diff.png
