@@ -179,3 +179,4 @@ dist
 .vscode
 .vercel
 *.diff.png
+storybook-static
