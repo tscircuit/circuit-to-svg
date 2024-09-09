@@ -10,6 +10,11 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "baseUrl": ".",
+
+    "paths": {
+      "src/*": ["src/*"]
+    },
+    
     "verbatimModuleSyntax": true,
     // Enable strict type checking so you can catch bugs early
     "strict": true,
