@@ -1,13 +1,20 @@
-import type { AnySoupElement } from "@tscircuit/soup"
-import { type INode, stringify } from "svgson"
-import { applyToPoint, compose, scale, translate } from "transformation-matrix"
+import type { AnySoupElement, PCBTrace } from "@tscircuit/soup"
+import { type INode as SvgObject, stringify } from "svgson"
+import {
+  applyToPoint,
+  compose,
+  scale,
+  translate,
+  type Matrix,
+} from "transformation-matrix"
+import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-object-from-pcb-trace"
 
-interface SvgObject {
-  name: string
-  type: "element" | "text"
-  attributes?: { [key: string]: string }
-  children?: SvgObject[]
-  value?: string
+/**
+ * TODO use @tscircuit/pcb-colors when it's published
+ */
+const LAYER_NAME_TO_COLOR = {
+  top: "rgb(200, 52, 52)",
+  bottom: "rgb(77, 127, 196)",
 }
 
 interface PointObjectNotation {
@@ -64,18 +71,15 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
 
   const traceElements = soup
     .filter((item) => item.type === "pcb_trace")
-    .map((item) => createSvgElement(item, transform))
-    .filter((element) => element !== null)
+    .flatMap((item) => createSvgObjects(item, transform))
 
   const holeElements = soup
     .filter((item) => item.type === "pcb_plated_hole")
-    .map((item) => createSvgElement(item, transform))
-    .filter((element) => element !== null)
+    .flatMap((item) => createSvgObjects(item, transform))
 
   const silkscreenElements = soup
     .filter((item) => item.type === "pcb_silkscreen_path")
-    .map((item) => createPcbSilkscreenPath(item, transform))
-    .filter((element) => element !== null)
+    .flatMap((item) => createPcbSilkscreenPath(item, transform))
 
   const otherElements = soup
     .filter(
@@ -84,8 +88,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
           item.type,
         ),
     )
-    .map((item) => createSvgElement(item, transform))
-    .filter((element) => element !== null)
+    .flatMap((item) => createSvgObjects(item, transform))
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -104,6 +107,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
       width: svgWidth.toString(),
       height: svgHeight.toString(),
     },
+    value: "",
     children: [
       {
         name: "style",
@@ -136,7 +140,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
           height: svgHeight.toString(),
         },
       },
-      createPcbBoundary(transform, minX, minY, maxX, maxY),
+      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
       {
         name: "g",
         type: "element",
@@ -161,11 +165,11 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
         attributes: { id: "silkscreen" },
         children: silkscreenElements,
       },
-    ].filter((child) => child !== null),
+    ].filter((child): child is SvgObject => child !== null),
   }
 
   try {
-    return stringify(svgObject as INode)
+    return stringify(svgObject as SvgObject)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
     throw error
@@ -190,22 +194,22 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   }
 }
 
-function createSvgElement(item: AnySoupElement, transform: any): any {
-  switch (item.type) {
+function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
+  switch (elm.type) {
     case "pcb_component":
-      return createPcbComponent(item, transform)
+      return [createSvgObjectsFromPcbComponent(elm, transform)].filter(Boolean)
     case "pcb_trace":
-      return createPcbTrace(item, transform)
+      return createSvgObjectsFromPcbTrace(elm, transform)
     case "pcb_plated_hole":
-      return createPcbHole(item, transform)
+      return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
     case "pcb_smtpad":
-      return createPcbSMTPad(item, transform)
+      return [createSvgObjectsFromSmtPad(elm, transform)].filter(Boolean)
     default:
-      return null
+      return []
   }
 }
 
-function createPcbComponent(component: any, transform: any): any {
+function createSvgObjectsFromPcbComponent(component: any, transform: any): any {
   const { center, width, height, rotation = 0 } = component
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const scaledWidth = width * Math.abs(transform.a)
@@ -243,7 +247,7 @@ function createPcbComponent(component: any, transform: any): any {
   }
 }
 
-function createPcbHole(hole: any, transform: any): any {
+function createSvgObjectsFromPcbHole(hole: any, transform: any): any {
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   const scaledOuterRadius = (hole.outer_diameter / 2) * Math.abs(transform.a)
   const scaledInnerRadius = (hole.hole_diameter / 2) * Math.abs(transform.a)
@@ -275,7 +279,7 @@ function createPcbHole(hole: any, transform: any): any {
   }
 }
 
-function createPcbSMTPad(pad: any, transform: any): any {
+function createSvgObjectsFromSmtPad(pad: any, transform: any): any {
   const [x, y] = applyToPoint(transform, [pad.x, pad.y])
   const width = pad.width * Math.abs(transform.a)
   const height = pad.height * Math.abs(transform.d)
@@ -288,71 +292,6 @@ function createPcbSMTPad(pad: any, transform: any): any {
       y: (y - height / 2).toString(),
       width: width.toString(),
       height: height.toString(),
-    },
-  }
-}
-
-function createPcbTrace(trace: any, transform: any): any {
-  if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
-    return null
-
-  const cornerRadius = 0.2 // Adjust this value to change the roundness of corners
-  const pathCommands: string[] = []
-  const transformedPoints = trace.route.map((point: any) =>
-    applyToPoint(transform, [point.x, point.y]),
-  )
-
-  // Start path
-  pathCommands.push(`M ${transformedPoints[0][0]} ${transformedPoints[0][1]}`)
-
-  for (let i = 1; i < transformedPoints.length - 1; i++) {
-    const prev = transformedPoints[i - 1]
-    const curr = transformedPoints[i]
-    const next = transformedPoints[i + 1]
-
-    // Calculate vectors
-    const v1 = curr && prev ? [curr[0] - prev[0], curr[1] - prev[1]] : [0, 0]
-    const v2 = next && curr ? [next[0] - curr[0], next[1] - curr[1]] : [0, 0]
-
-    // Normalize vectors
-    const l1 = Math.sqrt((v1[0] as number) * (v1[0] as number) + (v1[1] as number) * (v1[1] as number));
-    const l2 = Math.sqrt((v2[0] as number) * (v2[0] as number) + (v2[1] as number) * (v2[1] as number));
-    if (l1 !== 0) {
-      v1[0]! /= l1;
-      v1[1]! /= l1;
-    }
-    if (l2 !== 0) {
-      v2[0]! /= l2;
-      v2[1]! /= l2;
-    }
-
-    // Calculate the corner points
-    const radius = Math.min(cornerRadius, Math.min(l1, l2) / 2)
-    const p1 = [curr[0] - v1[0]! * radius, curr[1] - v1[1]! * radius] 
-    const p2 = [curr[0] + v2[0]! * radius, curr[1] + v2[1]! * radius]
-
-    // Add line to the start of the corner
-    pathCommands.push(`L ${p1[0]} ${p1[1]}`)
-
-    // Add the arc
-    pathCommands.push(`A ${radius} ${radius} 0 0 1 ${p2[0]} ${p2[1]}`)
-  }
-
-  // Add final line to last point
-  const lastPoint = transformedPoints[transformedPoints.length - 1]
-  pathCommands.push(`L ${lastPoint[0]} ${lastPoint[1]}`)
-
-  return {
-    name: "path",
-    type: "element",
-    attributes: {
-      class: "pcb-trace",
-      d: pathCommands.join(" "),
-      "stroke-width": trace.stroke_width
-        ? (trace.stroke_width * Math.abs(transform.a)).toString()
-        : "0.3",
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
     },
   }
 }
@@ -389,13 +328,13 @@ function createPcbSilkscreenPath(silkscreenPath: any, transform: any): any {
   }
 }
 
-function createPcbBoundary(
+function createSvgObjectFromPcbBoundary(
   transform: any,
   minX: number,
   minY: number,
   maxX: number,
   maxY: number,
-): any {
+): SvgObject {
   const [x1, y1] = applyToPoint(transform, [minX, minY])
   const [x2, y2] = applyToPoint(transform, [maxX, maxY])
   const width = Math.abs(x2 - x1)
@@ -405,6 +344,8 @@ function createPcbBoundary(
   return {
     name: "rect",
     type: "element",
+    value: "",
+    children: [],
     attributes: {
       class: "pcb-boundary",
       x: x.toString(),
