@@ -9,6 +9,7 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-slikscreen-text"
 
 interface PointObjectNotation {
   x: number
@@ -118,6 +119,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
               .pcb-silkscreen { fill: none; }
               .pcb-silkscreen-top { stroke: #f2eda1; }
               .pcb-silkscreen-bottom { stroke: #f2eda1; }
+              .pcb-silkscreen-text { fill: #f2eda1; }
             `,
           },
         ],
@@ -197,6 +199,8 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
       return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
+    case "pcb_silkscreen_text":
+      return createSvgObjectsFromPcbSilkscreenText(elm, transform)
     default:
       return []
   }
