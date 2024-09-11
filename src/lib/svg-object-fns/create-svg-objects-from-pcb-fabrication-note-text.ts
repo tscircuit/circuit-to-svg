@@ -1,5 +1,6 @@
-import type { PcbSilkscreenText } from "@tscircuit/soup"
+import type { PcbFabricationNoteText } from "@tscircuit/soup"
 import type { INode as SvgObject } from "svgson"
+import { toString as matrixToString } from "transformation-matrix"
 import {
   type Matrix,
   applyToPoint,
@@ -8,16 +9,17 @@ import {
   translate,
 } from "transformation-matrix"
 
-export function createSvgObjectsFromPcbSilkscreenText(
-  PcbSilkscreenText: PcbSilkscreenText,
+export function createSvgObjectsFromPcbFabricationNoteText(
+  pcbFabNoteText: PcbFabricationNoteText,
   transform: Matrix,
 ): SvgObject[] {
   const {
     anchor_position,
+    anchor_alignment,
     text,
     font_size = 1,
     layer = "top",
-  } = PcbSilkscreenText
+  } = pcbFabNoteText
 
   if (
     !anchor_position ||
@@ -42,7 +44,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Create a composite transformation
   const textTransform = compose(
-    translate(transformedX, transformedY),
+    translate(transformedX, transformedY), // TODO do anchor_alignment
     rotate(Math.PI / 180), // Convert degrees to radians
   )
 
@@ -56,9 +58,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
       "font-size": transformedFontSize.toString(),
       "text-anchor": "middle",
       "dominant-baseline": "central",
-      transform: `matrix(${textTransform.a} ${textTransform.b} ${textTransform.c} ${textTransform.d} ${textTransform.e} ${textTransform.f})`,
-      class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-      "data-pcb-silkscreen-text-id": PcbSilkscreenText.pcb_component_id,
+      transform: matrixToString(textTransform),
+      class: "pcb-fabrication-note-text",
+      fill: "rgba(255,255,255,0.5)",
     },
     children: [
       {

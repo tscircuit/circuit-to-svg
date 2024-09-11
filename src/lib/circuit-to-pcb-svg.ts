@@ -9,7 +9,10 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-slikscreen-text"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
+import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 
 interface PointObjectNotation {
   x: number
@@ -73,7 +76,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
 
   const silkscreenElements = soup
     .filter((elm) => elm.type === "pcb_silkscreen_path")
-    .flatMap((elm) => createPcbSilkscreenPath(elm, transform))
+    .flatMap((elm) => createSvgObjectsFromPcbSilkscreenPath(elm, transform))
 
   const otherElements = soup
     .filter(
@@ -201,6 +204,10 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
+    case "pcb_fabrication_note_path":
+      return createSvgObjectsFromPcbFabricationNotePath(elm, transform)
+    case "pcb_fabrication_note_text":
+      return createSvgObjectsFromPcbFabricationNoteText(elm, transform)
     default:
       return []
   }
@@ -273,38 +280,6 @@ function createSvgObjectsFromPcbHole(hole: any, transform: any): any {
         },
       },
     ],
-  }
-}
-
-function createPcbSilkscreenPath(silkscreenPath: any, transform: any): any {
-  if (!silkscreenPath.route || !Array.isArray(silkscreenPath.route)) return null
-
-  let path = silkscreenPath.route
-    .map((point: any, index: number) => {
-      const [x, y] = applyToPoint(transform, [point.x, point.y])
-      return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
-    })
-    .join(" ")
-
-  // Close the path if it's not already closed
-  const firstPoint = silkscreenPath.route[0]
-  const lastPoint = silkscreenPath.route[silkscreenPath.route.length - 1]
-  if (firstPoint.x !== lastPoint.x || firstPoint.y !== lastPoint.y) {
-    path += " Z"
-  }
-
-  return {
-    name: "path",
-    type: "element",
-    attributes: {
-      class: `pcb-silkscreen pcb-silkscreen-${silkscreenPath.layer}`,
-      d: path,
-      "stroke-width": (
-        silkscreenPath.stroke_width * Math.abs(transform.a)
-      ).toString(),
-      "data-pcb-component-id": silkscreenPath.pcb_component_id,
-      "data-pcb-silkscreen-path-id": silkscreenPath.pcb_silkscreen_path_id,
-    },
   }
 }
 
