@@ -80,8 +80,8 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   const svgObjects = soup
     .sort(
       (a, b) =>
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999),
+        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
+        (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
     .flatMap((item) => createSvgObjects(item, transform))
 
