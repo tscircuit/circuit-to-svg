@@ -8,19 +8,21 @@ export function createSvgObjectsFromPcbFabricationNotePath(
 ): SvgObject[] {
   if (!fabNotePath.route || !Array.isArray(fabNotePath.route)) return []
 
-  let path = fabNotePath.route
-    .map((point: any, index: number) => {
-      const [x, y] = applyToPoint(transform, [point.x, point.y])
-      return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
-    })
-    .join(" ")
-
-  // Close the path if it's not already closed
+  // Close the path if the first and last points are the same
   const firstPoint = fabNotePath.route[0]
   const lastPoint = fabNotePath.route[fabNotePath.route.length - 1]
-  if (firstPoint!.x !== lastPoint!.x || firstPoint!.y !== lastPoint!.y) {
-    path += " Z"
-  }
+  const isClosed =
+    firstPoint!.x === lastPoint!.x && firstPoint!.y === lastPoint!.y
+
+  const path =
+    fabNotePath.route
+      .slice(0, isClosed ? -1 : undefined)
+      .map((point: any, index: number) => {
+        const [x, y] = applyToPoint(transform, [point.x, point.y])
+        return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
+      })
+      .join(" ") + (isClosed ? " Z" : "")
+
   return [
     {
       name: "path",
