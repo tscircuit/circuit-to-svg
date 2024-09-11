@@ -183,6 +183,8 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
       return createSvgObjectsFromPcbFabricationNotePath(elm, transform)
     case "pcb_fabrication_note_text":
       return createSvgObjectsFromPcbFabricationNoteText(elm, transform)
+    case "pcb_silkscreen_path":
+      return createSvgObjectsFromPcbSilkscreenPath(elm, transform)
     default:
       return []
   }
