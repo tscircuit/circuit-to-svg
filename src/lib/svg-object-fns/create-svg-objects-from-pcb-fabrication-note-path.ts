@@ -28,6 +28,7 @@ export function createSvgObjectsFromPcbFabricationNotePath(
       attributes: {
         class: "pcb-fabrication-note-path",
         stroke: "rgba(255,255,255,0.5)",
+        fill: "none",
         d: path,
         "stroke-width": (
           fabNotePath.stroke_width * Math.abs(transform.a)
