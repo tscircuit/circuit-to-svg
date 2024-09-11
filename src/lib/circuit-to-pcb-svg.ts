@@ -14,6 +14,17 @@ import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/cre
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 
+const OBJECT_ORDER: AnySoupElement["type"][] = [
+  "pcb_fabrication_note_text",
+  "pcb_fabrication_note_path",
+  "pcb_silkscreen_text",
+  "pcb_silkscreen_path",
+  "pcb_trace",
+  "pcb_plated_hole",
+  "pcb_smtpad",
+  "pcb_component",
+]
+
 interface PointObjectNotation {
   x: number
   y: number
@@ -66,24 +77,11 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
-  const traceElements = soup
-    .filter((elm) => elm.type === "pcb_trace")
-    .flatMap((elm) => createSvgObjects(elm, transform))
-
-  const holeElements = soup
-    .filter((elm) => elm.type === "pcb_plated_hole")
-    .flatMap((elm) => createSvgObjects(elm, transform))
-
-  const silkscreenElements = soup
-    .filter((elm) => elm.type === "pcb_silkscreen_path")
-    .flatMap((elm) => createSvgObjectsFromPcbSilkscreenPath(elm, transform))
-
-  const otherElements = soup
-    .filter(
-      (elm) =>
-        !["pcb_trace", "pcb_plated_hole", "pcb_silkscreen_path"].includes(
-          elm.type,
-        ),
+  const svgObjects = soup
+    .sort(
+      (a, b) =>
+        (OBJECT_ORDER.indexOf(a.type) ?? 9999) -
+        (OBJECT_ORDER.indexOf(b.type) ?? 9999),
     )
     .flatMap((item) => createSvgObjects(item, transform))
 
@@ -139,30 +137,7 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
         },
       },
       createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
-      {
-        name: "g",
-        type: "element",
-        attributes: { id: "other-elements" },
-        children: otherElements,
-      },
-      {
-        name: "g",
-        type: "element",
-        attributes: { id: "traces" },
-        children: traceElements,
-      },
-      {
-        name: "g",
-        type: "element",
-        attributes: { id: "holes" },
-        children: holeElements,
-      },
-      {
-        name: "g",
-        type: "element",
-        attributes: { id: "silkscreen" },
-        children: silkscreenElements,
-      },
+      ...svgObjects,
     ].filter((child): child is SvgObject => child !== null),
   }
 
