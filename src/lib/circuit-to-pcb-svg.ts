@@ -1,26 +1,27 @@
-import type { AnySoupElement, PCBTrace } from "@tscircuit/soup"
+import type { AnySoupElement } from "@tscircuit/soup"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
+import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
+import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
-import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
-import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
-import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 
 const OBJECT_ORDER: AnySoupElement["type"][] = [
+  "pcb_plated_hole",
   "pcb_fabrication_note_text",
   "pcb_fabrication_note_path",
   "pcb_silkscreen_text",
   "pcb_silkscreen_path",
   "pcb_trace",
-  "pcb_plated_hole",
   "pcb_smtpad",
   "pcb_component",
 ]
@@ -222,38 +223,6 @@ function createSvgObjectsFromPcbComponent(component: any, transform: any): any {
           y: (-scaledHeight / 2).toString(),
           width: scaledWidth.toString(),
           height: scaledHeight.toString(),
-        },
-      },
-    ],
-  }
-}
-
-function createSvgObjectsFromPcbHole(hole: any, transform: any): any {
-  const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledOuterRadius = (hole.outer_diameter / 2) * Math.abs(transform.a)
-  const scaledInnerRadius = (hole.hole_diameter / 2) * Math.abs(transform.a)
-  return {
-    name: "g",
-    type: "element",
-    children: [
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-outer",
-          cx: x.toString(),
-          cy: y.toString(),
-          r: scaledOuterRadius.toString(),
-        },
-      },
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-inner",
-          cx: x.toString(),
-          cy: y.toString(),
-          r: scaledInnerRadius.toString(),
         },
       },
     ],
