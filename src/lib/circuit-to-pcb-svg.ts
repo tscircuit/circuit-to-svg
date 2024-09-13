@@ -9,11 +9,11 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 
 const OBJECT_ORDER: AnySoupElement["type"][] = [
   "pcb_plated_hole",
@@ -31,7 +31,15 @@ interface PointObjectNotation {
   y: number
 }
 
-function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
+interface Options {
+  width?: number
+  height?: number
+}
+
+function circuitJsonToPcbSvg(
+  soup: AnySoupElement[],
+  options?: Options,
+): string {
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
@@ -52,8 +60,8 @@ function circuitJsonToPcbSvg(soup: AnySoupElement[]): string {
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
-  const svgWidth = 800
-  const svgHeight = 600
+  const svgWidth = options?.width ?? 800
+  const svgHeight = options?.height ?? 600
   const paths: PointObjectNotation[][] = []
   for (const item of soup) {
     if ("route" in item && item.route !== undefined) {
