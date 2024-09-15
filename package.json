@@ -26,7 +26,7 @@
     "@storybook/react": "^8.2.5",
     "@storybook/react-vite": "^8.2.5",
     "@storybook/test": "^8.2.5",
-    "@tscircuit/core": "^0.0.55",
+    "@tscircuit/core": "^0.0.62",
     "@tscircuit/plop": "^0.0.10",
     "bun-match-svg": "^0.0.3",
     "esbuild": "^0.20.2",
@@ -37,9 +37,10 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/soup": "^0.0.55"
+    "@tscircuit/soup": "0.0.70"
   },
   "dependencies": {
+    "@tscircuit/soup": "0.0.70",
     "@tscircuit/footprinter": "^0.0.57",
     "@tscircuit/routing": "^1.3.5",
     "schematic-symbols": "^0.0.13",
