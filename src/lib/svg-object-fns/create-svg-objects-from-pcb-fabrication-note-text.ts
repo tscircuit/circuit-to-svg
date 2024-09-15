@@ -19,6 +19,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     text,
     font_size = 1,
     layer = "top",
+    color,
   } = pcbFabNoteText
 
   if (
@@ -60,7 +61,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
       "dominant-baseline": "central",
       transform: matrixToString(textTransform),
       class: "pcb-fabrication-note-text",
-      fill: "rgba(255,255,255,0.5)",
+      fill: color || "rgba(255,255,255,0.5)",
     },
     children: [
       {
