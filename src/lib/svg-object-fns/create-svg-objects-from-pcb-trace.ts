@@ -12,39 +12,83 @@ export function createSvgObjectsFromPcbTrace(
     return []
 
   const segments = pairs(trace.route)
-  const svgObjects: SvgObject[] = []
+  const wireObjects: SvgObject[] = []
+  const viaObjects: SvgObject[] = []
 
   for (const [start, end] of segments) {
     const startPoint = applyToPoint(transform, [start.x, start.y])
     const endPoint = applyToPoint(transform, [end.x, end.y])
 
-    const layer =
-      "layer" in start ? start.layer : "layer" in end ? end.layer : null
-    if (!layer) continue
+    if (start.route_type === "wire") {
+      const layer = start.layer
+      if (!layer) continue
 
-    const layerColor =
-      LAYER_NAME_TO_COLOR[layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
+      const layerColor =
+        LAYER_NAME_TO_COLOR[layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
 
-    const traceWidth =
-      "width" in start ? start.width : "width" in end ? end.width : null
+      const traceWidth = start.width || 0.1
 
-    svgObjects.push({
-      name: "path",
-      type: "element",
-      value: "",
-      children: [],
-      attributes: {
-        class: "pcb-trace",
-        stroke: layerColor,
-        d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-        "stroke-width": traceWidth
-          ? (traceWidth * Math.abs(transform.a)).toString()
-          : "0.3",
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round",
-        "shape-rendering": "crispEdges",
-      },
-    })
+      wireObjects.push({
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-trace wire",
+          stroke: layerColor,
+          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+          "stroke-width": (traceWidth * Math.abs(transform.a)).toString(),
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "shape-rendering": "crispEdges",
+        },
+      })
+    } else if (start.route_type === "via") {
+      const fromLayerColor =
+        LAYER_NAME_TO_COLOR[start.from_layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
+      const toLayerColor =
+        LAYER_NAME_TO_COLOR[start.to_layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
+
+      const outerRadius = 0.3 * Math.abs(transform.a)
+      const innerRadius = 0.15 * Math.abs(transform.a)
+
+      viaObjects.push({
+        name: "g",
+        type: "element",
+        children: [
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer",
+              cx: startPoint[0].toString(),
+              cy: startPoint[1].toString(),
+              r: outerRadius.toString(),
+              fill: fromLayerColor,
+            },
+            value: "",
+            children: []
+          },
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              cx: startPoint[0].toString(),
+              cy: startPoint[1].toString(),
+              r: innerRadius.toString(),
+              fill: toLayerColor,
+            },
+            value: "",
+            children: []
+          },
+        ],
+        value: "",
+        attributes: {}
+      })
+    }
   }
-  return svgObjects
+
+  // Combine wire and via objects, with vias on top
+  return [...wireObjects, ...viaObjects]
 }
