@@ -37,7 +37,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/soup": "0.0.70"
+    "@tscircuit/soup": "*"
   },
   "dependencies": {
     "@tscircuit/soup": "0.0.70",
