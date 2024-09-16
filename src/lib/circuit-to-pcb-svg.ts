@@ -1,4 +1,4 @@
-import type { AnySoupElement } from "@tscircuit/soup"
+import type { AnyCircuitElement } from "@tscircuit/soup"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -14,13 +14,15 @@ import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
+import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 
-const OBJECT_ORDER: AnySoupElement["type"][] = [
+const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_plated_hole",
   "pcb_fabrication_note_text",
   "pcb_fabrication_note_path",
   "pcb_silkscreen_text",
   "pcb_silkscreen_path",
+  "pcb_via",
   "pcb_trace",
   "pcb_smtpad",
   "pcb_component",
@@ -37,7 +39,7 @@ interface Options {
 }
 
 function circuitJsonToPcbSvg(
-  soup: AnySoupElement[],
+  soup: AnyCircuitElement[],
   options?: Options,
 ): string {
   let minX = Number.POSITIVE_INFINITY
@@ -176,7 +178,7 @@ function circuitJsonToPcbSvg(
   }
 }
 
-function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
+function createSvgObjects(elm: AnyCircuitElement, transform: Matrix): SvgObject[] {
   switch (elm.type) {
     case "pcb_component":
       return [createSvgObjectsFromPcbComponent(elm, transform)].filter(Boolean)
@@ -194,6 +196,8 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
       return createSvgObjectsFromPcbFabricationNoteText(elm, transform)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, transform)
+    case "pcb_via":
+      return createSvgObjectsFromPcbVia(elm, transform)
     default:
       return []
   }
