@@ -1,6 +1,6 @@
-import type { AnySoupElement, PCBTrace } from "@tscircuit/soup"
+import type { PCBTrace } from "@tscircuit/soup"
 import { pairs } from "src/utils/pairs"
-import { type INode as SvgObject, stringify } from "svgson"
+import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { LAYER_NAME_TO_COLOR } from "../layer-name-to-color"
 

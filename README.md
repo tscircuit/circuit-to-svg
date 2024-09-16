@@ -42,11 +42,11 @@ const pcbSvg = pcbSoupToSvg(pcbSoup);
 
 ## API
 
-### `soupToSvg(soup: AnySoupElement[]): string`
+### `soupToSvg(soup: AnyCircuitElement[]): string`
 
 Converts a schematic circuit description to an SVG string.
 
-### `pcbSoupToSvg(soup: AnySoupElement[]): string`
+### `pcbSoupToSvg(soup: AnyCircuitElement[]): string`
 
 Converts a PCB layout description to an SVG string.
 
