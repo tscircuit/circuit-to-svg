@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
-              .pcb-board { fill: #000; }
+              .boundary { fill: #000; }
+              .pcb-board { fill: none; }
               .pcb-trace { fill: none; }
               .pcb-hole-outer { fill: rgb(200, 52, 52); }
               .pcb-hole-inner { fill: rgb(255, 38, 226); }
@@ -9,4 +10,4 @@
               .pcb-silkscreen-top { stroke: #f2eda1; }
               .pcb-silkscreen-bottom { stroke: #f2eda1; }
               .pcb-silkscreen-text { fill: #f2eda1; }
-            </style><rect class="pcb-board" x="0" y="0" width="800" height="600"/><rect class="pcb-boundary" x="135.29411764705884" y="35.29411764705873" width="529.4117647058824" height="529.4117647058824"/><path class="pcb-fabrication-note-path" stroke="blue" fill="none" d="M 311.764705882353 388.235294117647 L 664.7058823529412 388.235294117647 L 664.7058823529412 35.29411764705873 Z" stroke-width="3.5294117647058827" data-pcb-component-id="null" data-pcb-fabrication-note-path-id="fabrication_note_0.1811151721592309"/><text x="0" y="0" font-family="Arial, sans-serif" font-size="35.294117647058826" text-anchor="middle" dominant-baseline="central" transform="matrix(0.9998476951563913,0.01745240643728351,-0.01745240643728351,0.9998476951563913,311.764705882353,388.235294117647)" class="pcb-fabrication-note-text" fill="#0000ff">hello world!</text></svg>
+            </style><rect class="boundary" x="0" y="0" width="800" height="600"/><rect class="pcb-boundary" x="125" y="25" width="550" height="550"/><path class="pcb-board" d="M 125 575 L 675 575 L 675 25 L 125 25 Z" stroke="rgba(255, 255, 255, 0.5)" stroke-width="2.5"/><path class="pcb-fabrication-note-path" stroke="blue" fill="none" d="M 400 300 L 650 300 L 650 50 Z" stroke-width="2.5" data-pcb-component-id="null" data-pcb-fabrication-note-path-id="fabrication_note_0.8945808412209938"/><text x="0" y="0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" dominant-baseline="central" transform="matrix(0.9998476951563913,0.01745240643728351,-0.01745240643728351,0.9998476951563913,400,300)" class="pcb-fabrication-note-text" fill="#0000ff">hello world!</text></svg>

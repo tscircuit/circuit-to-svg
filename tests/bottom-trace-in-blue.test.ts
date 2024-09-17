@@ -161,7 +161,7 @@ const soup: any = [
       y: 0,
     },
     width: 10,
-    height: 10,
+    height: 12,
   },
   {
     type: "pcb_smtpad",

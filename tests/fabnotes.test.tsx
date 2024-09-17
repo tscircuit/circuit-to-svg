@@ -6,7 +6,7 @@ test("fabrication note path and fabrication note text", () => {
   const circuit = new Circuit()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board width="22mm" height="22mm">
       <fabricationnotepath
         route={[
           { x: 0, y: 0 },

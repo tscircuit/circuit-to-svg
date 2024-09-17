@@ -1,4 +1,4 @@
-import type { AnySoupElement } from "@tscircuit/soup"
+import type { AnySoupElement, Point } from "@tscircuit/soup"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -14,6 +14,7 @@ import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
+import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 
 const OBJECT_ORDER: AnySoupElement["type"][] = [
   "pcb_plated_hole",
@@ -24,6 +25,7 @@ const OBJECT_ORDER: AnySoupElement["type"][] = [
   "pcb_trace",
   "pcb_smtpad",
   "pcb_component",
+  "pcb_board",
 ]
 
 interface PointObjectNotation {
@@ -47,8 +49,15 @@ function circuitJsonToPcbSvg(
 
   // Process all elements to determine bounds
   for (const item of soup) {
-    if ("center" in item && "width" in item && "height" in item) {
-      updateBounds(item.center, item.width, item.height)
+    if (item.type === "pcb_board") {
+      if (
+        item.outline &&
+        Array.isArray(item.outline) &&
+        item.outline.length >= 3
+      )
+        updateBoundsToIncludeOutline(item.outline)
+      else if ("center" in item && "width" in item && "height" in item)
+        updateBounds(item.center, item.width, item.height)
     } else if ("x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)
     } else if ("route" in item) {
@@ -120,7 +129,8 @@ function circuitJsonToPcbSvg(
           {
             type: "text",
             value: `
-              .pcb-board { fill: #000; }
+              .boundary { fill: #000; }
+              .pcb-board { fill: none; }
               .pcb-trace { fill: none; }
               .pcb-hole-outer { fill: rgb(200, 52, 52); }
               .pcb-hole-inner { fill: rgb(255, 38, 226); }
@@ -138,7 +148,7 @@ function circuitJsonToPcbSvg(
         name: "rect",
         type: "element",
         attributes: {
-          class: "pcb-board",
+          class: "boundary",
           x: "0",
           y: "0",
           width: svgWidth.toString(),
@@ -164,6 +174,15 @@ function circuitJsonToPcbSvg(
     minY = Math.min(minY, center.y - halfHeight)
     maxX = Math.max(maxX, center.x + halfWidth)
     maxY = Math.max(maxY, center.y + halfHeight)
+  }
+
+  function updateBoundsToIncludeOutline(outline: Point[]) {
+    for (const point of outline) {
+      minX = Math.min(minX, point.x)
+      minY = Math.min(minY, point.y)
+      maxX = Math.max(maxX, point.x)
+      maxY = Math.max(maxY, point.y)
+    }
   }
 
   function updateTraceBounds(route: any[]) {
@@ -194,6 +213,8 @@ function createSvgObjects(elm: AnySoupElement, transform: Matrix): SvgObject[] {
       return createSvgObjectsFromPcbFabricationNoteText(elm, transform)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, transform)
+    case "pcb_board":
+      return createSvgObjectsFromPcbBoard(elm, transform)
     default:
       return []
   }
