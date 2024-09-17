@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.29",
+  "version": "0.0.32",
   "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
   "files": [
@@ -37,10 +37,10 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/soup": "0.0.70"
+    "@tscircuit/soup": "*"
   },
   "dependencies": {
-    "@tscircuit/soup": "0.0.70",
+    "@tscircuit/soup": "*",
     "@tscircuit/footprinter": "^0.0.57",
     "@tscircuit/routing": "^1.3.5",
     "schematic-symbols": "^0.0.13",
