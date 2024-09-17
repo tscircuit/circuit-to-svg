@@ -483,6 +483,14 @@ const pcbSoup: any[] = [
   {
     type: "pcb_board",
     width: 10,
+    outline: [
+      { x: -10, y: -10 },
+      { x: 10, y: -10 },
+      { x: 10, y: 10 },
+      { x: 3, y: 3 },
+      { x: -7, y: 3 },
+      { x: -7, y: -7 },
+    ],
     center: {
       x: 0,
       y: 0,
