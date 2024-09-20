@@ -1,6 +1,7 @@
 import type { PCBHole } from "@tscircuit/soup"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "../svg-object"
+import { HOLE_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
@@ -22,7 +23,7 @@ export function createSvgObjectsFromPcbHole(
             cx: x.toString(),
             cy: y.toString(),
             r: radius.toString(),
-            fill: "black",
+            fill: HOLE_COLOR,
           },
           children: [],
           value: "",
@@ -40,7 +41,7 @@ export function createSvgObjectsFromPcbHole(
           y: (y - radius).toString(),
           width: scaledDiameter.toString(),
           height: scaledDiameter.toString(),
-          fill: "black",
+          fill: HOLE_COLOR,
         },
         children: [],
         value: "",
@@ -63,7 +64,7 @@ export function createSvgObjectsFromPcbHole(
           cy: y.toString(),
           rx: rx.toString(),
           ry: ry.toString(),
-          fill: "black",
+          fill: HOLE_COLOR,
         },
         children: [],
         value: "",
