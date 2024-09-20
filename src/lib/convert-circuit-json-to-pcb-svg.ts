@@ -9,13 +9,14 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
+import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_plated_hole",
@@ -40,7 +41,7 @@ interface Options {
   height?: number
 }
 
-function circuitJsonToPcbSvg(
+export function convertCircuitJsonToPcbSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
@@ -207,7 +208,9 @@ function createSvgObjects(
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, transform)
     case "pcb_plated_hole":
-      return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
+      return createSvgObjectsFromPcbPlatedHole(elm, transform).filter(Boolean)
+    case "pcb_hole":
+      return createSvgObjectsFromPcbHole(elm, transform)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_silkscreen_text":
@@ -293,4 +296,7 @@ function createSvgObjectFromPcbBoundary(
   }
 }
 
-export { circuitJsonToPcbSvg }
+/**
+ * @deprecated use `convertCircuitJsonToPcbSvg` instead
+ */
+export const circuitJsonToPcbSvg = convertCircuitJsonToPcbSvg
