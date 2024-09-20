@@ -59,7 +59,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           },
         ],
         value: "",
-        attributes: undefined,
+        attributes: {},
       },
     ]
   }
