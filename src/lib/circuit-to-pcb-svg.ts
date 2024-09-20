@@ -9,7 +9,7 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
+import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
@@ -40,7 +40,7 @@ interface Options {
   height?: number
 }
 
-function circuitJsonToPcbSvg(
+function convertCircuitJsonToPcbSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
@@ -207,6 +207,8 @@ function createSvgObjects(
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, transform)
     case "pcb_plated_hole":
+      return [createSvgObjectsFromPcbPlatedHole(elm, transform)].filter(Boolean)
+    case "pcb_hole":
       return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
@@ -293,4 +295,9 @@ function createSvgObjectFromPcbBoundary(
   }
 }
 
-export { circuitJsonToPcbSvg }
+/**
+ * @deprecated use `convertCircuitJsonToPcbSvg` instead
+ */
+export const circuitJsonToPcbSvg = convertCircuitJsonToPcbSvg
+
+export { convertCircuitJsonToPcbSvg }
