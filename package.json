@@ -28,6 +28,7 @@
     "@storybook/test": "^8.2.5",
     "@tscircuit/core": "^0.0.62",
     "@tscircuit/plop": "^0.0.10",
+    "@types/bun": "^1.1.9",
     "bun-match-svg": "^0.0.6",
     "esbuild": "^0.20.2",
     "react": "^18.3.1",
