@@ -16,6 +16,7 @@ import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-object
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_plated_hole",
@@ -40,7 +41,7 @@ interface Options {
   height?: number
 }
 
-function convertCircuitJsonToPcbSvg(
+export function convertCircuitJsonToPcbSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
@@ -207,9 +208,9 @@ function createSvgObjects(
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, transform)
     case "pcb_plated_hole":
-      return [createSvgObjectsFromPcbPlatedHole(elm, transform)].filter(Boolean)
+      return createSvgObjectsFromPcbPlatedHole(elm, transform).filter(Boolean)
     case "pcb_hole":
-      return [createSvgObjectsFromPcbHole(elm, transform)].filter(Boolean)
+      return createSvgObjectsFromPcbHole(elm, transform)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_silkscreen_text":
@@ -299,5 +300,3 @@ function createSvgObjectFromPcbBoundary(
  * @deprecated use `convertCircuitJsonToPcbSvg` instead
  */
 export const circuitJsonToPcbSvg = convertCircuitJsonToPcbSvg
-
-export { convertCircuitJsonToPcbSvg }

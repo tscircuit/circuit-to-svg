@@ -1,10 +1,11 @@
 import type { PCBPlatedHole } from "@tscircuit/soup"
 import { applyToPoint } from "transformation-matrix"
+import type { SvgObject } from "../svg-object"
 
 export function createSvgObjectsFromPcbPlatedHole(
   hole: PCBPlatedHole,
   transform: any,
-): any {
+): SvgObject[] {
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   if (hole.shape === "pill") {
@@ -19,40 +20,48 @@ export function createSvgObjectsFromPcbPlatedHole(
     const innerRadiusY = scaledHoleHeight / 2
     const straightLength = scaledOuterHeight - scaledOuterWidth
 
-    return {
-      name: "g",
-      type: "element",
-      children: [
-        // Outer pill shape
-        {
-          name: "path",
-          type: "element",
-          attributes: {
-            class: "pcb-hole-outer",
-            d:
-              `M${x - outerRadiusX},${y - straightLength / 2} ` +
-              `v${straightLength} ` +
-              `a${outerRadiusX},${outerRadiusX} 0 0 0 ${scaledOuterWidth},0 ` +
-              `v-${straightLength} ` +
-              `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          // Outer pill shape
+          {
+            name: "path",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer",
+              d:
+                `M${x - outerRadiusX},${y - straightLength / 2} ` +
+                `v${straightLength} ` +
+                `a${outerRadiusX},${outerRadiusX} 0 0 0 ${scaledOuterWidth},0 ` +
+                `v-${straightLength} ` +
+                `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
+            },
+            value: "",
+            children: [],
           },
-        },
-        // Inner pill shape
-        {
-          name: "path",
-          type: "element",
-          attributes: {
-            class: "pcb-hole-inner",
-            d:
-              `M${x - innerRadiusX},${y - (scaledHoleHeight - scaledHoleWidth) / 2} ` +
-              `v${scaledHoleHeight - scaledHoleWidth} ` +
-              `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
-              `v-${scaledHoleHeight - scaledHoleWidth} ` +
-              `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+          // Inner pill shape
+          {
+            name: "path",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              d:
+                `M${x - innerRadiusX},${y - (scaledHoleHeight - scaledHoleWidth) / 2} ` +
+                `v${scaledHoleHeight - scaledHoleWidth} ` +
+                `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
+                `v-${scaledHoleHeight - scaledHoleWidth} ` +
+                `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+            },
+            value: "",
+            children: [],
           },
-        },
-      ],
-    }
+        ],
+        value: "",
+        attributes: undefined,
+      },
+    ]
   }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
@@ -63,31 +72,40 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
     const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
-    return {
-      name: "g",
-      type: "element",
-      children: [
-        {
-          name: "circle",
-          type: "element",
-          attributes: {
-            class: "pcb-hole-outer",
-            cx: x.toString(),
-            cy: y.toString(),
-            r: outerRadius.toString(),
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer",
+              cx: x.toString(),
+              cy: y.toString(),
+              r: outerRadius.toString(),
+            },
+            value: "",
+            children: [],
           },
-        },
-        {
-          name: "circle",
-          type: "element",
-          attributes: {
-            class: "pcb-hole-inner",
-            cx: x.toString(),
-            cy: y.toString(),
-            r: innerRadius.toString(),
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              cx: x.toString(),
+              cy: y.toString(),
+              r: innerRadius.toString(),
+            },
+            value: "",
+            children: [],
           },
-        },
-      ],
-    }
+        ],
+        value: "",
+        attributes: {},
+      },
+    ]
   }
+  return []
 }

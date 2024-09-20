@@ -1,3 +1,2 @@
-export * from "./circuit-to-pcb-svg"
+export * from "./convert-circuit-json-to-pcb-svg"
 export * from "./circuit-to-schematic-svg"
-
