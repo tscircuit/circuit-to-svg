@@ -37,7 +37,7 @@ export function createSvgObjectsFromPcbFabricationNotePath(
         ).toString(),
         "data-pcb-component-id": fabNotePath.pcb_component_id,
         "data-pcb-fabrication-note-path-id":
-          fabNotePath.fabrication_note_path_id,
+          fabNotePath.pcb_fabrication_note_path_id,
       },
       value: "",
       children: [],

@@ -28,7 +28,4 @@
       // "dom"
     ]
   },
-  // Include the necessary files for your project
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
 }

@@ -1,16 +1,17 @@
-import React from "react";
-import { circuitJsonToPcbSvg } from "../lib/index.js";
+import React from "react"
+import { circuitJsonToPcbSvg } from "../lib/index.js"
 
 export const SilkScreenPcbPlatedHole = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup);
+  const result = circuitJsonToPcbSvg(pcbSoup as any)
 
-  return <div dangerouslySetInnerHTML={{ __html: result }} />;
-};
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
 
 export default {
   title: "Silkscreen with PCB Plated Hole",
   component: SilkScreenPcbPlatedHole,
-};
+}
 
 const pcbSoup = [
   {
@@ -1075,4 +1076,4 @@ const pcbSoup = [
     ],
     pcb_trace_id: "pcb_trace_for_source_trace_3",
   },
-];
+]
