@@ -28,7 +28,7 @@
     "@storybook/test": "^8.2.5",
     "@tscircuit/core": "^0.0.62",
     "@tscircuit/plop": "^0.0.10",
-    "bun-match-svg": "^0.0.3",
+    "bun-match-svg": "^0.0.6",
     "esbuild": "^0.20.2",
     "react": "^18.3.1",
     "storybook": "^8.2.5",
@@ -40,10 +40,12 @@
     "@tscircuit/soup": "*"
   },
   "dependencies": {
-    "@tscircuit/soup": "*",
     "@tscircuit/footprinter": "^0.0.57",
     "@tscircuit/routing": "^1.3.5",
-    "schematic-symbols": "^0.0.13",
+    "@tscircuit/soup": "^0.0.73",
+    "@tscircuit/soup-util": "^0.0.28",
+    "@types/node": "^22.5.5",
+    "schematic-symbols": "^0.0.17",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
   }

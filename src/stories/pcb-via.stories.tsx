@@ -1,17 +1,19 @@
-import { circuitJsonToPcbSvg } from "../lib/index.js";
+import type { AnyCircuitElement } from "@tscircuit/soup"
+import { circuitJsonToPcbSvg } from "../lib/index.js"
 
 export const PcbViaInNullTraceHit = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup);
+  const result = circuitJsonToPcbSvg(pcbSoup)
 
-  return <div dangerouslySetInnerHTML={{ __html: result }} />;
-};
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
 
 export default {
   title: "Silkscreen with PCB Plated Hole",
   component: PcbViaInNullTraceHit,
-};
+}
 
-const pcbSoup = [
+const pcbSoup: AnyCircuitElement[] = [
   {
     type: "source_port",
     source_port_id: "source_port_0",
@@ -951,7 +953,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_2",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -962,7 +964,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_3",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -995,7 +997,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_6",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1006,7 +1008,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_7",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1039,7 +1041,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_10",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1050,7 +1052,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_11",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1083,7 +1085,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_14",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1094,7 +1096,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_15",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1127,7 +1129,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_18",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1138,7 +1140,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_19",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1171,7 +1173,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_22",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1182,7 +1184,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_23",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1215,7 +1217,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_26",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1226,7 +1228,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_27",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1259,7 +1261,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_30",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1270,7 +1272,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_31",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1303,7 +1305,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_34",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1314,7 +1316,7 @@ const pcbSoup = [
   {
     type: "schematic_port",
     schematic_port_id: "schematic_port_35",
-    schematic_component_id: null,
+    schematic_component_id: "",
     center: {
       x: 0,
       y: 0,
@@ -1755,8 +1757,8 @@ const pcbSoup = [
       x: -19.05,
       y: -19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_0",
@@ -1781,8 +1783,8 @@ const pcbSoup = [
       x: 0,
       y: -19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_2",
@@ -1807,8 +1809,8 @@ const pcbSoup = [
       x: 19.05,
       y: -19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_4",
@@ -1833,8 +1835,8 @@ const pcbSoup = [
       x: -19.05,
       y: 0,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_6",
@@ -1859,8 +1861,8 @@ const pcbSoup = [
       x: 0,
       y: 0,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_8",
@@ -1885,8 +1887,8 @@ const pcbSoup = [
       x: 19.05,
       y: 0,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_10",
@@ -1911,8 +1913,8 @@ const pcbSoup = [
       x: -19.05,
       y: 19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_12",
@@ -1937,8 +1939,8 @@ const pcbSoup = [
       x: 0,
       y: 19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_14",
@@ -1963,8 +1965,8 @@ const pcbSoup = [
       x: 19.05,
       y: 19.05,
     },
-    width: null,
-    height: null,
+    width: 0,
+    height: 0,
     layer: "top",
     rotation: 0,
     source_component_id: "source_component_16",
@@ -2008,7 +2010,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_0",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_0",
     layer: "top",
     shape: "rect",
@@ -2021,7 +2023,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_1",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_1",
     layer: "top",
     shape: "rect",
@@ -2034,7 +2036,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_0",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -22.225000000000005,
     y: -17.78,
@@ -2042,7 +2044,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_1",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -15.875000000000007,
     y: -20.32,
@@ -2076,7 +2078,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_4",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_4",
     layer: "top",
     shape: "rect",
@@ -2089,7 +2091,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_5",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_5",
     layer: "top",
     shape: "rect",
@@ -2102,7 +2104,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_2",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -3.1750000000000007,
     y: -17.78,
@@ -2110,7 +2112,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_3",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 3.174999999999999,
     y: -20.32,
@@ -2144,7 +2146,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_8",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_8",
     layer: "top",
     shape: "rect",
@@ -2157,7 +2159,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_9",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_9",
     layer: "top",
     shape: "rect",
@@ -2170,7 +2172,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_4",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 15.875,
     y: -17.78,
@@ -2178,7 +2180,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_5",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 22.224999999999998,
     y: -20.32,
@@ -2212,7 +2214,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_12",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_12",
     layer: "top",
     shape: "rect",
@@ -2225,7 +2227,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_13",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_13",
     layer: "top",
     shape: "rect",
@@ -2238,7 +2240,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_6",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -22.225000000000005,
     y: 1.27,
@@ -2246,7 +2248,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_7",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -15.875000000000007,
     y: -1.27,
@@ -2280,7 +2282,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_16",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_16",
     layer: "top",
     shape: "rect",
@@ -2293,7 +2295,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_17",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_17",
     layer: "top",
     shape: "rect",
@@ -2306,7 +2308,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_8",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -3.1750000000000007,
     y: 1.27,
@@ -2314,7 +2316,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_9",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 3.174999999999999,
     y: -1.27,
@@ -2348,7 +2350,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_20",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_20",
     layer: "top",
     shape: "rect",
@@ -2361,7 +2363,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_21",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_21",
     layer: "top",
     shape: "rect",
@@ -2374,7 +2376,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_10",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 15.875,
     y: 1.27,
@@ -2382,7 +2384,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_11",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 22.224999999999998,
     y: -1.27,
@@ -2416,7 +2418,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_24",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_24",
     layer: "top",
     shape: "rect",
@@ -2429,7 +2431,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_25",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_25",
     layer: "top",
     shape: "rect",
@@ -2442,7 +2444,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_12",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -22.225000000000005,
     y: 20.32,
@@ -2450,7 +2452,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_13",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -15.875000000000007,
     y: 17.78,
@@ -2484,7 +2486,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_28",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_28",
     layer: "top",
     shape: "rect",
@@ -2497,7 +2499,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_29",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_29",
     layer: "top",
     shape: "rect",
@@ -2510,7 +2512,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_14",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: -3.1750000000000007,
     y: 20.32,
@@ -2518,7 +2520,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_15",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 3.174999999999999,
     y: 17.78,
@@ -2552,7 +2554,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_32",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_32",
     layer: "top",
     shape: "rect",
@@ -2565,7 +2567,7 @@ const pcbSoup = [
   {
     type: "pcb_smtpad",
     pcb_smtpad_id: "pcb_smtpad_33",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_33",
     layer: "top",
     shape: "rect",
@@ -2578,7 +2580,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_16",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 15.875,
     y: 20.32,
@@ -2586,7 +2588,7 @@ const pcbSoup = [
   {
     type: "pcb_hole",
     pcb_hole_id: "pcb_hole_17",
-    hole_shape: "round",
+    hole_shape: "circle",
     hole_diameter: 3,
     x: 22.224999999999998,
     y: 17.78,
@@ -3921,7 +3923,7 @@ const pcbSoup = [
   },
   {
     type: "pcb_via",
-    pcb_via_id: "pcb_via_0",
+    // pcb_via_id: "pcb_via_0",
     x: -4.281249780862737,
     y: -14.233181814231745,
     hole_diameter: 0.3,
@@ -3932,7 +3934,7 @@ const pcbSoup = [
   },
   {
     type: "pcb_via",
-    pcb_via_id: "pcb_via_1",
+    // pcb_via_id: "pcb_via_1",
     x: 34.20591131679997,
     y: -5.359753005603952,
     hole_diameter: 0.3,
@@ -4198,12 +4200,12 @@ const pcbSoup = [
       y: -2.54,
     },
     pcb_port_ids: ["pcb_port_16", "pcb_port_44"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_via",
-    pcb_via_id: "pcb_via_2",
+    // pcb_via_id: "pcb_via_2",
     x: 13.702636532712475,
     y: -2.1984238421998494,
     hole_diameter: 0.3,
@@ -4214,7 +4216,7 @@ const pcbSoup = [
   },
   {
     type: "pcb_via",
-    pcb_via_id: "pcb_via_3",
+    // pcb_via_id: "pcb_via_3",
     x: 37.17086973641227,
     y: -10.456476442519742,
     hole_diameter: 0.3,
@@ -4403,8 +4405,8 @@ const pcbSoup = [
       y: -5.61587296759648,
     },
     pcb_port_ids: ["pcb_port_28", "pcb_port_44"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_trace",
@@ -4509,8 +4511,8 @@ const pcbSoup = [
       y: 4.29844124608865,
     },
     pcb_port_ids: ["pcb_port_3", "pcb_port_40"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4524,8 +4526,8 @@ const pcbSoup = [
       y: -8.82089366170297,
     },
     pcb_port_ids: ["pcb_port_7", "pcb_port_40"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4539,8 +4541,8 @@ const pcbSoup = [
       y: -10.39997307715608,
     },
     pcb_port_ids: ["pcb_port_11", "pcb_port_40"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4554,8 +4556,8 @@ const pcbSoup = [
       y: 6.767164422621648,
     },
     pcb_port_ids: ["pcb_port_15", "pcb_port_41"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4569,8 +4571,8 @@ const pcbSoup = [
       y: -2.789999999999999,
     },
     pcb_port_ids: ["pcb_port_19", "pcb_port_41"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4584,8 +4586,8 @@ const pcbSoup = [
       y: -2.789999999999999,
     },
     pcb_port_ids: ["pcb_port_23", "pcb_port_41"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_error",
@@ -4599,12 +4601,12 @@ const pcbSoup = [
       y: 5.465000000000001,
     },
     pcb_port_ids: ["pcb_port_27", "pcb_port_42"],
-    pcb_trace_id: null,
-    pcb_component_ids: [null, null],
+    pcb_trace_id: "",
+    pcb_component_ids: [],
   },
   {
     type: "pcb_via",
-    pcb_via_id: "pcb_via_4",
+    // pcb_via_id: "pcb_via_4",
     x: 23.674326938532413,
     y: 12.282089990345455,
     hole_diameter: 0.3,
@@ -4737,13 +4739,13 @@ const pcbSoup = [
       y: 0,
     },
     pcb_port_ids: ["pcb_port_35", "pcb_port_42"],
-    pcb_trace_id: null,
+    pcb_trace_id: "",
     pcb_component_ids: [],
   },
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_0",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_13",
     route: [
       {
@@ -4756,7 +4758,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_1",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_24",
     route: [
       {
@@ -4774,7 +4776,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_2",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_3",
     route: [
       {
@@ -4792,7 +4794,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_3",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_4",
     route: [
       {
@@ -4810,7 +4812,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_4",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_28",
     route: [
       {
@@ -4828,7 +4830,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_5",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_20",
     route: [
       {
@@ -4846,7 +4848,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_6",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_7",
     route: [
       {
@@ -4864,7 +4866,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_7",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_1",
     route: [
       {
@@ -4877,7 +4879,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_8",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_12",
     route: [
       {
@@ -4890,7 +4892,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_9",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_15",
     route: [
       {
@@ -4908,7 +4910,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_10",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_11",
     route: [
       {
@@ -4921,7 +4923,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_11",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_35",
     route: [
       {
@@ -4934,7 +4936,7 @@ const pcbSoup = [
   {
     type: "pcb_trace_hint",
     pcb_trace_hint_id: "pcb_trace_hint_12",
-    pcb_component_id: null,
+    pcb_component_id: "",
     pcb_port_id: "pcb_port_31",
     route: [
       {
@@ -4944,4 +4946,4 @@ const pcbSoup = [
       },
     ],
   },
-];
+]
