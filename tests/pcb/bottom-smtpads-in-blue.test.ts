@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg } from "src"
+import { circuitJsonToPcbSvg } from "lib"
 
 test("bottom trace is blue", () => {
   expect(

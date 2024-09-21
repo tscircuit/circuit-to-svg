@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg } from "src"
+import { circuitJsonToPcbSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 
 test("fabrication note path and fabrication note text", () => {

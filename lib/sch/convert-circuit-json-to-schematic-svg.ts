@@ -2,7 +2,9 @@ import type { AnyCircuitElement } from "@tscircuit/soup"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync, stringify } from "svgson"
 
-function convertCircuitJsonToSchematicSvg(soup: AnyCircuitElement[]): string {
+export function convertCircuitJsonToSchematicSvg(
+  soup: AnyCircuitElement[],
+): string {
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
@@ -383,5 +385,3 @@ function getTextAnchor(anchor: string): string {
       return "middle"
   }
 }
-
-export { convertCircuitJsonToSchematicSvg as circuitJsonToSchematicSvg }

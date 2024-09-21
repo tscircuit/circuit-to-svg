@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { circuitJsonToPcbSvg } from "src"
+import { circuitJsonToPcbSvg } from "lib"
 
 const pcbSoup: any[] = [
   {

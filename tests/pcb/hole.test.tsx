@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg, convertCircuitJsonToPcbSvg } from "src"
+import { circuitJsonToPcbSvg, convertCircuitJsonToPcbSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 
 test("should render a hole", () => {
