@@ -1,6 +1,6 @@
 import type { PCBHole } from "@tscircuit/soup"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-import type { SvgObject } from "../svg-object"
+import type { SvgObject } from "lib/svg-object"
 import { HOLE_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbHole(

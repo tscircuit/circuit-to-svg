@@ -385,3 +385,8 @@ function getTextAnchor(anchor: string): string {
       return "middle"
   }
 }
+
+/**
+ * @deprecated use `convertCircuitJsonToSchematicSvg` instead
+ */
+export const circuitJsonToSchematicSvg = convertCircuitJsonToSchematicSvg
