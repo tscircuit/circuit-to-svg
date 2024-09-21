@@ -1,6 +1,6 @@
 import type { PcbSilkscreenPath } from "@tscircuit/soup"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-import type { SvgObject } from "../svg-object"
+import type { SvgObject } from "lib/svg-object"
 
 export function createSvgObjectsFromPcbSilkscreenPath(
   silkscreenPath: PcbSilkscreenPath,

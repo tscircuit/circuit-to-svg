@@ -1,6 +1,6 @@
 import type { PCBPlatedHole } from "@tscircuit/soup"
 import { applyToPoint } from "transformation-matrix"
-import type { SvgObject } from "../svg-object"
+import type { SvgObject } from "lib/svg-object"
 
 export function createSvgObjectsFromPcbPlatedHole(
   hole: PCBPlatedHole,

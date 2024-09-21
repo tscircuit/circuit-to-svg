@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg } from "src"
+import { circuitJsonToPcbSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 
 test("fabrication note path and fabrication note text", () => {
@@ -8,7 +8,6 @@ test("fabrication note path and fabrication note text", () => {
   circuit.add(
     <board width="22mm" height="22mm">
       <fabricationnotepath
-        color="blue"
         route={[
           { x: 0, y: 0 },
           { x: 10, y: 0 },
@@ -22,11 +21,7 @@ test("fabrication note path and fabrication note text", () => {
           },
         ]}
       />
-      <fabricationnotetext
-        color="#0000ff"
-        anchorAlignment="bottom_left"
-        text="hello world!"
-      />
+      <fabricationnotetext anchorAlignment="bottom_left" text="hello world!" />
     </board>,
   )
 
