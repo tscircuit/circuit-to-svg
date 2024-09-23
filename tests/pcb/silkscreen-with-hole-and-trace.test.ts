@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { circuitJsonToPcbSvg } from "lib"
+import { convertCircuitJsonToPcbSvg } from "lib"
 
 const pcbSoup: any[] = [
   {
@@ -1075,5 +1075,5 @@ const pcbSoup: any[] = [
 ]
 
 test("Silkscreen with PCB Plated Hole", () => {
-  expect(circuitJsonToPcbSvg(pcbSoup)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(pcbSoup)).toMatchSvgSnapshot(import.meta.path)
 })

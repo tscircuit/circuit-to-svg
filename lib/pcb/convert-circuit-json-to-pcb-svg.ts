@@ -1,4 +1,4 @@
-import type { Point, AnyCircuitElement } from "@tscircuit/soup"
+import type { Point, AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,

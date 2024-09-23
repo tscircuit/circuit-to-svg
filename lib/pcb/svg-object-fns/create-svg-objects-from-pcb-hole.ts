@@ -1,4 +1,4 @@
-import type { PCBHole } from "@tscircuit/soup"
+import type { PCBHole } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { HOLE_COLOR } from "../colors"

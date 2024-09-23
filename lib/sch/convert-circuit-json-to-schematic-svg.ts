@@ -1,4 +1,4 @@
-import type { AnyCircuitElement } from "@tscircuit/soup"
+import type { AnyCircuitElement } from "circuit-json"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync, stringify } from "svgson"
 

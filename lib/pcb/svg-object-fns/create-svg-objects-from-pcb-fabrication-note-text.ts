@@ -1,4 +1,4 @@
-import type { PcbFabricationNoteText } from "@tscircuit/soup"
+import type { PcbFabricationNoteText } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
 import {

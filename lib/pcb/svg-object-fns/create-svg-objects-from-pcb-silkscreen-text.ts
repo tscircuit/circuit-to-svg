@@ -1,4 +1,4 @@
-import type { PcbSilkscreenText } from "@tscircuit/soup"
+import type { PcbSilkscreenText } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,

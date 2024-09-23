@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { circuitJsonToSchematicSvg, circuitJsonToPcbSvg } from "../lib/index.js"
+import { circuitJsonToSchematicSvg, convertCircuitJsonToPcbSvg } from "../lib/index.js"
 
 const soup: any = [
   {
@@ -1130,7 +1130,7 @@ const soup: any = [
 ]
 
 export const NetLabelNotOverlap = () => {
-  const result = circuitJsonToPcbSvg(soup)
+  const result = convertCircuitJsonToPcbSvg(soup)
 
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }

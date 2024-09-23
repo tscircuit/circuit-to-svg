@@ -1,9 +1,9 @@
 import React from "react"
-import { circuitJsonToPcbSvg } from "../lib/index.js"
-import type { AnyCircuitElement } from "@tscircuit/soup"
+import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
+import type { AnyCircuitElement } from "circuit-json"
 
 export const PcbSilkScreenText = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup)
+  const result = convertCircuitJsonToPcbSvg(pcbSoup)
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
   return <div dangerouslySetInnerHTML={{ __html: result }} />
@@ -189,6 +189,7 @@ const pcbSoup: AnyCircuitElement[] = [
   {
     type: "pcb_silkscreen_text",
     layer: "top",
+    pcb_silkscreen_text_id: "pcb_silkscreen_text_0",
     font: "tscircuit2024",
     font_size: 1,
     pcb_component_id: "pcb_generic_component_0",

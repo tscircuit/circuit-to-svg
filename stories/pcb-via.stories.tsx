@@ -1,8 +1,8 @@
-import type { AnyCircuitElement } from "@tscircuit/soup"
-import { circuitJsonToPcbSvg } from "../lib/index.js"
+import type { AnyCircuitElement } from "circuit-json"
+import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
 
 export const PcbViaInNullTraceHit = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup)
+  const result = convertCircuitJsonToPcbSvg(pcbSoup)
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
   return <div dangerouslySetInnerHTML={{ __html: result }} />
@@ -1999,6 +1999,8 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_board",
+    num_layers: 2,
+    thickness: 1.2,
     pcb_board_id: "pcb_board_0",
     center: {
       x: 0,
@@ -3923,7 +3925,7 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_via",
-    // pcb_via_id: "pcb_via_0",
+    pcb_via_id: "pcb_via_0",
     x: -4.281249780862737,
     y: -14.233181814231745,
     hole_diameter: 0.3,
@@ -3934,7 +3936,7 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_via",
-    // pcb_via_id: "pcb_via_1",
+    pcb_via_id: "pcb_via_1",
     x: 34.20591131679997,
     y: -5.359753005603952,
     hole_diameter: 0.3,
@@ -4189,8 +4191,8 @@ const pcbSoup: AnyCircuitElement[] = [
     source_trace_id: "source_trace_12",
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_0",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_0",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#117(from:.SW5 .pin1 to:.U1 .D6) />]",
@@ -4205,7 +4207,7 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_via",
-    // pcb_via_id: "pcb_via_2",
+    pcb_via_id: "pcb_via_2",
     x: 13.702636532712475,
     y: -2.1984238421998494,
     hole_diameter: 0.3,
@@ -4216,7 +4218,7 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_via",
-    // pcb_via_id: "pcb_via_3",
+    pcb_via_id: "pcb_via_3",
     x: 37.17086973641227,
     y: -10.456476442519742,
     hole_diameter: 0.3,
@@ -4394,8 +4396,8 @@ const pcbSoup: AnyCircuitElement[] = [
     source_trace_id: "source_trace_15",
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_1",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_1",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#120(from:.SW8 .pin1 to:.U1 .D6) />]",
@@ -4500,8 +4502,8 @@ const pcbSoup: AnyCircuitElement[] = [
     source_trace_id: "source_trace_17",
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_2",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_2",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#122(from:.D1 .pin2 to:.U1 .D2) />]",
@@ -4515,8 +4517,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_3",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_3",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#123(from:.D2 .pin2 to:.U1 .D2) />]",
@@ -4530,8 +4532,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_4",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_4",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#124(from:.D3 .pin2 to:.U1 .D2) />]",
@@ -4545,8 +4547,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_5",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_5",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#125(from:.D4 .pin2 to:.U1 .D3) />]",
@@ -4560,8 +4562,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_6",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_6",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#126(from:.D5 .pin2 to:.U1 .D3) />]",
@@ -4575,8 +4577,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_7",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_7",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#127(from:.D6 .pin2 to:.U1 .D3) />]",
@@ -4590,8 +4592,8 @@ const pcbSoup: AnyCircuitElement[] = [
     pcb_component_ids: [],
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_8",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_8",
     error_type: "pcb_trace_error",
     message:
       "Could not find a route for [object <trace#128(from:.D7 .pin2 to:.U1 .D4) />]",
@@ -4606,7 +4608,7 @@ const pcbSoup: AnyCircuitElement[] = [
   },
   {
     type: "pcb_via",
-    // pcb_via_id: "pcb_via_4",
+    pcb_via_id: "pcb_via_4",
     x: 23.674326938532413,
     y: 12.282089990345455,
     hole_diameter: 0.3,
@@ -4728,8 +4730,8 @@ const pcbSoup: AnyCircuitElement[] = [
     source_trace_id: "source_trace_25",
   },
   {
-    type: "pcb_error",
-    pcb_error_id: "pcb_error_9",
+    type: "pcb_trace_error",
+    pcb_trace_error_id: "pcb_error_9",
     error_type: "pcb_trace_error",
     message:
       "Error getting obstacles for autorouting: getObstaclesFromTrace currently only supports horizontal and vertical traces (not diagonals) Conflicting trace: source_trace_25, start: (7, 12.200000000000001), end: (23.674326938532413, 12.282089990345455)",
