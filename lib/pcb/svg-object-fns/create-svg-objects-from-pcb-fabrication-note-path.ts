@@ -1,4 +1,4 @@
-import type { PcbSilkscreenPath, PcbFabricationNotePath } from "@tscircuit/soup"
+import type { PcbSilkscreenPath, PcbFabricationNotePath } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 

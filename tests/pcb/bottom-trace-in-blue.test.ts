@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg } from "lib"
+import { convertCircuitJsonToPcbSvg } from "lib"
 
 const soup: any = [
   {
@@ -331,5 +331,5 @@ const soup: any = [
 ]
 
 test("bottom trace is blue", () => {
-  expect(circuitJsonToPcbSvg(soup)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(soup)).toMatchSvgSnapshot(import.meta.path)
 })

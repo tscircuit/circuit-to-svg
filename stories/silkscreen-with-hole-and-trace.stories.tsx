@@ -1,8 +1,8 @@
 import React from "react"
-import { circuitJsonToPcbSvg } from "../lib/index.js"
+import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
 
 export const SilkScreenPcbPlatedHole = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup as any)
+  const result = convertCircuitJsonToPcbSvg(pcbSoup as any)
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
   return <div dangerouslySetInnerHTML={{ __html: result }} />

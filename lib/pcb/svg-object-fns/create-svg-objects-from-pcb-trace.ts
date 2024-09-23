@@ -1,4 +1,4 @@
-import type { PCBTrace } from "@tscircuit/soup"
+import type { PCBTrace } from "circuit-json"
 import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"

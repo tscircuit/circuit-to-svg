@@ -1,4 +1,4 @@
-import type { PCBSMTPad } from "@tscircuit/soup"
+import type { PCBSMTPad } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
 

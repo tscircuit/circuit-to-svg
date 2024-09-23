@@ -1,4 +1,4 @@
-import type { PCBVia } from "@tscircuit/soup"
+import type { PCBVia } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 
 export function createSvgObjectsFromPcbVia(hole: PCBVia, transform: any): any {

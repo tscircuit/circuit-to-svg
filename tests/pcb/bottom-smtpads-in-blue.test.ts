@@ -1,9 +1,9 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg } from "lib"
+import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("bottom trace is blue", () => {
   expect(
-    circuitJsonToPcbSvg([
+    convertCircuitJsonToPcbSvg([
       {
         type: "pcb_smtpad",
         x: 0,

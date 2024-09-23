@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import { circuitJsonToPcbSvg, convertCircuitJsonToPcbSvg } from "lib"
+import { convertCircuitJsonToPcbSvg, convertconvertCircuitJsonToPcbSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 
 test("should render a hole", () => {
@@ -28,7 +28,7 @@ test("should render a hole", () => {
 
   const circuitJson = circuit.getCircuitJson()
 
-  const svg = convertCircuitJsonToPcbSvg(circuitJson as any)
+  const svg = convertconvertCircuitJsonToPcbSvg(circuitJson as any)
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

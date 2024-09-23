@@ -1,4 +1,4 @@
-import type { PCBPlatedHole } from "@tscircuit/soup"
+import type { PCBPlatedHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 

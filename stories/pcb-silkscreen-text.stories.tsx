@@ -1,9 +1,9 @@
 import React from "react"
-import { circuitJsonToPcbSvg } from "../lib/index.js"
-import type { AnyCircuitElement } from "@tscircuit/soup"
+import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
+import type { AnyCircuitElement } from "circuit-json"
 
 export const PcbSilkScreenText = () => {
-  const result = circuitJsonToPcbSvg(pcbSoup)
+  const result = convertCircuitJsonToPcbSvg(pcbSoup)
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
   return <div dangerouslySetInnerHTML={{ __html: result }} />
