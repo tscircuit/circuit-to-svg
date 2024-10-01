@@ -36,10 +36,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   // Remove ${} from text value and handle undefined text
-  const cleanedText = (text || "").replace(/\$\{|\}/g, "")
-  if (!cleanedText) {
-    return []
-  }
 
   // Create a composite transformation
   const textTransform = compose(
@@ -64,7 +60,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     children: [
       {
         type: "text",
-        value: cleanedText,
+        value: text,
         name: "",
         attributes: {},
         children: [],
