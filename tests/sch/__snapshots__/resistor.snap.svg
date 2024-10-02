@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.6 -1.275 3.2 2.55" width="1200" height="600" style="background-color: #fff;"><style>
-              .component { fill: none; stroke: red; stroke-width: 0.03; }
-              .component-pin { fill: none; stroke: red; stroke-width: 0.03; }
-              .trace { stroke: green; stroke-width: 0.03; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: 0.2px; }
-              .port { fill: none; stroke: blue; stroke-width: 0.03; }
-            </style><g transform="translate(0, 0) rotate(0) scale(0.9090909090909091) translate(-0.5, 0)"><path d="M0,0 L0.2,0 L0.2,-0.12 L0.8,-0.12 L0.8,0.12 L0.2,0.12 L0.2,0" fill="none" stroke="red" stroke-width="0.03" stroke-linecap="round" stroke-linejoin="round"/><path d="M0.8,0 L1,0" fill="none" stroke="red" stroke-width="0.03" stroke-linecap="round" stroke-linejoin="round"/></g><rect class="port" x="-0.6" y="-0.1" width="0.2" height="0.2"/><line class="component-pin" x1="-0.5" y1="0" x2="-0.5" y2="0"/><rect class="port" x="0.4" y="-0.1" width="0.2" height="0.2"/><line class="component-pin" x1="0.5" y1="0" x2="0.5" y2="0"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.6 -1.275 3.2 2.55" width="1200" height="600" style="background-color: rgb(245, 241, 237)"><style>
+              .component { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.03; }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); stroke-width: 0.03; }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.02; }
+              .trace { stroke: rgb(0, 150, 0); stroke-width: 0.02; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: 0.2px; fill: rgb(0, 150, 0); }
+              .pin-number { font-size: 0.15px; fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { font-size: 0.25px; fill: rgb(0, 100, 100); }
+            </style><g transform="translate(0, 0) rotate(0)"><path d="M-0.5291666499999996,0 L-0.2645833500000001,0" fill="none" stroke="rgb(132, 0, 0)" stroke-width="0.03" stroke-linecap="round" stroke-linejoin="round"/><path d="M0.2645832500000007,0 L0.5291666500000001,0" fill="none" stroke="rgb(132, 0, 0)" stroke-width="0.03" stroke-linecap="round" stroke-linejoin="round"/><path d="M-1.4999999997655777e-7,-0.13229169999999968 L0.26458314999999955,-0.13229169999999968 L0.26458314999999955,0.13229169999999968 L-0.2645835500000011,0.13229169999999968 L-0.2645835500000011,-0.13229169999999968 L-1.5000000175291461e-7,-0.13229169999999968" fill="none" stroke="rgb(132, 0, 0)" stroke-width="0.03" stroke-linecap="round" stroke-linejoin="round"/><text class="component-name" x="0" y="-0.47500000000000003" text-anchor="middle" dominant-baseline="auto">10000</text><text class="component-name" x="0" y="-0.775" text-anchor="middle" dominant-baseline="auto">R1</text></g></svg>
