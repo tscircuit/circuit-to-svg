@@ -1,9 +1,16 @@
 import type { AnyCircuitElement } from "circuit-json"
+import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync, stringify } from "svgson"
 
+interface Options {
+  width?: number
+  height?: number
+}
+
 export function convertCircuitJsonToSchematicSvg(
   soup: AnyCircuitElement[],
+  options?: Options,
 ): string {
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
@@ -20,8 +27,6 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
       portPositions.set(item.schematic_port_id, item.center)
-    } else if (item.type === "schematic_text") {
-      updateBounds(item.position, { width: 0, height: 0 }, 0)
     }
   }
 
@@ -44,39 +49,19 @@ export function convertCircuitJsonToSchematicSvg(
       component.size,
       component.rotation || 0,
       (component as any).symbol_name,
+      (component as any).port_arrangement,
+      (component as any).port_labels,
+      (component as any).source_component_id,
+      soup,
     )
     svgChildren.push(svg)
     componentMap.set(component.schematic_component_id, component)
-  }
-
-  // Process ports and add lines to component edges
-  for (const port of soup.filter((item) => item.type === "schematic_port")) {
-    const flippedCenter = { x: port.center.x, y: flipY(port.center.y) }
-    const svg = createSchematicPort(flippedCenter)
-    svgChildren.push(svg)
-
-    const component = componentMap.get(port.schematic_component_id)
-    if (component) {
-      const line = createPortToComponentLine(
-        flippedCenter,
-        component,
-        port.facing_direction || "right",
-      )
-      svgChildren.push(line)
-    }
   }
 
   // Process schematic traces
   for (const trace of soup.filter((item) => item.type === "schematic_trace")) {
     const svg = createSchematicTrace(trace, flipY, portPositions)
     if (svg) svgChildren.push(svg)
-  }
-
-  // Process text
-  for (const text of soup.filter((item) => item.type === "schematic_text")) {
-    const flippedPosition = { x: text.position.x, y: flipY(text.position.y) }
-    const svg = createSchematicText(text, flippedPosition)
-    svgChildren.push(svg)
   }
 
   const padding = 1
@@ -89,9 +74,9 @@ export function convertCircuitJsonToSchematicSvg(
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
       viewBox,
-      width: "1200",
-      height: "600",
-      style: "background-color: #fff;",
+      width: options?.width ?? "1200",
+      height: options?.height ?? "600",
+      style: `background-color: ${colorMap.schematic.background}`,
     },
     children: [
       {
@@ -101,11 +86,14 @@ export function convertCircuitJsonToSchematicSvg(
           {
             type: "text",
             value: `
-              .component { fill: none; stroke: red; stroke-width: 0.03; }
-              .component-pin { fill: none; stroke: red; stroke-width: 0.03; }
-              .trace { stroke: green; stroke-width: 0.03; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: 0.2px; }
-              .port { fill: none; stroke: blue; stroke-width: 0.03; }
+              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
+              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
+              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.02; }
+              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 0.02; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: 0.2px; fill: ${colorMap.schematic.wire}; }
+              .pin-number { font-size: 0.15px; fill: ${colorMap.schematic.pin_number}; }
+              .port-label { fill: ${colorMap.schematic.reference}; }
+              .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
             `,
           },
         ],
@@ -115,6 +103,357 @@ export function convertCircuitJsonToSchematicSvg(
   }
 
   return stringify({ value: "", ...svgObject })
+
+  function createSchematicComponent(
+    center: { x: number; y: number },
+    size: { width: number; height: number },
+    rotation: number,
+    symbolName?: string,
+    portArrangement?: any,
+    portLabels?: any,
+    sourceComponentId?: string,
+    circuitJson?: AnyCircuitElement[],
+  ): any {
+    const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
+
+    let children: any[] = []
+
+    // Find the source component and get its name
+    const sourceComponent = circuitJson?.find(
+      (item) =>
+        item.type === "source_component" &&
+        item.source_component_id === sourceComponentId,
+    )
+    const componentName = sourceComponent ? sourceComponent.name : ""
+    const manufacturerNumber = sourceComponent?.manufacturer_part_number
+    const resistance = sourceComponent?.resistance
+    const capacitance = sourceComponent?.capacitance
+
+    if (symbolName) {
+      const symbol = (symbols as any)[symbolName]
+      const paths = symbol.primitives.filter((p: any) => p.type === "path")
+      const updatedSymbol = {
+        ...symbol,
+        primitives: paths,
+      }
+      const svg = parseSync(
+        getSvg(updatedSymbol, {
+          width: size.width,
+          height: size.height,
+        }),
+      )
+
+      children = svg.children
+        .filter(
+          (child: any) =>
+            child.name === "path" && child.attributes.fill !== "green",
+        )
+        .map((path: any) => {
+          const currentStrokeWidth = Number.parseFloat(
+            path.attributes["stroke-width"] || "0.02",
+          )
+          const newStrokeWidth = (currentStrokeWidth * 1.5).toString()
+
+          return {
+            ...path,
+            attributes: {
+              ...path.attributes,
+              stroke:
+                path.attributes.stroke === "black"
+                  ? `${colorMap.schematic.component_outline}`
+                  : path.attributes.stroke,
+              "stroke-width": newStrokeWidth,
+            },
+          }
+        })
+    } else {
+      children.push({
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "component chip",
+          x: -size.width / 2,
+          y: -size.height / 2,
+          width: size.width,
+          height: size.height,
+        },
+      })
+    }
+
+    if (manufacturerNumber) {
+      children.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: 1.2,
+          y: -size.height / 2 - 0.4, // Position above the component
+          "text-anchor": "right",
+          "dominant-baseline": "auto",
+        },
+        children: [{ type: "text", value: manufacturerNumber }],
+      })
+
+      // Add component name on top
+      children.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: 1.2,
+          y: -size.height / 2 - 0.7, // Position above the component
+          "text-anchor": "right",
+          "dominant-baseline": "auto",
+        },
+        children: [{ type: "text", value: componentName }],
+      })
+    }
+
+    if (resistance || capacitance) {
+      children.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: 0,
+          y: (-size.height / 2) - 0.2, // Position above the component
+          "text-anchor": "middle",
+          "dominant-baseline": "auto",
+        },
+        children: [{ type: "text", value: resistance || capacitance }],
+      })
+
+      // Add component name on top
+      children.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: 0,
+          y: (-size.height / 2) - 0.5, // Position above the component
+          "text-anchor": "middle",
+          "dominant-baseline": "auto",
+        },
+        children: [{ type: "text", value: componentName }],
+      }) 
+    }
+
+    // Add ports if portArrangement is provided
+    if (portArrangement) {
+      const portLength = 0.2 // Length of the port line
+      const circleRadius = 0.05 // Radius of the port circle
+      const labelOffset = 0.1 // Offset for label positioning
+
+      // console.log(portArrangement)
+
+      for (const [side, arrangement] of Object.entries(portArrangement)) {
+        if(arrangement === undefined) continue
+        
+        const pins = arrangement.pins
+        const direction = arrangement.direction
+
+        let getX: (index: number, total: number) => number
+        let getY: (index: number, total: number) => number
+        let getEndX: (x: number) => number
+        let getEndY: (y: number) => number
+        let getLabelX: (x: number) => number
+        let getLabelY: (y: number) => number
+        let labelAnchor: string
+        let isVertical = false
+
+        switch (side) {
+          case "left_side":
+            getX = () => -size.width / 2
+            getY = (index, total) =>
+              -size.height / 2 + (size.height * (index + 1)) / (total + 1)
+            getEndX = (x) => x - portLength
+            getEndY = (y) => y
+            getLabelX = (x) => x + labelOffset
+            getLabelY = (y) => y
+            labelAnchor = "start"
+            break
+          case "right_side":
+            getX = () => size.width / 2
+            getY = (index, total) =>
+              -size.height / 2 + (size.height * (index + 1)) / (total + 1)
+            getEndX = (x) => x + portLength
+            getEndY = (y) => y
+            getLabelX = (x) => x - labelOffset
+            getLabelY = (y) => y
+            labelAnchor = "end"
+            break
+          case "top_side":
+            getX = (index, total) =>
+              -size.width / 2 + (size.width * (index + 1)) / (total + 1)
+            getY = () => -size.height / 2
+            getEndX = (x) => x
+            getEndY = (y) => y - portLength
+            getLabelX = (x) => x
+            getLabelY = (y) => y + labelOffset + 0.15
+            labelAnchor = "middle"
+            isVertical = true
+            break
+          case "bottom_side":
+            getX = (index, total) =>
+              -size.width / 2 + (size.width * (index + 1)) / (total + 1)
+            getY = () => size.height / 2
+            getEndX = (x) => x
+            getEndY = (y) => y + portLength
+            getLabelX = (x) => x
+            getLabelY = (y) => y - labelOffset - 0.15
+            labelAnchor = "middle"
+            isVertical = true
+            break
+          default:
+            continue // Skip unknown sides
+        }
+
+        const totalPins = pins.length
+
+        pins.forEach((pin: number, index: number) => {
+          let x = getX(index, totalPins)
+          let y = getY(index, totalPins)
+
+          if (direction === "bottom-to-top" || direction === "right-to-left") {
+            ;[x, y] = [
+              getX(totalPins - 1 - index, totalPins),
+              getY(totalPins - 1 - index, totalPins),
+            ]
+          }
+
+          const endX = getEndX(x)
+          const endY = getEndY(y)
+
+          children.push({
+            name: "line",
+            type: "element",
+            attributes: {
+              class: "component-pin",
+              x1: x,
+              y1: y,
+              x2: endX,
+              y2: endY,
+            },
+          })
+
+          children.push({
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "component-pin",
+              cx: endX,
+              cy: endY,
+              r: circleRadius,
+            },
+          })
+
+          // Add label if it exists in portLabels
+          const labelKey = `pin${pin}`
+          if (portLabels && labelKey in portLabels) {
+            let labelTransform = ""
+            if (isVertical) {
+              labelTransform = `rotate(${side === "top_side" ? -90 : 270}, ${getLabelX(x)}, ${getLabelY(y)})`
+            }
+            children.push({
+              name: "text",
+              type: "element",
+              attributes: {
+                class: "port-label",
+                x: getLabelX(x),
+                y: getLabelY(y),
+                "text-anchor": labelAnchor,
+                "dominant-baseline": "middle",
+                "font-size": "0.2",
+                transform: labelTransform,
+              },
+              children: [{ type: "text", value: portLabels[labelKey] }],
+            })
+          }
+          // Add pin number
+          children.push({
+            name: "text",
+            type: "element",
+            attributes: {
+              class: "pin-number",
+              x: endX,
+              y: endY + (side === "bottom_side" ? 0.15 : -0.15),
+              "text-anchor": "middle",
+              "dominant-baseline": "middle",
+              "font-size": "0.15",
+            },
+            children: [{ type: "text", value: pin.toString() }],
+          })
+        })
+      }
+    }
+
+    return {
+      name: "g",
+      type: "element",
+      attributes: { transform },
+      children,
+    }
+  }
+
+  function createSchematicTrace(
+    trace: any,
+    flipY: (y: number) => number,
+    portPositions: Map<string, { x: number; y: number }>,
+  ): any {
+    const edges = trace.edges
+    if (edges.length === 0) return null
+
+    let path = ""
+
+    // Process all edges
+    edges.forEach((edge: any, index: number) => {
+      const fromPoint =
+        edge.from.ti !== undefined ? portPositions.get(edge.from.ti) : edge.from
+      const toPoint =
+        edge.to.ti !== undefined ? portPositions.get(edge.to.ti) : edge.to
+
+      if (!fromPoint || !toPoint) {
+        return
+      }
+
+      const fromCoord = `${fromPoint.x - 0.15} ${flipY(fromPoint.y)}`
+      const toCoord = `${toPoint.x + 0.15} ${flipY(toPoint.y)}`
+
+      if (index === 0) {
+        path += `M ${fromCoord} L ${toCoord}`
+      } else {
+        path += ` L ${toCoord}`
+      }
+    })
+
+    // Handle connection to final port if needed
+    if (trace.to_schematic_port_id) {
+      const finalPort = portPositions.get(trace.to_schematic_port_id)
+      if (finalPort) {
+        const lastFromPoint = path.split("M")[1]?.split("L")[0]
+        const lastEdge = edges[edges.length - 1]
+        const lastPoint =
+          lastEdge.to.ti !== undefined
+            ? portPositions.get(lastEdge.to.ti)
+            : lastEdge.to
+        if (lastPoint.x !== finalPort.x || lastPoint.y !== finalPort.y) {
+          const finalCoord = `${finalPort.x} ${flipY(finalPort.y)}`
+          path += ` M ${lastFromPoint} L ${finalCoord}`
+        }
+      }
+    }
+
+    return path
+      ? {
+          name: "path",
+          type: "element",
+          attributes: {
+            class: "trace",
+            d: path,
+          },
+        }
+      : null
+  }
 
   function updateBounds(center: any, size: any, rotation: number) {
     const corners = [
@@ -134,255 +473,6 @@ export function convertCircuitJsonToSchematicSvg(
       maxX = Math.max(maxX, rotatedX)
       maxY = Math.max(maxY, rotatedY)
     }
-  }
-}
-
-function createSchematicComponent(
-  center: { x: number; y: number },
-  size: { width: number; height: number },
-  rotation: number,
-  symbolName?: string,
-): any {
-  const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
-
-  if (symbolName) {
-    const symbol = (symbols as any)[symbolName]
-    const paths = symbol.primitives.filter((p: any) => p.type === "path")
-    const updatedSymbol = {
-      ...symbol,
-      primitives: paths,
-    }
-    const svg = parseSync(
-      getSvg(updatedSymbol, {
-        width: size.width,
-        height: size.height,
-      }),
-    )
-
-    // Filter out non-path elements and modify path colors
-    const pathElements = svg.children
-      .filter(
-        (child: any) =>
-          child.name === "path" && child.attributes.fill !== "green",
-      )
-      .map((path: any) => {
-        const currentStrokeWidth = Number.parseFloat(
-          path.attributes["stroke-width"] || "0.02",
-        )
-        const newStrokeWidth = (currentStrokeWidth * 1.5).toString()
-
-        return {
-          ...path,
-          attributes: {
-            ...path.attributes,
-            stroke:
-              path.attributes.stroke === "black"
-                ? "red"
-                : path.attributes.stroke,
-            "stroke-width": newStrokeWidth,
-          },
-        }
-      })
-
-    // Check if viewBox attribute exists
-    const viewBoxAttr = svg.attributes.viewBox
-    if (typeof viewBoxAttr === "undefined") {
-      throw new Error("SVG does not have a viewBox attribute.")
-    }
-
-    // Extract viewBox values
-    const viewBox = viewBoxAttr.split(" ").map(Number)
-    if (viewBox.length < 4) {
-      throw new Error("Invalid viewBox attribute.")
-    }
-    const [minX, minY, width = 0, height = 0] = viewBox
-
-    // Calculate scale factors
-    const scaleX = size.width / (width || 1)
-    const scaleY = size.height / (height || 1)
-
-    const scale = Math.min(scaleX, scaleY)
-
-    // Adjust transformation to include scaling and centering
-    const adjustedTransform = `${transform} scale(${scale}) translate(${-(minX ?? 0) - width / 2}, ${-(minY ?? 0) - height / 2})`
-
-    return {
-      name: "g",
-      type: "element",
-      attributes: { transform: adjustedTransform },
-      children: pathElements,
-    }
-  }
-
-  return {
-    name: "g",
-    type: "element",
-    attributes: { transform },
-    children: [
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "component",
-          x: (-size.width / 2).toString(),
-          y: (-size.height / 2).toString(),
-          width: size.width.toString(),
-          height: size.height.toString(),
-        },
-      },
-    ],
-  }
-}
-
-function createSchematicPort(center: { x: number; y: number }): any {
-  const portSize = 0.2
-  const x = center.x - portSize / 2
-  const y = center.y - portSize / 2
-
-  return {
-    name: "rect",
-    type: "element",
-    attributes: {
-      class: "port",
-      x: x.toString(),
-      y: y.toString(),
-      width: portSize.toString(),
-      height: portSize.toString(),
-    },
-  }
-}
-
-function createPortToComponentLine(
-  portCenter: { x: number; y: number },
-  component: any,
-  facingDirection: string,
-): any {
-  const componentCenter = { x: component.center.x, y: portCenter.y }
-  const halfWidth = component.size.width / 2
-  const halfHeight = component.size.height / 2
-
-  let endX = portCenter.x
-  let endY = portCenter.y
-
-  switch (facingDirection) {
-    case "left":
-      endX = componentCenter.x - halfWidth
-      break
-    case "right":
-      endX = componentCenter.x + halfWidth
-      break
-    case "up":
-      endY = componentCenter.y - halfHeight
-      break
-    case "down":
-      endY = componentCenter.y + halfHeight
-      break
-  }
-
-  return {
-    name: "line",
-    type: "element",
-    attributes: {
-      class: "component-pin",
-      x1: portCenter.x.toString(),
-      y1: portCenter.y.toString(),
-      x2: endX.toString(),
-      y2: endY.toString(),
-    },
-  }
-}
-
-function createSchematicTrace(
-  trace: any,
-  flipY: (y: number) => number,
-  portPositions: Map<string, { x: number; y: number }>,
-): any {
-  const edges = trace.edges
-  if (edges.length === 0) return null
-
-  let path = ""
-
-  // Process all edges
-  edges.forEach((edge: any, index: number) => {
-    const fromPoint =
-      edge.from.ti !== undefined ? portPositions.get(edge.from.ti) : edge.from
-    const toPoint =
-      edge.to.ti !== undefined ? portPositions.get(edge.to.ti) : edge.to
-
-    if (!fromPoint || !toPoint) {
-      return
-    }
-
-    const fromCoord = `${fromPoint.x} ${flipY(fromPoint.y)}`
-    const toCoord = `${toPoint.x} ${flipY(toPoint.y)}`
-
-    if (index === 0) {
-      path += `M ${fromCoord} L ${toCoord}`
-    } else {
-      path += ` L ${toCoord}`
-    }
-  })
-
-  // Handle connection to final port if needed
-  if (trace.to_schematic_port_id) {
-    const finalPort = portPositions.get(trace.to_schematic_port_id)
-    if (finalPort) {
-      const lastFromPoint = path.split("M")[1]?.split("L")[0]
-      const lastEdge = edges[edges.length - 1]
-      const lastPoint =
-        lastEdge.to.ti !== undefined
-          ? portPositions.get(lastEdge.to.ti)
-          : lastEdge.to
-      if (lastPoint.x !== finalPort.x || lastPoint.y !== finalPort.y) {
-        const finalCoord = `${finalPort.x} ${flipY(finalPort.y)}`
-        path += ` M ${lastFromPoint} L ${finalCoord}`
-      }
-    }
-  }
-
-  return path
-    ? {
-        name: "path",
-        type: "element",
-        attributes: {
-          class: "trace",
-          d: path,
-        },
-      }
-    : null
-}
-
-function createSchematicText(
-  text: any,
-  position: { x: number; y: number },
-): any {
-  return {
-    name: "text",
-    type: "element",
-    attributes: {
-      class: "text",
-      x: position.x.toString(),
-      y: position.y.toString(),
-      "text-anchor": getTextAnchor(text.anchor),
-      "dominant-baseline": "middle",
-    },
-    children: [
-      {
-        type: "text",
-        value: text.text ? text.text : "",
-      },
-    ],
-  }
-}
-
-function getTextAnchor(anchor: string): string {
-  switch (anchor) {
-    case "left":
-      return "start"
-    case "right":
-      return "end"
-    default:
-      return "middle"
   }
 }
 

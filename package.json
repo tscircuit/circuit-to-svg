@@ -8,6 +8,7 @@
     "dist"
   ],
   "scripts": {
+    "start": "storybook dev -p 6006",
     "prepublish": "npm run build",
     "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
     "format": "biome format . --write",
@@ -26,7 +27,7 @@
     "@storybook/react": "^8.2.5",
     "@storybook/react-vite": "^8.2.5",
     "@storybook/test": "^8.2.5",
-    "@tscircuit/core": "^0.0.71",
+    "@tscircuit/core": "^0.0.98",
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.1.9",
     "bun-match-svg": "^0.0.6",
@@ -44,10 +45,10 @@
   "dependencies": {
     "@tscircuit/footprinter": "^0.0.57",
     "@tscircuit/routing": "^1.3.5",
-    "circuit-json": "*",
     "@tscircuit/soup-util": "^0.0.28",
     "@types/node": "^22.5.5",
-    "schematic-symbols": "^0.0.17",
+    "circuit-json": "*",
+    "schematic-symbols": "^0.0.32",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
   }
