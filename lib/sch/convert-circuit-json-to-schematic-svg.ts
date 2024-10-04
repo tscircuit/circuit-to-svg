@@ -49,9 +49,9 @@ export function convertCircuitJsonToSchematicSvg(
       component.size,
       component.rotation || 0,
       (component as any).symbol_name,
-      (component as any).port_arrangement,
       (component as any).port_labels,
       (component as any).source_component_id,
+      (component as any).schematic_component_id,
       soup,
     )
     svgChildren.push(svg)
