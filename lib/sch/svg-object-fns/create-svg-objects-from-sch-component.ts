@@ -1,7 +1,20 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, SchematicPort } from "circuit-json"
 import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
+
+interface PortArrangementCenter {
+    x: number
+    y: number
+    trueIndex: number
+    pinNumber: number
+    side: "left" | "right" | "top" | "bottom"
+    distanceFromEdge: number
+}
+
+interface PortArrangement extends SchematicPort {
+    center: PortArrangementCenter
+}
 
 export function createSchematicComponent(
   center: { x: number; y: number },
@@ -10,7 +23,7 @@ export function createSchematicComponent(
   symbolName?: string,
   portLabels?: any,
   sourceComponentId?: string,
-  schematicComopnentId?: string,
+  schematicComponentId?: string,
   circuitJson?: AnyCircuitElement[],
 ): any {
   const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
@@ -95,7 +108,7 @@ export function createSchematicComponent(
         attributes: {
           class: "component-name",
           x: 1.2,
-          y: -size.height / 2 - 0.4,
+          y: -size.height / 2 - 0.5,
           "text-anchor": "right",
           "dominant-baseline": "auto",
         },
@@ -116,50 +129,48 @@ export function createSchematicComponent(
       })
     }
 
-    if (resistance || capacitance) {
-      children.push({
-        name: "text",
-        type: "element",
-        attributes: {
-          class: "component-name",
-          x: 0,
-          y: -size.height / 2 - 0.2,
-          "text-anchor": "middle",
-          "dominant-baseline": "auto",
-        },
-        children: [{ type: "text", value: resistance || capacitance }],
-      })
-
-      children.push({
-        name: "text",
-        type: "element",
-        attributes: {
-          class: "component-name",
-          x: 0,
-          y: -size.height / 2 - 0.5,
-          "text-anchor": "middle",
-          "dominant-baseline": "auto",
-        },
-        children: [{ type: "text", value: componentName }],
-      })
-    }
-
     // Find and process schematic_port objects
     const schematicPorts =
       circuitJson?.filter(
         (item) =>
           item.type === "schematic_port" &&
-          item.schematic_component_id === schematicComopnentId,
+          item.schematic_component_id === schematicComponentId,
       ) || []
 
     const portLength = 0.2
     const circleRadius = 0.05
 
-    for (const port of schematicPorts) {
-      console.log(port)
+    for (const port of (schematicPorts as PortArrangement[])) {
       const { x, y, pinNumber } = port.center
-      const endX = x + (port.center.side === "left" ? -portLength : portLength)
-      const endY = y
+      let endX = x
+      let endY = y
+      let labelX = x
+      let labelY = y
+      let textAnchor = "middle"
+      let dominantBaseline = "middle"
+
+      switch (port.center.side) {
+        case "left":
+          endX = x - portLength
+          labelX = x + 0.2
+          textAnchor = "start"
+          break
+        case "right":
+          endX = x + portLength
+          labelX = x - 0.2
+          textAnchor = "end"
+          break
+        case "top":
+          endY = y - portLength
+          labelY = y - 0.2
+          dominantBaseline = "hanging"
+          break
+        case "bottom":
+          endY = y + portLength
+          labelY = y + 0.2
+          dominantBaseline = "auto"
+          break
+      }
 
       // Add port line
       children.push({
@@ -189,16 +200,15 @@ export function createSchematicComponent(
       // Add port label if it exists
       const labelKey = `pin${pinNumber}`
       if (portLabels && labelKey in portLabels) {
-        const labelX = x + (port.center.side === "left" ? 0.5 : -0.5)
         children.push({
           name: "text",
           type: "element",
           attributes: {
             class: "port-label",
             x: labelX,
-            y: y,
-            "text-anchor": port.center.side === "left" ? "end" : "start",
-            "dominant-baseline": "middle",
+            y: labelY,
+            "text-anchor": textAnchor,
+            "dominant-baseline": dominantBaseline,
             "font-size": "0.2",
           },
           children: [{ type: "text", value: portLabels[labelKey] }],
@@ -206,20 +216,68 @@ export function createSchematicComponent(
       }
 
       // Add pin number
+      const pinNumberX = endX
+      let pinNumberY = endY
+      const pinNumberAnchor = "middle"
+      let pinNumberBaseline = "middle"
+
+      switch (port.center.side) {
+        case "left":
+        case "right":
+          pinNumberY -= 0.15
+          break
+        case "top":
+          pinNumberY -= 0.15
+          pinNumberBaseline = "auto"
+          break
+        case "bottom":
+          pinNumberY += 0.15
+          pinNumberBaseline = "hanging"
+          break
+      }
+
       children.push({
         name: "text",
         type: "element",
         attributes: {
           class: "pin-number",
-          x: endX,
-          y: endY - 0.15,
-          "text-anchor": "middle",
-          "dominant-baseline": "middle",
+          x: pinNumberX,
+          y: pinNumberY,
+          "text-anchor": pinNumberAnchor,
+          "dominant-baseline": pinNumberBaseline,
           "font-size": "0.15",
         },
         children: [{ type: "text", value: pinNumber }],
       })
     }
+  }
+
+  if (resistance || capacitance) {
+    children.push({
+      name: "text",
+      type: "element",
+      attributes: {
+        class: "component-name",
+        x: 0,
+        y: -size.height / 2 - 0.2,
+        "text-anchor": "middle",
+        "dominant-baseline": "auto",
+      },
+      children: [{ type: "text", value: resistance || capacitance }],
+    })
+
+    children.push({
+      name: "text",
+      type: "element",
+      attributes: {
+        class: "component-name",
+        x: 0,
+        y: -size.height / 2 - 0.5,
+        "text-anchor": "middle",
+        "dominant-baseline": "auto",
+      },
+      children: [{ type: "text", value: componentName }],
+    })
   }
 
   return {
