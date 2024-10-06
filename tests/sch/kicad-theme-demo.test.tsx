@@ -46,9 +46,6 @@ it("example 4: kicad theme demo", async () => {
   );
 
   expect(
-    convertCircuitJsonToSchematicSvg(project.getCircuitJson(), {
-      width: 30,
-      height: 8,
-    })
+    convertCircuitJsonToSchematicSvg(project.getCircuitJson())
   ).toMatchSvgSnapshot(import.meta.path);
 });

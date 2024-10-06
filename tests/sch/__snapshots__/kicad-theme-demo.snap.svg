@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.651106550000001 -4.6 10.151106550000002 9.1" width="30" height="8" style="background-color: rgb(245, 241, 237)"><style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.651106550000001 -4.6 10.151106550000002 9.1" width="1200" height="600" style="background-color: rgb(245, 241, 237)"><style>
               .component { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.03; }
               .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); stroke-width: 0.03; }
               .component-pin { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.02; }
