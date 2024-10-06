@@ -15,7 +15,13 @@ it("example 4: kicad theme demo", async () => {
         schX={-1}
         symbolName="boxresistor_horz"
       />
-      <capacitor name="C1" capacitance="0.1" footprint="0402" pcbX={2} schX={2} />
+      <capacitor
+        name="C1"
+        capacitance="0.1"
+        footprint="0402"
+        pcbX={2}
+        schX={2}
+      />
       <trace from=".R1 > .pin2" to=".C1 > .pin1" />
 
       <chip
@@ -46,6 +52,7 @@ it("example 4: kicad theme demo", async () => {
   );
 
   expect(
+    // @ts-ignore
     convertCircuitJsonToSchematicSvg(project.getCircuitJson())
   ).toMatchSvgSnapshot(import.meta.path);
 });
