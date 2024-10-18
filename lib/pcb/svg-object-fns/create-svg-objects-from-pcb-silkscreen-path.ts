@@ -15,10 +15,15 @@ export function createSvgObjectsFromPcbSilkscreenPath(
     })
     .join(" ")
 
-  // Close the path if it's not already closed
+  // Close the path if the first and last points match
   const firstPoint = silkscreenPath.route[0]
   const lastPoint = silkscreenPath.route[silkscreenPath.route.length - 1]
-  if (firstPoint!.x !== lastPoint!.x || firstPoint!.y !== lastPoint!.y) {
+  if (
+    firstPoint &&
+    lastPoint &&
+    firstPoint.x === lastPoint.x &&
+    firstPoint.y === lastPoint.y
+  ) {
     path += " Z"
   }
   return [
