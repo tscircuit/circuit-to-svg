@@ -1075,5 +1075,7 @@ const pcbSoup: any[] = [
 ]
 
 test("Silkscreen with PCB Plated Hole", () => {
-  expect(convertCircuitJsonToPcbSvg(pcbSoup)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(pcbSoup)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
 })

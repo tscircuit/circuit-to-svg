@@ -4,16 +4,16 @@ import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 
 interface PortArrangementCenter {
-    x: number
-    y: number
-    trueIndex: number
-    pinNumber: number
-    side: "left" | "right" | "top" | "bottom"
-    distanceFromEdge: number
+  x: number
+  y: number
+  trueIndex: number
+  pinNumber: number
+  side: "left" | "right" | "top" | "bottom"
+  distanceFromEdge: number
 }
 
 interface PortArrangement extends SchematicPort {
-    center: PortArrangementCenter
+  center: PortArrangementCenter
 }
 
 export function createSchematicComponent(
@@ -140,7 +140,7 @@ export function createSchematicComponent(
     const portLength = 0.2
     const circleRadius = 0.05
 
-    for (const port of (schematicPorts as PortArrangement[])) {
+    for (const port of schematicPorts as PortArrangement[]) {
       const { x, y, pinNumber } = port.center
       let endX = x
       let endY = y

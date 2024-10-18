@@ -14,7 +14,7 @@
     "paths": {
       "lib/*": ["lib/*"]
     },
-    
+
     "verbatimModuleSyntax": true,
     // Enable strict type checking so you can catch bugs early
     "strict": true,
@@ -27,5 +27,5 @@
       "es2022"
       // "dom"
     ]
-  },
+  }
 }
