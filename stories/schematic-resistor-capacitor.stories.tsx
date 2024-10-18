@@ -1,4 +1,4 @@
-import { convertCircuitJsonToSchematicSvg } from "../lib/index.js";
+import { convertCircuitJsonToSchematicSvg } from "../lib/index.js"
 
 const soup: any = [
   {
@@ -788,15 +788,15 @@ const soup: any = [
     source_component_id: "source_component_1",
     footprinter_string: "0402",
   },
-];
+]
 
 export const ResistorCapacitorSch = () => {
-  const result = convertCircuitJsonToSchematicSvg(soup);
+  const result = convertCircuitJsonToSchematicSvg(soup)
 
-  return <div dangerouslySetInnerHTML={{ __html: result }} />;
-};
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
 
 export default {
   title: "Resistor and Capacitor Schematic",
   component: ResistorCapacitorSch,
-};
+}

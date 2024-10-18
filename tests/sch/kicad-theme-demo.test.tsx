@@ -1,9 +1,9 @@
-import { expect, it } from "bun:test";
-import { convertCircuitJsonToSchematicSvg } from "lib/index";
-import { getTestFixture } from "tests/fixtures/get-test-fixture";
+import { expect, it } from "bun:test"
+import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 it("example 4: kicad theme demo", async () => {
-  const { project } = getTestFixture();
+  const { project } = getTestFixture()
 
   project.add(
     <board width="10mm" height="10mm">
@@ -48,11 +48,11 @@ it("example 4: kicad theme demo", async () => {
           },
         }}
       />
-    </board>
-  );
+    </board>,
+  )
 
   expect(
     // @ts-ignore
-    convertCircuitJsonToSchematicSvg(project.getCircuitJson())
-  ).toMatchSvgSnapshot(import.meta.path);
-});
+    convertCircuitJsonToSchematicSvg(project.getCircuitJson()),
+  ).toMatchSvgSnapshot(import.meta.path)
+})
