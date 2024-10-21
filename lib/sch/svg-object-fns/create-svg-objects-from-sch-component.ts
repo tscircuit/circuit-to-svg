@@ -141,7 +141,9 @@ export function createSchematicComponent(
     const circleRadius = 0.05
 
     for (const port of schematicPorts as PortArrangement[]) {
-      const { x, y, pinNumber } = port.center
+      const { x: portX, y: portY, pinNumber } = port.center
+      const x = portX - center.x
+      const y = portY - center.y
       let endX = x
       let endY = y
       let labelX = x
