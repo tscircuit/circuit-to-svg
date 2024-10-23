@@ -8,6 +8,7 @@ export function createSvgObjectsFromSchDebugObject(
     return [{
       name: "rect",
       type: "element",
+      value: "",
       attributes: {
         x: (debugObject.center.x - debugObject.size.width / 2).toString(),
         y: (debugObject.center.y - debugObject.size.height / 2).toString(),
@@ -21,6 +22,7 @@ export function createSvgObjectsFromSchDebugObject(
       children: debugObject.label ? [{
         name: "text",
         type: "element",
+        value: "",
         attributes: {
           x: debugObject.center.x.toString(),
           y: (debugObject.center.y - debugObject.size.height / 2 - 0.1).toString(),
@@ -30,7 +32,10 @@ export function createSvgObjectsFromSchDebugObject(
         },
         children: [{
           type: "text",
-          value: debugObject.label
+          value: debugObject.label,
+          name: "",
+          attributes: {},
+          children: []
         }]
       }] : []
     }]
@@ -39,7 +44,8 @@ export function createSvgObjectsFromSchDebugObject(
   if (debugObject.shape === "line") {
     return [{
       name: "line",
-      type: "element", 
+      type: "element",
+      value: "",
       attributes: {
         x1: debugObject.start.x.toString(),
         y1: debugObject.start.y.toString(),
@@ -52,6 +58,7 @@ export function createSvgObjectsFromSchDebugObject(
       children: debugObject.label ? [{
         name: "text",
         type: "element",
+        value: "",
         attributes: {
           x: ((debugObject.start.x + debugObject.end.x) / 2).toString(),
           y: ((debugObject.start.y + debugObject.end.y) / 2 - 0.1).toString(),
@@ -61,7 +68,10 @@ export function createSvgObjectsFromSchDebugObject(
         },
         children: [{
           type: "text",
-          value: debugObject.label
+          value: debugObject.label,
+          name: "",
+          attributes: {},
+          children: []
         }]
       }] : []
     }]
