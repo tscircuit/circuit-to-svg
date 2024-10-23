@@ -4,9 +4,7 @@
   "version": "0.0.43",
   "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "start": "storybook dev -p 6006",
     "prepublish": "npm run build",
