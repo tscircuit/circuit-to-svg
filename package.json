@@ -48,7 +48,7 @@
     "@tscircuit/soup-util": "^0.0.28",
     "@types/node": "^22.5.5",
     "circuit-json": "*",
-    "schematic-symbols": "^0.0.79",
+    "schematic-symbols": "^0.0.90",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
   }
