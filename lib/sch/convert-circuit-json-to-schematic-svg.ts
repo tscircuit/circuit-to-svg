@@ -2,6 +2,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import { colorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 
 interface Options {
   width?: number
@@ -27,13 +28,35 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
       portPositions.set(item.schematic_port_id, item.center)
+    } else if (item.type === "schematic_debug_object") {
+      if (item.shape === "rect") {
+        updateBounds(item.center, item.size, 0)
+      } else if (item.shape === "line") {
+        updateBounds(item.start, { width: 0.1, height: 0.1 }, 0)
+        updateBounds(item.end, { width: 0.1, height: 0.1 }, 0)
+      }
     }
   }
+
+  // Add padding to bounds
+  const padding = 0.5
+  minX -= padding
+  minY -= padding
+  maxX += padding
+  maxY += padding
 
   const height = maxY - minY
   const flipY = (y: number) => height - (y - minY) + minY
 
   const svgChildren: any[] = []
+
+  // Process debug objects first so they appear behind components
+  for (const debugObj of soup.filter(
+    (item) => item.type === "schematic_debug_object"
+  )) {
+    const svg = createSvgObjectsFromSchDebugObject(debugObj)
+    svgChildren.push(...svg)
+  }
 
   // Process components
   const componentMap = new Map()
@@ -64,7 +87,8 @@ export function convertCircuitJsonToSchematicSvg(
     if (svg) svgChildren.push(svg)
   }
 
-  const padding = 1
+  // Calculate final viewBox dimensions with additional padding
+  const viewBoxPadding = 1
   const width = maxX - minX + 2 * padding
   const viewBox = `${minX - padding} ${minY - padding} ${width} ${height + 2 * padding}`
 
