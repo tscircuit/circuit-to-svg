@@ -141,15 +141,15 @@ export function convertCircuitJsonToSchematicSvg(
       },
       ...svgChildren,
     ],
+    value: "",
   }
 
   return stringify({
-    value: "",
     ...svgObject,
     attributes: {
       ...svgObject.attributes,
-      width: svgObject.attributes.width.toString(),
-      height: svgObject.attributes.height.toString(),
+      width: svgObject.attributes.width?.toString()!,
+      height: svgObject.attributes.height?.toString()!,
     },
   })
 }
