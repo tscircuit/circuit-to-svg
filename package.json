@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
   "files": [
