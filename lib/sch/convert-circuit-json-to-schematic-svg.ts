@@ -120,7 +120,6 @@ export function convertCircuitJsonToSchematicSvg(
         children: [
           {
             type: "text",
-            // Avoid using classes, prefer directly styling svg objects
             value: `
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
