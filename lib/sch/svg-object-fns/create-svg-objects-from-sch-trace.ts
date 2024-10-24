@@ -3,7 +3,9 @@ import type { SvgObject } from "lib/svg-object"
 
 export function createSchematicTrace(
   trace: SchematicTrace,
+  // TODO needs to take transform, deprecate flipY!
   flipY: (y: number) => number,
+  // Deprecate portPositions, use su(circuitJson).get(port_id).center instead
   portPositions: Map<string, { x: number; y: number }>,
 ): SvgObject[] {
   const edges = trace.edges
