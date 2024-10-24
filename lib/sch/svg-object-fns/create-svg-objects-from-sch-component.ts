@@ -99,7 +99,6 @@ export function createSchematicComponent({
       ])
 
       const labelOffset = componentScale * 0.4
-      console.log(labelOffset)
       textChildren.push({
         name: "text",
         type: "element",
@@ -241,7 +240,9 @@ export function createSchematicComponent({
       let endY = relY
 
       // @ts-expect-error TODO remove when schematic_port has "side" defined
-      switch (schPort.side) {
+      const portSide = schPort.side ?? schPort.center.side
+
+      switch (portSide) {
         case "left":
           endX = relX - portLength
           break
@@ -302,8 +303,7 @@ export function createSchematicComponent({
         let textAnchor = "middle"
         const labelOffset = 0.6 * componentScale
 
-        // @ts-expect-error TODO remove when schematic_port has "side" defined
-        switch (schPort.side) {
+        switch (portSide) {
           case "left":
             labelX += labelOffset
             labelY += 0 // Center aligned vertically
@@ -352,17 +352,16 @@ export function createSchematicComponent({
       let pinY = endY
       let dominantBaseline = "auto"
 
-      // @ts-expect-error TODO remove when schematic_port has "side" defined
-      switch (schPort.side) {
+      switch (portSide) {
         case "top":
           // For top ports, stay at the same X but offset Y upward
-          pinY = -(portY - portLength - pinNumberOffset) // Move above the circle
+          pinY = -(portY - portLength + pinNumberOffset) // Move above the circle
           pinX = portX // Stay aligned with port
           dominantBaseline = "auto"
           break
         case "bottom":
           // For bottom ports, stay at the same X but offset Y downward
-          pinY = portY + portLength + pinNumberOffset
+          pinY = portY + portLength - pinNumberOffset
           pinX = portX
           dominantBaseline = "hanging"
           break
