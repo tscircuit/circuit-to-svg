@@ -1,5 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { colorMap } from "lib/utils/colors"
+import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { stringify } from "svgson"
@@ -17,37 +18,17 @@ export function convertCircuitJsonToSchematicSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-
-  const portSize = 0.2
   const portPositions = new Map()
 
-  // First pass: find the bounds and collect port positions
+  // Collect port positions
   for (const item of soup) {
-    if (item.type === "schematic_component") {
-      updateBounds(item.center, item.size, item.rotation || 0)
-    } else if (item.type === "schematic_port") {
-      updateBounds(item.center, { width: portSize, height: portSize }, 0)
+    if (item.type === "schematic_port") {
       portPositions.set(item.schematic_port_id, item.center)
-    } else if (item.type === "schematic_debug_object") {
-      if (item.shape === "rect") {
-        updateBounds(item.center, item.size, 0)
-      } else if (item.shape === "line") {
-        updateBounds(item.start, { width: 0.1, height: 0.1 }, 0)
-        updateBounds(item.end, { width: 0.1, height: 0.1 }, 0)
-      }
     }
   }
 
-  // Add padding to bounds
-  const padding = 0.5
-  minX -= padding
-  minY -= padding
-  maxX += padding
-  maxY += padding
+  // Get bounds with padding
+  const { minX, minY, maxX, maxY } = getSchematicBoundsFromCircuitJson(soup)
 
   const height = maxY - minY
   const flipY = (y: number) => height - (y - minY) + minY
@@ -103,9 +84,9 @@ export function convertCircuitJsonToSchematicSvg(
   }
 
   // Calculate final viewBox dimensions with additional padding
-  const viewBoxPadding = 1
-  const width = maxX - minX + 2 * padding
-  const viewBox = `${minX - padding} ${minY - padding} ${width} ${height + 2 * padding}`
+  const viewBoxPadding = 0.5
+  const width = maxX - minX + 2 * viewBoxPadding
+  const viewBox = `${minX - viewBoxPadding} ${minY - viewBoxPadding} ${width} ${height + 2 * viewBoxPadding}`
 
   const svgObject = {
     name: "svg",
@@ -209,26 +190,6 @@ export function convertCircuitJsonToSchematicSvg(
           },
         }
       : null
-  }
-
-  function updateBounds(center: any, size: any, rotation: number) {
-    const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
-    ]
-
-    for (const corner of corners) {
-      const rotatedX =
-        corner.x * Math.cos(rotation) - corner.y * Math.sin(rotation) + center.x
-      const rotatedY =
-        corner.x * Math.sin(rotation) + corner.y * Math.cos(rotation) + center.y
-      minX = Math.min(minX, rotatedX)
-      minY = Math.min(minY, rotatedY)
-      maxX = Math.max(maxX, rotatedX)
-      maxY = Math.max(maxY, rotatedY)
-    }
   }
 }
 
