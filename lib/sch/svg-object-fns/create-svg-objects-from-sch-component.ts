@@ -319,8 +319,16 @@ export function createSchematicComponent({
         "text-anchor": "middle",
         "dominant-baseline": "auto",
       },
-      value: (resistance || capacitance || "").toString(),
-      children: [],
+      value: "",
+      children: [
+        {
+          type: "text",
+          value: (resistance || capacitance || "").toString(),
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
     })
 
     children.push({
