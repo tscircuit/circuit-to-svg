@@ -15,11 +15,11 @@ export function createSchematicTrace(
   edges.forEach((edge: any, index: number) => {
     // Get the points, applying trace offset
     const fromPoint = {
-      x: (edge.from.x ?? edge.from.center?.x) - 0.15,
+      x: edge.from.x ?? edge.from.center?.x,
       y: edge.from.y ?? edge.from.center?.y,
     }
     const toPoint = {
-      x: (edge.to.x ?? edge.to.center?.x) + 0.15,
+      x: edge.to.x ?? edge.to.center?.x,
       y: edge.to.y ?? edge.to.center?.y,
     }
 
