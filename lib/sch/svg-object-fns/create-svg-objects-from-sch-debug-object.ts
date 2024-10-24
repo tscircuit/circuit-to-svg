@@ -7,25 +7,27 @@ export function createSvgObjectsFromSchDebugObject(
   transform: Matrix,
 ): SvgObject[] {
   if (debugObject.shape === "rect") {
-    // Calculate corners in local space - flip Y coordinates
-    const x = debugObject.center.x - debugObject.size.width / 2
-    const y = -(debugObject.center.y - debugObject.size.height / 2)
-
     // Transform all corners
-    const [transformedX, transformedY] = applyToPoint(transform, [x, y])
-    const [transformedRight, transformedBottom] = applyToPoint(transform, [
-      x + debugObject.size.width,
-      y - debugObject.size.height // Flip height direction
+    let [screenLeft, screenTop] = applyToPoint(transform, [
+      debugObject.center.x - debugObject.size.width / 2,
+      debugObject.center.y - debugObject.size.height / 2,
     ])
+    let [screenRight, screenBottom] = applyToPoint(transform, [
+      debugObject.center.x + debugObject.size.width / 2,
+      debugObject.center.y + debugObject.size.height / 2,
+    ])
+    ;[screenTop, screenBottom] = [
+      Math.min(screenTop, screenBottom),
+      Math.max(screenTop, screenBottom),
+    ]
 
-    // Calculate transformed width and height
-    const width = Math.abs(transformedRight - transformedX)
-    const height = Math.abs(transformedBottom - transformedY)
+    // Calculate screen width and height
+    const width = Math.abs(screenRight - screenLeft)
+    const height = Math.abs(screenBottom - screenTop)
 
-    // Transform center for label - flip Y
-    const [centerX, centerY] = applyToPoint(transform, [
+    const [screenCenterX, screenCenterY] = applyToPoint(transform, [
       debugObject.center.x,
-      -debugObject.center.y
+      debugObject.center.y,
     ])
 
     return [
@@ -34,8 +36,8 @@ export function createSvgObjectsFromSchDebugObject(
         type: "element",
         value: "",
         attributes: {
-          x: transformedX.toString(),
-          y: Math.min(transformedY, transformedBottom).toString(),
+          x: screenLeft.toString(),
+          y: screenTop.toString(),
           width: width.toString(),
           height: height.toString(),
           fill: "none",
@@ -50,8 +52,8 @@ export function createSvgObjectsFromSchDebugObject(
                 type: "element",
                 value: "",
                 attributes: {
-                  x: centerX.toString(),
-                  y: (centerY - 10).toString(),
+                  x: screenCenterX.toString(),
+                  y: (screenCenterY - 10).toString(),
                   "text-anchor": "middle",
                   "font-size": (0.2 * Math.abs(transform.a)).toString(),
                   fill: "red",
@@ -73,18 +75,18 @@ export function createSvgObjectsFromSchDebugObject(
   }
   if (debugObject.shape === "line") {
     // Transform start and end points - flip Y coordinates
-    const [startX, startY] = applyToPoint(transform, [
+    const [screenStartX, screenStartY] = applyToPoint(transform, [
       debugObject.start.x,
-      -debugObject.start.y, // Flip Y
+      debugObject.start.y,
     ])
-    const [endX, endY] = applyToPoint(transform, [
+    const [screenEndX, screenEndY] = applyToPoint(transform, [
       debugObject.end.x,
-      -debugObject.end.y, // Flip Y
+      debugObject.end.y,
     ])
 
     // Calculate midpoint for label
-    const midX = (startX + endX) / 2
-    const midY = (startY + endY) / 2
+    const screenMidX = (screenStartX + screenEndX) / 2
+    const screenMidY = (screenStartY + screenEndY) / 2
 
     return [
       {
@@ -92,10 +94,10 @@ export function createSvgObjectsFromSchDebugObject(
         type: "element",
         value: "",
         attributes: {
-          x1: startX.toString(),
-          y1: startY.toString(),
-          x2: endX.toString(),
-          y2: endY.toString(),
+          x1: screenStartX.toString(),
+          y1: screenStartY.toString(),
+          x2: screenEndX.toString(),
+          y2: screenEndY.toString(),
           stroke: "red",
           "stroke-width": (0.02 * Math.abs(transform.a)).toString(),
           "stroke-dasharray": "5,5",
@@ -107,8 +109,8 @@ export function createSvgObjectsFromSchDebugObject(
                 type: "element",
                 value: "",
                 attributes: {
-                  x: midX.toString(),
-                  y: (midY - 10).toString(),
+                  x: screenMidX.toString(),
+                  y: (screenMidY - 10).toString(),
                   "text-anchor": "middle",
                   "font-size": (0.2 * Math.abs(transform.a)).toString(),
                   fill: "red",
