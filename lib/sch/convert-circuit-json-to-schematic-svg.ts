@@ -7,6 +7,8 @@ import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-
 interface Options {
   width?: number
   height?: number
+  grid?: boolean | { cellSize: number }
+  labeledPoints?: Array<{ x: number; y: number; label: string }>
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -49,6 +51,99 @@ export function convertCircuitJsonToSchematicSvg(
   const flipY = (y: number) => height - (y - minY) + minY
 
   const svgChildren: any[] = []
+
+  // Add grid if enabled
+  if (options?.grid) {
+    const cellSize = typeof options.grid === 'object' ? options.grid.cellSize : 1
+    const gridLines: any[] = []
+    
+    // Vertical lines
+    for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
+      gridLines.push({
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: x.toString(),
+          y1: minY.toString(),
+          x2: x.toString(),
+          y2: maxY.toString(),
+          stroke: colorMap.schematic.grid,
+          "stroke-width": "0.01",
+          "stroke-opacity": "0.5"
+        }
+      })
+    }
+    
+    // Horizontal lines
+    for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
+      gridLines.push({
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: minX.toString(),
+          y1: y.toString(),
+          x2: maxX.toString(),
+          y2: y.toString(),
+          stroke: colorMap.schematic.grid,
+          "stroke-width": "0.01",
+          "stroke-opacity": "0.5"
+        }
+      })
+    }
+
+    svgChildren.push({
+      name: "g",
+      type: "element",
+      attributes: { class: "grid" },
+      children: gridLines
+    })
+  }
+
+  // Add labeled points if provided
+  if (options?.labeledPoints) {
+    const labeledPointsGroup: any[] = []
+    
+    for (const point of options.labeledPoints) {
+      // Add X marker
+      labeledPointsGroup.push({
+        name: "path",
+        type: "element",
+        attributes: {
+          d: `M${point.x - 0.1},${point.y - 0.1} L${point.x + 0.1},${point.y + 0.1} M${point.x - 0.1},${point.y + 0.1} L${point.x + 0.1},${point.y - 0.1}`,
+          stroke: colorMap.schematic.grid,
+          "stroke-width": "0.02",
+          "stroke-opacity": "0.7"
+        }
+      })
+
+      // Add label
+      labeledPointsGroup.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          x: (point.x + 0.15).toString(),
+          y: (point.y - 0.15).toString(),
+          fill: colorMap.schematic.grid,
+          "font-size": "0.15",
+          "fill-opacity": "0.7"
+        },
+        children: [{
+          type: "text",
+          value: point.label || `(${point.x},${point.y})`,
+          name: "",
+          attributes: {},
+          children: []
+        }]
+      })
+    }
+
+    svgChildren.push({
+      name: "g", 
+      type: "element",
+      attributes: { class: "labeled-points" },
+      children: labeledPointsGroup
+    })
+  }
 
   // Process debug objects first so they appear behind components
   for (const debugObj of soup.filter(
