@@ -11,15 +11,15 @@ test("schematic with grid and labeled points", () => {
           center: { x: 0, y: 0 },
           size: { width: 2, height: 1 },
           label: "Test Box",
-        }
+        },
       ],
       {
         grid: { cellSize: 0.5, labelCells: true },
         labeledPoints: [
           { x: 0, y: 0, label: "Origin" },
-          { x: 1, y: 1, label: "Point A" }
-        ]
-      }
-    )
+          { x: 1, y: 1, label: "Point A" },
+        ],
+      },
+    ),
   ).toMatchSvgSnapshot(import.meta.path)
 })
