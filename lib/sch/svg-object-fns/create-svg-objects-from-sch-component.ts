@@ -1,3 +1,4 @@
+import { su } from "@tscircuit/soup-util"
 import type {
   AnyCircuitElement,
   SchematicComponent,
@@ -8,19 +9,6 @@ import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-
-interface PortArrangementCenter {
-  x: number
-  y: number
-  trueIndex: number
-  pinNumber: number
-  side: "left" | "right" | "top" | "bottom"
-  distanceFromEdge: number
-}
-
-interface PortArrangement extends SchematicPort {
-  center: PortArrangementCenter
-}
 
 export function createSchematicComponent({
   component,
@@ -234,25 +222,26 @@ export function createSchematicComponent({
     }
 
     // Process ports
-    const schematicPorts =
-      circuitJson?.filter(
-        (item) =>
-          item.type === "schematic_port" &&
-          item.schematic_component_id === schematicComponentId,
-      ) || []
-
+    const schematicPorts = su(circuitJson as any).schematic_port.list({
+      schematic_component_id: schematicComponentId,
+    })
     const portLength = 0.2
     const circleRadius = 0.05
 
-    for (const port of schematicPorts as PortArrangement[]) {
-      const { x: portX, y: portY, pinNumber } = port.center
+    for (const schPort of schematicPorts) {
+      const { x: portX, y: portY } = schPort.center
+      const srcPort = su(circuitJson as any).source_port.get(
+        schPort.source_port_id,
+      )
+      const pinNumber = srcPort?.pin_number
       const relX = portX - center.x
       const relY = portY - center.y
 
       let endX = relX
       let endY = relY
 
-      switch (port.center.side) {
+      // @ts-expect-error TODO remove when schematic_port has "side" defined
+      switch (schPort.side) {
         case "left":
           endX = relX - portLength
           break
@@ -313,7 +302,8 @@ export function createSchematicComponent({
         let textAnchor = "middle"
         const labelOffset = 0.6 * componentScale
 
-        switch (port.center.side) {
+        // @ts-expect-error TODO remove when schematic_port has "side" defined
+        switch (schPort.side) {
           case "left":
             labelX += labelOffset
             labelY += 0 // Center aligned vertically
@@ -362,7 +352,8 @@ export function createSchematicComponent({
       let pinY = endY
       let dominantBaseline = "auto"
 
-      switch (port.center.side) {
+      // @ts-expect-error TODO remove when schematic_port has "side" defined
+      switch (schPort.side) {
         case "top":
           // For top ports, stay at the same X but offset Y upward
           pinY = -(portY - portLength - pinNumberOffset) // Move above the circle
@@ -409,7 +400,7 @@ export function createSchematicComponent({
         children: [
           {
             type: "text",
-            value: pinNumber.toString(),
+            value: pinNumber?.toString() || "",
             name: "",
             attributes: {},
             children: [],
