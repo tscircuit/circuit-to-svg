@@ -6,6 +6,9 @@ import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { stringify } from "svgson"
 import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
+import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import type { SvgObject } from "lib/svg-object"
+import { identity } from "transformation-matrix"
 
 interface Options {
   width?: number
@@ -15,87 +18,99 @@ interface Options {
 }
 
 export function convertCircuitJsonToSchematicSvg(
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
+  /**
+   * @deprecated use su(circuitJson).get(port_id).center, portPositions should
+   * be removed
+   */
   const portPositions = new Map()
 
   // Collect port positions
-  for (const item of soup) {
+  for (const item of circuitJson) {
     if (item.type === "schematic_port") {
       portPositions.set(item.schematic_port_id, item.center)
     }
   }
 
   // Get bounds with padding
-  const { minX, minY, maxX, maxY } = getSchematicBoundsFromCircuitJson(soup)
-
-  const height = maxY - minY
-  const flipY = (y: number) => height - (y - minY) + minY
-
-  const svgChildren: any[] = []
-
-  // Add grid if enabled
-  if (options?.grid) {
-    const gridConfig = typeof options.grid === "object" ? options.grid : {}
-    svgChildren.push(drawSchematicGrid(minX, minY, maxX, maxY, gridConfig))
-  }
-
-  // Add labeled points if provided
-  if (options?.labeledPoints) {
-    svgChildren.push(drawSchematicLabeledPoints(options.labeledPoints))
-  }
-
-  // Process debug objects first so they appear behind components
-  for (const debugObj of soup.filter(
-    (item) => item.type === "schematic_debug_object",
-  )) {
-    const svg = createSvgObjectsFromSchDebugObject(debugObj)
-    svgChildren.push(...svg)
-  }
-
-  // Process components
-  const componentMap = new Map()
-  for (const component of soup.filter(
-    (item) => item.type === "schematic_component",
-  )) {
-    const flippedCenter = {
-      x: component.center.x,
-      y: flipY(component.center.y),
-    }
-    const svg = createSchematicComponent(
-      flippedCenter,
-      component.size,
-      component.rotation || 0,
-      (component as any).symbol_name,
-      (component as any).port_labels,
-      (component as any).source_component_id,
-      (component as any).schematic_component_id,
-      soup,
-    )
-    svgChildren.push(svg)
-    componentMap.set(component.schematic_component_id, component)
-  }
-
-  // Process schematic traces
-  for (const trace of soup.filter((item) => item.type === "schematic_trace")) {
-    const svg = createSchematicTrace(trace, flipY, portPositions)
-    if (svg) svgChildren.push(svg)
-  }
+  const bounds = getSchematicBoundsFromCircuitJson(circuitJson)
+  const { minX, minY, maxX, maxY } = bounds
 
   // Calculate final viewBox dimensions with additional padding
   const viewBoxPadding = 0.5
   const width = maxX - minX + 2 * viewBoxPadding
+  const height = maxY - minY
   const viewBox = `${minX - viewBoxPadding} ${minY - viewBoxPadding} ${width} ${height + 2 * viewBoxPadding}`
 
-  const svgObject = {
+  /**
+   * @deprecated use `transform` instead, flipY should be removed
+   */
+  const flipY = (y: number) => height - (y - minY) + minY
+
+  /**
+   * The transform represents the transformation from the "schematic coordinate
+   * space" to the "pixel coordinate space" or "screen space". In other words,
+   * the transform takes a chip with a center at (5, 5) and moves it to
+   * something like (400, 400) on the screen.
+   *
+   * When we switch to transform _you should not set the SVG viewport_!!! Since
+   * we're going directly to screen space, there is no need for a viewport!!!
+   */
+  const transform = identity() // TODO compute transform
+
+  const svgChildren: SvgObject[] = []
+
+  // Add grid if enabled
+  if (options?.grid) {
+    const gridConfig = typeof options.grid === "object" ? options.grid : {}
+    svgChildren.push(drawSchematicGrid({ bounds, transform, ...gridConfig }))
+  }
+
+  // Add labeled points if provided
+  if (options?.labeledPoints) {
+    svgChildren.push(
+      drawSchematicLabeledPoints({
+        points: options.labeledPoints,
+        transform,
+      }),
+    )
+  }
+
+  const schDebugObjectSvgs: SvgObject[] = []
+  const schComponentSvgs: SvgObject[] = []
+  const schTraceSvgs: SvgObject[] = []
+
+  for (const elm of circuitJson) {
+    if (elm.type === "schematic_debug_object") {
+      schDebugObjectSvgs.push(...createSvgObjectsFromSchDebugObject(elm))
+    } else if (elm.type === "schematic_component") {
+      schComponentSvgs.push(
+        ...createSchematicComponent({
+          component: {
+            ...elm,
+            center: { x: elm.center.x, y: flipY(elm.center.y) },
+          },
+          transform, // Add the missing transform property
+          circuitJson,
+        }),
+      )
+    } else if (elm.type === "schematic_trace") {
+      schTraceSvgs.push(...createSchematicTrace(elm, flipY, portPositions))
+    }
+  }
+
+  svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs)
+
+  const svgObject: SvgObject = {
     name: "svg",
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
       viewBox,
-      width: options?.width ?? "1200",
-      height: options?.height ?? "600",
+      width: (options?.width ?? 1200).toString(),
+      height: (options?.height ?? 600).toString(),
       style: `background-color: ${colorMap.schematic.background}`,
     },
     children: [
@@ -105,6 +120,7 @@ export function convertCircuitJsonToSchematicSvg(
         children: [
           {
             type: "text",
+            // Avoid using classes, prefer directly styling svg objects
             value: `
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
@@ -115,8 +131,13 @@ export function convertCircuitJsonToSchematicSvg(
               .port-label { fill: ${colorMap.schematic.reference}; }
               .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
             `,
+            name: "",
+            attributes: {},
+            children: [],
           },
         ],
+        value: "",
+        attributes: {},
       },
       ...svgChildren,
     ],
@@ -131,66 +152,6 @@ export function convertCircuitJsonToSchematicSvg(
       height: svgObject.attributes.height.toString(),
     },
   })
-
-  function createSchematicTrace(
-    trace: any,
-    flipY: (y: number) => number,
-    portPositions: Map<string, { x: number; y: number }>,
-  ): any {
-    const edges = trace.edges
-    if (edges.length === 0) return null
-
-    let path = ""
-
-    // Process all edges
-    edges.forEach((edge: any, index: number) => {
-      const fromPoint =
-        edge.from.ti !== undefined ? portPositions.get(edge.from.ti) : edge.from
-      const toPoint =
-        edge.to.ti !== undefined ? portPositions.get(edge.to.ti) : edge.to
-
-      if (!fromPoint || !toPoint) {
-        return
-      }
-
-      const fromCoord = `${fromPoint.x - 0.15} ${flipY(fromPoint.y)}`
-      const toCoord = `${toPoint.x + 0.15} ${flipY(toPoint.y)}`
-
-      if (index === 0) {
-        path += `M ${fromCoord} L ${toCoord}`
-      } else {
-        path += ` L ${toCoord}`
-      }
-    })
-
-    // Handle connection to final port if needed
-    if (trace.to_schematic_port_id) {
-      const finalPort = portPositions.get(trace.to_schematic_port_id)
-      if (finalPort) {
-        const lastFromPoint = path.split("M")[1]?.split("L")[0]
-        const lastEdge = edges[edges.length - 1]
-        const lastPoint =
-          lastEdge.to.ti !== undefined
-            ? portPositions.get(lastEdge.to.ti)
-            : lastEdge.to
-        if (lastPoint.x !== finalPort.x || lastPoint.y !== finalPort.y) {
-          const finalCoord = `${finalPort.x} ${flipY(finalPort.y)}`
-          path += ` M ${lastFromPoint} L ${finalCoord}`
-        }
-      }
-    }
-
-    return path
-      ? {
-          name: "path",
-          type: "element",
-          attributes: {
-            class: "trace",
-            d: path,
-          },
-        }
-      : null
-  }
 }
 
 /**

@@ -1,5 +1,6 @@
 import { colorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
+import type { Matrix } from "transformation-matrix"
 
 interface LabeledPoint {
   x: number
@@ -7,7 +8,12 @@ interface LabeledPoint {
   label?: string
 }
 
-export function drawSchematicLabeledPoints(points: LabeledPoint[]): SvgObject {
+export function drawSchematicLabeledPoints(params: {
+  points: LabeledPoint[]
+  transform: Matrix
+}): SvgObject {
+  const { points, transform } = params
+
   const labeledPointsGroup: any[] = []
 
   for (const point of points) {

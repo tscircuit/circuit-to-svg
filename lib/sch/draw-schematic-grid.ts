@@ -1,20 +1,21 @@
 import { colorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
+import type { Matrix } from "transformation-matrix"
 
-interface GridConfig {
+export function drawSchematicGrid(params: {
+  bounds: {
+    minX: number
+    minY: number
+    maxX: number
+    maxY: number
+  }
+  transform: Matrix
   cellSize?: number
   labelCells?: boolean
-}
-
-export function drawSchematicGrid(
-  minX: number,
-  minY: number,
-  maxX: number,
-  maxY: number,
-  config: GridConfig = {},
-): SvgObject {
-  const cellSize = config.cellSize ?? 1
-  const labelCells = config.labelCells ?? false
+}): SvgObject {
+  const { minX, minY, maxX, maxY } = params.bounds
+  const cellSize = params.cellSize ?? 1
+  const labelCells = params.labelCells ?? false
   const gridLines: any[] = []
 
   // Vertical lines

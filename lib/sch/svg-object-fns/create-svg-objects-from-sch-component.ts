@@ -1,7 +1,13 @@
-import type { AnyCircuitElement, SchematicPort } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicComponent,
+  SchematicPort,
+} from "circuit-json"
+import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
+import type { Matrix } from "transformation-matrix"
 
 interface PortArrangementCenter {
   x: number
@@ -16,19 +22,25 @@ interface PortArrangement extends SchematicPort {
   center: PortArrangementCenter
 }
 
-export function createSchematicComponent(
-  center: { x: number; y: number },
-  size: { width: number; height: number },
-  rotation: number,
-  symbolName?: string,
-  portLabels?: any,
-  sourceComponentId?: string,
-  schematicComponentId?: string,
-  circuitJson?: AnyCircuitElement[],
-): any {
-  const transform = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
+export function createSchematicComponent({
+  component,
+  circuitJson,
+}: {
+  component: SchematicComponent
+  transform: Matrix
+  circuitJson: AnyCircuitElement[]
+}): SvgObject[] {
+  const center = component.center
+  const size = component.size
+  const rotation = component.rotation
+  const symbolName = component.symbol_name
+  const portLabels = component.port_labels
+  const sourceComponentId = component.source_component_id
+  const schematicComponentId = component.schematic_component_id
 
-  let children: any[] = []
+  const transformString = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
+
+  let children: SvgObject[] = []
 
   // Find the source component and get its name
   const sourceComponent = circuitJson?.find(
@@ -92,13 +104,15 @@ export function createSchematicComponent(
     children.push({
       name: "rect",
       type: "element",
+      value: "",
       attributes: {
         class: "component chip",
-        x: -size.width / 2,
-        y: -size.height / 2,
-        width: size.width,
-        height: size.height,
+        x: (-size.width / 2).toString(),
+        y: (-size.height / 2).toString(),
+        width: size.width.toString(),
+        height: size.height.toString(),
       },
+      children: [],
     })
 
     if (manufacturerNumber) {
@@ -107,12 +121,21 @@ export function createSchematicComponent(
         type: "element",
         attributes: {
           class: "component-name",
-          x: 1.2,
-          y: -size.height / 2 - 0.5,
+          x: (1.2).toString(),
+          y: (-size.height / 2 - 0.5).toString(),
           "text-anchor": "right",
           "dominant-baseline": "auto",
         },
-        children: [{ type: "text", value: manufacturerNumber }],
+        children: [
+          {
+            type: "text",
+            value: manufacturerNumber,
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+        value: "",
       })
 
       children.push({
@@ -120,12 +143,21 @@ export function createSchematicComponent(
         type: "element",
         attributes: {
           class: "component-name",
-          x: 1.2,
-          y: -size.height / 2 - 0.7,
+          x: (1.2).toString(),
+          y: (-size.height / 2 - 0.7).toString(),
           "text-anchor": "right",
           "dominant-baseline": "auto",
         },
-        children: [{ type: "text", value: componentName }],
+        children: [
+          {
+            type: "text",
+            value: componentName || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+        value: "",
       })
     }
 
@@ -180,11 +212,13 @@ export function createSchematicComponent(
         type: "element",
         attributes: {
           class: "component-pin",
-          x1: x,
-          y1: y,
-          x2: endX,
-          y2: endY,
+          x1: x.toString(),
+          y1: y.toString(),
+          x2: endX.toString(),
+          y2: endY.toString(),
         },
+        value: "",
+        children: [],
       })
 
       // Add port circle
@@ -193,10 +227,12 @@ export function createSchematicComponent(
         type: "element",
         attributes: {
           class: "component-pin",
-          cx: endX,
-          cy: endY,
-          r: circleRadius,
+          cx: endX.toString(),
+          cy: endY.toString(),
+          r: circleRadius.toString(),
         },
+        value: "",
+        children: [],
       })
 
       // Add port label if it exists
@@ -207,13 +243,22 @@ export function createSchematicComponent(
           type: "element",
           attributes: {
             class: "port-label",
-            x: labelX,
-            y: labelY,
+            x: labelX.toString(),
+            y: labelY.toString(),
             "text-anchor": textAnchor,
             "dominant-baseline": dominantBaseline,
             "font-size": "0.2",
           },
-          children: [{ type: "text", value: portLabels[labelKey] }],
+          children: [
+            {
+              type: "text",
+              value: portLabels[labelKey]!,
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ],
+          value: "",
         })
       }
 
@@ -243,13 +288,22 @@ export function createSchematicComponent(
         type: "element",
         attributes: {
           class: "pin-number",
-          x: pinNumberX,
-          y: pinNumberY,
+          x: pinNumberX.toString(),
+          y: pinNumberY.toString(),
           "text-anchor": pinNumberAnchor,
           "dominant-baseline": pinNumberBaseline,
           "font-size": "0.15",
         },
-        children: [{ type: "text", value: pinNumber }],
+        value: "",
+        children: [
+          {
+            type: "text",
+            value: pinNumber.toString(),
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
       })
     }
   }
@@ -260,12 +314,13 @@ export function createSchematicComponent(
       type: "element",
       attributes: {
         class: "component-name",
-        x: 0,
-        y: -size.height / 2 - 0.2,
+        x: "0",
+        y: (-size.height / 2 - 0.2).toString(),
         "text-anchor": "middle",
         "dominant-baseline": "auto",
       },
-      children: [{ type: "text", value: resistance || capacitance }],
+      value: (resistance || capacitance || "").toString(),
+      children: [],
     })
 
     children.push({
@@ -273,19 +328,31 @@ export function createSchematicComponent(
       type: "element",
       attributes: {
         class: "component-name",
-        x: 0,
-        y: -size.height / 2 - 0.5,
+        x: "0",
+        y: (-size.height / 2 - 0.5).toString(),
         "text-anchor": "middle",
         "dominant-baseline": "auto",
       },
-      children: [{ type: "text", value: componentName }],
+      value: "",
+      children: [
+        {
+          type: "text",
+          value: componentName || "",
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
     })
   }
 
-  return {
-    name: "g",
-    type: "element",
-    attributes: { transform },
-    children,
-  }
+  return [
+    {
+      name: "g",
+      value: "",
+      type: "element",
+      attributes: { transform: transformString },
+      children,
+    },
+  ]
 }
