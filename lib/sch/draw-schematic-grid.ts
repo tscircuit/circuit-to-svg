@@ -1,6 +1,6 @@
 import { colorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
-import type { Matrix } from "transformation-matrix"
+import { applyToPoint, type Matrix } from "transformation-matrix"
 
 export function drawSchematicGrid(params: {
   bounds: {
@@ -18,18 +18,27 @@ export function drawSchematicGrid(params: {
   const labelCells = params.labelCells ?? false
   const gridLines: any[] = []
 
+  // Helper function to transform points
+  const transformPoint = (x: number, y: number) => {
+    const [transformedX, transformedY] = applyToPoint(params.transform, [x, y])
+    return { x: transformedX, y: transformedY }
+  }
+
   // Vertical lines
   for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
+    const start = transformPoint(x, minY)
+    const end = transformPoint(x, maxY)
+    
     gridLines.push({
       name: "line",
       type: "element",
       attributes: {
-        x1: x.toString(),
-        y1: minY.toString(),
-        x2: x.toString(),
-        y2: maxY.toString(),
+        x1: start.x.toString(),
+        y1: start.y.toString(),
+        x2: end.x.toString(),
+        y2: end.y.toString(),
         stroke: colorMap.schematic.grid,
-        "stroke-width": "0.01",
+        "stroke-width": (0.01 * Math.abs(params.transform.a)).toString(),
         "stroke-opacity": "0.5",
       },
     })
@@ -37,16 +46,19 @@ export function drawSchematicGrid(params: {
 
   // Horizontal lines
   for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
+    const start = transformPoint(minX, y)
+    const end = transformPoint(maxX, y)
+    
     gridLines.push({
       name: "line",
       type: "element",
       attributes: {
-        x1: minX.toString(),
-        y1: y.toString(),
-        x2: maxX.toString(),
-        y2: y.toString(),
+        x1: start.x.toString(),
+        y1: start.y.toString(),
+        x2: end.x.toString(),
+        y2: end.y.toString(),
         stroke: colorMap.schematic.grid,
-        "stroke-width": "0.01",
+        "stroke-width": (0.01 * Math.abs(params.transform.a)).toString(),
         "stroke-opacity": "0.5",
       },
     })
@@ -56,15 +68,19 @@ export function drawSchematicGrid(params: {
   if (labelCells) {
     for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
       for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
+        const point = transformPoint(x, y)
+        
         gridLines.push({
           name: "text",
           type: "element",
           attributes: {
-            x: x.toString(),
-            y: y.toString(),
+            x: point.x.toString(),
+            y: point.y.toString(),
             fill: colorMap.schematic.grid,
-            "font-size": (cellSize / 6).toString(),
+            "font-size": ((cellSize / 6) * Math.abs(params.transform.a)).toString(),
             "fill-opacity": "0.5",
+            "text-anchor": "middle",
+            "dominant-baseline": "middle",
           },
           children: [
             {

@@ -1,10 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.05 -1.5 4.1 4.55" width="1200" height="600" style="background-color: rgb(245, 241, 237)"><style>
-              .component { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.03; }
-              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); stroke-width: 0.03; }
-              .component-pin { fill: none; stroke: rgb(132, 0, 0); stroke-width: 0.02; }
-              .trace { stroke: rgb(0, 150, 0); stroke-width: 0.02; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: 0.2px; fill: rgb(0, 150, 0); }
-              .pin-number { font-size: 0.15px; fill: rgb(169, 0, 0); }
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace { stroke: rgb(0, 150, 0); stroke-width: 2.1621621621621623; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: 21.621621621621625px; fill: rgb(0, 150, 0); }
+              .pin-number { font-size: 16.216216216216218px; fill: rgb(169, 0, 0); }
               .port-label { fill: rgb(0, 100, 100); }
-              .component-name { font-size: 0.25px; fill: rgb(0, 100, 100); }
-            </style><rect x="-1" y="-0.5" width="2" height="1" fill="none" stroke="red" stroke-width="0.02" stroke-dasharray="0.1,0.1"><text x="0" y="-0.6" text-anchor="middle" font-size="0.2" fill="red">Debug Box</text></rect><line x1="-1" y1="1" x2="1" y2="2" stroke="red" stroke-width="0.02" stroke-dasharray="0.1,0.1"><text x="0" y="1.4" text-anchor="middle" font-size="0.2" fill="red">Debug Line</text></line></svg>
+              .component-name { font-size: 27.027027027027028px; fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><rect x="491.8918918918919" y="329.7297297297297" width="216.21621621621625" height="108.10810810810813" fill="none" stroke="red" stroke-width="2.1621621621621623" stroke-dasharray="5,5"><text x="600" y="373.78378378378375" text-anchor="middle" font-size="21.621621621621625" fill="red">Debug Box</text></rect><line x1="491.8918918918919" y1="491.8918918918919" x2="708.1081081081081" y2="600" stroke="red" stroke-width="2.1621621621621623" stroke-dasharray="5,5"><text x="600" y="535.9459459459459" text-anchor="middle" font-size="21.621621621621625" fill="red">Debug Line</text></line></svg>

@@ -7,7 +7,7 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
-import type { Matrix } from "transformation-matrix"
+import { applyToPoint, type Matrix } from "transformation-matrix"
 
 interface PortArrangementCenter {
   x: number
@@ -24,25 +24,29 @@ interface PortArrangement extends SchematicPort {
 
 export function createSchematicComponent({
   component,
+  transform,
   circuitJson,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
 }): SvgObject[] {
-  const center = component.center
-  const size = component.size
-  const rotation = component.rotation
-  const symbolName = component.symbol_name
+  const { center, size, rotation, symbol_name: symbolName } = component
   const portLabels = component.port_labels
   const sourceComponentId = component.source_component_id
   const schematicComponentId = component.schematic_component_id
 
-  const transformString = `translate(${center.x}, ${center.y}) rotate(${(rotation * 180) / Math.PI})`
+  // Transform the center point for the main component position
+  const [transformedX, transformedY] = applyToPoint(transform, [
+    center.x,
+    center.y,
+  ])
 
-  let children: SvgObject[] = []
+  const componentScale = Math.abs(transform.a)
+  let componentChildren: SvgObject[] = []
+  const textChildren: SvgObject[] = []
 
-  // Find the source component and get its name
+  // Find source component and get its properties
   const sourceComponent = circuitJson?.find(
     (item) =>
       item.type === "source_component" &&
@@ -77,7 +81,7 @@ export function createSchematicComponent({
       }),
     )
 
-    children = svg.children
+    componentChildren = svg.children
       .filter(
         (child: any) =>
           child.name === "path" && child.attributes.fill !== "green",
@@ -86,8 +90,6 @@ export function createSchematicComponent({
         const currentStrokeWidth = Number.parseFloat(
           path.attributes["stroke-width"] || "0.02",
         )
-        const newStrokeWidth = (currentStrokeWidth * 1.5).toString()
-
         return {
           ...path,
           attributes: {
@@ -96,12 +98,69 @@ export function createSchematicComponent({
               path.attributes.stroke === "black"
                 ? `${colorMap.schematic.component_outline}`
                 : path.attributes.stroke,
-            "stroke-width": newStrokeWidth,
+            "stroke-width": currentStrokeWidth.toString(),
           },
         }
       })
+
+    // Add resistance/capacitance text
+    if (resistance || capacitance) {
+      const [textX, textY] = applyToPoint(transform, [
+        center.x,
+        -(center.y - size.height / 2 - 0.2),
+      ])
+
+      const labelOffset = componentScale * 0.4
+      console.log(labelOffset)
+      textChildren.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: textX.toString(),
+          y: textY.toString(),
+          "text-anchor": "middle",
+          "dominant-baseline": "auto",
+          "font-size": "0.2",
+        },
+        children: [
+          {
+            type: "text",
+            value: (resistance || capacitance || "").toString(),
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+        value: "",
+      })
+
+      textChildren.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          class: "component-name",
+          x: textX.toString(),
+          y: (textY - labelOffset).toString(),
+          "text-anchor": "middle",
+          "dominant-baseline": "auto",
+          "font-size": "0.2",
+        },
+        children: [
+          {
+            type: "text",
+            value: componentName || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+        value: "",
+      })
+    }
   } else {
-    children.push({
+    // Add basic rectangle for component body
+    componentChildren.push({
       name: "rect",
       type: "element",
       value: "",
@@ -111,20 +170,31 @@ export function createSchematicComponent({
         y: (-size.height / 2).toString(),
         width: size.width.toString(),
         height: size.height.toString(),
+        "stroke-width": "0.02",
       },
       children: [],
     })
 
+    // Add manufacturer number and component name text
     if (manufacturerNumber) {
-      children.push({
+      // Calculate position for top center of component
+      const [textX, textY] = applyToPoint(transform, [
+        center.x, // Center X position
+        -(center.y - size.height / 2 - 0.5), // Above the component top edge
+      ])
+
+      const labelOffset = componentScale * 0.4
+
+      textChildren.push({
         name: "text",
         type: "element",
         attributes: {
           class: "component-name",
-          x: (1.2).toString(),
-          y: (-size.height / 2 - 0.5).toString(),
-          "text-anchor": "right",
+          x: textX.toString(),
+          y: textY.toString(),
+          "text-anchor": "right", // Center align text
           "dominant-baseline": "auto",
+          "font-size": "0.2",
         },
         children: [
           {
@@ -138,15 +208,17 @@ export function createSchematicComponent({
         value: "",
       })
 
-      children.push({
+      // Component name below manufacturer number
+      textChildren.push({
         name: "text",
         type: "element",
         attributes: {
           class: "component-name",
-          x: (1.2).toString(),
-          y: (-size.height / 2 - 0.7).toString(),
-          "text-anchor": "right",
+          x: textX.toString(),
+          y: (textY - labelOffset).toString(),
+          "text-anchor": "right", // Center align text
           "dominant-baseline": "auto",
+          "font-size": "0.2",
         },
         children: [
           {
@@ -161,7 +233,7 @@ export function createSchematicComponent({
       })
     }
 
-    // Find and process schematic_port objects
+    // Process ports
     const schematicPorts =
       circuitJson?.filter(
         (item) =>
@@ -174,55 +246,45 @@ export function createSchematicComponent({
 
     for (const port of schematicPorts as PortArrangement[]) {
       const { x: portX, y: portY, pinNumber } = port.center
-      const x = portX - center.x
-      const y = portY - center.y
-      let endX = x
-      let endY = y
-      let labelX = x
-      let labelY = y
-      let textAnchor = "middle"
-      let dominantBaseline = "middle"
+      const relX = portX - center.x
+      const relY = portY - center.y
+
+      let endX = relX
+      let endY = relY
 
       switch (port.center.side) {
         case "left":
-          endX = x - portLength
-          labelX = x + 0.2
-          textAnchor = "start"
+          endX = relX - portLength
           break
         case "right":
-          endX = x + portLength
-          labelX = x - 0.2
-          textAnchor = "end"
+          endX = relX + portLength
           break
         case "top":
-          endY = y - portLength
-          labelY = y - 0.2
-          dominantBaseline = "hanging"
+          endY = relY - portLength
           break
         case "bottom":
-          endY = y + portLength
-          labelY = y + 0.2
-          dominantBaseline = "auto"
+          endY = relY + portLength
           break
       }
 
       // Add port line
-      children.push({
+      componentChildren.push({
         name: "line",
         type: "element",
         attributes: {
           class: "component-pin",
-          x1: x.toString(),
-          y1: y.toString(),
+          x1: relX.toString(),
+          y1: relY.toString(),
           x2: endX.toString(),
           y2: endY.toString(),
+          "stroke-width": "0.02",
         },
         value: "",
         children: [],
       })
 
       // Add port circle
-      children.push({
+      componentChildren.push({
         name: "circle",
         type: "element",
         attributes: {
@@ -230,15 +292,47 @@ export function createSchematicComponent({
           cx: endX.toString(),
           cy: endY.toString(),
           r: circleRadius.toString(),
+          "stroke-width": "0.02",
         },
         value: "",
         children: [],
       })
 
-      // Add port label if it exists
+      // Transform port position for texts
+      const [portEndX, portEndY] = applyToPoint(transform, [
+        center.x + endX,
+        center.y + endY,
+      ])
+
+      // Add port label
       const labelKey = `pin${pinNumber}`
       if (portLabels && labelKey in portLabels) {
-        children.push({
+        const labelText = portLabels[labelKey]!
+        let labelX = portEndX
+        let labelY = portEndY
+        let textAnchor = "middle"
+        const labelOffset = 0.6 * componentScale
+
+        switch (port.center.side) {
+          case "left":
+            labelX += labelOffset
+            labelY += 0 // Center aligned vertically
+            textAnchor = "start"
+            break
+          case "right":
+            labelX -= labelOffset
+            labelY += 0 // Center aligned vertically
+            textAnchor = "end"
+            break
+          case "top":
+            labelY -= labelOffset
+            break
+          case "bottom":
+            labelY += labelOffset
+            break
+        }
+
+        textChildren.push({
           name: "text",
           type: "element",
           attributes: {
@@ -246,13 +340,13 @@ export function createSchematicComponent({
             x: labelX.toString(),
             y: labelY.toString(),
             "text-anchor": textAnchor,
-            "dominant-baseline": dominantBaseline,
-            "font-size": "0.2",
+            "dominant-baseline": "middle",
+            "font-size": (0.2 * componentScale).toString(),
           },
           children: [
             {
               type: "text",
-              value: portLabels[labelKey]!,
+              value: labelText,
               name: "",
               attributes: {},
               children: [],
@@ -263,38 +357,55 @@ export function createSchematicComponent({
       }
 
       // Add pin number
-      const pinNumberX = endX
-      let pinNumberY = endY
-      const pinNumberAnchor = "middle"
-      let pinNumberBaseline = "middle"
+      const pinNumberOffset = 0.2
+      let pinX = endX
+      let pinY = endY
+      let dominantBaseline = "auto"
 
       switch (port.center.side) {
-        case "left":
-        case "right":
-          pinNumberY -= 0.15
-          break
         case "top":
-          pinNumberY -= 0.15
-          pinNumberBaseline = "auto"
+          // For top ports, stay at the same X but offset Y upward
+          pinY = -(portY - portLength - pinNumberOffset) // Move above the circle
+          pinX = portX // Stay aligned with port
+          dominantBaseline = "auto"
           break
         case "bottom":
-          pinNumberY += 0.15
-          pinNumberBaseline = "hanging"
+          // For bottom ports, stay at the same X but offset Y downward
+          pinY = portY + portLength + pinNumberOffset
+          pinX = portX
+          dominantBaseline = "hanging"
+          break
+        case "left":
+          // For left ports, stay at the same Y but offset X
+          pinX = portX - pinNumberOffset
+          pinY = portY + pinNumberOffset
+          dominantBaseline = "auto"
+          break
+        case "right":
+          // For right ports, stay at the same Y but offset X
+          pinX = portX + pinNumberOffset
+          pinY = portY + pinNumberOffset
+          dominantBaseline = "auto"
           break
       }
 
-      children.push({
+      // Transform the pin position from local to global coordinates
+      const [transformedPinX, transformedPinY] = applyToPoint(transform, [
+        pinX,
+        pinY,
+      ])
+
+      textChildren.push({
         name: "text",
         type: "element",
         attributes: {
           class: "pin-number",
-          x: pinNumberX.toString(),
-          y: pinNumberY.toString(),
-          "text-anchor": pinNumberAnchor,
-          "dominant-baseline": pinNumberBaseline,
-          "font-size": "0.15",
+          x: transformedPinX.toString(),
+          y: transformedPinY.toString(),
+          "text-anchor": "middle",
+          "dominant-baseline": dominantBaseline,
+          "font-size": (0.15 * componentScale).toString(),
         },
-        value: "",
         children: [
           {
             type: "text",
@@ -304,63 +415,32 @@ export function createSchematicComponent({
             children: [],
           },
         ],
+        value: "",
       })
     }
   }
 
-  if (resistance || capacitance) {
-    children.push({
-      name: "text",
-      type: "element",
-      attributes: {
-        class: "component-name",
-        x: "0",
-        y: (-size.height / 2 - 0.2).toString(),
-        "text-anchor": "middle",
-        "dominant-baseline": "auto",
-      },
-      value: "",
-      children: [
-        {
-          type: "text",
-          value: (resistance || capacitance || "").toString(),
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
-    })
-
-    children.push({
-      name: "text",
-      type: "element",
-      attributes: {
-        class: "component-name",
-        x: "0",
-        y: (-size.height / 2 - 0.5).toString(),
-        "text-anchor": "middle",
-        "dominant-baseline": "auto",
-      },
-      value: "",
-      children: [
-        {
-          type: "text",
-          value: componentName || "",
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
-    })
+  // Create component group with scaling
+  const componentGroup: SvgObject = {
+    name: "g",
+    value: "",
+    type: "element",
+    attributes: {
+      transform: `translate(${transformedX}, ${transformedY}) rotate(${
+        (rotation * 180) / Math.PI
+      }) scale(${componentScale})`,
+    },
+    children: componentChildren,
   }
 
-  return [
-    {
-      name: "g",
-      value: "",
-      type: "element",
-      attributes: { transform: transformString },
-      children,
-    },
-  ]
+  // Create text group without scaling
+  const textGroup: SvgObject = {
+    name: "g",
+    value: "",
+    type: "element",
+    attributes: {},
+    children: textChildren,
+  }
+
+  return [componentGroup, textGroup]
 }

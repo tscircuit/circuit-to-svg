@@ -1,12 +1,12 @@
 import type { PCBTrace } from "circuit-json"
 import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint } from "transformation-matrix"
+import { applyToPoint, type Matrix } from "transformation-matrix"
 import { LAYER_NAME_TO_COLOR } from "../layer-name-to-color"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
-  transform: any,
+  transform: Matrix,
 ): SvgObject[] {
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
