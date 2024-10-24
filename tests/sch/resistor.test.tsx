@@ -1,141 +1,23 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("schematic resistor", () => {
+  const { project } = getTestFixture()
+
+  project.add(
+    <board width="10mm" height="10mm">
+      <resistor
+        name="R1"
+        resistance="10"
+        footprint="0402"
+        symbolName="boxresistor_horz"
+      />
+    </board>,
+  )
+
   expect(
-    convertCircuitJsonToSchematicSvg([
-      {
-        type: "source_port",
-        source_port_id: "source_port_0",
-        name: "pin1",
-        pin_number: 1,
-        port_hints: ["-", "left", "pin1", "1"],
-        source_component_id: "source_component_0",
-      },
-      {
-        type: "source_port",
-        source_port_id: "source_port_1",
-        name: "pin2",
-        pin_number: 2,
-        port_hints: ["+", "right", "pin2", "2"],
-        source_component_id: "source_component_0",
-      },
-      {
-        type: "source_component",
-        source_component_id: "source_component_0",
-        ftype: "simple_resistor",
-        name: "R1",
-        manufacturer_part_number: undefined,
-        supplier_part_numbers: undefined,
-        resistance: 10000,
-      },
-      {
-        type: "schematic_component",
-        schematic_component_id: "schematic_component_0",
-        center: {
-          x: 0,
-          y: 0,
-        },
-        rotation: 0,
-        size: {
-          width: 1,
-          height: 0.55,
-        },
-        source_component_id: "source_component_0",
-        symbol_name: "boxresistor_horz",
-      },
-      {
-        type: "schematic_port",
-        schematic_port_id: "schematic_port_0",
-        schematic_component_id: "schematic_component_0",
-        center: {
-          x: -0.5,
-          y: 0,
-        },
-        source_port_id: "source_port_0",
-        facing_direction: "left",
-      },
-      {
-        type: "schematic_port",
-        schematic_port_id: "schematic_port_1",
-        schematic_component_id: "schematic_component_0",
-        center: {
-          x: 0.5,
-          y: 0,
-        },
-        source_port_id: "source_port_1",
-        facing_direction: "right",
-      },
-      {
-        type: "pcb_component",
-        pcb_component_id: "pcb_component_0",
-        center: {
-          x: 0,
-          y: 0,
-        },
-        width: 1.6,
-        height: 0.6000000000000001,
-        layer: "top",
-        rotation: 0,
-        source_component_id: "source_component_0",
-      },
-      {
-        type: "pcb_board",
-        num_layers: 2,
-        thickness: 1.2,
-        pcb_board_id: "pcb_board_0",
-        center: {
-          x: 0,
-          y: 0,
-        },
-        width: 5,
-        height: 5,
-        outline: undefined,
-      },
-      {
-        type: "pcb_smtpad",
-        pcb_smtpad_id: "pcb_smtpad_0",
-        pcb_component_id: "pcb_component_0",
-        pcb_port_id: "pcb_port_0",
-        layer: "top",
-        shape: "rect",
-        width: 0.6000000000000001,
-        height: 0.6000000000000001,
-        port_hints: ["1", "left"],
-        x: -0.5,
-        y: 0,
-      },
-      {
-        type: "pcb_smtpad",
-        pcb_smtpad_id: "pcb_smtpad_1",
-        pcb_component_id: "pcb_component_0",
-        pcb_port_id: "pcb_port_1",
-        layer: "top",
-        shape: "rect",
-        width: 0.6000000000000001,
-        height: 0.6000000000000001,
-        port_hints: ["2", "right"],
-        x: 0.5,
-        y: 0,
-      },
-      {
-        type: "pcb_port",
-        pcb_port_id: "pcb_port_0",
-        pcb_component_id: "pcb_component_0",
-        layers: ["top"],
-        x: -0.5,
-        y: 0,
-        source_port_id: "source_port_0",
-      },
-      {
-        type: "pcb_port",
-        pcb_port_id: "pcb_port_1",
-        pcb_component_id: "pcb_component_0",
-        layers: ["top"],
-        x: 0.5,
-        y: 0,
-        source_port_id: "source_port_1",
-      },
-    ]),
+    // @ts-ignore
+    convertCircuitJsonToSchematicSvg(project.getCircuitJson()),
   ).toMatchSvgSnapshot(import.meta.path)
 })

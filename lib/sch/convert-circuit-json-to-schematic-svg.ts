@@ -1,14 +1,20 @@
 import type { AnyCircuitElement } from "circuit-json"
+import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
+import { stringify } from "svgson"
+import {
+  applyToPoint,
+  compose,
+  scale,
+  translate,
+  type Matrix,
+} from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
-import { stringify } from "svgson"
+import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
 import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
-import type { SvgObject } from "lib/svg-object"
-import { identity } from "transformation-matrix"
 
 interface Options {
   width?: number
@@ -21,46 +27,51 @@ export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
-  /**
-   * @deprecated use su(circuitJson).get(port_id).center, portPositions should
-   * be removed
-   */
-  const portPositions = new Map()
-
-  // Collect port positions
-  for (const item of circuitJson) {
-    if (item.type === "schematic_port") {
-      portPositions.set(item.schematic_port_id, item.center)
-    }
-  }
-
   // Get bounds with padding
   const bounds = getSchematicBoundsFromCircuitJson(circuitJson)
   const { minX, minY, maxX, maxY } = bounds
 
-  // Calculate final viewBox dimensions with additional padding
-  const viewBoxPadding = 0.5
-  const width = maxX - minX + 2 * viewBoxPadding
-  const height = maxY - minY
-  const viewBox = `${minX - viewBoxPadding} ${minY - viewBoxPadding} ${width} ${height + 2 * viewBoxPadding}`
+  const padding = 1 // Reduced padding for tighter boundary
+  const circuitWidth = maxX - minX + 2 * padding
+  const circuitHeight = maxY - minY + 2 * padding
 
-  /**
-   * @deprecated use `transform` instead, flipY should be removed
-   */
-  const flipY = (y: number) => height - (y - minY) + minY
+  const svgWidth = options?.width ?? 1200
+  const svgHeight = options?.height ?? 600
 
-  /**
-   * The transform represents the transformation from the "schematic coordinate
-   * space" to the "pixel coordinate space" or "screen space". In other words,
-   * the transform takes a chip with a center at (5, 5) and moves it to
-   * something like (400, 400) on the screen.
-   *
-   * When we switch to transform _you should not set the SVG viewport_!!! Since
-   * we're going directly to screen space, there is no need for a viewport!!!
-   */
-  const transform = identity() // TODO compute transform
+  // Calculate scale factor to fit circuit within SVG, maintaining aspect ratio
+  const scaleX = svgWidth / circuitWidth
+  const scaleY = svgHeight / circuitHeight
+  const scaleFactor = Math.min(scaleX, scaleY)
+
+  // Calculate centering offsets
+  const offsetX = (svgWidth - circuitWidth * scaleFactor) / 2
+  const offsetY = (svgHeight - circuitHeight * scaleFactor) / 2
+
+  // Create transform matrix
+  const transform = compose(
+    translate(
+      offsetX - minX * scaleFactor + padding * scaleFactor,
+      svgHeight - offsetY + minY * scaleFactor - padding * scaleFactor,
+    ),
+    scale(scaleFactor, -scaleFactor), // Flip in y-direction
+  )
 
   const svgChildren: SvgObject[] = []
+
+  // Add background rectangle
+  svgChildren.push({
+    name: "rect",
+    type: "element",
+    attributes: {
+      class: "boundary",
+      x: "0",
+      y: "0",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
+    },
+    children: [],
+    value: "",
+  })
 
   // Add grid if enabled
   if (options?.grid) {
@@ -82,25 +93,26 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
 
+  // Process all elements using transform
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
-      schDebugObjectSvgs.push(...createSvgObjectsFromSchDebugObject(elm))
+      schDebugObjectSvgs.push(
+        ...createSvgObjectsFromSchDebugObject(elm, transform),
+      )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
         ...createSchematicComponent({
-          component: {
-            ...elm,
-            center: { x: elm.center.x, y: flipY(elm.center.y) },
-          },
-          transform, // Add the missing transform property
+          component: elm,
+          transform,
           circuitJson,
         }),
       )
     } else if (elm.type === "schematic_trace") {
-      schTraceSvgs.push(...createSchematicTrace(elm, flipY, portPositions))
+      schTraceSvgs.push(...createSchematicTrace(elm, transform))
     }
   }
 
+  // Add elements in correct order
   svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs)
 
   const svgObject: SvgObject = {
@@ -108,12 +120,12 @@ export function convertCircuitJsonToSchematicSvg(
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
-      viewBox,
-      width: (options?.width ?? 1200).toString(),
-      height: (options?.height ?? 600).toString(),
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
       style: `background-color: ${colorMap.schematic.background}`,
     },
     children: [
+      // Add styles
       {
         name: "style",
         type: "element",
@@ -121,14 +133,16 @@ export function convertCircuitJsonToSchematicSvg(
           {
             type: "text",
             value: `
-              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
-              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.03; }
-              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; stroke-width: 0.02; }
-              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 0.02; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: 0.2px; fill: ${colorMap.schematic.wire}; }
-              .pin-number { font-size: 0.15px; fill: ${colorMap.schematic.pin_number}; }
+              .boundary { fill: ${colorMap.schematic.background}; }
+              .schematic-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
+              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
+              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
+              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
+              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: ${0.02 * scaleFactor}; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: ${0.2 * scaleFactor}px; fill: ${colorMap.schematic.wire}; }
+              .pin-number { font-size: ${0.15 * scaleFactor}px; fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
-              .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
+              .component-name { font-size: ${0.25 * scaleFactor}px; fill: ${colorMap.schematic.reference}; }
             `,
             name: "",
             attributes: {},
@@ -143,14 +157,7 @@ export function convertCircuitJsonToSchematicSvg(
     value: "",
   }
 
-  return stringify({
-    ...svgObject,
-    attributes: {
-      ...svgObject.attributes,
-      width: svgObject.attributes.width?.toString()!,
-      height: svgObject.attributes.height?.toString()!,
-    },
-  })
+  return stringify(svgObject)
 }
 
 /**

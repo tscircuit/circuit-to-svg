@@ -1,6 +1,6 @@
 import { colorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
-import type { Matrix } from "transformation-matrix"
+import { applyToPoint, type Matrix } from "transformation-matrix"
 
 interface LabeledPoint {
   x: number
@@ -13,32 +13,45 @@ export function drawSchematicLabeledPoints(params: {
   transform: Matrix
 }): SvgObject {
   const { points, transform } = params
-
   const labeledPointsGroup: any[] = []
 
   for (const point of points) {
+    // Transform offset points for X marker
+    const [x1, y1] = applyToPoint(transform, [point.x - 0.1, -(point.y - 0.1)])
+    const [x2, y2] = applyToPoint(transform, [point.x + 0.1, -(point.y + 0.1)])
+    const [x3, y3] = applyToPoint(transform, [point.x - 0.1, -(point.y + 0.1)])
+    const [x4, y4] = applyToPoint(transform, [point.x + 0.1, -(point.y - 0.1)])
+
     // Add X marker
     labeledPointsGroup.push({
       name: "path",
       type: "element",
       attributes: {
-        d: `M${point.x - 0.1},${point.y - 0.1} L${point.x + 0.1},${point.y + 0.1} M${point.x - 0.1},${point.y + 0.1} L${point.x + 0.1},${point.y - 0.1}`,
+        d: `M${x1},${y1} L${x2},${y2} M${x3},${y3} L${x4},${y4}`,
         stroke: colorMap.schematic.grid,
-        "stroke-width": "0.02",
+        "stroke-width": (0.02 * Math.abs(transform.a)).toString(),
         "stroke-opacity": "0.7",
       },
     })
+
+    // Transform label position
+    const [labelX, labelY] = applyToPoint(transform, [
+      point.x + 0.15,
+      -(point.y - 0.15),
+    ])
 
     // Add label
     labeledPointsGroup.push({
       name: "text",
       type: "element",
       attributes: {
-        x: (point.x + 0.15).toString(),
-        y: (point.y - 0.15).toString(),
+        x: labelX.toString(),
+        y: labelY.toString(),
         fill: colorMap.schematic.grid,
-        "font-size": "0.15",
+        "font-size": (0.15 * Math.abs(transform.a)).toString(),
         "fill-opacity": "0.7",
+        "text-anchor": "start",
+        "dominant-baseline": "middle",
       },
       children: [
         {
