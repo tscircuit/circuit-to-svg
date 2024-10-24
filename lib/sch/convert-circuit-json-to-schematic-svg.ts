@@ -1,6 +1,7 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { colorMap } from "lib/utils/colors"
 import { drawSchematicGrid } from "./draw-schematic-grid"
+import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { stringify } from "svgson"
 import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
@@ -61,50 +62,7 @@ export function convertCircuitJsonToSchematicSvg(
 
   // Add labeled points if provided
   if (options?.labeledPoints) {
-    const labeledPointsGroup: any[] = []
-
-    for (const point of options.labeledPoints) {
-      // Add X marker
-      labeledPointsGroup.push({
-        name: "path",
-        type: "element",
-        attributes: {
-          d: `M${point.x - 0.1},${point.y - 0.1} L${point.x + 0.1},${point.y + 0.1} M${point.x - 0.1},${point.y + 0.1} L${point.x + 0.1},${point.y - 0.1}`,
-          stroke: colorMap.schematic.grid,
-          "stroke-width": "0.02",
-          "stroke-opacity": "0.7",
-        },
-      })
-
-      // Add label
-      labeledPointsGroup.push({
-        name: "text",
-        type: "element",
-        attributes: {
-          x: (point.x + 0.15).toString(),
-          y: (point.y - 0.15).toString(),
-          fill: colorMap.schematic.grid,
-          "font-size": "0.15",
-          "fill-opacity": "0.7",
-        },
-        children: [
-          {
-            type: "text",
-            value: point.label || `(${point.x},${point.y})`,
-            name: "",
-            attributes: {},
-            children: [],
-          },
-        ],
-      })
-    }
-
-    svgChildren.push({
-      name: "g",
-      type: "element",
-      attributes: { class: "labeled-points" },
-      children: labeledPointsGroup,
-    })
+    svgChildren.push(drawSchematicLabeledPoints(options.labeledPoints))
   }
 
   // Process debug objects first so they appear behind components
