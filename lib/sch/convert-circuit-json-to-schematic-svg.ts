@@ -1,8 +1,14 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { colorMap } from "lib/utils/colors"
+import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
+import { drawSchematicGrid } from "./draw-schematic-grid"
+import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { stringify } from "svgson"
 import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
+import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import type { SvgObject } from "lib/svg-object"
+import { identity } from "transformation-matrix"
 
 interface Options {
   width?: number
@@ -12,221 +18,99 @@ interface Options {
 }
 
 export function convertCircuitJsonToSchematicSvg(
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-
-  const portSize = 0.2
+  /**
+   * @deprecated use su(circuitJson).get(port_id).center, portPositions should
+   * be removed
+   */
   const portPositions = new Map()
 
-  // First pass: find the bounds and collect port positions
-  for (const item of soup) {
-    if (item.type === "schematic_component") {
-      updateBounds(item.center, item.size, item.rotation || 0)
-    } else if (item.type === "schematic_port") {
-      updateBounds(item.center, { width: portSize, height: portSize }, 0)
+  // Collect port positions
+  for (const item of circuitJson) {
+    if (item.type === "schematic_port") {
       portPositions.set(item.schematic_port_id, item.center)
-    } else if (item.type === "schematic_debug_object") {
-      if (item.shape === "rect") {
-        updateBounds(item.center, item.size, 0)
-      } else if (item.shape === "line") {
-        updateBounds(item.start, { width: 0.1, height: 0.1 }, 0)
-        updateBounds(item.end, { width: 0.1, height: 0.1 }, 0)
-      }
     }
   }
 
-  // Add padding to bounds
-  const padding = 0.5
-  minX -= padding
-  minY -= padding
-  maxX += padding
-  maxY += padding
+  // Get bounds with padding
+  const bounds = getSchematicBoundsFromCircuitJson(circuitJson)
+  const { minX, minY, maxX, maxY } = bounds
 
+  // Calculate final viewBox dimensions with additional padding
+  const viewBoxPadding = 0.5
+  const width = maxX - minX + 2 * viewBoxPadding
   const height = maxY - minY
+  const viewBox = `${minX - viewBoxPadding} ${minY - viewBoxPadding} ${width} ${height + 2 * viewBoxPadding}`
+
+  /**
+   * @deprecated use `transform` instead, flipY should be removed
+   */
   const flipY = (y: number) => height - (y - minY) + minY
 
-  const svgChildren: any[] = []
+  /**
+   * The transform represents the transformation from the "schematic coordinate
+   * space" to the "pixel coordinate space" or "screen space". In other words,
+   * the transform takes a chip with a center at (5, 5) and moves it to
+   * something like (400, 400) on the screen.
+   *
+   * When we switch to transform _you should not set the SVG viewport_!!! Since
+   * we're going directly to screen space, there is no need for a viewport!!!
+   */
+  const transform = identity() // TODO compute transform
+
+  const svgChildren: SvgObject[] = []
 
   // Add grid if enabled
   if (options?.grid) {
     const gridConfig = typeof options.grid === "object" ? options.grid : {}
-    const cellSize = gridConfig.cellSize ?? 1
-    const labelCells = gridConfig.labelCells ?? false
-    const gridLines: any[] = []
-
-    // Vertical lines
-    for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
-      gridLines.push({
-        name: "line",
-        type: "element",
-        attributes: {
-          x1: x.toString(),
-          y1: minY.toString(),
-          x2: x.toString(),
-          y2: maxY.toString(),
-          stroke: colorMap.schematic.grid,
-          "stroke-width": "0.01",
-          "stroke-opacity": "0.5",
-        },
-      })
-    }
-
-    // Horizontal lines
-    for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
-      gridLines.push({
-        name: "line",
-        type: "element",
-        attributes: {
-          x1: minX.toString(),
-          y1: y.toString(),
-          x2: maxX.toString(),
-          y2: y.toString(),
-          stroke: colorMap.schematic.grid,
-          "stroke-width": "0.01",
-          "stroke-opacity": "0.5",
-        },
-      })
-    }
-
-    // Add cell labels if enabled
-    if (labelCells) {
-      for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
-        for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
-          gridLines.push({
-            name: "text",
-            type: "element",
-            attributes: {
-              x: x.toString(),
-              y: y.toString(),
-              fill: colorMap.schematic.grid,
-              "font-size": (cellSize / 6).toString(),
-              "fill-opacity": "0.5",
-            },
-            children: [
-              {
-                type: "text",
-                value: `${x},${y}`,
-                name: "",
-                attributes: {},
-                children: [],
-              },
-            ],
-          })
-        }
-      }
-    }
-
-    svgChildren.push({
-      name: "g",
-      type: "element",
-      attributes: { class: "grid" },
-      children: gridLines,
-    })
+    svgChildren.push(drawSchematicGrid({ bounds, transform, ...gridConfig }))
   }
 
   // Add labeled points if provided
   if (options?.labeledPoints) {
-    const labeledPointsGroup: any[] = []
-
-    for (const point of options.labeledPoints) {
-      // Add X marker
-      labeledPointsGroup.push({
-        name: "path",
-        type: "element",
-        attributes: {
-          d: `M${point.x - 0.1},${point.y - 0.1} L${point.x + 0.1},${point.y + 0.1} M${point.x - 0.1},${point.y + 0.1} L${point.x + 0.1},${point.y - 0.1}`,
-          stroke: colorMap.schematic.grid,
-          "stroke-width": "0.02",
-          "stroke-opacity": "0.7",
-        },
-      })
-
-      // Add label
-      labeledPointsGroup.push({
-        name: "text",
-        type: "element",
-        attributes: {
-          x: (point.x + 0.15).toString(),
-          y: (point.y - 0.15).toString(),
-          fill: colorMap.schematic.grid,
-          "font-size": "0.15",
-          "fill-opacity": "0.7",
-        },
-        children: [
-          {
-            type: "text",
-            value: point.label || `(${point.x},${point.y})`,
-            name: "",
-            attributes: {},
-            children: [],
-          },
-        ],
-      })
-    }
-
-    svgChildren.push({
-      name: "g",
-      type: "element",
-      attributes: { class: "labeled-points" },
-      children: labeledPointsGroup,
-    })
-  }
-
-  // Process debug objects first so they appear behind components
-  for (const debugObj of soup.filter(
-    (item) => item.type === "schematic_debug_object",
-  )) {
-    const svg = createSvgObjectsFromSchDebugObject(debugObj)
-    svgChildren.push(...svg)
-  }
-
-  // Process components
-  const componentMap = new Map()
-  for (const component of soup.filter(
-    (item) => item.type === "schematic_component",
-  )) {
-    const flippedCenter = {
-      x: component.center.x,
-      y: flipY(component.center.y),
-    }
-    const svg = createSchematicComponent(
-      flippedCenter,
-      component.size,
-      component.rotation || 0,
-      (component as any).symbol_name,
-      (component as any).port_labels,
-      (component as any).source_component_id,
-      (component as any).schematic_component_id,
-      soup,
+    svgChildren.push(
+      drawSchematicLabeledPoints({
+        points: options.labeledPoints,
+        transform,
+      }),
     )
-    svgChildren.push(svg)
-    componentMap.set(component.schematic_component_id, component)
   }
 
-  // Process schematic traces
-  for (const trace of soup.filter((item) => item.type === "schematic_trace")) {
-    const svg = createSchematicTrace(trace, flipY, portPositions)
-    if (svg) svgChildren.push(svg)
+  const schDebugObjectSvgs: SvgObject[] = []
+  const schComponentSvgs: SvgObject[] = []
+  const schTraceSvgs: SvgObject[] = []
+
+  for (const elm of circuitJson) {
+    if (elm.type === "schematic_debug_object") {
+      schDebugObjectSvgs.push(...createSvgObjectsFromSchDebugObject(elm))
+    } else if (elm.type === "schematic_component") {
+      schComponentSvgs.push(
+        ...createSchematicComponent({
+          component: {
+            ...elm,
+            center: { x: elm.center.x, y: flipY(elm.center.y) },
+          },
+          transform, // Add the missing transform property
+          circuitJson,
+        }),
+      )
+    } else if (elm.type === "schematic_trace") {
+      schTraceSvgs.push(...createSchematicTrace(elm, flipY, portPositions))
+    }
   }
 
-  // Calculate final viewBox dimensions with additional padding
-  const viewBoxPadding = 1
-  const width = maxX - minX + 2 * padding
-  const viewBox = `${minX - padding} ${minY - padding} ${width} ${height + 2 * padding}`
+  svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs)
 
-  const svgObject = {
+  const svgObject: SvgObject = {
     name: "svg",
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
       viewBox,
-      width: options?.width ?? "1200",
-      height: options?.height ?? "600",
+      width: (options?.width ?? 1200).toString(),
+      height: (options?.height ?? 600).toString(),
       style: `background-color: ${colorMap.schematic.background}`,
     },
     children: [
@@ -246,102 +130,27 @@ export function convertCircuitJsonToSchematicSvg(
               .port-label { fill: ${colorMap.schematic.reference}; }
               .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
             `,
+            name: "",
+            attributes: {},
+            children: [],
           },
         ],
+        value: "",
+        attributes: {},
       },
       ...svgChildren,
     ],
+    value: "",
   }
 
   return stringify({
-    value: "",
     ...svgObject,
     attributes: {
       ...svgObject.attributes,
-      width: svgObject.attributes.width.toString(),
-      height: svgObject.attributes.height.toString(),
+      width: svgObject.attributes.width?.toString()!,
+      height: svgObject.attributes.height?.toString()!,
     },
   })
-
-  function createSchematicTrace(
-    trace: any,
-    flipY: (y: number) => number,
-    portPositions: Map<string, { x: number; y: number }>,
-  ): any {
-    const edges = trace.edges
-    if (edges.length === 0) return null
-
-    let path = ""
-
-    // Process all edges
-    edges.forEach((edge: any, index: number) => {
-      const fromPoint =
-        edge.from.ti !== undefined ? portPositions.get(edge.from.ti) : edge.from
-      const toPoint =
-        edge.to.ti !== undefined ? portPositions.get(edge.to.ti) : edge.to
-
-      if (!fromPoint || !toPoint) {
-        return
-      }
-
-      const fromCoord = `${fromPoint.x - 0.15} ${flipY(fromPoint.y)}`
-      const toCoord = `${toPoint.x + 0.15} ${flipY(toPoint.y)}`
-
-      if (index === 0) {
-        path += `M ${fromCoord} L ${toCoord}`
-      } else {
-        path += ` L ${toCoord}`
-      }
-    })
-
-    // Handle connection to final port if needed
-    if (trace.to_schematic_port_id) {
-      const finalPort = portPositions.get(trace.to_schematic_port_id)
-      if (finalPort) {
-        const lastFromPoint = path.split("M")[1]?.split("L")[0]
-        const lastEdge = edges[edges.length - 1]
-        const lastPoint =
-          lastEdge.to.ti !== undefined
-            ? portPositions.get(lastEdge.to.ti)
-            : lastEdge.to
-        if (lastPoint.x !== finalPort.x || lastPoint.y !== finalPort.y) {
-          const finalCoord = `${finalPort.x} ${flipY(finalPort.y)}`
-          path += ` M ${lastFromPoint} L ${finalCoord}`
-        }
-      }
-    }
-
-    return path
-      ? {
-          name: "path",
-          type: "element",
-          attributes: {
-            class: "trace",
-            d: path,
-          },
-        }
-      : null
-  }
-
-  function updateBounds(center: any, size: any, rotation: number) {
-    const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
-    ]
-
-    for (const corner of corners) {
-      const rotatedX =
-        corner.x * Math.cos(rotation) - corner.y * Math.sin(rotation) + center.x
-      const rotatedY =
-        corner.x * Math.sin(rotation) + corner.y * Math.cos(rotation) + center.y
-      minX = Math.min(minX, rotatedX)
-      minY = Math.min(minY, rotatedY)
-      maxX = Math.max(maxX, rotatedX)
-      maxY = Math.max(maxY, rotatedY)
-    }
-  }
 }
 
 /**
