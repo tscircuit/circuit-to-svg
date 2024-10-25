@@ -1,9 +1,5 @@
 import { su } from "@tscircuit/soup-util"
-import type {
-  AnyCircuitElement,
-  SchematicComponent,
-  SchematicPort,
-} from "circuit-json"
+import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
@@ -95,7 +91,7 @@ export function createSchematicComponent({
     if (resistance || capacitance) {
       const [textX, textY] = applyToPoint(transform, [
         center.x,
-        -(center.y - size.height / 2 - 0.2),
+        center.y - size.height / 2 - 0.2,
       ])
 
       const labelOffset = componentScale * 0.4
@@ -167,7 +163,7 @@ export function createSchematicComponent({
       // Calculate position for top center of component
       const [textX, textY] = applyToPoint(transform, [
         center.x, // Center X position
-        -(center.y - size.height / 2 - 0.5), // Above the component top edge
+        center.y - size.height / 2 - 0.5, // Above the component top edge
       ])
 
       const labelOffset = componentScale * 0.4
@@ -244,16 +240,16 @@ export function createSchematicComponent({
 
       switch (portSide) {
         case "left":
-          endX = relX - portLength
-          break
-        case "right":
           endX = relX + portLength
           break
+        case "right":
+          endX = relX - portLength
+          break
         case "top":
-          endY = relY - portLength
+          endY = relY + portLength
           break
         case "bottom":
-          endY = relY + portLength
+          endY = relY - portLength
           break
       }
 
@@ -279,8 +275,8 @@ export function createSchematicComponent({
         type: "element",
         attributes: {
           class: "component-pin",
-          cx: endX.toString(),
-          cy: endY.toString(),
+          cx: relX.toString(),
+          cy: relY.toString(),
           r: circleRadius.toString(),
           "stroke-width": "0.02",
         },
@@ -301,24 +297,29 @@ export function createSchematicComponent({
         let labelX = portEndX
         let labelY = portEndY
         let textAnchor = "middle"
-        const labelOffset = 0.6 * componentScale
+        let rotation = 0
+        const labelOffset = 0.1 * componentScale
 
         switch (portSide) {
           case "left":
             labelX += labelOffset
-            labelY += 0 // Center aligned vertically
             textAnchor = "start"
             break
           case "right":
             labelX -= labelOffset
-            labelY += 0 // Center aligned vertically
             textAnchor = "end"
             break
           case "top":
-            labelY -= labelOffset
+            // For top ports, rotate text 90 degrees clockwise
+            labelY += labelOffset * 6 // Move label down inside the chip
+            textAnchor = "start"
+            rotation = -90 // Rotate clockwise
             break
           case "bottom":
-            labelY += labelOffset
+            // For bottom ports, rotate text 90 degrees counterclockwise
+            labelY -= labelOffset * 6 // Move label up inside the chip
+            textAnchor = "end"
+            rotation = -90 // Rotate counterclockwise
             break
         }
 
@@ -332,6 +333,9 @@ export function createSchematicComponent({
             "text-anchor": textAnchor,
             "dominant-baseline": "middle",
             "font-size": (0.2 * componentScale).toString(),
+            transform: rotation
+              ? `rotate(${rotation}, ${labelX}, ${labelY})`
+              : "",
           },
           children: [
             {
@@ -355,26 +359,26 @@ export function createSchematicComponent({
       switch (portSide) {
         case "top":
           // For top ports, stay at the same X but offset Y upward
-          pinY = -(portY - portLength + pinNumberOffset) // Move above the circle
+          pinY = portY - pinNumberOffset // Move above the circle
           pinX = portX // Stay aligned with port
           dominantBaseline = "auto"
           break
         case "bottom":
           // For bottom ports, stay at the same X but offset Y downward
-          pinY = portY + portLength - pinNumberOffset
+          pinY = portY + pinNumberOffset
           pinX = portX
           dominantBaseline = "hanging"
           break
         case "left":
           // For left ports, stay at the same Y but offset X
           pinX = portX - pinNumberOffset
-          pinY = portY + pinNumberOffset
+          pinY = portY + pinNumberOffset / 4
           dominantBaseline = "auto"
           break
         case "right":
           // For right ports, stay at the same Y but offset X
           pinX = portX + pinNumberOffset
-          pinY = portY + pinNumberOffset
+          pinY = portY + pinNumberOffset / 4
           dominantBaseline = "auto"
           break
       }

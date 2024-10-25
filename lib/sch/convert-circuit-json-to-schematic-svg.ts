@@ -53,7 +53,7 @@ export function convertCircuitJsonToSchematicSvg(
       offsetX - minX * scaleFactor + padding * scaleFactor,
       svgHeight - offsetY + minY * scaleFactor - padding * scaleFactor,
     ),
-    scale(scaleFactor, -scaleFactor), // Flip in y-direction
+    scale(scaleFactor, scaleFactor),
   )
 
   const svgChildren: SvgObject[] = []

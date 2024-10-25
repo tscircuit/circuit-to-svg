@@ -33,6 +33,12 @@ it("example 4: kicad theme demo", async () => {
         schPinStyle={{
           pin29: { bottomMargin: 0.5 },
         }}
+        pinLabels={{
+          pin29: "RESET",
+          pin13: "GND",
+          pin2: "VCC",
+          pin18: "OSC1",
+        }}
         schPortArrangement={{
           leftSide: {
             pins: [29, 7, 8, 20, 19, 22],
@@ -45,6 +51,10 @@ it("example 4: kicad theme demo", async () => {
           rightSide: {
             direction: "bottom-to-top",
             pins: [12, 13, 14, 15, 16, 17, 23],
+          },
+          bottomSide: {
+            direction: "left-to-right",
+            pins: [1, 2],
           },
         }}
       />
