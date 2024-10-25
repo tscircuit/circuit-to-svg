@@ -238,6 +238,11 @@ export function createSchematicComponent({
       // @ts-expect-error TODO remove when schematic_port has "side" defined
       const portSide = schPort.side ?? schPort.center.side
 
+      // Hide center ports
+      if (portSide === "center") {
+        continue
+      }
+
       switch (portSide) {
         case "left":
           endX = relX + portLength
