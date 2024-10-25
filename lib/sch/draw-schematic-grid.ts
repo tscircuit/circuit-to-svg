@@ -74,10 +74,10 @@ export function drawSchematicGrid(params: {
           name: "text",
           type: "element",
           attributes: {
-            x: point.x.toString(),
-            y: point.y.toString(),
+            x: (point.x - 2.5).toString(),
+            y: (point.y - 2.5).toString(),
             fill: colorMap.schematic.grid,
-            "font-size": ((cellSize / 6) * Math.abs(params.transform.a)).toString(),
+            "font-size": ((cellSize / 5) * Math.abs(params.transform.a)).toString(),
             "fill-opacity": "0.5",
             "text-anchor": "middle",
             "dominant-baseline": "middle",
