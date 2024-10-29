@@ -23,30 +23,30 @@ This library provides functionality to convert circuit descriptions, referred to
 ## Installation
 
 ```bash
-npm install @tscircuit/circuit-to-svg
+npm install circuit-to-svg
 ```
 
 ## Usage
 
 ```typescript
-import { soupToSvg, pcbSoupToSvg } from '@tscircuit/circuit-to-svg';
+import { convertCircuitJsonToSchematicSvg, convertCircuitJsonToPcbSvg } from 'circuit-to-svg';
 
 // For schematic circuits
-const schematicSoup = [...]; // Your schematic circuit description
-const schematicSvg = soupToSvg(schematicSoup);
+const schematicCircuitJson = [...]; // Your schematic circuit description
+const schematicSvg = convertCircuitJsonToSchematicSvg(schematicCircuitJson);
 
 // For PCB layouts
-const pcbSoup = [...]; // Your PCB layout description
-const pcbSvg = pcbSoupToSvg(pcbSoup);
+const pcbCircuitJson = [...]; // Your PCB layout description
+const pcbSvg = convertCircuitJsonToPcbSvg(pcbCircuitJson);
 ```
 
 ## API
 
-### `soupToSvg(soup: AnyCircuitElement[]): string`
+### `convertCircuitJsonToSchematicSvg(circuitJson: AnyCircuitElement[]): string`
 
 Converts a schematic circuit description to an SVG string.
 
-### `pcbSoupToSvg(soup: AnyCircuitElement[]): string`
+### `convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[]): string`
 
 Converts a PCB layout description to an SVG string.
 
