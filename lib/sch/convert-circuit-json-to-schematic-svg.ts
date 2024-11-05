@@ -159,7 +159,7 @@ export function convertCircuitJsonToSchematicSvg(
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
               .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
-              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 2px; fill: none; }
+              .trace { stroke: ${colorMap.schematic.wire}; }
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }

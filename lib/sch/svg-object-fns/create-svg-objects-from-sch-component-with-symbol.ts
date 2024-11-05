@@ -6,12 +6,18 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSvg, symbols } from "schematic-symbols"
+import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
 import { parseSync } from "svgson"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import {
+  applyToPoint,
+  compose,
+  translate,
+  type Matrix,
+} from "transformation-matrix"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 
 export const createSvgObjectsFromSchematicComponentWithSymbol = ({
-  component,
+  component: schComponent,
   transform,
   circuitJson,
 }: {
@@ -21,7 +27,46 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
-  // const symbol = (symbols as any)[symbolName]
+  const symbol: SchSymbol = (symbols as any)[schComponent.symbol_name!]
+  console.log(schComponent.symbol_name)
+
+  if (!symbol) return []
+
+  const { center, ports, primitives, size } = symbol
+
+  const paths = primitives.filter((p) => p.type === "path")
+  const texts = primitives.filter((p) => p.type === "text")
+  const circles = primitives.filter((p) => p.type === "circle")
+  const boxes = primitives.filter((p) => p.type === "box")
+
+  for (const path of paths) {
+    const { points, color, closed, fill } = path
+    svgObjects.push({
+      type: "element",
+      name: "path",
+      attributes: {
+        d:
+          points
+            .map((p, i) => {
+              const [x, y] = applyToPoint(
+                compose(
+                  transform,
+                  translate(schComponent.center.x, schComponent.center.y),
+                ),
+                [p.x, p.y],
+              )
+              return `${i === 0 ? "M" : "L"} ${x} ${y}`
+            })
+            .join(" ") + (closed ? " Z" : ""),
+        stroke: colorMap.schematic.component_outline,
+        fill: "none",
+        "stroke-width": `${getSchStrokeSize(transform)}px`,
+      },
+      value: "",
+      children: [],
+    })
+  }
+
   // const paths = symbol.primitives.filter((p: any) => p.type === "path")
   // const updatedSymbol = {
   //   ...symbol,

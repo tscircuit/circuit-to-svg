@@ -4,9 +4,9 @@
               .component { fill: none; stroke: rgb(132, 0, 0); }
               .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
               .component-pin { fill: none; stroke: rgb(132, 0, 0); }
-              .trace { stroke: rgb(0, 150, 0); stroke-width: 2px; fill: none; }
+              .trace { stroke: rgb(0, 150, 0); }
               .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
               .pin-number { fill: rgb(169, 0, 0); }
               .port-label { fill: rgb(0, 100, 100); }
               .component-name { fill: rgb(0, 100, 100); }
-            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/></svg>
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><path d="M 354.3108297946636 319.7575352241129 L 481.3112201959086 319.7575352241129" stroke="rgb(132, 0, 0)" fill="none" stroke-width="9.600030720098001px"/><path d="M 735.3120009983995 319.7575352241129 L 862.312439399798 319.7575352241129" stroke="rgb(132, 0, 0)" fill="none" stroke-width="9.600030720098001px"/><path d="M 608.3115625970004 383.2577544248122 L 735.3119529982454 383.2577544248122 L 735.3119529982454 256.2573160234137 L 481.31112419560094 256.2573160234137 L 481.31112419560094 383.2577544248122 L 608.3115625969995 383.2577544248122" stroke="rgb(132, 0, 0)" fill="none" stroke-width="9.600030720098001px"/></svg>

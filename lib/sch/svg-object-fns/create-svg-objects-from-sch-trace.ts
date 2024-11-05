@@ -1,5 +1,7 @@
 import type { SchematicTrace } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import { colorMap } from "lib/utils/colors"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
 export function createSchematicTrace(
@@ -50,7 +52,9 @@ export function createSchematicTrace(
           attributes: {
             class: "trace",
             d: path,
-            "stroke-width": (0.02 * Math.abs(transform.a)).toString(), // Scale stroke width with transform
+            stroke: colorMap.schematic.wire,
+            fill: "none",
+            "stroke-width": `${getSchStrokeSize(transform)}px`,
           },
           value: "",
           children: [],
