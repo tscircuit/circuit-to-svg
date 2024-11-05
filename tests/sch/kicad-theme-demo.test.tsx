@@ -65,6 +65,11 @@ it("example 4: kicad theme demo", async () => {
 
   expect(
     // @ts-ignore
-    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson(), {
+      grid: {
+        cellSize: 1,
+        labelCells: true,
+      },
+    }),
   ).toMatchSvgSnapshot(import.meta.path)
 })

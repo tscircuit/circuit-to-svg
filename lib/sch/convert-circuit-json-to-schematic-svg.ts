@@ -7,12 +7,14 @@ import {
   compose,
   scale,
   translate,
+  fromTriangles,
   type Matrix,
+  fromTwoMovingPoints,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
-import { createSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 
@@ -28,34 +30,46 @@ export function convertCircuitJsonToSchematicSvg(
   options?: Options,
 ): string {
   // Get bounds with padding
-  const bounds = getSchematicBoundsFromCircuitJson(circuitJson)
-  const { minX, minY, maxX, maxY } = bounds
-
-  const padding = 1 // Reduced padding for tighter boundary
-  const circuitWidth = maxX - minX + 2 * padding
-  const circuitHeight = maxY - minY + 2 * padding
+  const realBounds = getSchematicBoundsFromCircuitJson(circuitJson)
+  const realWidth = realBounds.maxX - realBounds.minX
+  const realHeight = realBounds.maxY - realBounds.minY
+  console.log({ realWidth, realHeight })
 
   const svgWidth = options?.width ?? 1200
   const svgHeight = options?.height ?? 600
 
-  // Calculate scale factor to fit circuit within SVG, maintaining aspect ratio
-  const scaleX = svgWidth / circuitWidth
-  const scaleY = svgHeight / circuitHeight
-  const scaleFactor = Math.min(scaleX, scaleY)
+  // Compute the padding such that we maintain the same aspect ratio
+  const circuitAspectRatio = realWidth / realHeight
 
-  // Calculate centering offsets
-  const offsetX = (svgWidth - circuitWidth * scaleFactor) / 2
-  const offsetY = (svgHeight - circuitHeight * scaleFactor) / 2
+  const newWidthToMaintainAspectRatio = circuitAspectRatio * svgHeight
+  let screenPaddingPx: { x: number; y: number }
+  if (newWidthToMaintainAspectRatio > svgWidth) {
+    screenPaddingPx = {
+      x: 0,
+      y: (newWidthToMaintainAspectRatio - svgWidth) / 2,
+    }
+  } else {
+    screenPaddingPx = {
+      x: (svgWidth - newWidthToMaintainAspectRatio) / 2,
+      y: 0,
+    }
+  }
 
-  // Create transform matrix
-  const transform = compose(
-    translate(
-      offsetX - minX * scaleFactor + padding * scaleFactor,
-      svgHeight - offsetY + minY * scaleFactor - padding * scaleFactor,
-    ),
-    scale(scaleFactor, scaleFactor),
+  // Calculate projection using REAL points and SCREEN points
+  // We're saying to map the real bounds to the screen bounds by giving 3 points
+  // for each coordinate space
+  const transform = fromTriangles(
+    [
+      { x: realBounds.minX, y: realBounds.maxY },
+      { x: realBounds.maxX, y: realBounds.maxY },
+      { x: realBounds.maxX, y: realBounds.minY },
+    ],
+    [
+      { x: screenPaddingPx.x, y: screenPaddingPx.y },
+      { x: svgWidth - screenPaddingPx.x, y: screenPaddingPx.y },
+      { x: svgWidth - screenPaddingPx.x, y: svgHeight - screenPaddingPx.y },
+    ],
   )
-
   const svgChildren: SvgObject[] = []
 
   // Add background rectangle
@@ -76,7 +90,9 @@ export function convertCircuitJsonToSchematicSvg(
   // Add grid if enabled
   if (options?.grid) {
     const gridConfig = typeof options.grid === "object" ? options.grid : {}
-    svgChildren.push(drawSchematicGrid({ bounds, transform, ...gridConfig }))
+    svgChildren.push(
+      drawSchematicGrid({ bounds: realBounds, transform, ...gridConfig }),
+    )
   }
 
   // Add labeled points if provided
@@ -101,7 +117,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
-        ...createSchematicComponent({
+        ...createSvgObjectsFromSchematicComponent({
           component: elm,
           transform,
           circuitJson,
@@ -138,11 +154,11 @@ export function convertCircuitJsonToSchematicSvg(
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
               .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
-              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: ${0.02 * scaleFactor}; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: ${0.2 * scaleFactor}px; fill: ${colorMap.schematic.wire}; }
-              .pin-number { font-size: ${0.15 * scaleFactor}px; fill: ${colorMap.schematic.pin_number}; }
+              .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 2px; fill: none; }
+              .text { font-family: Arial, sans-serif; font-size: 2px; fill: ${colorMap.schematic.wire}; }
+              .pin-number { font-size: 0.15px; fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
-              .component-name { font-size: ${0.25 * scaleFactor}px; fill: ${colorMap.schematic.reference}; }
+              .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
             `,
             name: "",
             attributes: {},
