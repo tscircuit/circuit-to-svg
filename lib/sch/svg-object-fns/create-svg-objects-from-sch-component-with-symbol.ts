@@ -208,26 +208,6 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       value: "",
       children: [],
     })
-    // svgObjects.push({
-    //   type: "element",
-    //   name: "text",
-    //   attributes: {
-    //     x: screenPortPos.x.toString(),
-    //     y: screenPortPos.y.toString(),
-    //     "font-family": "sans-serif",
-    //     "font-size": "10px",
-    //   },
-    //   value: "",
-    //   children: [
-    //     {
-    //       type: "text",
-    //       value: port.labels.join(","),
-    //       name: "",
-    //       attributes: {},
-    //       children: [],
-    //     },
-    //   ],
-    // })
   }
 
   return svgObjects
