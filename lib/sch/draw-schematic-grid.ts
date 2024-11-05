@@ -28,7 +28,7 @@ export function drawSchematicGrid(params: {
   for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
     const start = transformPoint(x, minY)
     const end = transformPoint(x, maxY)
-    
+
     gridLines.push({
       name: "line",
       type: "element",
@@ -48,7 +48,7 @@ export function drawSchematicGrid(params: {
   for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
     const start = transformPoint(minX, y)
     const end = transformPoint(maxX, y)
-    
+
     gridLines.push({
       name: "line",
       type: "element",
@@ -69,18 +69,22 @@ export function drawSchematicGrid(params: {
     for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
       for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
         const point = transformPoint(x, y)
-        
+
         gridLines.push({
           name: "text",
           type: "element",
           attributes: {
             x: (point.x - 2.5).toString(),
-            y: (point.y - 2.5).toString(),
+            y: (point.y - 5).toString(),
             fill: colorMap.schematic.grid,
-            "font-size": ((cellSize / 5) * Math.abs(params.transform.a)).toString(),
+            "font-size": (
+              (cellSize / 5) *
+              Math.abs(params.transform.a)
+            ).toString(),
             "fill-opacity": "0.5",
             "text-anchor": "middle",
             "dominant-baseline": "middle",
+            "font-family": "sans-serif",
           },
           children: [
             {
