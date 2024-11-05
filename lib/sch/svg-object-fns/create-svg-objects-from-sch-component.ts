@@ -1,5 +1,9 @@
 import { su } from "@tscircuit/soup-util"
-import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicComponent,
+  SchematicPort,
+} from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
@@ -15,15 +19,15 @@ export function createSchematicComponent({
   transform: Matrix
   circuitJson: AnyCircuitElement[]
 }): SvgObject[] {
-  const { center, size, rotation, symbol_name: symbolName } = component
+  const { rotation, symbol_name: symbolName } = component
   const portLabels = component.port_labels
   const sourceComponentId = component.source_component_id
   const schematicComponentId = component.schematic_component_id
 
   // Transform the center point for the main component position
   const [transformedX, transformedY] = applyToPoint(transform, [
-    center.x,
-    center.y,
+    component.center.x,
+    component.center.y,
   ])
 
   const componentScale = Math.abs(transform.a)
@@ -60,8 +64,8 @@ export function createSchematicComponent({
     }
     const svg = parseSync(
       getSvg(updatedSymbol, {
-        width: size.width,
-        height: size.height,
+        width: component.size.width,
+        height: component.size.height,
       }),
     )
 
@@ -90,8 +94,8 @@ export function createSchematicComponent({
     // Add resistance/capacitance text
     if (resistance || capacitance) {
       const [textX, textY] = applyToPoint(transform, [
-        center.x,
-        center.y - size.height / 2 - 0.2,
+        component.center.x,
+        component.center.y - component.size.height / 2 - 0.2,
       ])
 
       const labelOffset = componentScale * 0.4
@@ -149,10 +153,10 @@ export function createSchematicComponent({
       value: "",
       attributes: {
         class: "component chip",
-        x: (-size.width / 2).toString(),
-        y: (-size.height / 2).toString(),
-        width: size.width.toString(),
-        height: size.height.toString(),
+        x: (-component.size.width / 2).toString(),
+        y: (-component.size.height / 2).toString(),
+        width: component.size.width.toString(),
+        height: component.size.height.toString(),
         "stroke-width": "0.02",
       },
       children: [],
@@ -162,8 +166,8 @@ export function createSchematicComponent({
     if (manufacturerNumber) {
       // Calculate position for top center of component
       const [textX, textY] = applyToPoint(transform, [
-        center.x, // Center X position
-        center.y - size.height / 2 - 0.5, // Above the component top edge
+        component.center.x, // Center X position
+        component.center.y - component.size.height / 2 - 0.5, // Above the component top edge
       ])
 
       const labelOffset = componentScale * 0.4
@@ -219,9 +223,9 @@ export function createSchematicComponent({
     // Process ports
     const schematicPorts = su(circuitJson as any).schematic_port.list({
       schematic_component_id: schematicComponentId,
-    })
-    const portLength = 0.2
-    const circleRadius = 0.05
+    }) as SchematicPort[]
+    const pinLineLength = 0.2
+    const pinCircleRadius = 0.05
 
     for (const schPort of schematicPorts) {
       const { x: portX, y: portY } = schPort.center
@@ -229,32 +233,24 @@ export function createSchematicComponent({
         schPort.source_port_id,
       )
       const pinNumber = srcPort?.pin_number
-      const relX = portX - center.x
-      const relY = portY - center.y
+      const pinLineStartX = portX - component.center.x
+      const pinLineStartY = portY - component.center.y
 
-      let endX = relX
-      let endY = relY
+      let pinLineEndX = pinLineStartX
+      let pinLineEndY = pinLineStartY
 
-      // @ts-expect-error TODO remove when schematic_port has "side" defined
-      const portSide = schPort.side ?? schPort.center.side
-
-      // Hide center ports
-      if (portSide === "center") {
-        continue
-      }
-
-      switch (portSide) {
+      switch (schPort.side_of_component) {
         case "left":
-          endX = relX + portLength
+          pinLineEndX = pinLineStartX + pinLineLength
           break
         case "right":
-          endX = relX - portLength
+          pinLineEndX = pinLineStartX - pinLineLength
           break
         case "top":
-          endY = relY + portLength
+          pinLineEndY = pinLineStartY + pinLineLength
           break
         case "bottom":
-          endY = relY - portLength
+          pinLineEndY = pinLineStartY - pinLineLength
           break
       }
 
@@ -264,10 +260,10 @@ export function createSchematicComponent({
         type: "element",
         attributes: {
           class: "component-pin",
-          x1: relX.toString(),
-          y1: relY.toString(),
-          x2: endX.toString(),
-          y2: endY.toString(),
+          x1: pinLineStartX.toString(),
+          y1: pinLineStartY.toString(),
+          x2: pinLineEndX.toString(),
+          y2: pinLineEndY.toString(),
           "stroke-width": "0.02",
         },
         value: "",
@@ -280,9 +276,9 @@ export function createSchematicComponent({
         type: "element",
         attributes: {
           class: "component-pin",
-          cx: relX.toString(),
-          cy: relY.toString(),
-          r: circleRadius.toString(),
+          cx: pinLineStartX.toString(),
+          cy: pinLineStartY.toString(),
+          r: pinCircleRadius.toString(),
           "stroke-width": "0.02",
         },
         value: "",
@@ -291,8 +287,8 @@ export function createSchematicComponent({
 
       // Transform port position for texts
       const [portEndX, portEndY] = applyToPoint(transform, [
-        center.x + endX,
-        center.y + endY,
+        component.center.x + pinLineEndX,
+        component.center.y + pinLineEndY,
       ])
 
       // Add port label
@@ -305,7 +301,7 @@ export function createSchematicComponent({
         let rotation = 0
         const labelOffset = 0.1 * componentScale
 
-        switch (portSide) {
+        switch (schPort.side_of_component) {
           case "left":
             labelX += labelOffset
             textAnchor = "start"
@@ -355,52 +351,52 @@ export function createSchematicComponent({
         })
       }
 
-      // Add pin number
+      // Add pin number text
       const pinNumberOffset = 0.2
-      let pinX = endX
-      let pinY = endY
+      let localPinNumberTextX = portX
+      let localPinNumberTextY = portY
       let dominantBaseline = "auto"
 
-      switch (portSide) {
+      switch (schPort.side_of_component) {
         case "top":
           // For top ports, stay at the same X but offset Y upward
-          pinY = portY - pinNumberOffset // Move above the circle
-          pinX = portX // Stay aligned with port
+          localPinNumberTextY = portY - pinNumberOffset // Move above the circle
+          localPinNumberTextX = portX // Stay aligned with port
           dominantBaseline = "auto"
           break
         case "bottom":
           // For bottom ports, stay at the same X but offset Y downward
-          pinY = portY + pinNumberOffset
-          pinX = portX
+          localPinNumberTextY = portY + pinNumberOffset
+          localPinNumberTextX = portX
           dominantBaseline = "hanging"
           break
         case "left":
           // For left ports, stay at the same Y but offset X
-          pinX = portX - pinNumberOffset
-          pinY = portY + pinNumberOffset / 4
+          localPinNumberTextX = portX - pinNumberOffset
+          localPinNumberTextY = portY + pinNumberOffset / 4
           dominantBaseline = "auto"
           break
         case "right":
           // For right ports, stay at the same Y but offset X
-          pinX = portX + pinNumberOffset
-          pinY = portY + pinNumberOffset / 4
+          localPinNumberTextX = portX + pinNumberOffset
+          localPinNumberTextY = portY + pinNumberOffset / 4
           dominantBaseline = "auto"
           break
       }
 
       // Transform the pin position from local to global coordinates
-      const [transformedPinX, transformedPinY] = applyToPoint(transform, [
-        pinX,
-        pinY,
-      ])
+      const [screenPinNumberTextX, screenPinNumberTextY] = applyToPoint(
+        transform,
+        [localPinNumberTextX, localPinNumberTextY],
+      )
 
       textChildren.push({
         name: "text",
         type: "element",
         attributes: {
           class: "pin-number",
-          x: transformedPinX.toString(),
-          y: transformedPinY.toString(),
+          x: screenPinNumberTextX.toString(),
+          y: screenPinNumberTextY.toString(),
           "text-anchor": "middle",
           "dominant-baseline": dominantBaseline,
           "font-size": (0.15 * componentScale).toString(),
@@ -425,6 +421,7 @@ export function createSchematicComponent({
     value: "",
     type: "element",
     attributes: {
+      // DEPRECATE: Never ever use relative coordinates! This should be removed!
       transform: `translate(${transformedX}, ${transformedY}) rotate(${
         (rotation * 180) / Math.PI
       }) scale(${componentScale})`,
