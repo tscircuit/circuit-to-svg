@@ -67,10 +67,10 @@ export const createSvgObjectsForSchPortBoxLine = ({
       realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
       break
     case "top":
-      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
+      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
       break
     case "bottom":
-      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
+      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
       break
   }
   const screenLineEnd = applyToPoint(transform, realLineEnd)
