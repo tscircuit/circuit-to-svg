@@ -3,9 +3,9 @@ import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 it("example 4: kicad theme demo", async () => {
-  const { project } = getTestFixture()
+  const { circuit } = getTestFixture()
 
-  project.add(
+  circuit.add(
     <board width="10mm" height="10mm">
       <resistor
         name="R1"
@@ -61,8 +61,10 @@ it("example 4: kicad theme demo", async () => {
     </board>,
   )
 
+  circuit.render()
+
   expect(
     // @ts-ignore
-    convertCircuitJsonToSchematicSvg(project.getCircuitJson()),
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
   ).toMatchSvgSnapshot(import.meta.path)
 })
