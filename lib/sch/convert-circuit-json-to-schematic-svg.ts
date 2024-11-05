@@ -39,17 +39,21 @@ export function convertCircuitJsonToSchematicSvg(
 
   // Compute the padding such that we maintain the same aspect ratio
   const circuitAspectRatio = realWidth / realHeight
+  const containerAspectRatio = svgWidth / svgHeight
 
-  const newWidthToMaintainAspectRatio = circuitAspectRatio * svgHeight
   let screenPaddingPx: { x: number; y: number }
-  if (newWidthToMaintainAspectRatio > svgWidth) {
+  if (circuitAspectRatio > containerAspectRatio) {
+    // Circuit is wider than container - fit to width
+    const newHeight = svgWidth / circuitAspectRatio
     screenPaddingPx = {
       x: 0,
-      y: (newWidthToMaintainAspectRatio - svgWidth) / 2,
+      y: (svgHeight - newHeight) / 2,
     }
   } else {
+    // Circuit is taller than container - fit to height
+    const newWidth = svgHeight * circuitAspectRatio
     screenPaddingPx = {
-      x: (svgWidth - newWidthToMaintainAspectRatio) / 2,
+      x: (svgWidth - newWidth) / 2,
       y: 0,
     }
   }
