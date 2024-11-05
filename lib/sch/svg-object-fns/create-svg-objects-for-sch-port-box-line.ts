@@ -35,7 +35,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   // schPort.distance_from_component_edge is currently calculated incorrectly
   // in core
-  const realPinLineLength = 0.2 // schPort.distance_from_component_edge ?? 0.2
+  const realPinLineLength = schPort.distance_from_component_edge ?? 0.4
 
   switch (schPort.side_of_component) {
     case "left":
@@ -45,10 +45,10 @@ export const createSvgObjectsForSchPortBoxLine = ({
       realEdgePos.x -= realPinLineLength
       break
     case "top":
-      realEdgePos.y += realPinLineLength
+      realEdgePos.y -= realPinLineLength
       break
     case "bottom":
-      realEdgePos.y -= realPinLineLength
+      realEdgePos.y += realPinLineLength
       break
   }
 
@@ -65,10 +65,10 @@ export const createSvgObjectsForSchPortBoxLine = ({
       screenLineEnd.x -= PIN_CIRCLE_RADIUS_PX
       break
     case "top":
-      screenLineEnd.y -= PIN_CIRCLE_RADIUS_PX
+      screenLineEnd.y += PIN_CIRCLE_RADIUS_PX
       break
     case "bottom":
-      screenLineEnd.y += PIN_CIRCLE_RADIUS_PX
+      screenLineEnd.y -= PIN_CIRCLE_RADIUS_PX
       break
   }
 
