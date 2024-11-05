@@ -33,7 +33,6 @@ export function convertCircuitJsonToSchematicSvg(
   const realBounds = getSchematicBoundsFromCircuitJson(circuitJson)
   const realWidth = realBounds.maxX - realBounds.minX
   const realHeight = realBounds.maxY - realBounds.minY
-  console.log({ realWidth, realHeight })
 
   const svgWidth = options?.width ?? 1200
   const svgHeight = options?.height ?? 600
@@ -109,7 +108,6 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
 
-  // Process all elements using transform
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -148,6 +146,9 @@ export function convertCircuitJsonToSchematicSvg(
         children: [
           {
             type: "text",
+
+            // DO NOT USE THESE CLASSES!!!!
+            // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
               .boundary { fill: ${colorMap.schematic.background}; }
               .schematic-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
@@ -156,7 +157,7 @@ export function convertCircuitJsonToSchematicSvg(
               .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 2px; fill: none; }
               .text { font-family: Arial, sans-serif; font-size: 2px; fill: ${colorMap.schematic.wire}; }
-              .pin-number { font-size: 0.15px; fill: ${colorMap.schematic.pin_number}; }
+              .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
               .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
             `,
