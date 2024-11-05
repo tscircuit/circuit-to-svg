@@ -18,8 +18,6 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
   const svgObjects: SvgObject[] = []
   const { schPort, schComponent, transform, circuitJson } = params
 
-  const pinNumberOffset = 0.2
-
   const realPinNumberPos = {
     x: schPort.center.x,
     y: schPort.center.y,
