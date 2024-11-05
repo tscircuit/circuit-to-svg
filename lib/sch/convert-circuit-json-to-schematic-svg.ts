@@ -155,15 +155,15 @@ export function convertCircuitJsonToSchematicSvg(
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
               .boundary { fill: ${colorMap.schematic.background}; }
-              .schematic-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
+              .schematic-boundary { fill: none; stroke: #fff; }
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
               .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .trace { stroke: ${colorMap.schematic.wire}; stroke-width: 2px; fill: none; }
-              .text { font-family: Arial, sans-serif; font-size: 2px; fill: ${colorMap.schematic.wire}; }
+              .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
-              .component-name { font-size: 0.25px; fill: ${colorMap.schematic.reference}; }
+              .component-name { fill: ${colorMap.schematic.reference}; }
             `,
             name: "",
             attributes: {},

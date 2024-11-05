@@ -12,6 +12,8 @@ import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { getSchFontSize } from "lib/utils/get-sch-font-size"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -51,75 +53,75 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
       y: componentScreenTopLeft.y.toString(),
       width: componentScreenWidth.toString(),
       height: componentScreenHeight.toString(),
-      "stroke-width": "2px",
+      "stroke-width": `${getSchStrokeSize(transform)}px`,
     },
     children: [],
   })
+  // Calculate position for top center of component
+  const screenManufacturerNumberPos = applyToPoint(transform, {
+    x: schComponent.center.x + schComponent.size.width / 2,
+    y: schComponent.center.y + schComponent.size.height / 2 + 0.5, // Above the component top edge
+  })
+  const fontSizePx = getSchFontSize(transform, "manufacturer_number")
 
-  // // Add manufacturer number and component name text
-  // if (manufacturerNumber) {
-  //   // Calculate position for top center of component
-  //   const [textX, textY] = applyToPoint(transform, [
-  //     schComponent.center.x, // Center X position
-  //     schComponent.center.y - schComponent.size.height / 2 - 0.5, // Above the component top edge
-  //   ])
+  // Add manufacturer number and component name text
+  if (srcComponent?.manufacturer_part_number) {
+    svgObjects.push({
+      name: "text",
+      type: "element",
+      attributes: {
+        class: "component-name",
+        x: screenManufacturerNumberPos.x.toString(),
+        y: screenManufacturerNumberPos.y.toString(),
+        "font-family": "sans-serif",
+        "text-anchor": "right", // Center align text
+        "dominant-baseline": "auto",
+        "font-size": `${fontSizePx}px`,
+      },
+      children: [
+        {
+          type: "text",
+          value: srcComponent.manufacturer_part_number,
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+      value: "",
+    })
+  }
 
-  //   const labelOffset = componentScale * 0.4
-
-  //   textChildren.push({
-  //     name: "text",
-  //     type: "element",
-  //     attributes: {
-  //       class: "component-name",
-  //       x: textX.toString(),
-  //       y: textY.toString(),
-  //       "text-anchor": "right", // Center align text
-  //       "dominant-baseline": "auto",
-  //       "font-size": "0.2",
-  //     },
-  //     children: [
-  //       {
-  //         type: "text",
-  //         value: manufacturerNumber,
-  //         name: "",
-  //         attributes: {},
-  //         children: [],
-  //       },
-  //     ],
-  //     value: "",
-  //   })
-
-  //   // Component name below manufacturer number
-  //   textChildren.push({
-  //     name: "text",
-  //     type: "element",
-  //     attributes: {
-  //       class: "component-name",
-  //       x: textX.toString(),
-  //       y: (textY - labelOffset).toString(),
-  //       "text-anchor": "right", // Center align text
-  //       "dominant-baseline": "auto",
-  //       "font-size": "0.2",
-  //     },
-  //     children: [
-  //       {
-  //         type: "text",
-  //         value: componentName || "",
-  //         name: "",
-  //         attributes: {},
-  //         children: [],
-  //       },
-  //     ],
-  //     value: "",
-  //   })
-  // }
+  // Component name below manufacturer number
+  if (srcComponent?.name) {
+    svgObjects.push({
+      name: "text",
+      type: "element",
+      attributes: {
+        class: "component-name",
+        x: screenManufacturerNumberPos.x.toString(),
+        y: (screenManufacturerNumberPos.y + fontSizePx * 1.1).toString(),
+        "font-family": "sans-serif",
+        "text-anchor": "right", // Center align text
+        "dominant-baseline": "auto",
+        "font-size": `${fontSizePx}px`,
+      },
+      children: [
+        {
+          type: "text",
+          value: srcComponent.name || "",
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+      value: "",
+    })
+  }
 
   // // Process ports
   const schematicPorts = su(circuitJson as any).schematic_port.list({
     schematic_component_id: schComponent.schematic_component_id,
   }) as SchematicPort[]
-  const pinLineLength = 0.2
-  const pinCircleRadius = 0.05
 
   for (const schPort of schematicPorts) {
     svgObjects.push(
@@ -132,24 +134,5 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     )
   }
 
-  // // Create component group with scaling
-  // const componentGroup: SvgObject = {
-  //   name: "g",
-  //   value: "",
-  //   type: "element",
-  //   attributes: {},
-  //   children: svgObjects,
-  // }
-
-  // // Create text group without scaling
-  // const textGroup: SvgObject = {
-  //   name: "g",
-  //   value: "",
-  //   type: "element",
-  //   attributes: {},
-  //   children: textChildren,
-  // }
-
-  // return [componentGroup, textGroup]
   return svgObjects
 }
