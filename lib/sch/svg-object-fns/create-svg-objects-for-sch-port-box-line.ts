@@ -6,8 +6,9 @@ import type {
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import { su } from "@tscircuit/soup-util"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 
-const PIN_CIRCLE_RADIUS_PX = 3
+const PIN_CIRCLE_RADIUS_MM = 0.02
 
 /**
  * The schematic port box line is the line and circle that goes from the edge
@@ -56,21 +57,23 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const screenRealEdgePos = applyToPoint(transform, realEdgePos)
 
   // Subtract the pin circle radius from the pin line length to get the end
-  const screenLineEnd = applyToPoint(transform, schPort.center)
+  const realLineEnd = { ...schPort.center }
+
   switch (schPort.side_of_component) {
     case "left":
-      screenLineEnd.x += PIN_CIRCLE_RADIUS_PX
+      realLineEnd.x += PIN_CIRCLE_RADIUS_MM
       break
     case "right":
-      screenLineEnd.x -= PIN_CIRCLE_RADIUS_PX
+      realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
       break
     case "top":
-      screenLineEnd.y += PIN_CIRCLE_RADIUS_PX
+      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
       break
     case "bottom":
-      screenLineEnd.y -= PIN_CIRCLE_RADIUS_PX
+      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
       break
   }
+  const screenLineEnd = applyToPoint(transform, realLineEnd)
 
   // Add port line
   svgObjects.push({
@@ -82,7 +85,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
       y1: screenLineEnd.y.toString(),
       x2: screenRealEdgePos.x.toString(),
       y2: screenRealEdgePos.y.toString(),
-      "stroke-width": "2px",
+      "stroke-width": `${getSchStrokeSize(transform)}px`,
     },
     value: "",
     children: [],
@@ -96,8 +99,8 @@ export const createSvgObjectsForSchPortBoxLine = ({
       class: "component-pin",
       cx: screenSchPortPos.x.toString(),
       cy: screenSchPortPos.y.toString(),
-      r: PIN_CIRCLE_RADIUS_PX.toString(),
-      "stroke-width": "2px",
+      r: (Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM).toString(),
+      "stroke-width": `${getSchStrokeSize(transform)}px`,
     },
     value: "",
     children: [],
