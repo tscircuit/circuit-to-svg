@@ -17,6 +17,7 @@ import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-c
 import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 
 interface Options {
   width?: number
@@ -111,6 +112,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schDebugObjectSvgs: SvgObject[] = []
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
+  const schNetLabel: SvgObject[] = []
 
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
@@ -128,10 +130,14 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (elm.type === "schematic_trace") {
       schTraceSvgs.push(...createSchematicTrace(elm, transform))
     }
+    else if(elm.type === "schematic_net_label") {
+      schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
+      console.log(schNetLabel)
+    }
   }
 
   // Add elements in correct order
-  svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs)
+  svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs, ...schNetLabel)
 
   const svgObject: SvgObject = {
     name: "svg",

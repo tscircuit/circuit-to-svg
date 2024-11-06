@@ -1,4 +1,4 @@
-import { convertCircuitJsonToSchematicSvg } from "../lib/index.js"
+import { convertCircuitJsonToSchematicSvg } from "../../lib/index.js"
 
 const soup: any = [
   {
