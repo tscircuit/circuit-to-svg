@@ -17,7 +17,8 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
   // Calculate label dimensions based on text
   const textWidth = (schNetLabel.text?.length || 0) * fontSize * 0.7
   const padding = fontSize * 0.5
-  const labelHeight = fontSize * 1.5
+  // Increase height to better accommodate text
+  const labelHeight = fontSize * 1.2
   const arrowPoint = fontSize * 0.3
   const labelWidth = textWidth + (padding * 2) + arrowPoint
 
@@ -78,7 +79,7 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
       class: "net-label",
       d: pathD,
       fill: "white",
-      stroke: colorMap.schematic.net_name,
+      stroke: colorMap.schematic.label_global,
       "stroke-width": `${getSchStrokeSize(transform)}px`,
       transform: transformString,
     },
@@ -88,7 +89,8 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
 
   // Calculate text position (centered in label, accounting for arrow)
   const textX = baseX + ((labelWidth - arrowPoint) / 2)
-  const textY = baseY + (labelHeight / 2)
+  // Adjust text Y position for better vertical centering
+  const textY = baseY + (labelHeight / 2) + (fontSize * 0.05)
 
   // Add the label text
   svgObjects.push({
@@ -98,9 +100,9 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
       class: "net-label-text",
       x: textX.toString(),
       y: textY.toString(),
-      fill: colorMap.schematic.net_name,
+      fill: colorMap.schematic.label_global,
       "text-anchor": "middle",
-      "dominant-baseline": "middle",
+      "dominant-baseline": "central", // Changed to central for better vertical alignment
       "font-family": "sans-serif",
       "font-size": `${fontSize}px`,
       transform: transformString,

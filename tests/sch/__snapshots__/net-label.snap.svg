@@ -10,10 +10,10 @@
               .port-label { fill: rgb(0, 100, 100); }
               .component-name { fill: rgb(0, 100, 100); }
             </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><path class="net-label" d="
-    M 600,300
-    L 767.3999999999999,300
-    L 783.5999999999999,340.5
-    L 767.3999999999999,381
-    L 600,381
+    M 567.6,208.20000000000002
+    L 735,208.20000000000002
+    L 751.2,240.60000000000002
+    L 735,273
+    L 567.6,273
     Z
-  " fill="white" stroke="rgb(132, 132, 132)" stroke-width="6px"/><text class="net-label-text" x="683.7" y="340.5" fill="rgb(132, 132, 132)" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="54px">GND</text></svg>
+  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="6px" transform="rotate(90 600 300)"/><text class="net-label-text" x="651.3" y="243.3" fill="rgb(132, 0, 0)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="54px" transform="rotate(90 600 300)">GND</text></svg>
