@@ -18,9 +18,9 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
   const textWidth = (schNetLabel.text?.length || 0) * fontSize * 0.7
   const padding = fontSize * 0.5
   // Increase height to better accommodate text
-  const labelHeight = fontSize * 1.2
-  const arrowPoint = fontSize * 0.3
-  const labelWidth = textWidth + (padding * 2) + arrowPoint
+  const screenLabelHeight = fontSize * 1.2
+  const screenArrowPoint = fontSize * 0.3
+  const screenLabelWidth = textWidth + (padding * 2) + screenArrowPoint
 
   // Get rotation angle based on anchor_side
   let rotation = 0
@@ -33,17 +33,17 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
       break
     case "right":
       rotation = 180
-      baseX -= labelWidth
+      baseX -= screenLabelWidth
       break
     case "top":
       rotation = -90
-      baseX -= labelHeight/2
-      baseY += labelWidth/2
+      baseX -= screenLabelHeight/2
+      baseY += screenLabelWidth/2
       break
     case "bottom":
       rotation = 90
-      baseX -= labelHeight/2
-      baseY -= labelWidth/2
+      baseX -= screenLabelHeight/2
+      baseY -= screenLabelWidth/2
       break
     default:
       rotation = 0
@@ -55,10 +55,10 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
   // Calculate the points for the path
   const points = [
     { x: baseX, y: baseY }, // Left edge
-    { x: baseX + labelWidth - arrowPoint, y: baseY }, // Top edge
-    { x: baseX + labelWidth, y: baseY + labelHeight / 2 }, // Arrow point
-    { x: baseX + labelWidth - arrowPoint, y: baseY + labelHeight }, // Bottom after arrow
-    { x: baseX, y: baseY + labelHeight }, // Bottom left corner
+    { x: baseX + screenLabelWidth - screenArrowPoint, y: baseY }, // Top edge
+    { x: baseX + screenLabelWidth, y: baseY + screenLabelHeight / 2 }, // Arrow point
+    { x: baseX + screenLabelWidth - screenArrowPoint, y: baseY + screenLabelHeight }, // Bottom after arrow
+    { x: baseX, y: baseY + screenLabelHeight }, // Bottom left corner
   ]
 
   // Create the label path
@@ -88,9 +88,9 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
   })
 
   // Calculate text position (centered in label, accounting for arrow)
-  const textX = baseX + ((labelWidth - arrowPoint) / 2)
+  const screenTextX = baseX + ((screenLabelWidth - screenArrowPoint) / 2)
   // Adjust text Y position for better vertical centering
-  const textY = baseY + (labelHeight / 2) + (fontSize * 0.05)
+  const screenTextY = baseY + (screenLabelHeight / 2) + (fontSize * 0.05)
 
   // Add the label text
   svgObjects.push({
@@ -98,8 +98,8 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
     type: "element",
     attributes: {
       class: "net-label-text",
-      x: textX.toString(),
-      y: textY.toString(),
+      x: screenTextX.toString(),
+      y: screenTextY.toString(),
       fill: colorMap.schematic.label_global,
       "text-anchor": "middle",
       "dominant-baseline": "central", // Changed to central for better vertical alignment
