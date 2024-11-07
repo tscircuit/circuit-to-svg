@@ -31,6 +31,8 @@ export function getSchematicBoundsFromCircuitJson(
         updateBounds(item.start, { width: 0.1, height: 0.1 }, 0)
         updateBounds(item.end, { width: 0.1, height: 0.1 }, 0)
       }
+    } else if (item.type === "schematic_net_label") {
+      updateBounds(item.center, { width: 1, height: 1 }, 0)
     }
   }
 

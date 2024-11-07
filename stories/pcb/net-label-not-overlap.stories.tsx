@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import {
   circuitJsonToSchematicSvg,
   convertCircuitJsonToPcbSvg,
-} from "../lib/index.js"
+} from "../../lib/index.js"
 
 const soup: any = [
   {

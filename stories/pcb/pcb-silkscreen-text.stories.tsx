@@ -1,6 +1,5 @@
-import React from "react"
-import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
 import type { AnyCircuitElement } from "circuit-json"
+import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
 export const PcbSilkScreenText = () => {
   const result = convertCircuitJsonToPcbSvg(pcbSoup)

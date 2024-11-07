@@ -1,5 +1,5 @@
 import type { AnyCircuitElement } from "circuit-json"
-import { convertCircuitJsonToPcbSvg } from "../lib/index.js"
+import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
 export const PcbViaInNullTraceHit = () => {
   const result = convertCircuitJsonToPcbSvg(pcbSoup)
