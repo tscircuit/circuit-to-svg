@@ -12,12 +12,13 @@
     "prepublish": "npm run build",
     "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
     "format": "biome format . --write",
+    "format:check": "biome format .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.4",
     "@chromatic-com/storybook": "^1.6.1",
     "@storybook/addon-essentials": "^8.2.5",
     "@storybook/addon-interactions": "^8.2.5",
