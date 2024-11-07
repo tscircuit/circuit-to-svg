@@ -40,7 +40,9 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   // Transform the pin position from local to global coordinates
   const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
 
-  const label = schComponent.port_labels?.[`pin${schPort.pin_number}`]
+  const label =
+    schPort.display_pin_label ??
+    schComponent.port_labels?.[`pin${schPort.pin_number}`]
 
   if (!label) return []
 
@@ -53,7 +55,11 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       y: screenPinNumberTextPos.y.toString(),
       style: "font-family: sans-serif;",
       fill: colorMap.schematic.pin_number,
-      "text-anchor": schPort.side_of_component === "left" ? "start" : "end",
+      "text-anchor":
+        schPort.side_of_component === "left" ||
+        schPort.side_of_component === "bottom"
+          ? "start"
+          : "end",
       "dominant-baseline": "middle",
       "font-size": `${getSchFontSize(transform, "pin_number")}px`,
       transform:
