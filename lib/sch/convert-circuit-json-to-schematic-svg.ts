@@ -129,15 +129,18 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_trace") {
       schTraceSvgs.push(...createSchematicTrace(elm, transform))
-    }
-    else if(elm.type === "schematic_net_label") {
+    } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
-      console.log(schNetLabel)
     }
   }
 
   // Add elements in correct order
-  svgChildren.push(...schDebugObjectSvgs, ...schComponentSvgs, ...schTraceSvgs, ...schNetLabel)
+  svgChildren.push(
+    ...schDebugObjectSvgs,
+    ...schComponentSvgs,
+    ...schTraceSvgs,
+    ...schNetLabel,
+  )
 
   const svgObject: SvgObject = {
     name: "svg",

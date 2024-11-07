@@ -26,7 +26,8 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noConsole": "warn"
       },
       "style": {
         "noNonNullAssertion": "off",

@@ -5,22 +5,25 @@ import { getSchFontSize } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, transform: Matrix): SvgObject[] => {
+export const createSvgObjectsForSchNetLabel = (
+  schNetLabel: SchematicNetLabel,
+  transform: Matrix,
+): SvgObject[] => {
   const svgObjects: SvgObject[] = []
-  
+
   // Transform the center position to screen coordinates
   const screenPos = applyToPoint(transform, schNetLabel.center)
-  
+
   // Get font size for text
   const fontSize = getSchFontSize(transform, "net_label")
-  
+
   // Calculate label dimensions based on text
   const textWidth = (schNetLabel.text?.length || 0) * fontSize * 0.7
   const padding = fontSize * 0.5
   // Increase height to better accommodate text
   const screenLabelHeight = fontSize * 1.2
   const screenArrowPoint = fontSize * 0.3
-  const screenLabelWidth = textWidth + (padding * 2) + screenArrowPoint
+  const screenLabelWidth = textWidth + padding * 2 + screenArrowPoint
 
   // Get rotation angle based on anchor_side
   let rotation = 0
@@ -37,13 +40,13 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
       break
     case "top":
       rotation = -90
-      baseX -= screenLabelHeight/2
-      baseY += screenLabelWidth/2
+      baseX -= screenLabelHeight / 2
+      baseY += screenLabelWidth / 2
       break
     case "bottom":
       rotation = 90
-      baseX -= screenLabelHeight/2
-      baseY -= screenLabelWidth/2
+      baseX -= screenLabelHeight / 2
+      baseY -= screenLabelWidth / 2
       break
     default:
       rotation = 0
@@ -57,7 +60,10 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
     { x: baseX, y: baseY }, // Left edge
     { x: baseX + screenLabelWidth - screenArrowPoint, y: baseY }, // Top edge
     { x: baseX + screenLabelWidth, y: baseY + screenLabelHeight / 2 }, // Arrow point
-    { x: baseX + screenLabelWidth - screenArrowPoint, y: baseY + screenLabelHeight }, // Bottom after arrow
+    {
+      x: baseX + screenLabelWidth - screenArrowPoint,
+      y: baseY + screenLabelHeight,
+    }, // Bottom after arrow
     { x: baseX, y: baseY + screenLabelHeight }, // Bottom left corner
   ]
 
@@ -88,9 +94,9 @@ export const createSvgObjectsForSchNetLabel = (schNetLabel: SchematicNetLabel, t
   })
 
   // Calculate text position (centered in label, accounting for arrow)
-  const screenTextX = baseX + ((screenLabelWidth - screenArrowPoint) / 2)
+  const screenTextX = baseX + (screenLabelWidth - screenArrowPoint) / 2
   // Adjust text Y position for better vertical centering
-  const screenTextY = baseY + (screenLabelHeight / 2) + (fontSize * 0.05)
+  const screenTextY = baseY + screenLabelHeight / 2 + fontSize * 0.05
 
   // Add the label text
   svgObjects.push({
