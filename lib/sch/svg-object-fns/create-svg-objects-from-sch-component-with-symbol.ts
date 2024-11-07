@@ -127,10 +127,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     if (text.text === "{REF}") {
       textValue = srcComponent?.name ?? ""
     } else if (text.text === "{VAL}") {
-      textValue =
-        (srcComponent as any)?.display_value ??
-        (srcComponent as any).capacitance ??
-        (srcComponent as any).resistance
+      textValue = schComponent.symbol_display_value ?? ""
     }
     svgObjects.push({
       name: "text",
@@ -159,12 +156,6 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   // Draw Boxes
 
   for (const box of boxes) {
-    // x: number;
-    // y: number;
-    // width: number;
-    // height: number;
-    // anchor: string;
-
     const screenBoxPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       box,
