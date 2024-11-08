@@ -25,6 +25,7 @@ test("schematic trace overlap", () => {
 
       <trace from=".R1 > .pin2" to=".R3 > .pin1" />
       <trace from=".R2 > .pin2" to=".R3 > .pin2" />
+      <trace from=".R1 > .pin1" to=".R3 > .pin1" />
     </board>,
   )
 
