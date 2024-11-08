@@ -3,9 +3,9 @@ import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("schematic resistor", () => {
-  const { project } = getTestFixture()
+  const { circuit } = getTestFixture()
 
-  project.add(
+  circuit.add(
     <board width="10mm" height="10mm">
       <resistor
         name="R1"
@@ -19,7 +19,7 @@ test("schematic resistor", () => {
   expect(
     // @ts-ignore
     convertCircuitJsonToSchematicSvg(
-      project
+      circuit
         .getCircuitJson()
         // TEMPORARY HACK: until @tscircuit/core supports symbol_display_value
         .map((elm) => {
