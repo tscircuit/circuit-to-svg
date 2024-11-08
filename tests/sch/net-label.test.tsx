@@ -42,10 +42,10 @@ test("schematic net label", () => {
         labelCells: true,
       },
       labeledPoints: [
-        { x: 0, y: 0, label: "VCC" },
-        { x: 4, y: 0, label: "GND" },
-        { x: 0, y: 4, label: "SDA" },
-        { x: 4, y: 4, label: "SCL" },
+        { x: 0, y: 0, label: "anchor_side=top" },
+        { x: 4, y: 0, label: "anchor_side=bottom" },
+        { x: 0, y: 4, label: "anchor_side=left" },
+        { x: 4, y: 4, label: "anchor_side=right" },
       ],
     }),
   ).toMatchSvgSnapshot(import.meta.path)
