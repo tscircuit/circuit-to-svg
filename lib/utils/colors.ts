@@ -230,6 +230,7 @@ export const colorMap = {
     sheet_name: "rgb(0, 100, 100)",
     value: "rgb(0, 100, 100)",
     wire: "rgb(0, 150, 0)",
+    wire_crossing: "rgb(30, 180, 30)",
     worksheet: "rgb(132, 0, 0)",
   },
 }

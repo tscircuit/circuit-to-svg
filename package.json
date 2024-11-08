@@ -28,7 +28,7 @@
     "@storybook/react": "^8.2.5",
     "@storybook/react-vite": "^8.2.5",
     "@storybook/test": "^8.2.5",
-    "@tscircuit/core": "^0.0.155",
+    "@tscircuit/core": "^0.0.158",
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.1.9",
     "bun-match-svg": "^0.0.6",
@@ -41,7 +41,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "circuit-json": "^0.0.97"
+    "circuit-json": "^0.0.98"
   },
   "dependencies": {
     "@tscircuit/footprinter": "^0.0.57",
