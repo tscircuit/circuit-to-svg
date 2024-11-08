@@ -17,7 +17,7 @@ test("schematic with grid and labeled points", () => {
         grid: { cellSize: 0.5, labelCells: true },
         labeledPoints: [
           { x: 0, y: 0, label: "Origin" },
-          { x: 1, y: 1, label: "Point A" },
+          { x: 0.75, y: 0.75, label: "Point A" },
         ],
       },
     ),
