@@ -17,10 +17,10 @@ export function drawSchematicLabeledPoints(params: {
 
   for (const point of points) {
     // Transform offset points for X marker
-    const [x1, y1] = applyToPoint(transform, [point.x - 0.1, -(point.y - 0.1)])
-    const [x2, y2] = applyToPoint(transform, [point.x + 0.1, -(point.y + 0.1)])
-    const [x3, y3] = applyToPoint(transform, [point.x - 0.1, -(point.y + 0.1)])
-    const [x4, y4] = applyToPoint(transform, [point.x + 0.1, -(point.y - 0.1)])
+    const [x1, y1] = applyToPoint(transform, [point.x - 0.1, point.y - 0.1])
+    const [x2, y2] = applyToPoint(transform, [point.x + 0.1, point.y + 0.1])
+    const [x3, y3] = applyToPoint(transform, [point.x - 0.1, point.y + 0.1])
+    const [x4, y4] = applyToPoint(transform, [point.x + 0.1, point.y - 0.1])
 
     // Add X marker
     labeledPointsGroup.push({
@@ -37,7 +37,7 @@ export function drawSchematicLabeledPoints(params: {
     // Transform label position
     const [labelX, labelY] = applyToPoint(transform, [
       point.x + 0.15,
-      -(point.y - 0.15),
+      point.y - 0.15,
     ])
 
     // Add label
@@ -48,9 +48,10 @@ export function drawSchematicLabeledPoints(params: {
         x: labelX.toString(),
         y: labelY.toString(),
         fill: colorMap.schematic.grid,
-        "font-size": (0.15 * Math.abs(transform.a)).toString(),
+        "font-size": (0.1 * Math.abs(transform.a)).toString(),
         "fill-opacity": "0.7",
         "text-anchor": "start",
+        "font-family": "sans-serif",
         "dominant-baseline": "middle",
       },
       children: [
