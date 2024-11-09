@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 const soup = [
@@ -80,7 +81,7 @@ const soup = [
     pcb_trace_id: "pcb_trace_0",
     source_trace_id: "source_trace_0",
   },
-]
+] as AnyCircuitElement[]
 
 test("shouldDrawErrors false", () => {
   expect(convertCircuitJsonToPcbSvg(soup)).toMatchSvgSnapshot(
