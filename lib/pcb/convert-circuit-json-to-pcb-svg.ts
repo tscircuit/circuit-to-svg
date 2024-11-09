@@ -7,6 +7,7 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
@@ -19,6 +20,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
+  "pcb_trace_error",
   "pcb_plated_hole",
   "pcb_fabrication_note_text",
   "pcb_fabrication_note_path",
@@ -39,6 +41,7 @@ interface PointObjectNotation {
 interface Options {
   width?: number
   height?: number
+  shouldDrawErrors?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -104,7 +107,9 @@ export function convertCircuitJsonToPcbSvg(
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, transform))
+    .flatMap((item) =>
+      createSvgObjects(item, transform, soup, options?.shouldDrawErrors),
+    )
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -201,8 +206,17 @@ export function convertCircuitJsonToPcbSvg(
 function createSvgObjects(
   elm: AnyCircuitElement,
   transform: Matrix,
+  soup: AnyCircuitElement[],
+  shouldDrawErrors?: boolean,
 ): SvgObject[] {
   switch (elm.type) {
+    case "pcb_trace_error":
+      return createSvgObjectsFromPcbTraceError(
+        elm,
+        transform,
+        soup,
+        shouldDrawErrors,
+      ).filter(Boolean)
     case "pcb_component":
       return [createSvgObjectsFromPcbComponent(elm, transform)].filter(Boolean)
     case "pcb_trace":
