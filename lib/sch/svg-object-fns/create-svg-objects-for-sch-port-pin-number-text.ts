@@ -5,7 +5,7 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSchFontSize } from "lib/utils/get-sch-font-size"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -58,7 +58,7 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
       fill: colorMap.schematic.pin_number,
       "text-anchor": "middle",
       "dominant-baseline": "auto",
-      "font-size": `${getSchFontSize(transform, "pin_number")}px`,
+      "font-size": `${getSchScreenFontSize(transform, "pin_number")}px`,
       transform:
         schPort.side_of_component === "top" ||
         schPort.side_of_component === "bottom"

@@ -13,7 +13,7 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { getSchFontSize } from "lib/utils/get-sch-font-size"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -62,7 +62,7 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     x: schComponent.center.x + schComponent.size.width / 2,
     y: schComponent.center.y + schComponent.size.height / 2 + 0.5, // Above the component top edge
   })
-  const fontSizePx = getSchFontSize(transform, "manufacturer_number")
+  const fontSizePx = getSchScreenFontSize(transform, "manufacturer_number")
 
   // Add manufacturer number and component name text
   if (srcComponent?.manufacturer_part_number) {

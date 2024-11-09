@@ -32,6 +32,27 @@ test("schematic net label", () => {
       anchor_side: "right",
       text: "SCL",
     },
+    {
+      type: "schematic_net_label",
+      source_net_id: "net5",
+      center: { x: 0, y: 2 },
+      anchor_side: "left",
+      text: "short label",
+    },
+    {
+      type: "schematic_net_label",
+      source_net_id: "net6",
+      center: { x: 0, y: 1 },
+      anchor_side: "left",
+      text: "WWWWWWWWWW",
+    },
+    {
+      type: "schematic_net_label",
+      source_net_id: "net5",
+      center: { x: 2, y: 0 },
+      anchor_side: "bottom",
+      text: "superlong label. This is a long one!",
+    },
   ]
 
   expect(
