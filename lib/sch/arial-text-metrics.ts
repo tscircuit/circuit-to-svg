@@ -1,3 +1,4 @@
+// https://claude.ai/share/5e327d90-627f-48d5-9a51-ba6117479007
 export const arialTextMetrics = {
   "0": {
     width: 13,

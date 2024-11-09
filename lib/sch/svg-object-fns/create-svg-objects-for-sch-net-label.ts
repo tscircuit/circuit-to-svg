@@ -16,9 +16,7 @@ import {
   translate,
   type Matrix,
 } from "transformation-matrix"
-
-// Note: This is font dependent, more or less a hack for now
-const FONT_SIZE_WIDTH_OVER_HEIGHT_RATIO = 0.52
+import { estimateTextWidth } from "../estimate-text-width"
 
 /**
  * Arrow point width as a fraction of font size (Font Size Ratio)
@@ -28,12 +26,14 @@ const ARROW_POINT_WIDTH_FSR = 0.3
 /**
  * End padding as a fraction of font size (Font Size Ratio)
  */
-const END_PADDING_FSR = 0.8
+const END_PADDING_FSR = 0.3
+const END_PADDING_EXTRA_PER_CHARACTER_FSR = 0.06
 
 export const createSvgObjectsForSchNetLabel = (
   schNetLabel: SchematicNetLabel,
   realToScreenTransform: Matrix,
 ): SvgObject[] => {
+  if (!schNetLabel.text) return []
   const svgObjects: SvgObject[] = []
 
   const fontSizeMm = getSchMmFontSize("net_label")
@@ -60,6 +60,8 @@ export const createSvgObjectsForSchNetLabel = (
   const textGrowthVec = getUnitVectorFromOutsideToEdge(schNetLabel.anchor_side)
   textGrowthVec.y *= -1 // Invert y direction because anchor_side is pre-transform
 
+  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
+
   // Calculate the points for the outline
   const screenOutlinePoints: Array<{ x: number; y: number }> = [
     // Arrow point in font-relative coordinates
@@ -77,7 +79,8 @@ export const createSvgObjectsForSchNetLabel = (
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        (schNetLabel.text?.length || 0) * FONT_SIZE_WIDTH_OVER_HEIGHT_RATIO,
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+        textWidthFSR,
       y: 0.6,
     },
     // Bottom right corner in font-relative coordinates
@@ -85,7 +88,8 @@ export const createSvgObjectsForSchNetLabel = (
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        (schNetLabel.text?.length || 0) * FONT_SIZE_WIDTH_OVER_HEIGHT_RATIO,
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+        textWidthFSR,
       y: -0.6,
     },
     // Bottom left corner in font-relative coordinates
