@@ -36,17 +36,42 @@ export const createSvgObjectsForSchNetLabel = (
   if (!schNetLabel.text) return []
   const svgObjects: SvgObject[] = []
 
+  const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
+  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
 
   // Transform the center position to screen coordinates
-  const screenPos = applyToPoint(realToScreenTransform, schNetLabel.center)
+  const screenCenter = applyToPoint(realToScreenTransform, schNetLabel.center)
 
-  // Get font size for text
-  const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
+  const realTextGrowthVec = getUnitVectorFromOutsideToEdge(
+    schNetLabel.anchor_side,
+  )
 
-  const screenAnchorPosition = {
-    x: screenPos.x,
-    y: screenPos.y,
+  const screenTextGrowthVec = { ...realTextGrowthVec }
+  screenTextGrowthVec.y *= -1 // Invert y direction because anchor_side is pre-transform
+
+  const fullWidthFsr =
+    textWidthFSR +
+    ARROW_POINT_WIDTH_FSR * 2 +
+    END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+    END_PADDING_FSR
+  const screenAnchorPosition = schNetLabel.anchor_position
+    ? applyToPoint(realToScreenTransform, schNetLabel.anchor_position)
+    : {
+        x:
+          screenCenter.x -
+          (screenTextGrowthVec.x * fullWidthFsr * fontSizePx) / 2,
+        y:
+          screenCenter.y -
+          (screenTextGrowthVec.y * fullWidthFsr * fontSizePx) / 2,
+      }
+  const realAnchorPosition = schNetLabel.anchor_position ?? {
+    x:
+      schNetLabel.center.x -
+      (realTextGrowthVec.x * fullWidthFsr * fontSizeMm) / 2,
+    y:
+      schNetLabel.center.y -
+      (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
   }
 
   // Get rotation angle based on anchor_side
@@ -56,11 +81,6 @@ export const createSvgObjectsForSchNetLabel = (
     bottom: 90,
     right: 180,
   }[schNetLabel.anchor_side]
-
-  const textGrowthVec = getUnitVectorFromOutsideToEdge(schNetLabel.anchor_side)
-  textGrowthVec.y *= -1 // Invert y direction because anchor_side is pre-transform
-
-  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
 
   // Calculate the points for the outline
   const screenOutlinePoints: Array<{ x: number; y: number }> = [
@@ -101,7 +121,7 @@ export const createSvgObjectsForSchNetLabel = (
     applyToPoint(
       compose(
         realToScreenTransform,
-        translate(schNetLabel.center.x, schNetLabel.center.y),
+        translate(realAnchorPosition.x, realAnchorPosition.y),
         scale(fontSizeMm),
         rotate((pathRotation / 180) * Math.PI),
       ),
@@ -135,8 +155,8 @@ export const createSvgObjectsForSchNetLabel = (
   })
 
   const screenTextPos = {
-    x: screenAnchorPosition.x + textGrowthVec.x * fontSizePx * 0.5,
-    y: screenAnchorPosition.y + textGrowthVec.y * fontSizePx * 0.5,
+    x: screenAnchorPosition.x + screenTextGrowthVec.x * fontSizePx * 0.5,
+    y: screenAnchorPosition.y + screenTextGrowthVec.y * fontSizePx * 0.5,
   }
 
   const textAnchor = {

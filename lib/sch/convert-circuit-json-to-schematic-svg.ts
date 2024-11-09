@@ -99,16 +99,6 @@ export function convertCircuitJsonToSchematicSvg(
     )
   }
 
-  // Add labeled points if provided
-  if (options?.labeledPoints) {
-    svgChildren.push(
-      drawSchematicLabeledPoints({
-        points: options.labeledPoints,
-        transform,
-      }),
-    )
-  }
-
   const schDebugObjectSvgs: SvgObject[] = []
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
@@ -141,6 +131,16 @@ export function convertCircuitJsonToSchematicSvg(
     ...schTraceSvgs,
     ...schNetLabel,
   )
+
+  // Add labeled points if provided
+  if (options?.labeledPoints) {
+    svgChildren.push(
+      drawSchematicLabeledPoints({
+        points: options.labeledPoints,
+        transform,
+      }),
+    )
+  }
 
   const svgObject: SvgObject = {
     name: "svg",
