@@ -1,10 +1,9 @@
 import { Circuit } from "@tscircuit/core"
 
 export const getTestFixture = () => {
-  const project = new Circuit()
+  const circuit = new Circuit()
 
   return {
-    project,
-    circuit: project,
+    circuit,
   }
 }

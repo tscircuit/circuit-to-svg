@@ -17,7 +17,7 @@ import {
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
-import { getSchFontSize } from "lib/utils/get-sch-font-size"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 
 const ninePointAnchorToTextAnchor: Record<
@@ -138,7 +138,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "font-family": "sans-serif",
-        "font-size": `${getSchFontSize(realToScreenTransform, "reference_designator")}px`,
+        "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
       },
       value: "",
       children: [

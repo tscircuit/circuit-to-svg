@@ -3,9 +3,9 @@ import { convertCircuitJsonToSchematicSvg } from "lib"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("schematic trace overlap", () => {
-  const { project } = getTestFixture()
+  const { circuit } = getTestFixture()
 
-  project.add(
+  circuit.add(
     <board width="20mm" height="20mm">
       <resistor
         name="R1"
@@ -30,6 +30,6 @@ test("schematic trace overlap", () => {
   )
 
   expect(
-    convertCircuitJsonToSchematicSvg(project.getCircuitJson()),
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
   ).toMatchSvgSnapshot(import.meta.path)
 })
