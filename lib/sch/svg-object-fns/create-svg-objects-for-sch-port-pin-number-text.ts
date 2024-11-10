@@ -23,7 +23,7 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
   const sourcePort = circuitJson.find(
     (element) =>
       element.type === "source_port" &&
-      element.source_port_id === schPort.source_port_id
+      element.source_port_id === schPort.source_port_id,
   )
 
   const realPinNumberPos = {
@@ -55,6 +55,8 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
     screenPinNumberTextPos.y -= 2 //px
   }
 
+  const pinLabel = (sourcePort as SourcePort).name.replace("pin", "")
+
   svgObjects.push({
     name: "text",
     type: "element",
@@ -76,7 +78,7 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
     children: [
       {
         type: "text",
-        value: (sourcePort as SourcePort)?.name || schPort.pin_number?.toString() || "",
+        value: pinLabel,
         name: "",
         attributes: {},
         children: [],
