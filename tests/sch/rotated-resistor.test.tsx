@@ -16,24 +16,15 @@ test("schematic rotated resistor", () => {
     </board>,
   )
 
-  console.log(
-    circuit.getCircuitJson().filter((c) => c.type === "schematic_component"),
-  )
-  console.table(
-    circuit
-      .getCircuitJson()
-      .filter((c) => c.type === "schematic_port")
-      .map((a) => ({ ...a.center })),
-  )
-
   expect(
     convertCircuitJsonToSchematicSvg(
       circuit.getCircuitJson().map((c) => {
         if (c.type !== "schematic_component") return c
-        console.log(c)
 
-        c.symbol_name = "boxresistor_vert"
-        return c
+        return {
+          ...c,
+          symbol_name: "boxresistor_vert",
+        }
       }),
     ),
   ).toMatchSvgSnapshot(import.meta.path)
