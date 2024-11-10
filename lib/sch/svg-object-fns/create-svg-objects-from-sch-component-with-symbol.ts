@@ -19,6 +19,7 @@ import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbo
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
+import { createSvgSchErrorText } from "./create-svg-error-text"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -63,7 +64,15 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   const symbol: SchSymbol = (symbols as any)[schComponent.symbol_name!]
 
-  if (!symbol) return []
+  if (!symbol) {
+    return [
+      createSvgSchErrorText({
+        text: `Symbol not found: ${schComponent.symbol_name}`,
+        realCenter: schComponent.center,
+        realToScreenTransform,
+      }),
+    ]
+  }
 
   const schPorts = su(circuitJson as any).schematic_port.list({
     schematic_component_id: schComponent.schematic_component_id,
@@ -79,7 +88,15 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     schComponent,
   })
 
-  if (!schPortsWithSymbolPorts[0]) return []
+  if (!schPortsWithSymbolPorts[0]) {
+    return [
+      createSvgSchErrorText({
+        text: `Could not match ports for symbol ${schComponent.symbol_name}`,
+        realCenter: schComponent.center,
+        realToScreenTransform,
+      }),
+    ]
+  }
 
   const transformFromSymbolToReal = pointPairsToMatrix(
     schPortsWithSymbolPorts[1]?.symbolPort ?? symbol.center,

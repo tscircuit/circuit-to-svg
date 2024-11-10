@@ -6,9 +6,10 @@ type SchTextType =
   | "reference_designator"
   | "manufacturer_number"
   | "net_label"
+  | "error"
 
 export const getSchMmFontSize = (textType: SchTextType) => {
-  return textType === "pin_number" ? 0.15 : 0.18
+  return textType === "error" ? 0.05 : textType === "pin_number" ? 0.15 : 0.18
 }
 
 export const getSchScreenFontSize = (
