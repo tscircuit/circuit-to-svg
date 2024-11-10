@@ -2,6 +2,7 @@ import type {
   AnyCircuitElement,
   SchematicComponent,
   SchematicPort,
+  SourcePort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
@@ -17,6 +18,13 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
   const { schPort, schComponent, transform, circuitJson } = params
+
+  // Find the source port using the source_port_id from the schematic port
+  const sourcePort = circuitJson.find(
+    (element) =>
+      element.type === "source_port" &&
+      element.source_port_id === schPort.source_port_id
+  )
 
   const realPinNumberPos = {
     x: schPort.center.x,
@@ -68,7 +76,7 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
     children: [
       {
         type: "text",
-        value: schPort.pin_number?.toString() || "",
+        value: (sourcePort as SourcePort)?.name || schPort.pin_number?.toString() || "",
         name: "",
         attributes: {},
         children: [],
