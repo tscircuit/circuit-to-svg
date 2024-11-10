@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace { stroke: rgb(0, 150, 0); }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><path d="M 119.07749295443239 299.2650562145075 L 169.7349858112491 299.2650562145075" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.829228288922px"/><path d="M 271.0499715248829 299.2650562145075 L 321.70748352784096 299.2650562145075" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.829228288922px"/><path d="M 220.39245952192448 324.5938122159866 L 271.0499523787412 324.5938122159866 L 271.0499523787412 273.93630021302846 L 169.734947518966 273.93630021302846 L 169.734947518966 324.5938122159866 L 220.39245952192414 324.5938122159866" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.829228288922px"/><text x="216.80437688449737" y="338.2918999663912" dominant-baseline="hanging" text-anchor="middle" font-family="sans-serif" font-size="34.463054600298px">R1</text><text x="216.98856276519444" y="242.56195858899878" dominant-baseline="auto" text-anchor="middle" font-family="sans-serif" font-size="34.463054600298px">1kΩ</text><circle cx="114.87684866762619" cy="299.1968576586813" r="3.829228288922px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="319.2774935479739" cy="299.0922239956868" r="3.829228288922px" fill="none" stroke="rgb(132, 0, 0)"/><text x="982.9228288922" y="300" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="34.463054600298px">Symbol not found: NONEXISTENT_SYMBOL!!</text></svg>

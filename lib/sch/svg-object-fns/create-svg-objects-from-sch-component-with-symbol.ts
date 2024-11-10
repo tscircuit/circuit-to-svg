@@ -63,7 +63,37 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   const symbol: SchSymbol = (symbols as any)[schComponent.symbol_name!]
 
-  if (!symbol) return []
+  if (!symbol) {
+    const screenCenter = applyToPoint(
+      realToScreenTransform,
+      schComponent.center,
+    )
+    return [
+      {
+        type: "element",
+        name: "text",
+        value: "",
+        attributes: {
+          x: screenCenter.x.toString(),
+          y: screenCenter.y.toString(),
+          fill: "red",
+          "text-anchor": "middle",
+          "dominant-baseline": "middle",
+          "font-family": "sans-serif",
+          "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
+        },
+        children: [
+          {
+            type: "text",
+            value: `Symbol not found: ${schComponent.symbol_name}`,
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+      },
+    ]
+  }
 
   const schPorts = su(circuitJson as any).schematic_port.list({
     schematic_component_id: schComponent.schematic_component_id,
