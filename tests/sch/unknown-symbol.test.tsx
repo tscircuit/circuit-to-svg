@@ -29,7 +29,7 @@ test("schematic rotated resistor", () => {
       circuit.getCircuitJson().map((c) => {
         if (c.type !== "schematic_component") return c
         if (c.symbol_display_value === "10kΩ") {
-          c.symbol_name = "NONEXISTENT_SYMBOL!!"
+          c.symbol_name = "INTENTIONALLY_NONEXISTENT_SYMBOL!!"
         }
         return c
       }),
