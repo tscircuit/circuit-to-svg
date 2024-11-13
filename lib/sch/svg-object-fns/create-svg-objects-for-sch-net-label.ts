@@ -77,8 +77,8 @@ export const createSvgObjectsForSchNetLabel = (
   // Get rotation angle based on anchor_side
   const pathRotation = {
     left: 0,
-    top: -90,
-    bottom: 90,
+    top: 90,
+    bottom: -90,
     right: 180,
   }[schNetLabel.anchor_side]
 
@@ -156,7 +156,7 @@ export const createSvgObjectsForSchNetLabel = (
 
   const screenTextPos = {
     x: screenAnchorPosition.x + screenTextGrowthVec.x * fontSizePx * 0.5,
-    y: screenAnchorPosition.y + screenTextGrowthVec.y * fontSizePx * 0.5,
+    y: screenAnchorPosition.y - screenTextGrowthVec.y * fontSizePx * 0.5,
   }
 
   const textAnchor = {
@@ -169,8 +169,8 @@ export const createSvgObjectsForSchNetLabel = (
   const textTransformString = {
     left: "",
     right: "",
-    top: `rotate(90 ${screenTextPos.x} ${screenTextPos.y})`,
-    bottom: `rotate(-90 ${screenTextPos.x} ${screenTextPos.y})`,
+    top: `rotate(-90 ${screenTextPos.x} ${screenTextPos.y})`,
+    bottom: `rotate(90 ${screenTextPos.x} ${screenTextPos.y})`,
   }[schNetLabel.anchor_side]
 
   // Add the label text
