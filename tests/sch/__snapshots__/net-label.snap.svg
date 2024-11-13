@@ -52,13 +52,13 @@
     L 405.4,510.8
     Z
   " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="500" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">WWWWWWWWWW</text><path class="net-label" d="
-    M 650,500
-    L 660.8,505.4
-    L 660.8000000000001,799.0799999999999
-    L 639.2,799.0799999999999
-    L 639.2,505.4
+    M 650,200
+    L 660.8,205.4
+    L 660.8000000000001,499.08
+    L 639.2,499.08
+    L 639.2,205.4
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="650" y="509" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 650 509)">superlong label. This is a long one!</text><path class="net-label" d="
+  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="650" y="209" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 650 209)">superlong label. This is a long one!</text><path class="net-label" d="
     M 751.12,400
     L 756.52,389.2
     L 848.88,389.2

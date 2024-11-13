@@ -60,7 +60,7 @@ test("schematic net label", () => {
       type: "schematic_net_label",
       source_net_id: "net5",
       center: { x: 2.5, y: 0 },
-      anchor_position: { x: 2.5, y: 0 },
+      anchor_position: { x: 2.5, y: 3 },
       anchor_side: "bottom",
       text: "superlong label. This is a long one!",
     },
