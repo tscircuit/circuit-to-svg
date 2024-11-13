@@ -209,7 +209,8 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       attributes: {
         cx: screenPortPos.x.toString(),
         cy: screenPortPos.y.toString(),
-        r: `${realToScreenTransform.a * 0.02}px`,
+        r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
+        "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
         fill: "none",
         stroke: colorMap.schematic.component_outline,
       },
