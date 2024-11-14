@@ -108,6 +108,7 @@ export function createSchematicTrace(
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
+        "stroke-linejoin": "round",
       },
       value: "",
       children: [],
