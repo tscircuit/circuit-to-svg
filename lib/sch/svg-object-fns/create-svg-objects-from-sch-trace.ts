@@ -103,12 +103,12 @@ export function createSchematicTrace(
       name: "path",
       type: "element",
       attributes: {
-        class: "trace",
         d: path,
         stroke: colorMap.schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
+        "stroke-linejoin": "round",
       },
       value: "",
       children: [],
@@ -137,5 +137,15 @@ export function createSchematicTrace(
     }
   }
 
-  return svgObjects
+  return [
+    {
+      name: "g",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "trace",
+      },
+      children: svgObjects,
+    },
+  ]
 }
