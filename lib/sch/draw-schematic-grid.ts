@@ -25,7 +25,7 @@ export function drawSchematicGrid(params: {
   }
 
   // Vertical lines
-  for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
+  for (let x = Math.floor(minX); x <= Math.ceil(maxX); x += cellSize) {
     const start = transformPoint(x, minY)
     const end = transformPoint(x, maxY)
 
@@ -45,7 +45,7 @@ export function drawSchematicGrid(params: {
   }
 
   // Horizontal lines
-  for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
+  for (let y = Math.floor(minY); y <= Math.ceil(maxY); y += cellSize) {
     const start = transformPoint(minX, y)
     const end = transformPoint(maxX, y)
 
@@ -66,8 +66,12 @@ export function drawSchematicGrid(params: {
 
   // Add cell labels if enabled
   if (labelCells) {
-    for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += cellSize) {
-      for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += cellSize) {
+    const formatPoint = (x: number, y: number) => {
+      if (cellSize <= 0.1) return `${x.toFixed(1)},${y.toFixed(1)}`
+      return `${x},${y}`
+    }
+    for (let x = Math.floor(minX); x <= Math.ceil(maxX); x += cellSize) {
+      for (let y = Math.floor(minY); y <= Math.ceil(maxY); y += cellSize) {
         const point = transformPoint(x, y)
 
         gridLines.push({
@@ -89,7 +93,7 @@ export function drawSchematicGrid(params: {
           children: [
             {
               type: "text",
-              value: `${x},${y}`,
+              value: formatPoint(x, y),
               name: "",
               attributes: {},
               children: [],

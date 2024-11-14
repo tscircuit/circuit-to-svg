@@ -33,6 +33,11 @@ export function getSchematicBoundsFromCircuitJson(
       }
     } else if (item.type === "schematic_net_label") {
       updateBounds(item.center, { width: 1, height: 1 }, 0)
+    } else if (item.type === "schematic_trace") {
+      for (const edge of item.edges) {
+        updateBounds(edge.from, { width: 0.1, height: 0.1 }, 0)
+        updateBounds(edge.to, { width: 0.1, height: 0.1 }, 0)
+      }
     }
   }
 
