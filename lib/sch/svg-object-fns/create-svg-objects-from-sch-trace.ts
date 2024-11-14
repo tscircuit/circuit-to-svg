@@ -12,7 +12,36 @@ export function createSchematicTrace(
   if (edges.length === 0) return []
   const svgObjects: SvgObject[] = []
 
-  let path = ""
+  let currentPath = ""
+  const paths: SvgObject[] = []
+
+  let colors = [
+    "rgb(255,0,0)",
+    "rgb(0,255,0)",
+    "rgb(0,0,255)",
+    "rgb(255,255,0)",
+    "rgb(255, 0, 255)",
+    "rgb(0, 255,255)",
+  ]
+  let colorIndex = -1
+
+  function addPath() {
+    paths.push({
+      name: "path",
+      type: "element",
+      attributes: {
+        class: "trace",
+        d: currentPath,
+        stroke: colors[colorIndex++ % colors.length],
+        fill: "none",
+        "stroke-width": `${getSchStrokeSize(transform) * (1 + colorIndex / 2)}px`,
+        "stroke-linecap": "round",
+        opacity: "0.5",
+      },
+      value: "",
+      children: [],
+    })
+  }
 
   // Process edges into an SVG path
   for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
@@ -31,12 +60,15 @@ export function createSchematicTrace(
     ])
 
     // Regular straight line for non-crossing traces
-    if (edgeIndex === 0 || edges[edgeIndex - 1]?.is_crossing) {
-      path += `M ${screenFromX} ${screenFromY} L ${screenToX} ${screenToY}`
-    } else {
-      path += ` L ${screenToX} ${screenToY}`
-    }
+    // if (edgeIndex === 0 || edges[edgeIndex - 1]?.is_crossing) {
+    addPath()
+    currentPath = `M ${screenFromX} ${screenFromY} L ${screenToX} ${screenToY}`
+    // } else {
+    //   currentPath += ` L ${screenToX} ${screenToY}`
+    // }
   }
+
+  if (currentPath) addPath()
 
   // Process wire crossings with little "hops" or arcs
   for (const edge of edges) {
@@ -98,23 +130,6 @@ export function createSchematicTrace(
     })
   }
 
-  if (path) {
-    svgObjects.push({
-      name: "path",
-      type: "element",
-      attributes: {
-        class: "trace",
-        d: path,
-        stroke: colorMap.schematic.wire,
-        fill: "none",
-        "stroke-width": `${getSchStrokeSize(transform)}px`,
-        "stroke-linecap": "round",
-      },
-      value: "",
-      children: [],
-    })
-  }
-
   // Add junction circles
   if (trace.junctions) {
     for (const junction of trace.junctions) {
@@ -136,6 +151,8 @@ export function createSchematicTrace(
       })
     }
   }
+
+  svgObjects.push(...paths)
 
   return svgObjects
 }
