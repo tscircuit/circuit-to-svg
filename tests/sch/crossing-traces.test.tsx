@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { SchematicTrace } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 
 test("schematic crossing traces", () => {
@@ -117,7 +118,7 @@ test("schematic crossing traces", () => {
           },
         ],
         junctions: [],
-      },
+      } as SchematicTrace,
     ]),
   ).toMatchSvgSnapshot(import.meta.path)
 })
