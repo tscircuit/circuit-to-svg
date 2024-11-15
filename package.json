@@ -39,7 +39,7 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1",
-    "circuit-json": "^0.0.99",
+    "circuit-json": "^0.0.104",
     "schematic-symbols": "^0.0.99"
   },
   "peerDependencies": {
