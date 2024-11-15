@@ -33,19 +33,19 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
   realPinNumberPos.x += (vecToEdge.x * realPinEdgeDistance) / 2
   realPinNumberPos.y += (vecToEdge.y * realPinEdgeDistance) / 2
 
-  // Transform the pin position from local to global coordinates
-  const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
-
   if (
     schPort.side_of_component === "top" ||
     schPort.side_of_component === "bottom"
   ) {
     // Move the pin number text to the left a bit so it doesn't hit the port line
-    screenPinNumberTextPos.x -= 2 //px
+    realPinNumberPos.x -= 0.02 //mm
   } else {
     // Move the pin number text up a bit so it doesn't hit the port line
-    screenPinNumberTextPos.y -= 2 //px
+    realPinNumberPos.y += 0.02 //mm
   }
+
+  // Transform the pin position from local to global coordinates
+  const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
 
   svgObjects.push({
     name: "text",
