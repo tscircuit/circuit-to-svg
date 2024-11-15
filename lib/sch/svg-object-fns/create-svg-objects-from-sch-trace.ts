@@ -74,10 +74,11 @@ export function createSchematicTrace(
       name: "path",
       type: "element",
       attributes: {
+        class: "trace-crossing-outline",
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
         stroke: colorMap.schematic.background,
         fill: "none",
-        "stroke-width": `${getSchStrokeSize(transform) + 1.5}px`,
+        "stroke-width": `${getSchStrokeSize(transform) * 1.5}px`,
         "stroke-linecap": "round",
       },
       value: "",
@@ -99,6 +100,23 @@ export function createSchematicTrace(
   }
 
   if (path) {
+    // Makes hovering over trace (which inverts the colors) easier
+    svgObjects.push({
+      name: "path",
+      type: "element",
+      attributes: {
+        d: path,
+        class: "trace-invisible-hover-outline",
+        stroke: colorMap.schematic.wire,
+        fill: "none",
+        "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
+        "stroke-linecap": "round",
+        opacity: "0",
+        "stroke-linejoin": "round",
+      },
+      value: "",
+      children: [],
+    })
     svgObjects.push({
       name: "path",
       type: "element",
