@@ -6,19 +6,17 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
-import { parseSync } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  translate,
-  type Matrix,
-} from "transformation-matrix"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
+import { symbols, type SchSymbol } from "schematic-symbols"
+import {
+  applyToPoint,
+  compose,
+  type Matrix
+} from "transformation-matrix"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 
 const ninePointAnchorToTextAnchor: Record<
@@ -198,26 +196,37 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   }
 
   // Draw Ports for debugging
-  for (const port of symbol.ports) {
-    const screenPortPos = applyToPoint(
-      compose(realToScreenTransform, transformFromSymbolToReal),
-      port,
-    )
-    svgObjects.push({
-      type: "element",
-      name: "circle",
-      attributes: {
-        cx: screenPortPos.x.toString(),
-        cy: screenPortPos.y.toString(),
-        r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
-        "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
-        fill: "none",
-        stroke: colorMap.schematic.component_outline,
-      },
-      value: "",
-      children: [],
-    })
-  }
+  // Draw Ports for debugging
+for (const port of symbol.ports) {
+  // Calculate screen position for the port
+  const screenPortPos = applyToPoint(
+    compose(realToScreenTransform, transformFromSymbolToReal),
+    port
+  );
+
+  // Ensure port positions are aligned symmetrically if the component is a resistor
+  // Adjust `symbol.ports` positions here if needed
+  const adjustedScreenPortPos = {
+    x: Math.round(screenPortPos.x * 1000) / 1000, // Round to avoid minor floating-point differences
+    y: Math.round(screenPortPos.y * 1000) / 1000,
+  };
+
+  svgObjects.push({
+    type: "element",
+    name: "circle",
+    attributes: {
+      cx: adjustedScreenPortPos.x.toString(),
+      cy: adjustedScreenPortPos.y.toString(),
+      r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
+      "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+      fill: "none",
+      stroke: colorMap.schematic.component_outline,
+    },
+    value: "",
+    children: [],
+  });
+}
+
 
   return svgObjects
 }
