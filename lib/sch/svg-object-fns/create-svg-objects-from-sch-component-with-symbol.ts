@@ -196,37 +196,31 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   }
 
   // Draw Ports for debugging
-  // Draw Ports for debugging
-for (const port of symbol.ports) {
-  // Calculate screen position for the port
-  const screenPortPos = applyToPoint(
-    compose(realToScreenTransform, transformFromSymbolToReal),
-    port
-  );
-
-  // Ensure port positions are aligned symmetrically if the component is a resistor
-  // Adjust `symbol.ports` positions here if needed
-  const adjustedScreenPortPos = {
-    x: Math.round(screenPortPos.x * 1000) / 1000, // Round to avoid minor floating-point differences
-    y: Math.round(screenPortPos.y * 1000) / 1000,
-  };
-
-  svgObjects.push({
-    type: "element",
-    name: "circle",
-    attributes: {
-      cx: adjustedScreenPortPos.x.toString(),
-      cy: adjustedScreenPortPos.y.toString(),
-      r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
-      "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
-      fill: "none",
-      stroke: colorMap.schematic.component_outline,
-    },
-    value: "",
-    children: [],
-  });
-}
-
+  for (const port of symbol.ports) {
+    console.log("Port Object:", port); // Debug: Log each port
+    const offsetX = port.x > 0 ? 0.025 : 0; // Apply offset for right port only
+  
+    const screenPortPos = applyToPoint(
+      compose(realToScreenTransform, transformFromSymbolToReal),
+      { x: port.x + offsetX, y: port.y } // Adjust x position
+    );
+  
+    svgObjects.push({
+      type: "element",
+      name: "circle",
+      attributes: {
+        cx: screenPortPos.x.toString(),
+        cy: screenPortPos.y.toString(),
+        r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
+        "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+        fill: "none",
+        stroke: colorMap.schematic.component_outline,
+      },
+      value: "",
+      children: [],
+    });
+  }
+  
 
   return svgObjects
 }
