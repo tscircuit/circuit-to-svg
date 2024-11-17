@@ -36,6 +36,11 @@ test("schematic text", () => {
 
   expect(
     // @ts-ignore
-    convertCircuitJsonToSchematicSvg(circuitJson),
+    convertCircuitJsonToSchematicSvg(circuitJson,{
+      grid: {
+        cellSize: 1,
+        labelCells: true,
+      }
+      }),
   ).toMatchSvgSnapshot(import.meta.path)
 })
