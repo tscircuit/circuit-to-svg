@@ -197,7 +197,6 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   // Draw Ports for debugging
   for (const port of symbol.ports) {
-    console.log("Port Object:", port); // Debug: Log each port
     const offsetX = port.x > 0 ? 0.025 : 0; // Apply offset for right port only
   
     const screenPortPos = applyToPoint(
