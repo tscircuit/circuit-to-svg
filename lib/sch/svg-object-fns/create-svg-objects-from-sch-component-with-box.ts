@@ -24,9 +24,6 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
   transform: Matrix
   circuitJson: AnyCircuitElement[]
 }): SvgObject[] => {
-  const srcComponent = su(circuitJson as any).source_component.get(
-    schComponent.source_component_id,
-  )
   const svgObjects: SvgObject[] = []
 
   const componentScreenTopLeft = applyToPoint(transform, {
@@ -57,66 +54,6 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     },
     children: [],
   })
-  // Calculate position for top center of component
-  const screenManufacturerNumberPos = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2 + 0.5, // Above the component top edge
-  })
-  const fontSizePx = getSchScreenFontSize(transform, "manufacturer_number")
-
-  // Add manufacturer number and component name text
-  if (srcComponent?.manufacturer_part_number) {
-    svgObjects.push({
-      name: "text",
-      type: "element",
-      attributes: {
-        class: "component-name",
-        x: screenManufacturerNumberPos.x.toString(),
-        y: screenManufacturerNumberPos.y.toString(),
-        "font-family": "sans-serif",
-        "text-anchor": "right", // Center align text
-        "dominant-baseline": "auto",
-        "font-size": `${fontSizePx}px`,
-      },
-      children: [
-        {
-          type: "text",
-          value: srcComponent.manufacturer_part_number,
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
-      value: "",
-    })
-  }
-
-  // Component name below manufacturer number
-  if (srcComponent?.name) {
-    svgObjects.push({
-      name: "text",
-      type: "element",
-      attributes: {
-        class: "component-name",
-        x: screenManufacturerNumberPos.x.toString(),
-        y: (screenManufacturerNumberPos.y + fontSizePx * 1.1).toString(),
-        "font-family": "sans-serif",
-        "text-anchor": "right", // Center align text
-        "dominant-baseline": "auto",
-        "font-size": `${fontSizePx}px`,
-      },
-      children: [
-        {
-          type: "text",
-          value: srcComponent.name || "",
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
-      value: "",
-    })
-  }
 
   // // Process ports
   const schematicPorts = su(circuitJson as any).schematic_port.list({
