@@ -18,6 +18,7 @@ import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
+import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
 interface Options {
   width?: number
@@ -103,6 +104,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
   const schNetLabel: SvgObject[] = []
+  const schText: SvgObject[] = []
 
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
@@ -121,6 +123,8 @@ export function convertCircuitJsonToSchematicSvg(
       schTraceSvgs.push(...createSchematicTrace(elm, transform))
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
+    } else if (elm.type === "schematic_text") {
+      schText.push(createSvgSchText(elm, transform))
     }
   }
 
@@ -130,6 +134,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schComponentSvgs,
     ...schTraceSvgs,
     ...schNetLabel,
+    ...schText,
   )
 
   // Add labeled points if provided

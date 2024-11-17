@@ -38,6 +38,8 @@ export function getSchematicBoundsFromCircuitJson(
         updateBounds(edge.from, { width: 0.1, height: 0.1 }, 0)
         updateBounds(edge.to, { width: 0.1, height: 0.1 }, 0)
       }
+    } else if (item.type === "schematic_text") {
+      updateBounds(item.position, { width: 0.1, height: 0.1 }, 0)
     }
   }
 

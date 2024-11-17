@@ -31,16 +31,17 @@
     "@tscircuit/core": "^0.0.179",
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.1.9",
+    "biome": "^0.3.3",
     "bun-match-svg": "^0.0.6",
+    "circuit-json": "^0.0.104",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "^18.3.1",
+    "schematic-symbols": "^0.0.99",
     "storybook": "^8.2.5",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
-    "vite-tsconfig-paths": "^5.0.1",
-    "circuit-json": "^0.0.104",
-    "schematic-symbols": "^0.0.99"
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
     "circuit-json": "*",
