@@ -23,7 +23,13 @@ it("example 4: kicad theme demo", async () => {
         schX={2}
       />
       <trace from=".R1 > .pin2" to=".C1 > .pin1" />
-
+    <pinheader
+      name="pin1"
+      schX={0}
+      schY={-2}
+      pinCount={10}
+      pinLabels={["pin1", "pin2", "pin3", "pin4", "pin5", "pin6", "pin7", "pin8", "pin9", "pin10"]}
+    />
       <chip
         name="U2"
         manufacturerPartNumber="ATmega8-16A"
