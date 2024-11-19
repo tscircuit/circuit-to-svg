@@ -42,7 +42,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const label =
     schPort.display_pin_label ??
-    schComponent.port_labels?.[`pin${schPort.pin_number}`]
+    schComponent.port_labels?.[`${schPort.pin_number}`]
 
   if (!label) return []
 
