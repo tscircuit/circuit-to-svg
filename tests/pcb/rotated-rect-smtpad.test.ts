@@ -23,7 +23,7 @@ test("rotated rect smtpad shape", () => {
         shape: "rotated_rect",
         ccw_rotation: 90,
         width: 1,
-        height: 1,
+        height: 2,
         pcb_smtpad_id: "test_pad_2",
       },
       {
