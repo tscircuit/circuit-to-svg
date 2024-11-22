@@ -24,7 +24,7 @@ export function createSvgObjectsFromSmtPad(
             y: (-height / 2).toString(),
             width: width.toString(),
             height: height.toString(),
-            transform: `translate(${x} ${y}) rotate(${pad.ccw_rotation})`,
+            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
           },
         },
       ]
