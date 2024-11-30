@@ -1,72 +1,111 @@
-name: Bundle Size Analysis
+name: Size
 
 on:
   pull_request:
     branches: [main]
-    paths:
-      - 'lib/**'
-      - 'package.json'
-      - 'tsup.config.ts'
-      - 'bun.lockb'
-      - '.github/workflows/**'
 
 permissions:
-  contents: read
   pull-requests: write
 
 jobs:
-  analyze:
+  size:
+    name: Report bundle and install size
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
-      - name: Install dependencies
+      - name: Install dependencies (base)
         run: bun install
 
-      - name: Build PR branch
+      - name: Build (base)
         run: bun run build
 
-      - name: Analyze bundle
-        id: bundle-analysis
+      - name: Get base bundle size
+        id: base-bundle-size
         run: |
-          # Get total bundle size
-          TOTAL_SIZE=$(du -sh dist/index.js | cut -f1)
-          echo "total_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
-          
-          # Get dependency sizes using npm list
-          echo "dependencies<<EOF" >> $GITHUB_OUTPUT
-          npm list --json | jq -r '.dependencies | to_entries | sort_by(.value.size) | reverse | .[0:10] | .[] | "\(.key)|\(.value.size)"' >> $GITHUB_OUTPUT
+          echo "base=$(du -sh dist | cut -f1)" >> $GITHUB_OUTPUT
+
+      - name: Get base install size
+        id: base-install-size
+        run: |
+          echo "base=$(bunx howfat -r simple . | grep 'Size:' | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (PR)
+        run: bun install
+
+      - name: Build (PR)
+        run: bun run build
+
+      - name: Get PR bundle size
+        id: pr-bundle-size
+        run: |
+          echo "pr=$(du -sh dist | cut -f1)" >> $GITHUB_OUTPUT
+
+      - name: Get PR install size and full howfat output
+        id: pr-install-size
+        run: |
+          echo "pr=$(bunx howfat -r simple . | grep 'Size:' | awk '{print $2}')" >> $GITHUB_OUTPUT
+          echo "full_output<<EOF" >> $GITHUB_OUTPUT
+          bunx howfat -r table . >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Comment PR
+      - name: Calculate bundle size difference
+        id: bundle-size-diff
+        run: |
+          base_size=$(echo ${{ steps.base-bundle-size.outputs.base }} | sed 's/[^0-9.]*//g')
+          pr_size=$(echo ${{ steps.pr-bundle-size.outputs.pr }} | sed 's/[^0-9.]*//g')
+          diff=$(echo "$pr_size - $base_size" | bc)
+          if (( $(echo "$diff > 0" | bc -l) )); then
+            echo "diff=+$diff" >> $GITHUB_OUTPUT
+          else
+            echo "diff=$diff" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate install size difference
+        id: install-size-diff
+        run: |
+          base_size=$(echo ${{ steps.base-install-size.outputs.base }} | sed 's/[^0-9.]*//g')
+          pr_size=$(echo ${{ steps.pr-install-size.outputs.pr }} | sed 's/[^0-9.]*//g')
+          diff=$(echo "$pr_size - $base_size" | bc)
+          if (( $(echo "$diff > 0" | bc -l) )); then
+            echo "diff=+$diff" >> $GITHUB_OUTPUT
+          else
+            echo "diff=$diff" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update comment
         uses: mshick/add-pr-comment@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
         with:
+          header: Size Report
           message: |
-            # 📊 Bundle Size Analysis
+            ## Size Report
+            ### Bundle Size
+            - Base branch size: ${{ steps.base-bundle-size.outputs.base }}
+            - PR branch size: ${{ steps.pr-bundle-size.outputs.pr }}
+            - Difference: ${{ steps.bundle-size-diff.outputs.diff }}
 
-            ### Bundle Size Analysis
-            Total Bundle Size: ${{ steps.bundle-analysis.outputs.total_size }}
+            ### Install Size
+            - Base branch size: ${{ steps.base-install-size.outputs.base }}
+            - PR branch size: ${{ steps.pr-install-size.outputs.pr }}
+            - Difference: ${{ steps.install-size-diff.outputs.diff }}
 
-            ### Top 10 Dependencies
-            | Package | Size |
-            |---------|------|
-            ${{ steps.bundle-analysis.outputs.dependencies }}
-
-            <details>
-            <summary>View More</summary>
-            View the complete dependency tree and bundle analysis in the Actions tab.
-            </details>
-
-            <details>
-            <summary>What is this?</summary>
-            This is an automated bundle size report generated during the build process.
-            It shows the total bundle size and lists the top dependencies by size.
-            </details>
+            ### Full Howfat Output (PR Branch)
+            ```
+            ${{ steps.pr-install-size.outputs.full_output }}
+            ```
           proxy-url: https://add-pr-comment-proxy-tscircuit.vercel.app/api
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           allow-repeats: false
