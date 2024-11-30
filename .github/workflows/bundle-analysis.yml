@@ -1,0 +1,72 @@
+name: Bundle Size Analysis
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'package.json'
+      - 'tsup.config.ts'
+      - 'bun.lockb'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build PR branch
+        run: bun run build
+
+      - name: Analyze bundle
+        id: bundle-analysis
+        run: |
+          # Get total bundle size
+          TOTAL_SIZE=$(du -sh dist/index.js | cut -f1)
+          echo "total_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
+          
+          # Get dependency sizes using npm list
+          echo "dependencies<<EOF" >> $GITHUB_OUTPUT
+          npm list --json | jq -r '.dependencies | to_entries | sort_by(.value.size) | reverse | .[0:10] | .[] | "\(.key)|\(.value.size)"' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            # 📊 Bundle Size Analysis
+
+            ### Bundle Size Analysis
+            Total Bundle Size: ${{ steps.bundle-analysis.outputs.total_size }}
+
+            ### Top 10 Dependencies
+            | Package | Size |
+            |---------|------|
+            ${{ steps.bundle-analysis.outputs.dependencies }}
+
+            <details>
+            <summary>View More</summary>
+            View the complete dependency tree and bundle analysis in the Actions tab.
+            </details>
+
+            <details>
+            <summary>What is this?</summary>
+            This is an automated bundle size report generated during the build process.
+            It shows the total bundle size and lists the top dependencies by size.
+            </details>
+          proxy-url: https://add-pr-comment-proxy-tscircuit.vercel.app/api
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          allow-repeats: false
