@@ -6,7 +6,7 @@ on:
     paths:
       - 'package.json'
       - 'bun.lockb'
-      - '.github/workflows/bundle-size-analysis.yml'
+      - '.github/workflows/bundle-analysis.yml'
 
 permissions:
   pull-requests: write
