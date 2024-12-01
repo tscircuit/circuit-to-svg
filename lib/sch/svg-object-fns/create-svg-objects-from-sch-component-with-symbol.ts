@@ -6,19 +6,17 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
-import { parseSync } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  translate,
-  type Matrix,
-} from "transformation-matrix"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
+import { symbols, type SchSymbol } from "schematic-symbols"
+import {
+  applyToPoint,
+  compose,
+  type Matrix
+} from "transformation-matrix"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 
 const ninePointAnchorToTextAnchor: Record<
@@ -199,10 +197,13 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   // Draw Ports for debugging
   for (const port of symbol.ports) {
+    const offsetX = port.x > 0 ? 0.025 : 0; // Apply offset for right port only
+  
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
-      port,
-    )
+      { x: port.x + offsetX, y: port.y } // Adjust x position
+    );
+  
     svgObjects.push({
       type: "element",
       name: "circle",
@@ -216,8 +217,9 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       },
       value: "",
       children: [],
-    })
+    });
   }
+  
 
   return svgObjects
 }
