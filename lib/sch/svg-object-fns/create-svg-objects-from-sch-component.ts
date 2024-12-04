@@ -11,9 +11,20 @@ export function createSvgObjectsFromSchematicComponent(params: {
 }): SvgObject[] {
   const { component } = params
 
-  if (component.symbol_name) {
-    return createSvgObjectsFromSchematicComponentWithSymbol(params)
-  }
+  const innerElements = component.symbol_name
+    ? createSvgObjectsFromSchematicComponentWithSymbol(params)
+    : createSvgObjectsFromSchematicComponentWithBox(params)
 
-  return createSvgObjectsFromSchematicComponentWithBox(params)
+  return [
+    {
+      type: "element",
+      name: "g",
+      attributes: {
+        "data-circuit-json-type": "schematic_component",
+        "data-schematic-component-id": component.schematic_component_id,
+      },
+      children: innerElements,
+      value: "",
+    },
+  ]
 }
