@@ -83,9 +83,8 @@ test("component wrapper has correct attributes", () => {
   const circuitJson = circuit.getCircuitJson()
   const svg = convertCircuitJsonToSchematicSvg(circuitJson)
 
-
   expect(svg).toContain('data-circuit-json-type="schematic_component"')
-  expect(svg).toContain('data-schematic-component-id')
+  expect(svg).toContain("data-schematic-component-id")
 
   expect(svg).toContain('class="component-overlay"')
   expect(svg).toContain('fill="transparent"')

@@ -110,7 +110,6 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   const circles = symbol.primitives.filter((p) => p.type === "circle")
   const boxes = symbol.primitives.filter((p) => p.type === "box")
 
-
   const bounds = {
     minX: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
     maxX: Math.max(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
