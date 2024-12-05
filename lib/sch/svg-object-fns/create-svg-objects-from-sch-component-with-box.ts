@@ -51,6 +51,23 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
       width: componentScreenWidth.toString(),
       height: componentScreenHeight.toString(),
       "stroke-width": `${getSchStrokeSize(transform)}px`,
+      fill: colorMap.schematic.component_body,
+      stroke: colorMap.schematic.component_outline,
+    },
+    children: [],
+  })
+
+  svgObjects.push({
+    name: "rect",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "component-overlay",
+      x: componentScreenTopLeft.x.toString(),
+      y: componentScreenTopLeft.y.toString(),
+      width: componentScreenWidth.toString(),
+      height: componentScreenHeight.toString(),
+      fill: "transparent",
     },
     children: [],
   })

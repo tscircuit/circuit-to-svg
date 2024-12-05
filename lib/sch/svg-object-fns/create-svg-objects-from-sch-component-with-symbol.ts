@@ -110,6 +110,39 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   const circles = symbol.primitives.filter((p) => p.type === "circle")
   const boxes = symbol.primitives.filter((p) => p.type === "box")
 
+  const bounds = {
+    minX: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
+    maxX: Math.max(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
+    minY: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.y))),
+    maxY: Math.max(...paths.flatMap((p) => p.points.map((pt) => pt.y))),
+  }
+  const [screenMinX, screenMinY] = applyToPoint(
+    compose(realToScreenTransform, transformFromSymbolToReal),
+    [bounds.minX, bounds.minY],
+  )
+
+  const [screenMaxX, screenMaxY] = applyToPoint(
+    compose(realToScreenTransform, transformFromSymbolToReal),
+    [bounds.maxX, bounds.maxY],
+  )
+  const rectHeight = Math.abs(screenMaxY - screenMinY)
+  const rectY = Math.min(screenMinY, screenMaxY)
+  const rectWidth = Math.abs(screenMaxX - screenMinX)
+  const rectX = Math.min(screenMinX, screenMaxX)
+  svgObjects.push({
+    name: "rect",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "component-overlay",
+      x: rectX.toString(),
+      y: rectY.toString(),
+      width: rectWidth.toString(),
+      height: rectHeight.toString(),
+      fill: "transparent",
+    },
+    children: [],
+  })
   for (const path of paths) {
     const { points, color, closed, fill } = path
     svgObjects.push({
@@ -218,6 +251,5 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       children: [],
     })
   }
-
   return svgObjects
 }
