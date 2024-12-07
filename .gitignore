@@ -181,3 +181,6 @@ dist
 *.diff.png
 storybook-static
 package-lock.json
+
+.yalc
+yalc.lock
