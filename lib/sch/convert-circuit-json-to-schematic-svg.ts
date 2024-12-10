@@ -15,6 +15,7 @@ import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
 import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
 import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
@@ -105,7 +106,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schTraceSvgs: SvgObject[] = []
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
-
+  const voltageProbeSvg: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -127,6 +128,10 @@ export function convertCircuitJsonToSchematicSvg(
         : schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
     } else if (elm.type === "schematic_text") {
       schText.push(createSvgSchText(elm, transform))
+    } else if (elm.type === "schematic_voltage_probe") {
+      voltageProbeSvg.push(
+        ...createSvgObjectsFromSchVoltageProbe(elm, transform),
+      )
     }
   }
 
@@ -137,6 +142,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schTraceSvgs,
     ...schNetLabel,
     ...schText,
+    ...voltageProbeSvg,
   )
 
   // Add labeled points if provided
