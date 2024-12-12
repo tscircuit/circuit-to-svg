@@ -41,7 +41,7 @@ export function getSchematicBoundsFromCircuitJson(
     } else if (item.type === "schematic_text") {
       updateBounds(item.position, { width: 0.1, height: 0.1 }, 0)
     } else if (item.type === "schematic_voltage_probe") {
-      updateBounds(item.position, { width: 0.1, height: 0.1 }, 0)
+      updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and hight of the probe (Arrow)
     }
   }
 

@@ -106,7 +106,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schTraceSvgs: SvgObject[] = []
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
-  const voltageProbeSvg: SvgObject[] = []
+  const voltageProbeSvgs: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -129,7 +129,7 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (elm.type === "schematic_text") {
       schText.push(createSvgSchText(elm, transform))
     } else if (elm.type === "schematic_voltage_probe") {
-      voltageProbeSvg.push(
+      voltageProbeSvgs.push(
         ...createSvgObjectsFromSchVoltageProbe(elm, transform),
       )
     }
@@ -142,7 +142,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schTraceSvgs,
     ...schNetLabel,
     ...schText,
-    ...voltageProbeSvg,
+    ...voltageProbeSvgs,
   )
 
   // Add labeled points if provided
