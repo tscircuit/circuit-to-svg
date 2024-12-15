@@ -6,7 +6,6 @@ import {
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { getUnitVectorFromEdgeToOutside } from "lib/utils/get-unit-vector-from-edge-to-outside"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
   applyToPoint,
@@ -17,23 +16,28 @@ import {
   type Matrix,
 } from "transformation-matrix"
 import { estimateTextWidth } from "../estimate-text-width"
-
-/**
- * Arrow point width as a fraction of font size (Font Size Ratio)
- */
-const ARROW_POINT_WIDTH_FSR = 0.3
-
-/**
- * End padding as a fraction of font size (Font Size Ratio)
- */
-const END_PADDING_FSR = 0.3
-const END_PADDING_EXTRA_PER_CHARACTER_FSR = 0.06
+import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
+import {
+  ARROW_POINT_WIDTH_FSR,
+  END_PADDING_FSR,
+  END_PADDING_EXTRA_PER_CHARACTER_FSR,
+} from "../../utils/net-label-utils"
 
 export const createSvgObjectsForSchNetLabel = (
   schNetLabel: SchematicNetLabel,
   realToScreenTransform: Matrix,
 ): SvgObject[] => {
   if (!schNetLabel.text) return []
+
+  // If symbol_name is provided, use the symbol renderer
+
+  if (schNetLabel.symbol_name) {
+    return createSvgObjectsForSchNetLabelWithSymbol(
+      schNetLabel,
+      realToScreenTransform,
+    )
+  }
+
   const svgObjects: SvgObject[] = []
 
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
