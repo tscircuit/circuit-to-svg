@@ -23,6 +23,7 @@ import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
+  getTextOffsets,
 } from "../../utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 
@@ -212,15 +213,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
     const baseOffset = scale * 0.1 // Base offset unit in screen coordinates
 
     // Apply rotation-specific text offset with scale
-    const rotationOffsetMap: Record<string, { x: number; y: number }> = {
-      "0": { x: baseOffset * 0.8, y: -baseOffset }, // Left
-      "-90": { x: baseOffset * 3.3, y: baseOffset * 2.8 }, // Top
-      "90": { x: -baseOffset * 3.55, y: -baseOffset * 4.2 }, // Bottom
-      "180": { x: -baseOffset * 0.85, y: -baseOffset * 0.2 }, // Right
-    }
-
-    const currentRotation = pathRotation.toString()
-    const rotationOffset = rotationOffsetMap[currentRotation] || { x: 0, y: 0 }
+    const rotationOffset = getTextOffsets(pathRotation, realToScreenTransform)
 
     const offsetScreenPos = {
       x: screenTextPos.x + rotationOffset.x,

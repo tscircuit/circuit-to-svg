@@ -1,14 +1,7 @@
 import type { SchematicNetLabel } from "circuit-json"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import {
-  applyToPoint,
-  compose,
-  rotate,
-  scale,
-  translate,
-  type Matrix,
-} from "transformation-matrix"
-import { symbols, type TextPrimitive } from "schematic-symbols"
+import { type Matrix } from "transformation-matrix"
+import { type TextPrimitive } from "schematic-symbols"
 
 export const ARROW_POINT_WIDTH_FSR = 0.3
 export const END_PADDING_FSR = 0.3
@@ -59,10 +52,10 @@ export function getTextOffsets(pathRotation: number, transform: Matrix) {
   const baseOffset = scale * 0.1
 
   const rotationOffsetMap: Record<string, { x: number; y: number }> = {
-    "180": { x: baseOffset * 0.8, y: -baseOffset }, // Left
-    "90": { x: baseOffset * 3.3, y: baseOffset * 2.8 }, // Top
-    "-90": { x: -baseOffset * 3.25, y: -baseOffset * 3.8 }, // Bottom
-    "0": { x: -baseOffset * 0.85, y: -baseOffset * 0.2 }, // Right
+    "0": { x: baseOffset * 0.8, y: -baseOffset }, // Left
+    "-90": { x: baseOffset * 3.3, y: baseOffset * 2.8 }, // Top
+    "90": { x: -baseOffset * 3.55, y: -baseOffset * 4.2 }, // Bottom
+    "180": { x: -baseOffset * 0.85, y: -baseOffset * 0.2 }, // Right
   }
 
   return rotationOffsetMap[pathRotation.toString()] || { x: 0, y: 0 }
