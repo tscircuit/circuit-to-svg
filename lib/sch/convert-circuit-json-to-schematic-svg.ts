@@ -20,7 +20,7 @@ import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
-import { createSvgObjectsForSchNetSymbol } from "./svg-object-fns/create-svg-objects-for-sch-net-symbol"
+
 interface Options {
   width?: number
   height?: number
@@ -123,9 +123,7 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (elm.type === "schematic_trace") {
       schTraceSvgs.push(...createSchematicTrace(elm, transform))
     } else if (elm.type === "schematic_net_label") {
-      elm.symbol_name
-        ? schNetLabel.push(...createSvgObjectsForSchNetSymbol(elm, transform))
-        : schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
+      schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
     } else if (elm.type === "schematic_text") {
       schText.push(createSvgSchText(elm, transform))
     } else if (elm.type === "schematic_voltage_probe") {

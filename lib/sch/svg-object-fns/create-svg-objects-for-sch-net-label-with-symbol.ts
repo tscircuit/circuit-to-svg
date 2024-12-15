@@ -6,7 +6,6 @@ import {
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
   applyToPoint,
   compose,
@@ -16,51 +15,18 @@ import {
   type Matrix,
 } from "transformation-matrix"
 import { estimateTextWidth } from "../estimate-text-width"
-import { symbols, type TextPrimitive } from "schematic-symbols"
+import { symbols } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
+import {
+  ninePointAnchorToTextAnchor,
+  ninePointAnchorToDominantBaseline,
+  ARROW_POINT_WIDTH_FSR,
+  END_PADDING_EXTRA_PER_CHARACTER_FSR,
+  END_PADDING_FSR,
+} from "../../utils/net-label-utils"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 
-const ninePointAnchorToTextAnchor: Record<
-  TextPrimitive["anchor"],
-  "middle" | "start" | "end"
-> = {
-  top_left: "start",
-  top_right: "end",
-  middle_left: "start",
-  middle_right: "end",
-  bottom_left: "start",
-  bottom_right: "end",
-  center: "middle",
-  middle_top: "middle",
-  middle_bottom: "middle",
-}
-
-const ninePointAnchorToDominantBaseline: Record<
-  TextPrimitive["anchor"],
-  "auto" | "hanging" | "middle"
-> = {
-  top_left: "auto",
-  top_right: "auto",
-  bottom_left: "hanging",
-  bottom_right: "hanging",
-  center: "auto",
-  middle_left: "middle",
-  middle_right: "middle",
-  middle_top: "auto",
-  middle_bottom: "hanging",
-}
-
-/**
- * Arrow point width as a fraction of font size (Font Size Ratio)
- */
-const ARROW_POINT_WIDTH_FSR = 0.3
-
-/**
- * End padding as a fraction of font size (Font Size Ratio)
- */
-const END_PADDING_FSR = 0.3
-const END_PADDING_EXTRA_PER_CHARACTER_FSR = 0.06
-
-export const createSvgObjectsForSchNetSymbol = (
+export const createSvgObjectsForSchNetLabelWithSymbol = (
   schNetLabel: SchematicNetLabel,
   realToScreenTransform: Matrix,
 ): SvgObject[] => {
@@ -68,7 +34,7 @@ export const createSvgObjectsForSchNetSymbol = (
   const svgObjects: SvgObject[] = []
 
   // If symbol name is provided, draw the symbol
-  const symbol = symbols["ground_horz" as keyof typeof symbols]
+  const symbol = symbols[schNetLabel.symbol_name as keyof typeof symbols]
   if (!symbol) {
     svgObjects.push(
       createSvgSchErrorText({
@@ -79,7 +45,6 @@ export const createSvgObjectsForSchNetSymbol = (
     )
     return svgObjects
   }
-
   const symbolPaths = symbol.primitives.filter((p) => p.type === "path")
   const symbolTexts = symbol.primitives.filter((p) => p.type === "text")
   const symbolCircles = symbol.primitives.filter((p) => p.type === "circle")
@@ -242,12 +207,16 @@ export const createSvgObjectsForSchNetSymbol = (
 
     // Adjust vertical positioning for left anchor side
 
-    // Apply rotation-specific text offset
+    // Calculate scale-adjusted text offset based on transform
+    const scale = Math.abs(realToScreenTransform.a)
+    const baseOffset = scale * 0.1 // Base offset unit in screen coordinates
+
+    // Apply rotation-specific text offset with scale
     const rotationOffsetMap: Record<string, { x: number; y: number }> = {
-      "0": { x: 8, y: -10 }, // Left
-      "-90": { x: 33, y: 28 }, // Top
-      "90": { x: -32.5, y: -38 }, // Bottom
-      "180": { x: -8.5, y: -2 }, // Right
+      "0": { x: baseOffset * 0.8, y: -baseOffset }, // Left
+      "-90": { x: baseOffset * 3.3, y: baseOffset * 2.8 }, // Top
+      "90": { x: -baseOffset * 3.55, y: -baseOffset * 4.2 }, // Bottom
+      "180": { x: -baseOffset * 0.85, y: -baseOffset * 0.2 }, // Right
     }
 
     const currentRotation = pathRotation.toString()
@@ -264,7 +233,7 @@ export const createSvgObjectsForSchNetSymbol = (
       attributes: {
         x: offsetScreenPos.x.toString(),
         y: offsetScreenPos.y.toString(),
-        fill: colorMap.schematic.label_global,
+        fill: colorMap.schematic.label_local,
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
@@ -282,7 +251,6 @@ export const createSvgObjectsForSchNetSymbol = (
       value: "",
     })
   }
-
   // Draw symbol boxes
   for (const box of symbolBoxes) {
     const screenBoxPos = applyToPoint(
