@@ -1,7 +1,7 @@
 import type { Point } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 interface ComponentProps {
   center: Point
   width: number
@@ -38,7 +38,7 @@ export function createSvgObjectsFromAssemblyComponent(
         pinY,
         rotation,
       ),
-      createComponentLabel(scaledWidth, scaledHeight, name),
+      createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
     ],
   }
 }
@@ -74,18 +74,22 @@ function createComponentPath(
 function createComponentLabel(
   scaledWidth: number,
   scaledHeight: number,
-  name?: string,
+  name: string,
+  transform: Matrix,
 ): SvgObject {
+  const scale = Math.min(scaledWidth, scaledHeight) * 0.4
+  const fontSize = getSchScreenFontSize(transform, "net_label") * (scale / 2.5)
+  const scaledFontSize = scale < 25 ? fontSize : fontSize * 0.6
   return {
     name: "text",
     type: "element",
     attributes: {
       x: "0",
-      y: "0",
+      y: `${0 + scaledFontSize / 8}`,
       class: "assembly-component-label",
       "text-anchor": "middle",
       "dominant-baseline": "middle",
-      "font-size": `${Math.min(scaledWidth, scaledHeight) * 0.5}`,
+      "font-size": `${scaledFontSize}px`,
       transform: "scale(1, -1)",
     },
     children: [
