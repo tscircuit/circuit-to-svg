@@ -162,6 +162,8 @@ export function createSchematicTrace(
       value: "",
       attributes: {
         class: "trace",
+        "data-circuit-json-type": "schematic_trace",
+        "data-schematic-trace-id": trace.schematic_trace_id,
       },
       children: svgObjects,
     },
