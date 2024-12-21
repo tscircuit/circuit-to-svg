@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
@@ -30,6 +31,6 @@ test("schematic trace overlap", () => {
   )
 
   expect(
-    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson() as AnyCircuitElement[]),
   ).toMatchSvgSnapshot(import.meta.path)
 })
