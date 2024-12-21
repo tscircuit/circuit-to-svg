@@ -1,4 +1,4 @@
-import { convertCircuitJsonToSchematicSvg } from "../../lib/index.js"
+import { convertCircuitJsonToSchematicSvg, convertCircuitJsonToPcbSvg, convertCircuitJsonToAssemblySvg, convertCircuitJsonTo3dSvg } from "../../lib/index.js"
 
 const soup: any = [
   {
@@ -784,7 +784,7 @@ const soup: any = [
 ]
 
 export const ResistorCapacitorSch = () => {
-  const result = convertCircuitJsonToSchematicSvg(soup)
+  const result = convertCircuitJsonTo3dSvg(soup)
 
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }

@@ -34,6 +34,7 @@
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.6",
     "circuit-json": "^0.0.111",
+    "circuit-to-svg": ".",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "^18.3.1",
@@ -48,6 +49,7 @@
     "schematic-symbols": "*"
   },
   "dependencies": {
+    "@tscircuit/3d-viewer": "^0.0.59",
     "@tscircuit/footprinter": "^0.0.91",
     "@tscircuit/routing": "^1.3.5",
     "@tscircuit/soup-util": "^0.0.41",
