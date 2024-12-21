@@ -31,6 +31,8 @@ test("schematic trace overlap", () => {
   )
 
   expect(
-    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson() as AnyCircuitElement[]),
+    convertCircuitJsonToSchematicSvg(
+      circuit.getCircuitJson() as AnyCircuitElement[],
+    ),
   ).toMatchSvgSnapshot(import.meta.path)
 })

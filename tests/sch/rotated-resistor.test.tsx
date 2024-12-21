@@ -26,7 +26,7 @@ test("schematic rotated resistor", () => {
           ...c,
           symbol_name: "boxresistor_vert",
         }
-      } )as AnyCircuitElement[]
+      }) as AnyCircuitElement[],
     ),
   ).toMatchSvgSnapshot(import.meta.path)
 })
