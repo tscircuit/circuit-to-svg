@@ -49,7 +49,7 @@
     "schematic-symbols": "*"
   },
   "dependencies": {
-    "@tscircuit/3d-viewer": "^0.0.59",
+    "@tscircuit/3d-viewer": "github:tscircuit/3d-viewer",
     "@tscircuit/footprinter": "^0.0.91",
     "@tscircuit/routing": "^1.3.5",
     "@tscircuit/soup-util": "^0.0.41",
