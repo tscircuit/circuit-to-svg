@@ -73,12 +73,14 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     children: [],
   })
 
-  const schTexts = su(circuitJson as any).schematic_text.list({
-    schematic_component_id: schComponent.schematic_component_id,
-  })
+  const schTexts = su(circuitJson as any).schematic_text.list()
 
   for (const schText of schTexts) {
-    svgObjects.push(createSvgSchText(schText, transform))
+    if (
+      schText.schematic_component_id === schComponent.schematic_component_id
+    ) {
+      svgObjects.push(createSvgSchText(schText, transform))
+    }
   }
   // // Process ports
   const schematicPorts = su(circuitJson as any).schematic_port.list({

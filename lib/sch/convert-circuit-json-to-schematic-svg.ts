@@ -126,7 +126,9 @@ export function convertCircuitJsonToSchematicSvg(
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
     } else if (elm.type === "schematic_text") {
-      schText.push(createSvgSchText(elm, transform))
+      if (!elm.schematic_component_id.includes("schematic_component")) {
+        schText.push(createSvgSchText(elm, transform))
+      }
     } else if (elm.type === "schematic_voltage_probe") {
       voltageProbeSvgs.push(
         ...createSvgObjectsFromSchVoltageProbe(elm, transform),
