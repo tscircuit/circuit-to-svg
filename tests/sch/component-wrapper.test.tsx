@@ -81,7 +81,7 @@ test("component wrapper has correct attributes", () => {
 
   circuit.render()
   const circuitJson = circuit.getCircuitJson()
-  const svg = convertCircuitJsonToSchematicSvg(circuitJson)
+  const svg = convertCircuitJsonToSchematicSvg(circuitJson as SchematicComponent[])
 
   expect(svg).toContain('data-circuit-json-type="schematic_component"')
   expect(svg).toContain("data-schematic-component-id")
