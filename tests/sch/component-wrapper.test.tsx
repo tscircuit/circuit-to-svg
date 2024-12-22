@@ -14,7 +14,7 @@ test("component wrapper has correct attributes", () => {
         footprint="0402"
         pcbX={-2}
         schX={-1}
-        symbolName="boxresistor_horz"
+        symbolName="boxresistor_right"
       />
       <capacitor
         name="C1"

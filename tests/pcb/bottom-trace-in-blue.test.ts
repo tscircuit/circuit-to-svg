@@ -66,7 +66,7 @@ const soup: any = [
       height: 0.55,
     },
     source_component_id: "source_component_0",
-    symbol_name: "boxresistor_horz",
+    symbol_name: "boxresistor_right",
   },
   {
     type: "schematic_component",
@@ -81,7 +81,7 @@ const soup: any = [
       height: 0.4594567000000005,
     },
     source_component_id: "source_component_1",
-    symbol_name: "led_horz",
+    symbol_name: "led_right",
   },
   {
     type: "schematic_port",
