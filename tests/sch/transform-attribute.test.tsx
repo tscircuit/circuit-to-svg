@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 
-test.skip("svg should have data-real-to-screen-transform attribute", () => {
+test("svg should have data-real-to-screen-transform attribute", () => {
   const svg = convertCircuitJsonToSchematicSvg([
     {
       type: "schematic_box",

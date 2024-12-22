@@ -181,32 +181,18 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       textValue = schComponent.symbol_display_value ?? ""
     }
 
-    const getTextOffset = (
-      bounds: { minX: number; maxX: number; minY: number; maxY: number },
-      anchor: TextPrimitive["anchor"],
-      transform: Matrix,
-    ) => {
-      const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
-      const offsetFactor = 0.1
+    const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
+    const offsetFactor = 0.1
+    const baseOffset = symbolHeight * offsetFactor
+    const transformScale = Math.abs(transformFromSymbolToReal.a)
 
-      const baseOffset = symbolHeight * offsetFactor
+    let verticalOffset = 0
 
-      const transformScale = Math.abs(transform.a)
-
-      if (anchor.includes("bottom")) {
-        return baseOffset * transformScale
-      }
-      if (anchor.includes("top")) {
-        return -baseOffset * transformScale
-      }
-      return 0
+    if (text.anchor.includes("bottom")) {
+      verticalOffset = baseOffset * transformScale
+    } else if (text.anchor.includes("top")) {
+      verticalOffset = -baseOffset * transformScale
     }
-
-    const verticalOffset = getTextOffset(
-      bounds,
-      text.anchor,
-      transformFromSymbolToReal,
-    )
 
     const dominantBaseline = text.anchor.includes("bottom")
       ? "auto"
