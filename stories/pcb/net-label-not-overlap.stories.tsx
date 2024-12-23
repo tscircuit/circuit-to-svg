@@ -775,7 +775,7 @@ const soup: any = [
       x: -2.1,
       y: 0,
     },
-    symbol_name: "boxresistor_horz",
+    symbol_name: "boxresistor_right",
   },
   {
     type: "source_port",

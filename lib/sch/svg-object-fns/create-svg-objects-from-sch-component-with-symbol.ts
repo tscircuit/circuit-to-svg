@@ -173,21 +173,43 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       compose(realToScreenTransform, transformFromSymbolToReal),
       text,
     )
+
     let textValue = ""
     if (text.text === "{REF}") {
       textValue = srcComponent?.name ?? ""
     } else if (text.text === "{VAL}") {
       textValue = schComponent.symbol_display_value ?? ""
     }
+
+    const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
+    const offsetFactor = 0.1
+    const baseOffset = symbolHeight * offsetFactor
+    const transformScale = Math.abs(transformFromSymbolToReal.a)
+
+    let verticalOffset = 0
+
+    if (text.anchor.includes("bottom")) {
+      verticalOffset = baseOffset * transformScale
+    } else if (text.anchor.includes("top")) {
+      verticalOffset = -baseOffset * transformScale
+    }
+
+    const dominantBaseline = text.anchor.includes("bottom")
+      ? "auto"
+      : text.anchor.includes("top")
+        ? "hanging"
+        : "middle"
+
     svgObjects.push({
       name: "text",
       type: "element",
       attributes: {
         x: screenTextPos.x.toString(),
-        y: screenTextPos.y.toString(),
-        "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
-        "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
+        y: (screenTextPos.y + verticalOffset).toString(),
+        fill: colorMap.schematic.label_local,
         "font-family": "sans-serif",
+        "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
+        "dominant-baseline": dominantBaseline,
         "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
       },
       value: "",

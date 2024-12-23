@@ -12,7 +12,7 @@ test("schematic resistor", () => {
         name="R1"
         resistance="10"
         footprint="0402"
-        symbolName="boxresistor_horz"
+        symbolName="boxresistor_right"
       />
     </board>,
   )
