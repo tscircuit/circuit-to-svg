@@ -14,6 +14,7 @@ import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-o
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -72,6 +73,15 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     children: [],
   })
 
+  const schTexts = su(circuitJson as any).schematic_text.list()
+
+  for (const schText of schTexts) {
+    if (
+      schText.schematic_component_id === schComponent.schematic_component_id
+    ) {
+      svgObjects.push(createSvgSchText(schText, transform))
+    }
+  }
   // // Process ports
   const schematicPorts = su(circuitJson as any).schematic_port.list({
     schematic_component_id: schComponent.schematic_component_id,
