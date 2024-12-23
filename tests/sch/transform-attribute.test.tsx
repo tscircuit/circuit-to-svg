@@ -18,7 +18,6 @@ test("svg should have data-real-to-screen-transform attribute", () => {
 
   // Extract the transform value and verify it's a valid matrix string
   const match = svg.match(/data-real-to-screen-transform="([^"]+)"/)
-
   // @ts-ignore
   expect(match[1]).toMatchInlineSnapshot(
     `"matrix(54.5454545455,0,0,-54.5454545455,600,300)"`,
