@@ -2,7 +2,7 @@ import { test, expect } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 // this test needs core update and  PR to support net symbols
-test.skip("schematic net symbol", () => {
+test("schematic net symbol", () => {
   const circuit = new Circuit()
 
   circuit.add(
