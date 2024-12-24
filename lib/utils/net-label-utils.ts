@@ -53,8 +53,8 @@ export function getTextOffsets(pathRotation: number, transform: Matrix) {
 
   const rotationOffsetMap: Record<string, { x: number; y: number }> = {
     "0": { x: baseOffset * 0.8, y: -baseOffset }, // Left
-    "-90": { x: baseOffset * 3.3, y: baseOffset * 2.8 }, // Top
-    "90": { x: -baseOffset * 3.55, y: -baseOffset * 4.2 }, // Bottom
+    "-90": { x: baseOffset * -3.5, y: baseOffset * 2.8 }, // Top
+    "90": { x: -baseOffset * -3.55, y: -baseOffset * 4.2 }, // Bottom
     "180": { x: -baseOffset * 0.85, y: -baseOffset * 0.2 }, // Right
   }
 
