@@ -1,7 +1,7 @@
 import type { AnySoupElement } from "@tscircuit/soup"
 import type { AnyCircuitElement } from "circuit-json"
 import { createBoardGeomFromSoup } from "@tscircuit/3d-viewer/src/soup-to-3d"
-import { STLModel } from "@tscircuit/3d-viewer/src/three-components/STLModel"
+import { STLModel } from "./components/STLModel"
 import { AnyCadComponent } from "@tscircuit/3d-viewer/src/AnyCadComponent"
 import { su } from "@tscircuit/soup-util"
 import { createStlsFromGeom } from "./svg-object-fns/create-stls-from-geom"
