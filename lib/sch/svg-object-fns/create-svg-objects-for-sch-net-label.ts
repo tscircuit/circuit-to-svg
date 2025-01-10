@@ -150,7 +150,7 @@ export const createSvgObjectsForSchNetLabel = (
     attributes: {
       class: "net-label",
       d: pathD,
-      fill: "white",
+      // fill: "white",
       stroke: colorMap.schematic.label_global,
       "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
     },
@@ -185,7 +185,7 @@ export const createSvgObjectsForSchNetLabel = (
       class: "net-label-text",
       x: screenTextPos.x.toString(),
       y: screenTextPos.y.toString(),
-      fill: colorMap.schematic.label_global,
+      // fill: colorMap.schematic.label_global,
       "text-anchor": textAnchor,
       "dominant-baseline": "central",
       "font-family": "sans-serif",
