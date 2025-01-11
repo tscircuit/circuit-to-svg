@@ -1,40 +1,36 @@
 import stlSerializer from "@jscad/stl-serializer"
 import type { Geom3 } from "@jscad/modeling/src/geometries/types"
 
-function blobToBase64Url(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      resolve(reader.result as string)
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(blob)
-  })
-}
-
-type StlObj = { stlUrl: string; color: number[] }
+type StlObj = { hash: string; stlData: ArrayBuffer; color: number[] }
 
 export const createStlsFromGeom = (geom: Geom3[] | Geom3): StlObj[] => {
-  let stls: StlObj[] = []
+  const geometries = Array.isArray(geom) ? geom : [geom]
 
-  const generateStls = async () => {
-    const geometries = Array.isArray(geom) ? geom : [geom]
-
-    const stlPromises = geometries.map(async (g) => {
-      const rawData = stlSerializer.serialize({ binary: true }, [g])
-      const blobData = new Blob(rawData)
-      const stlUrl = await blobToBase64Url(blobData)
-      return { stlUrl, color: g.color! }
-    })
-
-    try {
-      stls = await Promise.all(stlPromises)
-    } catch (error) {
-      console.error("Error generating STLs:", error)
-    }
-  }
-
-  generateStls()
+  const stls = geometries.map((g) => {
+    const rawData = stlSerializer.serialize({ binary: true }, [g])
+    const stlData = join(rawData)
+    return { hash: hash(stlData), stlData, color: g.color! }
+  })
 
   return stls
+}
+
+function join(buffers: ArrayBuffer[]) {
+  const totalLength = buffers.reduce((sum, b) => sum + b.byteLength, 0)
+  const result = new Uint8Array(totalLength)
+  let offset = 0
+  for (const buffer of buffers) {
+    result.set(new Uint8Array(buffer), offset)
+    offset += buffer.byteLength
+  }
+  return result.buffer
+}
+
+function hash(buffer: ArrayBuffer) {
+  const view = new Uint8Array(buffer)
+  let hash = 0
+  for (let i = 0; i < view.length; i++) {
+    hash = (hash * 31 + view[i]!) >>> 0
+  }
+  return hash.toString(16)
 }

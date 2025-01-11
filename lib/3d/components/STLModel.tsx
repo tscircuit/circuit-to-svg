@@ -1,23 +1,24 @@
-import { useLoader } from "@react-three/fiber"
 import { useRef } from "react"
 import * as THREE from "three"
-import { MTLLoader, OBJLoader, STLLoader } from "three-stdlib"
+import { STLLoader } from "three-stdlib"
+
+const stlLoader = new STLLoader()
 
 export function STLModel({
-  stlUrl,
-  mtlUrl,
+  stlData,
+  mtlData,
   color,
   opacity = 1,
 }: {
-  stlUrl: string
+  stlData: ArrayBuffer
   color?: any
-  mtlUrl?: string
+  mtlData?: ArrayBuffer
   opacity?: number
 }) {
-  const geom = useLoader(STLLoader, stlUrl)
+  const geom = stlLoader.parse(stlData)
   const mesh = useRef<THREE.Mesh>()
 
-  // TODO handle mtl url
+  // TODO load MTL
 
   return (
     <mesh ref={mesh as any}>

@@ -49,10 +49,10 @@ export function convertCircuitJsonTo3dSvg(
       cellSize={1}
       sectionSize={10}
     />
-    {boardStls.map(({ stlUrl, color }, index) => (
+    {boardStls.map(({ hash, stlData, color }, index) => (
       <STLModel
-        key={stlUrl}
-        stlUrl={stlUrl}
+        key={hash}
+        stlData={stlData}
         color={color}
         opacity={index === 0 ? 0.95 : 1}
       />
@@ -68,6 +68,3 @@ export function convertCircuitJsonTo3dSvg(
 
   return gl.domElement.outerHTML
 }
-
-
-
