@@ -24,14 +24,17 @@ export function convertCircuitJsonTo3dSvg(
   const boardStls = createStlsFromGeom(boardGeom)
   const cad_components = su(soup).cad_component.list()
 
+  const boards = soup.filter(e => e.type === "pcb_board")
+  const dimensions = boards.flatMap((b) => [b.width, b.height])
+  const zoom = dimensions.reduce((prev, val) => prev + val, 0) / dimensions.length
+
   const gl = new SVGRenderer()
 
   // @ts-expect-error should be fine. see https://github.com/pmndrs/react-three-fiber/blob/3acb4b041354e8084e7833c9254326ef6282cb5c/example/src/demos/SVGRenderer.tsx#L54
   const root = createRoot({})
     .configure({
       gl, frameloop: "never",
-      scene: { up: [0, 0, 1] },
-      camera: { position: [0, 0, 50], up: [0, 0, 1] },
+      camera: { position: [0, 0, zoom] },
       size: { width, height, top: 0, left: 0 },
     })
 
