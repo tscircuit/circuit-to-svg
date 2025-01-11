@@ -38,6 +38,5 @@ test("pill smtpad shape", () => {
     },
   ])
 
-  console.log(result) // Log the result to debug
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })
