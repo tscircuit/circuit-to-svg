@@ -52,9 +52,10 @@ export function createSvgObjectsFromSmtPad(
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
 
+    // Create a pill shape (rectangular with rounded corners)
     return [
       {
-        name: "pill",
+        name: "rect",
         type: "element",
         attributes: {
           class: "pcb-pad",
@@ -63,8 +64,8 @@ export function createSvgObjectsFromSmtPad(
           y: (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
-          rx: radius.toString(),
-          ry: radius.toString(),
+          rx: radius.toString(), // Rounded corners for "pill" shape
+          ry: radius.toString(), // Rounded corners for "pill" shape
         },
       },
     ]
