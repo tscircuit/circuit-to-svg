@@ -45,6 +45,31 @@ export function createSvgObjectsFromSmtPad(
       },
     ]
   }
-  // TODO implement smtpad circles/ovals etc.
+
+  // Implement pill-shaped SMT pad
+  if (pad.shape === "pill") {
+    const width = pad.width * Math.abs(transform.a)
+    const height = pad.height * Math.abs(transform.d)
+    const radius = pad.radius * Math.abs(transform.a)
+
+    return [
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-pad",
+          fill: layerNameToColor(pad.layer),
+          x: (x - width / 2).toString(),
+          y: (y - height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          rx: radius.toString(),
+          ry: radius.toString(),
+        },
+      },
+    ]
+  }
+
+  // TODO: Implement SMT pad circles/ovals etc.
   return []
 }
