@@ -49,7 +49,7 @@ export function drawSchematicLabeledPoints(params: {
         y: labelY.toString(),
         fill: colorMap.schematic.grid,
         "font-size": (0.1 * Math.abs(transform.a)).toString(),
-        "fill-opacity": "0.7",
+        "fill-opacity": "0.1",
         "text-anchor": "start",
         "font-family": "sans-serif",
         "dominant-baseline": "middle",
