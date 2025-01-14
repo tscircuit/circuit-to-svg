@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 25330f55a53ea507636022459695664fb9f4bd45..859f0946f4abb3a01d3746e2896b9522278553bc 100644
+--- a/package.json
++++ b/package.json
+@@ -27,7 +27,6 @@
+     "type": "opencollective",
+     "url": "https://opencollective.com/react-three-fiber"
+   },
+-  "main": "dist/react-three-fiber.cjs.js",
+   "module": "dist/react-three-fiber.esm.js",
+   "types": "dist/react-three-fiber.cjs.d.ts",
+   "react-native": "native/dist/react-three-fiber-native.cjs.js",
