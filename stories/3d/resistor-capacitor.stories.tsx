@@ -20,6 +20,7 @@ const createCircuit = () => {
     />
     <resistor
       name="R2"
+      layer="bottom"
       footprint={"0402"}
       resistance={"1k"}
       pcbX={5}
@@ -33,7 +34,7 @@ const createCircuit = () => {
 export const ResistorCapacitorPcb = () => {
   const result = convertCircuitJsonTo3dSvg(createCircuit())
 
-  return <div dangerouslySetInnerHTML={{ __html: result }} />
+  return <div dangerouslySetInnerHTML={{ __html: result.join() }} />
 }
 
 export default {
