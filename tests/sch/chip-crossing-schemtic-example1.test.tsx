@@ -2,7 +2,7 @@ import { expect, it } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-it("example 4: kicad theme demo", async () => {
+it("example 1: chip crossing schemtic", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
