@@ -7,7 +7,6 @@ import { su } from "@tscircuit/soup-util"
 import { createStlsFromGeom } from "./svg-object-fns/create-stls-from-geom"
 import { SVGRenderer } from "three-stdlib"
 import { extend, createRoot, advance, flushSync } from "@react-three/fiber"
-import { Grid } from "@react-three/drei"
 import * as THREE from "three"
 
 interface Options {
@@ -45,12 +44,6 @@ export function convertCircuitJsonTo3dSvg(
       position={[-10, -10, 10]}
       decay={0}
       intensity={Math.PI / 4}
-    />
-    <Grid
-      rotation={[Math.PI / 2, 0, 0]}
-      infiniteGrid={true}
-      cellSize={1}
-      sectionSize={10}
     />
     {boardStls.map(({ hash, stlData, color }, index) => (
       <STLModel
