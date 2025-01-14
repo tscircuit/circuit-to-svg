@@ -6,7 +6,7 @@ it("example 4: kicad theme demo", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-<board width="40mm" height="40mm" schTraceAutoLabelEnabled>
+    <board width="40mm" height="40mm" schTraceAutoLabelEnabled>
       {/* Central chip with 16 pins */}
       <chip
         name="U1"
@@ -76,7 +76,7 @@ it("example 4: kicad theme demo", async () => {
       <trace from=".R1 > .pin1" to=".R12 > .pin2" />
       <trace from=".R3 > .pin1" to=".R10 > .pin2" />
       <trace from=".R5 > .pin1" to=".R8 > .pin2" />
-    </board>
+    </board>,
   )
 
   circuit.render()
