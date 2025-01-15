@@ -21,74 +21,74 @@
     L 389.2,252.77333333333334
     L 389.2,205.4
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="400" y="209" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 400 209)">VCC</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="400" y="209" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 400 209)">VCC</text><path class="net-label" d="
     M 500,200
     L 489.2,194.6
     L 489.2,145.22666666666666
     L 510.8,145.22666666666666
     L 510.8,194.6
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="500" y="191" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 500 191)">GND</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="500" y="191" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 500 191)">GND</text><path class="net-label" d="
     M 400,100
     L 405.4,89.2
     L 452.1066666666667,89.2
     L 452.1066666666667,110.8
     L 405.4,110.8
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="100" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">SDA</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="100" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">SDA</text><path class="net-label" d="
     M 600,100
     L 594.6,110.8
     L 549.8933333333333,110.8
     L 549.8933333333333,89.19999999999999
     L 594.6,89.2
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="591" y="100" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">SCL</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="591" y="100" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">SCL</text><path class="net-label" d="
     M 400,400
     L 405.4,389.2
     L 500.74666666666667,389.2
     L 500.74666666666667,410.8
     L 405.4,410.8
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="400" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">short label</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="400" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">short label</text><path class="net-label" d="
     M 400,500
     L 405.4,489.2
     L 580.3333333333334,489.2
     L 580.3333333333334,510.8
     L 405.4,510.8
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="500" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">WWWWWWWWWW</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="409" y="500" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">WWWWWWWWWW</text><path class="net-label" d="
     M 650,500
     L 639.2,494.6
     L 639.2,200.92000000000002
     L 660.8000000000001,200.92000000000002
     L 660.8,494.6
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="650" y="491" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 650 491)">superlong label. This is a long one!</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="650" y="491" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 650 491)">superlong label. This is a long one!</text><path class="net-label" d="
     M 751.12,400
     L 756.52,389.2
     L 848.88,389.2
     L 848.88,410.8
     L 756.52,410.8
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="760.12" y="400" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">CENTER1</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="760.12" y="400" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">CENTER1</text><path class="net-label" d="
     M 848.8799999999999,300
     L 843.4799999999999,310.8
     L 751.1199999999999,310.8
     L 751.1199999999999,289.2
     L 843.4799999999999,289.2
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="839.88" y="300" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">CENTER2</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="839.88" y="300" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="">CENTER2</text><path class="net-label" d="
     M 800,151.12
     L 810.8,156.52
     L 810.8,248.88
     L 789.2,248.88
     L 789.2,156.52
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="800" y="160.12" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 800 160.12)">CENTER3</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="800" y="160.12" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(90 800 160.12)">CENTER3</text><path class="net-label" d="
     M 800,148.88
     L 789.2,143.48
     L 789.2,51.120000000000005
     L 810.8,51.120000000000005
     L 810.8,143.48
     Z
-  " fill="white" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="800" y="139.88" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 800 139.88)">CENTER4</text><g class="labeled-points"><path d="M390,210 L410,190 M390,190 L410,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="415" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=top</text><path d="M490,210 L510,190 M490,190 L510,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="515" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=bottom</text><path d="M390,110 L410,90.00000000000006 M390,90.00000000000006 L410,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="415" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=left</text><path d="M590,110 L610,90.00000000000006 M590,90.00000000000006 L610,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="615" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=right</text><path d="M790,410 L810,390 M790,390 L810,410" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="415" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center1</text><path d="M790,310 L810,290 M790,290 L810,310" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="315" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center2</text><path d="M790,210 L810,190 M790,190 L810,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center3</text><path d="M790,110 L810,90.00000000000006 M790,90.00000000000006 L810,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center4</text></g></svg>
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="2px"/><text class="net-label-text" x="800" y="139.88" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="18px" transform="rotate(-90 800 139.88)">CENTER4</text><g class="labeled-points"><path d="M390,210 L410,190 M390,190 L410,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="415" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=top</text><path d="M490,210 L510,190 M490,190 L510,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="515" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=bottom</text><path d="M390,110 L410,90.00000000000006 M390,90.00000000000006 L410,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="415" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=left</text><path d="M590,110 L610,90.00000000000006 M590,90.00000000000006 L610,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="615" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">anchor_side=right</text><path d="M790,410 L810,390 M790,390 L810,410" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="415" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center1</text><path d="M790,310 L810,290 M790,290 L810,310" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="315" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center2</text><path d="M790,210 L810,190 M790,190 L810,210" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="215" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center3</text><path d="M790,110 L810,90.00000000000006 M790,90.00000000000006 L810,110" stroke="rgb(181, 181, 181)" stroke-width="2" stroke-opacity="0.7"/><text x="815" y="115" fill="rgb(181, 181, 181)" font-size="10" fill-opacity="0.7" text-anchor="start" font-family="sans-serif" dominant-baseline="middle">center4</text></g></svg>
