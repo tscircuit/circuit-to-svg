@@ -21,18 +21,18 @@
     L 821.5848008218255,444.5177300756403
     L 821.5848008218255,398.7753917722422
     Z
-  " fill="transparent" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="829.9409789963299" y="401.560784497077" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="rotate(90 829.9409789963299 401.560784497077)">GND2</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="829.9409789963299" y="401.560784497077" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="rotate(90 829.9409789963299 401.560784497077)">GND2</text><path class="net-label" d="
     M 721.62015080831,286.27647449697
     L 717.4420617210578,294.63265267147443
     L 671.6997234176596,294.63265267147443
     L 671.6997234176596,277.9202963224656
     L 717.4420617210578,277.9202963224656
     Z
-  " fill="transparent" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="714.656668996223" y="286.27647449697" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="">GND2</text><path class="net-label" d="
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="714.656668996223" y="286.27647449697" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="">GND2</text><path class="net-label" d="
     M 922.78740315749,286.27647449696997
     L 926.9654922447421,277.92029632246556
     L 972.7078305481404,277.92029632246556
     L 972.7078305481404,294.6326526714744
     L 926.9654922447421,294.6326526714744
     Z
-  " fill="transparent" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="929.750884969577" y="286.27647449696997" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="">GND2</text></svg>
+  " fill="#FFFFFF99" stroke="rgb(132, 0, 0)" stroke-width="1.547440402686px"/><text class="net-label-text" x="929.750884969577" y="286.27647449696997" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="13.926963624174px" transform="">GND2</text></svg>
