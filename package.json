@@ -60,6 +60,6 @@
     "transformation-matrix": "^2.16.1"
   },
   "patchedDependencies": {
-    "three-stdlib@2.35.2": "patches/three-stdlib@2.35.2.patch",
+    "three-stdlib@2.35.2": "patches/three-stdlib@2.35.2.patch"
   }
 }
