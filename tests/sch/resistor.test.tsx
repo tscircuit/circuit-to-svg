@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
@@ -11,7 +12,7 @@ test("schematic resistor", () => {
         name="R1"
         resistance="10"
         footprint="0402"
-        symbolName="boxresistor_horz"
+        symbolName="boxresistor_right"
       />
     </board>,
   )
@@ -30,7 +31,7 @@ test("schematic resistor", () => {
             }
           }
           return elm
-        }),
+        }) as AnyCircuitElement[],
     ),
   ).toMatchSvgSnapshot(import.meta.path)
 })

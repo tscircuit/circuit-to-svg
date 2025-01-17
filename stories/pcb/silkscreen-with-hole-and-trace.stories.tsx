@@ -220,7 +220,7 @@ const pcbSoup = [
       y: 0,
     },
     rotation: 0,
-    symbol_name: "boxresistor_horz",
+    symbol_name: "boxresistor_right",
     source_component_id: "source_component_1",
     schematic_component_id: "schematic_component_1",
   },

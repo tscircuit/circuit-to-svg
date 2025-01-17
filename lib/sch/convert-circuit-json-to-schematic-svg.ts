@@ -10,6 +10,7 @@ import {
   fromTriangles,
   type Matrix,
   fromTwoMovingPoints,
+  toSVG,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
@@ -124,7 +125,7 @@ export function convertCircuitJsonToSchematicSvg(
       schTraceSvgs.push(...createSchematicTrace(elm, transform))
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
-    } else if (elm.type === "schematic_text") {
+    } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(createSvgSchText(elm, transform))
     } else if (elm.type === "schematic_voltage_probe") {
       voltageProbeSvgs.push(
@@ -161,6 +162,7 @@ export function convertCircuitJsonToSchematicSvg(
       width: svgWidth.toString(),
       height: svgHeight.toString(),
       style: `background-color: ${colorMap.schematic.background}`,
+      "data-real-to-screen-transform": toSVG(transform),
     },
     children: [
       // Add styles

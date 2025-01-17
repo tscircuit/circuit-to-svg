@@ -14,7 +14,7 @@ test("component wrapper has correct attributes", () => {
         footprint="0402"
         pcbX={-2}
         schX={-1}
-        symbolName="boxresistor_horz"
+        symbolName="boxresistor_right"
       />
       <capacitor
         name="C1"
@@ -81,7 +81,9 @@ test("component wrapper has correct attributes", () => {
 
   circuit.render()
   const circuitJson = circuit.getCircuitJson()
-  const svg = convertCircuitJsonToSchematicSvg(circuitJson)
+  const svg = convertCircuitJsonToSchematicSvg(
+    circuitJson as SchematicComponent[],
+  )
 
   expect(svg).toContain('data-circuit-json-type="schematic_component"')
   expect(svg).toContain("data-schematic-component-id")
