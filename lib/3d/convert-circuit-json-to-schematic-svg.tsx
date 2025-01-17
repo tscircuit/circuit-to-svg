@@ -5,8 +5,8 @@ import { STLModel } from "./components/STLModel"
 import { AnyCadComponent } from "@tscircuit/3d-viewer/src/AnyCadComponent"
 import { su } from "@tscircuit/soup-util"
 import { createStlsFromGeom } from "./svg-object-fns/create-stls-from-geom"
-import { SVGRenderer } from "three-stdlib"
-import { extend, createRoot, flushSync, type RenderProps } from "@react-three/fiber"
+import { SVGRenderer } from "../../node_modules/three-stdlib/renderers/SVGRenderer.js"
+import { extend, createRoot, flushSync, type RenderProps } from "@react-three/fiber/dist/react-three-fiber.esm.js"
 import * as THREE from "three"
 
 interface Options {

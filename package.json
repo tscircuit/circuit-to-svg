@@ -58,9 +58,5 @@
     "@types/node": "^22.5.5",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
-  },
-  "patchedDependencies": {
-    "three-stdlib@2.35.2": "patches/three-stdlib@2.35.2.patch",
-    "@react-three/fiber@8.17.10": "patches/@react-three%2Ffiber@8.17.10.patch"
   }
 }

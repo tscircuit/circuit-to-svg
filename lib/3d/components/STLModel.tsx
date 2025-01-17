@@ -1,6 +1,6 @@
 import { useRef } from "react"
-import * as THREE from "three"
-import { STLLoader } from "three-stdlib"
+import type * as THREE from "three"
+import { STLLoader } from "../../../node_modules/three-stdlib/loaders/STLLoader.js"
 
 const stlLoader = new STLLoader()
 
