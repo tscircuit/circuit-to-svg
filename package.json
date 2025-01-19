@@ -3,14 +3,17 @@
   "type": "module",
   "version": "0.0.101",
   "description": "Convert Circuit JSON to SVG",
-  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./3d": "./dist/3d.js"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "start": "storybook dev -p 6006",
     "prepublish": "npm run build",
-    "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
+    "build": "tsup-node ./lib/{index,3d}.ts --format esm --dts --sourcemap",
     "format": "biome format . --write",
     "format:check": "biome format .",
     "storybook": "storybook dev -p 6006",
@@ -49,8 +52,10 @@
     "circuit-json": "*",
     "schematic-symbols": "*"
   },
+  "optionalDependencies": {
+    "@tscircuit/3d-viewer": "github:tscircuit/3d-viewer#v0.0.81"
+  },
   "dependencies": {
-    "@tscircuit/3d-viewer": "github:tscircuit/3d-viewer#v0.0.81",
     "@tscircuit/footprinter": "^0.0.91",
     "@tscircuit/routing": "^1.3.5",
     "@tscircuit/soup-util": "^0.0.41",
