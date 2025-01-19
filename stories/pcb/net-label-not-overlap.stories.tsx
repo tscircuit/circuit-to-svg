@@ -1,8 +1,4 @@
-import React, { useEffect, useState } from "react"
-import {
-  circuitJsonToSchematicSvg,
-  convertCircuitJsonToPcbSvg,
-} from "../../lib/index.js"
+import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
 const soup: any = [
   {
