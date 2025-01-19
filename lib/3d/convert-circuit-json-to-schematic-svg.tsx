@@ -12,7 +12,14 @@ import {
   flushSync,
   type RenderProps,
 } from "@react-three/fiber/dist/react-three-fiber.esm.js"
-import { Object3D, Group, Mesh, MeshStandardMaterial, AmbientLight, PointLight } from "three"
+import {
+  Object3D,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  AmbientLight,
+  PointLight,
+} from "three"
 
 interface Options {
   width?: number
@@ -24,7 +31,14 @@ export function convertCircuitJsonTo3dSvg(
   soup: AnyCircuitElement[],
   { width = 1200, height = 600, camera } = {} as Options,
 ): string[] {
-  extend({ Object3D, Group, Mesh, MeshStandardMaterial, AmbientLight, PointLight })
+  extend({
+    Object3D,
+    Group,
+    Mesh,
+    MeshStandardMaterial,
+    AmbientLight,
+    PointLight,
+  })
 
   const boardGeom = createBoardGeomFromSoup(soup as AnySoupElement[])
   const boardStls = createStlsFromGeom(boardGeom)
