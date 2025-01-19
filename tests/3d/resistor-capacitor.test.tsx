@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonTo3dSvg } from "lib"
+import { convertCircuitJsonTo3dSvg } from "lib/3d"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const Components = ({ id = "", layer = "top" as "top" | "bottom" } = {}) => (
