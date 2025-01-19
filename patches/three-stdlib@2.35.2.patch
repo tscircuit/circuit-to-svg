@@ -1,79 +1,37 @@
-diff --git a/index.cjs b/index.cjs
-index 547f85cd7080b51b26bc2bb3a487ff4ef9a85f5d..88bb86d246f415594dded65007c03f986903f0ea 100644
---- a/index.cjs
-+++ b/index.cjs
-@@ -204,7 +204,6 @@ const KMZLoader = require("./loaders/KMZLoader.cjs");
- const VRMLoader = require("./loaders/VRMLoader.cjs");
- const VRMLLoader = require("./loaders/VRMLLoader.cjs");
- const KTX2Loader = require("./loaders/KTX2Loader.cjs");
--const LottieLoader = require("./loaders/LottieLoader.cjs");
- const TTFLoader = require("./loaders/TTFLoader.cjs");
- const RGBELoader = require("./loaders/RGBELoader.cjs");
- const AssimpLoader = require("./loaders/AssimpLoader.cjs");
-@@ -530,7 +529,6 @@ exports.KMZLoader = KMZLoader.KMZLoader;
- exports.VRMLoader = VRMLoader.VRMLoader;
- exports.VRMLLoader = VRMLLoader.VRMLLoader;
- exports.KTX2Loader = KTX2Loader.KTX2Loader;
--exports.LottieLoader = LottieLoader.LottieLoader;
- exports.TTFLoader = TTFLoader.TTFLoader;
- exports.RGBELoader = RGBELoader.RGBELoader;
- exports.AssimpLoader = AssimpLoader.AssimpLoader;
-diff --git a/index.d.ts b/index.d.ts
-index 9b30bc6f5f142f309e862c7f5eb80c3e640238b1..edc669e4e401b49f36e6aa399882df273f0cd717 100644
---- a/index.d.ts
-+++ b/index.d.ts
-@@ -203,7 +203,6 @@ export * from './loaders/KMZLoader';
- export * from './loaders/VRMLoader';
- export * from './loaders/VRMLLoader';
- export * from './loaders/KTX2Loader';
--export * from './loaders/LottieLoader';
- export * from './loaders/TTFLoader';
- export * from './loaders/RGBELoader';
- export * from './loaders/AssimpLoader';
-diff --git a/index.js b/index.js
-index a457f0619459b0bc0076b2dfd56c5040cff3a063..8ec63e031281b1f226000a5719d1fe1ff454b256 100644
---- a/index.js
-+++ b/index.js
-@@ -202,7 +202,6 @@ import { KMZLoader } from "./loaders/KMZLoader.js";
- import { VRMLoader } from "./loaders/VRMLoader.js";
- import { VRMLLoader } from "./loaders/VRMLLoader.js";
- import { KTX2Loader } from "./loaders/KTX2Loader.js";
--import { LottieLoader } from "./loaders/LottieLoader.js";
- import { TTFLoader } from "./loaders/TTFLoader.js";
- import { RGBELoader } from "./loaders/RGBELoader.js";
- import { AssimpLoader } from "./loaders/AssimpLoader.js";
-@@ -401,7 +400,6 @@ export {
-   LineMaterial,
-   LineSegments2,
-   LineSegmentsGeometry,
--  LottieLoader,
-   LuminosityHighPassShader,
-   LuminosityShader,
-   Lut,
-diff --git a/libs/lottie.cjs b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/libs/lottie.cjs
-deleted file mode 100644
-index 7d8aefea8e7830ebaef2d3f9ea5f48d30e9e0852..0000000000000000000000000000000000000000
-diff --git a/libs/lottie.cjs.map b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/libs/lottie.cjs.map
-deleted file mode 100644
-index 12de44a8d95d72d5b155a21b3b716c8162772499..0000000000000000000000000000000000000000
-diff --git a/libs/lottie.js b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/libs/lottie.js
-deleted file mode 100644
-index 9ade8c1378595d3d06077fd9f701ed8a5837f0b3..0000000000000000000000000000000000000000
-diff --git a/libs/lottie.js.map b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/libs/lottie.js.map
-deleted file mode 100644
-index 0ea7ed76e0831e22f21b051d42c4fd1a842fbded..0000000000000000000000000000000000000000
-diff --git a/loaders/LottieLoader.cjs b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/loaders/LottieLoader.cjs
-deleted file mode 100644
-index 41b1339e75c0ae4fb08e22580e9bf951f301bd06..0000000000000000000000000000000000000000
-diff --git a/loaders/LottieLoader.cjs.map b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/loaders/LottieLoader.cjs.map
-deleted file mode 100644
-index 083b3ee89eeb470fbffb943fddddeffc1032ff89..0000000000000000000000000000000000000000
-diff --git a/loaders/LottieLoader.d.ts b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/loaders/LottieLoader.d.ts
-deleted file mode 100644
-index 951cd679fff328cb4240544a312048d7fc730b4f..0000000000000000000000000000000000000000
-diff --git a/loaders/LottieLoader.js b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/loaders/LottieLoader.js
-deleted file mode 100644
-index 20cfe9afedc3d2a0e28e842dd08c6a18e3d2840b..0000000000000000000000000000000000000000
-diff --git a/loaders/LottieLoader.js.map b/home/wildan/.cache/.bun/install/cache/three-stdlib@2.35.2@@@1/loaders/LottieLoader.js.map
-deleted file mode 100644
-index 2e878490e0404e12ac604f54b07b85402b37a1d5..0000000000000000000000000000000000000000
+diff --git a/libs/lottie.js b/libs/lottie.js
+index 9ade8c1378595d3d06077fd9f701ed8a5837f0b3..d3efeb505809a869488796cb8cd277e1a4980d23 100644
+--- a/libs/lottie.js
++++ b/libs/lottie.js
+@@ -1044,15 +1044,7 @@ const lottie = (() => {
+     };
+   }();
+   const ImagePreloader = function() {
+-    var proxyImage = function() {
+-      var canvas = createTag("canvas");
+-      canvas.width = 1;
+-      canvas.height = 1;
+-      var ctx = canvas.getContext("2d");
+-      ctx.fillStyle = "rgba(0,0,0,0)";
+-      ctx.fillRect(0, 0, 1, 1);
+-      return canvas;
+-    }();
++    var proxyImage
+     function imageLoaded() {
+       this.loadedAssets += 1;
+       if (this.loadedAssets === this.totalImages && this.loadedFootagesCount === this.totalFootages) {
+@@ -1218,6 +1210,15 @@ const lottie = (() => {
+       }
+     }
+     function ImagePreloaderFactory() {
++      proxyImage = function() {
++        var canvas = createTag("canvas");
++        canvas.width = 1;
++        canvas.height = 1;
++        var ctx = canvas.getContext("2d");
++        ctx.fillStyle = "rgba(0,0,0,0)";
++        ctx.fillRect(0, 0, 1, 1);
++        return canvas;
++      }(); 
+       this._imageLoaded = imageLoaded.bind(this);
+       this._footageLoaded = footageLoaded.bind(this);
+       this.testImageLoaded = testImageLoaded.bind(this);
