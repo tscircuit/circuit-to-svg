@@ -15,17 +15,18 @@ export function createSvgObjectsForRatsNest(
   soup: AnyCircuitElement[],
   transform: Matrix,
 ): SvgObject[] {
-  // Build a lookup map by cleaned ID for any element that might provide a position.
+  const connectivityMap = getFullConnectivityMapFromCircuitJson(soup)
+
   const elementMap = new Map<string, AnyCircuitElement>()
   for (const elm of soup) {
     const id =
       (elm as any).id || (elm as any).pcb_port_id || (elm as any).source_port_id
+
     if (id) {
       const cleanedId = id.replace(/_\d+$/, "")
       elementMap.set(cleanedId, elm)
     }
   }
-
   const getElementPosition = (id: string): { x: number; y: number } | null => {
     const cleanedId = id.replace(/_\d+$/, "")
     const elm = elementMap.get(cleanedId)
