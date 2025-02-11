@@ -1,8 +1,12 @@
-import { getFullConnectivityMapFromCircuitJson } from "circuit-json-to-connectivity-map"
+import {
+  ConnectivityMap,
+  getFullConnectivityMapFromCircuitJson,
+} from "circuit-json-to-connectivity-map"
 import type { AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { su } from "@tscircuit/soup-util"
+import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
 
 interface RatsNestLine {
   key: string
@@ -15,37 +19,23 @@ export function createSvgObjectsForRatsNest(
   soup: AnyCircuitElement[],
   transform: Matrix,
 ): SvgObject[] {
-  const connectivityMap = getFullConnectivityMapFromCircuitJson(soup)
+  // Compute connectivity using the helper from the imported package.
+  let connectivity: ConnectivityMap
+  try {
+    connectivity = getFullConnectivityMapFromCircuitJson(soup)
+  } catch (error) {
+    console.error("Error computing connectivity map for rats nest:", error)
+    return []
+  }
 
+  // Build a lookup map by original ID for any element that might provide a position.
   const elementMap = new Map<string, AnyCircuitElement>()
   for (const elm of soup) {
     const id =
       (elm as any).id || (elm as any).pcb_port_id || (elm as any).source_port_id
-
-    if (id) {
-      const cleanedId = id.replace(/_\d+$/, "")
-      elementMap.set(cleanedId, elm)
+    if (id && connectivity.idToNetMap[id]) {
+      elementMap.set(id, elm)
     }
-  }
-  const getElementPosition = (id: string): { x: number; y: number } | null => {
-    const cleanedId = id.replace(/_\d+$/, "")
-    const elm = elementMap.get(cleanedId)
-    if (elm && "x" in elm && "y" in elm) {
-      return { x: (elm as any).x, y: (elm as any).y }
-    }
-    return null
-  }
-
-  // Compute connectivity using the helper from the imported package.
-  let netMap: { [netId: string]: string[] } = {}
-  let idToNetMap: { [id: string]: string } = {}
-  try {
-    const connectivity = getFullConnectivityMapFromCircuitJson(soup)
-    netMap = connectivity.netMap
-    idToNetMap = connectivity.idToNetMap
-  } catch (error) {
-    console.error("Error computing connectivity map for rats nest:", error)
-    return []
   }
 
   // Filter for ports and traces that are relevant for rats nest.
@@ -56,34 +46,12 @@ export function createSvgObjectsForRatsNest(
     return su(soup).source_port.getWhere({ pcb_port_id: pcbPortId })
   }
 
-  // Helper: for a given point and net, find the nearest other point (if any) in that net.
-  const findNearestPointInNet = (
-    sourcePoint: { x: number; y: number },
-    netId: string,
-  ): { x: number; y: number } | null => {
-    const connectedIds: string[] = netMap[netId] || []
-    let nearestPoint: { x: number; y: number } | null = null
-    let minDistance = Infinity
-    for (const id of connectedIds) {
-      const pos = getElementPosition(id)
-      if (pos) {
-        const dx = sourcePoint.x - pos.x
-        const dy = sourcePoint.y - pos.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        if (distance > 0 && distance < minDistance) {
-          minDistance = distance
-          nearestPoint = pos
-        }
-      }
-    }
-    return nearestPoint
-  }
-
   const ratsNestLines: RatsNestLine[] = []
   pcbPorts.forEach((port, index) => {
     const portId = (port as any).pcb_port_id
     if (!portId) return
-    const netId = idToNetMap[portId]
+
+    const netId = connectivity.getNetConnectedToId(portId)
     if (!netId) return
 
     // Determine whether the port is in net via a connected source trace.
@@ -105,7 +73,12 @@ export function createSvgObjectsForRatsNest(
     }
 
     const startPoint = { x: (port as any).x, y: (port as any).y }
-    const nearestPoint = findNearestPointInNet(startPoint, netId)
+    const nearestPoint = findNearestPointInNet(
+      startPoint,
+      netId,
+      connectivity,
+      elementMap,
+    )
     if (!nearestPoint) return
 
     ratsNestLines.push({
@@ -127,6 +100,7 @@ export function createSvgObjectsForRatsNest(
       line.endPoint.x,
       line.endPoint.y,
     ])
+
     const attributes: { [key: string]: string } = {
       x1: transformedStart[0].toString(),
       y1: transformedStart[1].toString(),
@@ -135,9 +109,11 @@ export function createSvgObjectsForRatsNest(
       stroke: "white",
       "stroke-width": "1",
     }
+
     if (line.isInNet) {
       attributes["stroke-dasharray"] = "6,6"
     }
+
     svgObjects.push({
       name: "line",
       type: "element",
@@ -146,5 +122,6 @@ export function createSvgObjectsForRatsNest(
       children: [],
     })
   }
+
   return svgObjects
 }

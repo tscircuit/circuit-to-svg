@@ -18,7 +18,7 @@ import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
-import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rat-nests"
+import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
