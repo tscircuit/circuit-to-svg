@@ -16,16 +16,16 @@ interface RatsNestLine {
 }
 
 export function createSvgObjectsForRatsNest(
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   transform: Matrix,
 ): SvgObject[] {
   // Compute connectivity using the helper from the imported package.
   const connectivity: ConnectivityMap =
-    getFullConnectivityMapFromCircuitJson(soup)
+    getFullConnectivityMapFromCircuitJson(circuitJson)
 
   // Filter for ports and traces that are relevant for rats nest.
-  const pcbPorts = soup.filter((elm) => elm.type === "pcb_port")
-  const sourceTraces = soup.filter((elm) => elm.type === "source_trace")
+  const pcbPorts = circuitJson.filter((elm) => elm.type === "pcb_port")
+  const sourceTraces = circuitJson.filter((elm) => elm.type === "source_trace")
 
   const ratsNestLines: RatsNestLine[] = []
 
@@ -38,7 +38,9 @@ export function createSvgObjectsForRatsNest(
 
     // Determine whether the port is in net via a connected source trace.
     let isInNet = false
-    const sourcePort = su(soup).source_port.getWhere({ pcb_port_id: portId })
+    const sourcePort = su(circuitJson).source_port.getWhere({
+      pcb_port_id: portId,
+    })
     if (sourcePort && (sourcePort as any).source_port_id) {
       const sourcePortId = (sourcePort as any).source_port_id
       for (const trace of sourceTraces) {
@@ -61,7 +63,7 @@ export function createSvgObjectsForRatsNest(
       startPoint,
       netId,
       connectivity,
-      soup,
+      circuitJson,
     )
 
     if (!nearestPoint) return

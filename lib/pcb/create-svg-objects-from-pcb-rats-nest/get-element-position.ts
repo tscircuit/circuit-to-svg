@@ -2,9 +2,9 @@ import type { AnyCircuitElement } from "circuit-json"
 
 export const getElementPosition = (
   id: string,
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
 ): { x: number; y: number } | null => {
-  const elm = soup.find((element) => {
+  const elm = circuitJson.find((element) => {
     const elmId =
       (element as any).id ||
       (element as any).pcb_port_id ||
