@@ -18,6 +18,7 @@ import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
+import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rat-nests"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -42,6 +43,7 @@ interface Options {
   width?: number
   height?: number
   shouldDrawErrors?: boolean
+  shouldDrawRatsNest?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -101,7 +103,7 @@ export function convertCircuitJsonToPcbSvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
-  const svgObjects = soup
+  let svgObjects = soup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
@@ -118,6 +120,11 @@ export function convertCircuitJsonToPcbSvg(
       strokeWidth = String(scaleFactor * element.stroke_width)
       break
     }
+  }
+
+  if (options?.shouldDrawRatsNest) {
+    const ratsNestObjects = createSvgObjectsForRatsNest(soup, transform)
+    svgObjects = svgObjects.concat(ratsNestObjects)
   }
 
   const svgObject: SvgObject = {
