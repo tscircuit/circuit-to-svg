@@ -94,10 +94,9 @@ export function createSvgObjectsForRatsNest(
       y2: transformedEnd[1].toString(),
       stroke: "white",
       "stroke-width": "1",
+      "stroke-dasharray": "6,6",
     }
-    if (line.isInNet) {
-      attributes["stroke-dasharray"] = "6,6"
-    }
+
     svgObjects.push({
       name: "line",
       type: "element",
