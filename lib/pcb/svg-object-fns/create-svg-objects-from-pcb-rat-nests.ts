@@ -2,6 +2,7 @@ import { getFullConnectivityMapFromCircuitJson } from "circuit-json-to-connectiv
 import type { AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
+import { su } from "@tscircuit/soup-util"
 
 interface RatsNestLine {
   key: string
@@ -49,10 +50,9 @@ export function createSvgObjectsForRatsNest(
   // Filter for ports and traces that are relevant for rats nest.
   const pcbPorts = soup.filter((elm) => elm.type === "pcb_port")
   const sourceTraces = soup.filter((elm) => elm.type === "source_trace")
-  const sourcePorts = soup.filter((elm) => elm.type === "source_port")
 
   const getSourcePortForPcbPort = (pcbPortId: string) => {
-    return sourcePorts.find((elm) => (elm as any).pcb_port_id === pcbPortId)
+    return su(soup).source_port.getWhere({ pcb_port_id: pcbPortId })
   }
 
   // Helper: for a given point and net, find the nearest other point (if any) in that net.
