@@ -5,8 +5,8 @@ import {
 import type { AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import { su } from "@tscircuit/soup-util"
 import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
+import { getSourcePortForPcbPort } from "../create-svg-objects-from-pcb-rats-nest/get-source-port-for-pcb"
 
 interface RatsNestLine {
   key: string
@@ -20,33 +20,15 @@ export function createSvgObjectsForRatsNest(
   transform: Matrix,
 ): SvgObject[] {
   // Compute connectivity using the helper from the imported package.
-  let connectivity: ConnectivityMap
-  try {
-    connectivity = getFullConnectivityMapFromCircuitJson(soup)
-  } catch (error) {
-    console.error("Error computing connectivity map for rats nest:", error)
-    return []
-  }
-
-  // Build a lookup map by original ID for any element that might provide a position.
-  const elementMap = new Map<string, AnyCircuitElement>()
-  for (const elm of soup) {
-    const id =
-      (elm as any).id || (elm as any).pcb_port_id || (elm as any).source_port_id
-    if (id && connectivity.idToNetMap[id]) {
-      elementMap.set(id, elm)
-    }
-  }
+  const connectivity: ConnectivityMap =
+    getFullConnectivityMapFromCircuitJson(soup)
 
   // Filter for ports and traces that are relevant for rats nest.
   const pcbPorts = soup.filter((elm) => elm.type === "pcb_port")
   const sourceTraces = soup.filter((elm) => elm.type === "source_trace")
 
-  const getSourcePortForPcbPort = (pcbPortId: string) => {
-    return su(soup).source_port.getWhere({ pcb_port_id: pcbPortId })
-  }
-
   const ratsNestLines: RatsNestLine[] = []
+
   pcbPorts.forEach((port, index) => {
     const portId = (port as any).pcb_port_id
     if (!portId) return
@@ -56,7 +38,7 @@ export function createSvgObjectsForRatsNest(
 
     // Determine whether the port is in net via a connected source trace.
     let isInNet = false
-    const sourcePort = getSourcePortForPcbPort(portId)
+    const sourcePort = getSourcePortForPcbPort(portId, soup)
     if (sourcePort && (sourcePort as any).source_port_id) {
       const sourcePortId = (sourcePort as any).source_port_id
       for (const trace of sourceTraces) {
@@ -73,12 +55,15 @@ export function createSvgObjectsForRatsNest(
     }
 
     const startPoint = { x: (port as any).x, y: (port as any).y }
+
+    // Find the nearest point in the net using ConnectivityMap
     const nearestPoint = findNearestPointInNet(
       startPoint,
       netId,
       connectivity,
-      elementMap,
+      soup,
     )
+
     if (!nearestPoint) return
 
     ratsNestLines.push({
@@ -100,7 +85,6 @@ export function createSvgObjectsForRatsNest(
       line.endPoint.x,
       line.endPoint.y,
     ])
-
     const attributes: { [key: string]: string } = {
       x1: transformedStart[0].toString(),
       y1: transformedStart[1].toString(),
@@ -109,11 +93,9 @@ export function createSvgObjectsForRatsNest(
       stroke: "white",
       "stroke-width": "1",
     }
-
     if (line.isInNet) {
       attributes["stroke-dasharray"] = "6,6"
     }
-
     svgObjects.push({
       name: "line",
       type: "element",
