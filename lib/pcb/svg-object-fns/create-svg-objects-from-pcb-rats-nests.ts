@@ -6,7 +6,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
-import { getSourcePortForPcbPort } from "../create-svg-objects-from-pcb-rats-nest/get-source-port-for-pcb"
+import { su } from "@tscircuit/soup-util"
 
 interface RatsNestLine {
   key: string
@@ -38,7 +38,7 @@ export function createSvgObjectsForRatsNest(
 
     // Determine whether the port is in net via a connected source trace.
     let isInNet = false
-    const sourcePort = getSourcePortForPcbPort(portId, soup)
+    const sourcePort = su(soup).source_port.getWhere({ pcb_port_id: portId })
     if (sourcePort && (sourcePort as any).source_port_id) {
       const sourcePortId = (sourcePort as any).source_port_id
       for (const trace of sourceTraces) {
