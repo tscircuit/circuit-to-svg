@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
+              .boundary { fill: #000; }
+              .pcb-board { fill: none; }
+              .pcb-trace { fill: none; }
+              .pcb-hole-outer { fill: rgb(200, 52, 52); }
+              .pcb-hole-inner { fill: rgb(255, 38, 226); }
+              .pcb-pad { }
+              .pcb-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
+              .pcb-silkscreen { fill: none; }
+              .pcb-silkscreen-top { stroke: #f2eda1; }
+              .pcb-silkscreen-bottom { stroke: #f2eda1; }
+              .pcb-silkscreen-text { fill: #f2eda1; }
+            </style><rect class="boundary" x="0" y="0" width="800" height="600"/><rect class="pcb-boundary" x="NaN" y="NaN" width="NaN" height="NaN"/><rect x="NaN" y="NaN" width="0" height="0" class="pcb-silkscreen-rect pcb-silkscreen-top" transform="matrix(0,0,0,0,NaN,NaN)" data-pcb-silkscreen-rect-id="rect_1"/><rect x="NaN" y="NaN" width="0" height="0" class="pcb-silkscreen-rect pcb-silkscreen-bottom" transform="matrix(0,0,0,0,NaN,NaN)" data-pcb-silkscreen-rect-id="rect_2"/><rect x="NaN" y="NaN" width="0" height="0" class="pcb-silkscreen-rect pcb-silkscreen-top" transform="matrix(0,0,0,0,NaN,NaN)" data-pcb-silkscreen-rect-id="rect_3"/></svg>

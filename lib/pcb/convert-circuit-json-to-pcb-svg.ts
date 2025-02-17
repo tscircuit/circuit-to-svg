@@ -13,6 +13,9 @@ import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/cre
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
+import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
+import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
@@ -236,6 +239,13 @@ function createSvgObjects(
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
+    case "pcb_silkscreen_rect":
+      return createSvgObjectsFromPcbSilkscreenRect(elm, transform)
+    case "pcb_silkscreen_circle":
+      return createSvgObjectsFromPcbSilkscreenCircle(elm, transform)
+    case "pcb_silkscreen_line":
+      return createSvgObjectsFromPcbSilkscreenLine(elm, transform)
+
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, transform)
     case "pcb_fabrication_note_text":
