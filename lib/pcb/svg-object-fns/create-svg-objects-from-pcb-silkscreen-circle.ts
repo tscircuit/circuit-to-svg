@@ -10,7 +10,22 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
   pcbSilkscreenCircle: PcbSilkscreenCircle,
   transform: Matrix,
 ): SvgObject[] {
-  const { center, radius, layer } = pcbSilkscreenCircle
+  const {
+    center,
+    radius,
+    layer = "top",
+    pcb_silkscreen_circle_id,
+  } = pcbSilkscreenCircle
+
+  if (
+    !center ||
+    typeof center.x !== "number" ||
+    typeof center.y !== "number" ||
+    typeof radius !== "number"
+  ) {
+    console.error("Invalid PCB Silkscreen Circle data:", { center, radius })
+    return []
+  }
 
   const [transformedX, transformedY] = applyToPoint(transform, [
     center.x,
@@ -18,21 +33,26 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
   ])
   const transformedRadius = radius * Math.abs(transform.a)
 
-  return [
-    {
-      name: "circle",
-      type: "element",
-      attributes: {
-        cx: transformedX.toString(),
-        cy: transformedY.toString(),
-        r: transformedRadius.toString(),
-        class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
-        transform: matrixToString(transform),
-        "data-pcb-silkscreen-circle-id":
-          pcbSilkscreenCircle.pcb_silkscreen_circle_id,
-      },
-      value: "",
-      children: [],
+  console.debug(
+    `Transformed Circle - X: ${transformedX}, Y: ${transformedY}, Radius: ${transformedRadius}`,
+  )
+
+  const svgObject: SvgObject = {
+    name: "circle",
+    type: "element",
+    attributes: {
+      cx: transformedX.toString(),
+      cy: transformedY.toString(),
+      r: transformedRadius.toString(),
+      class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
+      stroke: "red",
+      "stroke-width": "3",
+      "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
     },
-  ]
+    value: "",
+    children: [],
+  }
+
+  console.log(svgObject)
+  return [svgObject]
 }

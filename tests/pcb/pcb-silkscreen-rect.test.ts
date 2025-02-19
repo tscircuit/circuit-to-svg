@@ -22,13 +22,27 @@ test("silkscreen rect shape", () => {
       height: 1,
     },
     {
-      type: "pcb_silkscreen_rect",
-      layer: "top" as const,
-      pcb_component_id: "pcb_component_3",
-      pcb_silkscreen_rect_id: "rect_3",
-      center: { x: 5, y: 7 },
-      width: 2,
-      height: 3,
+      type: "pcb_fabrication_note_path",
+      layer: "top",
+      pcb_component_id: "pcb_generic_component_0",
+      pcb_fabrication_note_path_id: "fabrication_note_path_4",
+      route: [
+        { x: 12.295, y: 7.24 },
+        { x: 12.295, y: -7.24 },
+      ],
+      stroke_width: 0.1,
+    },
+
+    {
+      type: "pcb_fabrication_note_path",
+      layer: "top",
+      pcb_component_id: "pcb_generic_component_0",
+      pcb_fabrication_note_path_id: "fabrication_note_path_6",
+      route: [
+        { x: 12.3, y: -6.43 },
+        { x: 0.405, y: -5.597 },
+      ],
+      stroke_width: 0.1,
     },
   ])
 

@@ -10,10 +10,29 @@ export function createSvgObjectsFromPcbSilkscreenLine(
   pcbSilkscreenLine: PcbSilkscreenLine,
   transform: Matrix,
 ): SvgObject[] {
-  const { x1, y1, x2, y2, stroke_width, layer } = pcbSilkscreenLine
+  const {
+    x1,
+    y1,
+    x2,
+    y2,
+    stroke_width,
+    layer = "top",
+    pcb_silkscreen_line_id,
+  } = pcbSilkscreenLine
+
+  if (
+    typeof x1 !== "number" ||
+    typeof y1 !== "number" ||
+    typeof x2 !== "number" ||
+    typeof y2 !== "number"
+  ) {
+    console.error("Invalid coordinates:", { x1, y1, x2, y2 })
+    return []
+  }
 
   const [transformedX1, transformedY1] = applyToPoint(transform, [x1, y1])
   const [transformedX2, transformedY2] = applyToPoint(transform, [x2, y2])
+
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
   return [
@@ -27,8 +46,7 @@ export function createSvgObjectsFromPcbSilkscreenLine(
         y2: transformedY2.toString(),
         "stroke-width": transformedStrokeWidth.toString(),
         class: `pcb-silkscreen-line pcb-silkscreen-${layer}`,
-        transform: matrixToString(transform),
-        "data-pcb-silkscreen-line-id": pcbSilkscreenLine.pcb_silkscreen_line_id,
+        "data-pcb-silkscreen-line-id": pcb_silkscreen_line_id,
       },
       value: "",
       children: [],
