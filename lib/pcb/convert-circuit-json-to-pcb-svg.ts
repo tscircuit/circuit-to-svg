@@ -73,6 +73,13 @@ export function convertCircuitJsonToPcbSvg(
       updateBounds({ x: item.x, y: item.y }, 0, 0)
     } else if ("route" in item) {
       updateTraceBounds(item.route)
+    } else if (
+      item.type === "pcb_silkscreen_text" ||
+      item.type === "pcb_silkscreen_rect" ||
+      item.type === "pcb_silkscreen_circle" ||
+      item.type === "pcb_silkscreen_line"
+    ) {
+      updateSilkscreenBounds(item)
     }
   }
 
@@ -209,6 +216,21 @@ export function convertCircuitJsonToPcbSvg(
       minY = Math.min(minY, point.y)
       maxX = Math.max(maxX, point.x)
       maxY = Math.max(maxY, point.y)
+    }
+  }
+
+  function updateSilkscreenBounds(item: AnyCircuitElement) {
+    if (item.type === "pcb_silkscreen_text") {
+      updateBounds(item.anchor_position, 0, 0)
+    } else if (item.type === "pcb_silkscreen_path") {
+      updateTraceBounds(item.route)
+    } else if (item.type === "pcb_silkscreen_rect") {
+      updateBounds(item.center, item.width, item.height)
+    } else if (item.type === "pcb_silkscreen_circle") {
+      updateBounds(item.center, item.radius * 2, item.radius * 2)
+    } else if (item.type === "pcb_silkscreen_line") {
+      updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
+      updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
     }
   }
 }
