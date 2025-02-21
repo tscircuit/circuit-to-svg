@@ -13,7 +13,6 @@ test("silkscreen elements bounds calculation", () => {
       width: 4,
       height: 2,
       stroke_width: 0.2,
-
     },
     // Test silkscreen circle
     {
@@ -24,7 +23,6 @@ test("silkscreen elements bounds calculation", () => {
       center: { x: -5, y: -5 },
       radius: 3,
       stroke_width: 0.2,
-
     },
     // Test silkscreen line (fixed: added x1, y1, x2, y2, and stroke_width)
     {
@@ -104,7 +102,6 @@ test("silkscreen elements with mixed components", () => {
       width: 4,
       height: 2,
       stroke_width: 0.2,
-
     },
     // Trace (fixed: updated route points with required properties)
     {
@@ -144,7 +141,6 @@ test("silkscreen elements at extreme positions", () => {
       width: 10,
       height: 10,
       stroke_width: 0.2,
-
     },
     // Far bottom-left
     {
@@ -155,7 +151,6 @@ test("silkscreen elements at extreme positions", () => {
       center: { x: -100, y: -100 },
       radius: 5,
       stroke_width: 0.2,
-
     },
     // Center reference PCB board (fixed: added thickness and num_layers)
     {
