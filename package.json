@@ -33,7 +33,7 @@
     "@types/bun": "^1.1.9",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.6",
-    "circuit-json": "^0.0.130",
+    "circuit-json": "^0.0.140",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "^18.3.1",
