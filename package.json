@@ -3,14 +3,17 @@
   "type": "module",
   "version": "0.0.105",
   "description": "Convert Circuit JSON to SVG",
-  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./3d": "./dist/3d.js"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "start": "storybook dev -p 6006",
     "prepublish": "npm run build",
-    "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
+    "build": "tsup-node ./lib/{index,3d}.ts --format esm --dts --sourcemap",
     "format": "biome format . --write",
     "format:check": "biome format .",
     "storybook": "storybook dev -p 6006",
@@ -19,33 +22,38 @@
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@chromatic-com/storybook": "^1.6.1",
-    "@storybook/addon-essentials": "^8.2.5",
-    "@storybook/addon-interactions": "^8.2.5",
-    "@storybook/addon-links": "^8.2.5",
-    "@storybook/addon-onboarding": "^8.2.5",
-    "@storybook/blocks": "^8.2.5",
-    "@storybook/react": "^8.2.5",
-    "@storybook/react-vite": "^8.2.5",
-    "@storybook/test": "^8.2.5",
-    "@tscircuit/core": "^0.0.267",
+    "@chromatic-com/storybook": "^1.9.0",
+    "@happy-dom/global-registrator": "^16.5.3",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/addon-links": "^8.4.7",
+    "@storybook/addon-onboarding": "^8.4.7",
+    "@storybook/blocks": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/react-vite": "^8.4.7",
+    "@storybook/test": "^8.4.7",
+    "@tscircuit/core": "^0.0.229",
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.1.9",
+    "@vitejs/plugin-react": "^4.3.4",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.6",
     "circuit-json": "^0.0.130",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "^18.3.1",
-    "schematic-symbols": "^0.0.110",
-    "storybook": "^8.2.5",
+    "schematic-symbols": "^0.0.111",
+    "storybook": "^8.4.7",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
-    "vite-tsconfig-paths": "^5.0.1"
+    "typescript": "^5.7.2",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
     "circuit-json": "*",
     "schematic-symbols": "*"
+  },
+  "optionalDependencies": {
+    "@tscircuit/3d-viewer": "github:tscircuit/3d-viewer#v0.0.81"
   },
   "dependencies": {
     "@tscircuit/footprinter": "^0.0.91",
