@@ -18,6 +18,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     text,
     font_size = 1,
     layer = "top",
+    ccw_rotation = 0,
   } = pcbSilkscreenText
 
   if (
@@ -40,7 +41,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   // Create a composite transformation
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate(Math.PI / 180), // Convert degrees to radians
+    rotate((ccw_rotation * Math.PI) / 180), // Convert degrees to radians
   )
 
   const svgObject: SvgObject = {
