@@ -34,7 +34,7 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_position: { x: 0, y: 0 },
     anchor_alignment: "center",
     text: "Horizontal Text",
-    rotation: 0,
+    ccw_rotation: 0,
   },
   // Vertical text (90 degrees)
   {
@@ -47,7 +47,7 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_position: { x: 5, y: 0 },
     anchor_alignment: "center",
     text: "Vertical Text",
-    rotation: 90,
+    ccw_rotation: 90,
   },
   // Upside down text (180 degrees)
   {
@@ -60,7 +60,7 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_position: { x: 0, y: 5 },
     anchor_alignment: "center",
     text: "Upside Down Text",
-    rotation: 180,
+    ccw_rotation: 180,
   },
   // Diagonal text (45 degrees)
   {
@@ -73,6 +73,6 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_position: { x: 5, y: 5 },
     anchor_alignment: "center",
     text: "Diagonal Text",
-    rotation: 45,
+    ccw_rotation: 45,
   },
 ]
