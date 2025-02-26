@@ -18,6 +18,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     text,
     font_size = 1,
     layer = "top",
+    stroke_width = 0.001,
   } = pcbSilkscreenText
 
   if (
@@ -34,6 +35,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.y,
   ])
   const transformedFontSize = font_size * Math.abs(transform.a)
+  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
   // Remove ${} from text value and handle undefined text
 
@@ -53,6 +55,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       "font-size": transformedFontSize.toString(),
       "text-anchor": "middle",
       "dominant-baseline": "central",
+      "stroke-width": transformedStrokeWidth.toString(),
       transform: matrixToString(textTransform),
       class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
