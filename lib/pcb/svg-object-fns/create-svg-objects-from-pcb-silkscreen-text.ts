@@ -50,6 +50,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     attributes: {
       x: "0",
       y: "0",
+      fill: "#f2eda1",
       "font-family": "Arial, sans-serif",
       "font-size": transformedFontSize.toString(),
       "text-anchor": "middle",
