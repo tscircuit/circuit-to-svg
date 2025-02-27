@@ -153,16 +153,7 @@ export function convertCircuitJsonToPcbSvg(
         children: [
           {
             type: "text",
-            value: `
-              .boundary { fill: #000; }
-              .pcb-board { fill: none; }
-              .pcb-trace { fill: none; }
-              .pcb-hole-outer { fill: rgb(200, 52, 52); }
-              .pcb-hole-inner { fill: rgb(255, 38, 226); }
-              .pcb-pad { }
-              .pcb-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
-              .pcb-silkscreen-text { fill: #f2eda1; }
-            `,
+            value: "",
           },
         ],
       },
