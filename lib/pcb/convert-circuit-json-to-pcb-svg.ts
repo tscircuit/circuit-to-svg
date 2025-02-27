@@ -161,9 +161,6 @@ export function convertCircuitJsonToPcbSvg(
               .pcb-hole-inner { fill: rgb(255, 38, 226); }
               .pcb-pad { }
               .pcb-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
-              .pcb-silkscreen { fill: none; }
-              .pcb-silkscreen-top { stroke: #f2eda1; }
-              .pcb-silkscreen-bottom { stroke: #f2eda1; }
               .pcb-silkscreen-text { fill: #f2eda1; }
             `,
           },

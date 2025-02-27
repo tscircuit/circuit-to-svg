@@ -33,10 +33,6 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
   ])
   const transformedRadius = radius * Math.abs(transform.a)
 
-  console.debug(
-    `Transformed Circle - X: ${transformedX}, Y: ${transformedY}, Radius: ${transformedRadius}`,
-  )
-
   const svgObject: SvgObject = {
     name: "circle",
     type: "element",
@@ -52,7 +48,5 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     value: "",
     children: [],
   }
-
-  console.log(svgObject)
   return [svgObject]
 }
