@@ -9,21 +9,29 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 
-interface PcbBoundaryStyle {
+interface BoundaryStyle {
   fill: string
   stroke: string
   strokeWidthFactor: number
 }
 
-const DEFAULT_PCB_BOUNDARY: PcbBoundaryStyle = {
+const DEFAULT_BOUNDARY: BoundaryStyle = {
   fill: "none",
   stroke: "#fff",
   strokeWidthFactor: 0.3,
 }
 
+interface Options {
+  width?: number
+  height?: number
+  shouldDrawErrors?: boolean
+  shouldDrawRatsNest?: boolean
+}
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   transform: Matrix,
+  options: Options = {}
 ): SvgObject[] {
   const {
     anchor_position,
@@ -53,21 +61,17 @@ export function createSvgObjectsFromPcbSilkscreenText(
     rotate((ccw_rotation * Math.PI) / 180),
   )
 
-  const path = `M ${transformedX} ${transformedY} L ${transformedX + 10} ${transformedY + 10}`
-
+  const svgWidth = options?.width ?? 800
+  const svgHeight = options?.height ?? 600
   const svgObject: SvgObject = {
-    name: "path",
+    name: "rect",
     type: "element",
     attributes: {
-      class: "pcb-fabrication-note-path",
-      stroke: "#fff",
-      fill: "none",
-      d: path,
-      "stroke-width": (
-        DEFAULT_PCB_BOUNDARY.strokeWidthFactor * Math.abs(transform.a)
-      ).toString(),
-      "data-pcb-component-id": pcbSilkscreenText.pcb_component_id,
-      "data-pcb-fabrication-note-path-id": pcbSilkscreenText.pcb_component_id,
+      fill: "#000",
+      x: "0",
+      y: "0",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
     },
     value: "",
     children: [
