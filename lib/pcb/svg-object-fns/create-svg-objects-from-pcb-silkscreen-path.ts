@@ -33,7 +33,8 @@ export function createSvgObjectsFromPcbSilkscreenPath(
       attributes: {
         class: `pcb-silkscreen pcb-silkscreen-${silkscreenPath.layer}`,
         d: path,
-        "stroke-color": "#f2eda1",
+        fill: "none",
+        stroke: "#f2eda1",
         "stroke-width": (
           silkscreenPath.stroke_width * Math.abs(transform.a)
         ).toString(),

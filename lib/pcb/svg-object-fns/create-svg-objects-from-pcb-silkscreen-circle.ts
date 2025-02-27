@@ -33,10 +33,6 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
   ])
   const transformedRadius = radius * Math.abs(transform.a)
 
-  console.debug(
-    `Transformed Circle - X: ${transformedX}, Y: ${transformedY}, Radius: ${transformedRadius}`,
-  )
-
   const svgObject: SvgObject = {
     name: "circle",
     type: "element",
@@ -45,8 +41,8 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       cy: transformedY.toString(),
       r: transformedRadius.toString(),
       class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
-      "stroke-color": "#f2eda1",
-      "stroke-width": "3",
+      stroke: "#f2eda1",
+      "stroke-width": "1",
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
     },
     value: "",
