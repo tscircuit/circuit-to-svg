@@ -46,7 +46,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
       width: transformedWidth.toString(),
       height: transformedHeight.toString(),
       class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
-      stroke: "red",
+      "stroke-color": "#f2eda1",
       "stroke-width": "1",
       "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
     },

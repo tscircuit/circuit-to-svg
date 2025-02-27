@@ -45,7 +45,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       cy: transformedY.toString(),
       r: transformedRadius.toString(),
       class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
-      stroke: "red",
+      "stroke-color": "#f2eda1",
       "stroke-width": "3",
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
     },
@@ -53,6 +53,5 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     children: [],
   }
 
-  console.log(svgObject)
   return [svgObject]
 }
