@@ -9,6 +9,18 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 
+interface PcbBoundaryStyle {
+  fill: string
+  stroke: string
+  strokeWidthFactor: number
+}
+
+const DEFAULT_PCB_BOUNDARY: PcbBoundaryStyle = {
+  fill: "none",
+  stroke: "#fff",
+  strokeWidthFactor: 0.3,
+}
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   transform: Matrix,
@@ -36,38 +48,55 @@ export function createSvgObjectsFromPcbSilkscreenText(
   ])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Remove ${} from text value and handle undefined text
-
-  // Create a composite transformation
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((ccw_rotation * Math.PI) / 180), // Convert degrees to radians
+    rotate((ccw_rotation * Math.PI) / 180),
   )
 
+  const path = `M ${transformedX} ${transformedY} L ${transformedX + 10} ${transformedY + 10}`
+
   const svgObject: SvgObject = {
-    name: "text",
+    name: "path",
     type: "element",
     attributes: {
-      x: "0",
-      y: "0",
-      "font-family": "Arial, sans-serif",
-      "font-size": transformedFontSize.toString(),
-      "text-anchor": "middle",
-      "dominant-baseline": "central",
-      transform: matrixToString(textTransform),
-      class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-      "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+      class: "pcb-fabrication-note-path",
+      stroke: "#fff",
+      fill: "none",
+      d: path,
+      "stroke-width": (
+        DEFAULT_PCB_BOUNDARY.strokeWidthFactor * Math.abs(transform.a)
+      ).toString(),
+      "data-pcb-component-id": pcbSilkscreenText.pcb_component_id,
+      "data-pcb-fabrication-note-path-id": pcbSilkscreenText.pcb_component_id,
     },
+    value: "",
     children: [
       {
-        type: "text",
-        value: text,
-        name: "",
-        attributes: {},
-        children: [],
+        name: "text",
+        type: "element",
+        attributes: {
+          x: "0",
+          y: "0",
+          "font-family": "Arial, sans-serif",
+          "font-size": transformedFontSize.toString(),
+          "text-anchor": "middle",
+          "dominant-baseline": "central",
+          transform: matrixToString(textTransform),
+          class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
+          "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+        },
+        children: [
+          {
+            type: "text",
+            value: text,
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+        value: "",
       },
     ],
-    value: "",
   }
 
   return [svgObject]
