@@ -28,7 +28,7 @@ export function createSvgObjectsFromPcbTrace(
     const traceWidth =
       "width" in start ? start.width : "width" in end ? end.width : null
 
-    svgObjects.push({
+    const svgObject: SvgObject = {
       name: "path",
       type: "element",
       value: "",
@@ -44,8 +44,25 @@ export function createSvgObjectsFromPcbTrace(
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
         "shape-rendering": "crispEdges",
+        "data-layer": layer,
       },
-    })
+    }
+
+    svgObjects.push(svgObject)
   }
+
+  svgObjects.sort((a, b) => {
+    const layerA = a.attributes["data-layer"]
+    const layerB = b.attributes["data-layer"]
+
+    if (layerA === "bottom" && layerB !== "bottom") {
+      return -1
+    }
+    if (layerA === "top" && layerB !== "top") {
+      return 1
+    }
+    return 0
+  })
+
   return svgObjects
 }
