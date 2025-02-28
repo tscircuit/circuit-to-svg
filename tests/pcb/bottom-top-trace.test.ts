@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const soup: any = [
+const circuitJson: any = [
   {
     type: "pcb_trace",
     pcb_trace_id: "pcb_trace_0",
@@ -54,5 +54,5 @@ const soup: any = [
 ]
 
 test("bottom and top trace", () => {
-  expect(convertCircuitJsonToPcbSvg(soup)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })
