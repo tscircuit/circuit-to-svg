@@ -19,6 +19,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     font_size = 1,
     layer = "top",
     ccw_rotation = 0,
+    stroke_width = 0,
   } = pcbSilkscreenText
 
   if (
@@ -34,14 +35,14 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.x,
     anchor_position.y,
   ])
+
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Remove ${} from text value and handle undefined text
+  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
-  // Create a composite transformation
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((ccw_rotation * Math.PI) / 180), // Convert degrees to radians
+    rotate((ccw_rotation * Math.PI) / 180),
   )
 
   const svgObject: SvgObject = {
@@ -58,6 +59,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
       transform: matrixToString(textTransform),
       class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+      stroke: "#f2eda1",
+      "stroke-width": transformedStrokeWidth.toString(),
     },
     children: [
       {

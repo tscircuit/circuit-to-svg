@@ -16,6 +16,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     height,
     layer = "top",
     pcb_silkscreen_rect_id,
+    stroke_width = 1,
   } = pcbSilkscreenRect
 
   if (
@@ -37,6 +38,8 @@ export function createSvgObjectsFromPcbSilkscreenRect(
   const transformedWidth = width * Math.abs(transform.a)
   const transformedHeight = height * Math.abs(transform.d)
 
+  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+
   const svgObject: SvgObject = {
     name: "rect",
     type: "element",
@@ -48,7 +51,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
       class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
       fill: "none",
       stroke: "#f2eda1",
-      "stroke-width": "1",
+      "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
     },
     value: "",

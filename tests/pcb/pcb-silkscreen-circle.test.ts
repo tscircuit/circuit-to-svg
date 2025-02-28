@@ -35,6 +35,7 @@ test("convert PCB elements to SVG with silkscreen circles and text", () => {
       pcb_silkscreen_circle_id: "circle_1",
       center: { x: 2, y: 3 },
       radius: 1.5,
+      stroke_width: 0.1,
     },
     {
       type: "pcb_silkscreen_circle",
@@ -43,6 +44,7 @@ test("convert PCB elements to SVG with silkscreen circles and text", () => {
       pcb_silkscreen_circle_id: "circle_2",
       center: { x: -2, y: -3 },
       radius: 2,
+      stroke_width: 0.1,
     },
   ])
 
