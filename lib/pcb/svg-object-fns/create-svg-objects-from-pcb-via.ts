@@ -19,6 +19,7 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, transform: any): any {
         type: "element",
         attributes: {
           class: "pcb-hole-outer",
+          fill: "rgb(200, 52, 52)",
           cx: x.toString(),
           cy: y.toString(),
           r: outerRadius.toString(),
@@ -29,6 +30,8 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, transform: any): any {
         type: "element",
         attributes: {
           class: "pcb-hole-inner",
+          fill: "rgb(255, 38, 226)",
+
           cx: x.toString(),
           cy: y.toString(),
           r: innerRadius.toString(),

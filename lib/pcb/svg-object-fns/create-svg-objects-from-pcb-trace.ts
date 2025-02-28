@@ -36,6 +36,7 @@ export function createSvgObjectsFromPcbTrace(
       attributes: {
         class: "pcb-trace",
         stroke: layerColor,
+        fill: "none",
         d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
         "stroke-width": traceWidth
           ? (traceWidth * Math.abs(transform.a)).toString()
