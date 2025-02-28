@@ -15,7 +15,7 @@ test("silkscreen text with rotation", () => {
       anchor_alignment: "center",
       text: "0° at (0,0)",
       ccw_rotation: 0,
-      stroke_width: 0.1,
+      stroke_width: 0.001,
     },
     // Add SMT pad to mark the anchor point for horizontal text
     {
@@ -41,7 +41,7 @@ test("silkscreen text with rotation", () => {
       anchor_alignment: "center",
       text: "90° at (5,0)",
       ccw_rotation: 90,
-      stroke_width: 0.1,
+      stroke_width: 0.001,
     },
     // Add SMT pad to mark the anchor point for vertical text
     {
@@ -67,7 +67,7 @@ test("silkscreen text with rotation", () => {
       anchor_alignment: "center",
       text: "180° at (0,5)",
       ccw_rotation: 180,
-      stroke_width: 0.1,
+      stroke_width: 0.001,
     },
     // Add SMT pad to mark the anchor point for upside down text
     {
@@ -93,7 +93,7 @@ test("silkscreen text with rotation", () => {
       anchor_alignment: "center",
       text: "45° at (5,5)",
       ccw_rotation: 45,
-      stroke_width: 0.1,
+      stroke_width: 0.001,
     },
     // Add SMT pad to mark the anchor point for diagonal text
     {
