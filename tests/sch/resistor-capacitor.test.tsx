@@ -24,6 +24,6 @@ test("schematic resistor", () => {
   )
 
   expect(
-    convertCircuitJsonToPcbSvg(circuit.getCircuitJson()),
+    convertCircuitJsonToPcbSvg(circuit.getCircuitJson() as any),
   ).toMatchSvgSnapshot(import.meta.path)
 })

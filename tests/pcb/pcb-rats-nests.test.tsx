@@ -41,10 +41,12 @@ circuit.add(
   </board>,
 )
 
-const soup = circuit.getCircuitJson()
+const circuitJson = circuit.getCircuitJson()
 
 test("shouldDrawRatsNest true", () => {
   expect(
-    convertCircuitJsonToPcbSvg(soup, { shouldDrawRatsNest: true }),
+    convertCircuitJsonToPcbSvg(circuitJson as any, {
+      shouldDrawRatsNest: true,
+    }),
   ).toMatchSvgSnapshot(import.meta.path, "pcb-trace-error-shouldDrawRatsNest")
 })

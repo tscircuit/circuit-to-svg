@@ -12,6 +12,7 @@ test("silkscreen elements bounds calculation", () => {
       center: { x: 10, y: 5 },
       width: 4,
       height: 2,
+      stroke_width: 0.1,
     },
     // Test silkscreen circle
     {
@@ -21,6 +22,7 @@ test("silkscreen elements bounds calculation", () => {
       pcb_silkscreen_circle_id: "circle_1",
       center: { x: -5, y: -5 },
       radius: 3,
+      stroke_width: 0.1,
     },
     // Test silkscreen line (fixed: added x1, y1, x2, y2, and stroke_width)
     {
@@ -73,9 +75,7 @@ test("silkscreen elements bounds calculation", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(
-    import.meta.path + "all-silkscreen-elements",
-  )
+  expect(result).toMatchSvgSnapshot(import.meta.path, "all-silkscreen-elements")
 })
 
 test("silkscreen elements with mixed components", () => {
@@ -99,6 +99,7 @@ test("silkscreen elements with mixed components", () => {
       center: { x: 8, y: 6 },
       width: 4,
       height: 2,
+      stroke_width: 0.1,
     },
     // Trace (fixed: updated route points with required properties)
     {
@@ -123,7 +124,7 @@ test("silkscreen elements with mixed components", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path + "mixed-elements")
+  expect(result).toMatchSvgSnapshot(import.meta.path, "mixed-elements")
 })
 
 test("silkscreen elements at extreme positions", () => {
@@ -137,6 +138,7 @@ test("silkscreen elements at extreme positions", () => {
       center: { x: 100, y: 100 },
       width: 10,
       height: 10,
+      stroke_width: 0.1,
     },
     // Far bottom-left
     {
@@ -146,6 +148,7 @@ test("silkscreen elements at extreme positions", () => {
       pcb_silkscreen_circle_id: "circle_1",
       center: { x: -100, y: -100 },
       radius: 5,
+      stroke_width: 0.1,
     },
     // Center reference PCB board (fixed: added thickness and num_layers)
     {
@@ -159,5 +162,5 @@ test("silkscreen elements at extreme positions", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path + "extreme-positions")
+  expect(result).toMatchSvgSnapshot(import.meta.path, "extreme-positions")
 })

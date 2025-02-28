@@ -11,6 +11,7 @@ test("silkscreen rect shape", () => {
       center: { x: 2, y: 3 },
       width: 4,
       height: 2,
+      stroke_width: 0.1,
     },
     {
       type: "pcb_silkscreen_rect",
@@ -20,6 +21,7 @@ test("silkscreen rect shape", () => {
       center: { x: -1, y: -2 },
       width: 3,
       height: 1,
+      stroke_width: 0.1,
     },
     {
       type: "pcb_fabrication_note_path",
