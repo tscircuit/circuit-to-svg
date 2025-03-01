@@ -21,7 +21,7 @@ export function getSchematicBoundsFromCircuitJson(
   // Find the bounds
   for (const item of soup) {
     if (item.type === "schematic_component") {
-      updateBounds(item.center, item.size, item.rotation || 0)
+      updateBounds(item.center, item.size, 0)
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
     } else if (item.type === "schematic_debug_object") {

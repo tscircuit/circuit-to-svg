@@ -759,7 +759,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -774,7 +773,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -789,7 +787,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -804,7 +801,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -819,7 +815,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -834,7 +829,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -849,7 +843,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -864,7 +857,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -879,7 +871,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 0.4,
@@ -894,7 +885,6 @@ const pcbSoup: AnyCircuitElement[] = [
       x: 0,
       y: 0,
     },
-    rotation: 0,
     size: {
       width: 0.4,
       height: 2.5999999999999996,
@@ -1787,8 +1777,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_0",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1813,8 +1803,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_2",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1839,8 +1829,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_4",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1865,8 +1855,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_6",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1891,8 +1881,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_8",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1917,8 +1907,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_10",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1943,8 +1933,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_12",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1969,8 +1959,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_14",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -1995,8 +1985,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 0,
     height: 0,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_16",
+    rotation: 0,
   },
   {
     type: "pcb_component",
@@ -2021,8 +2011,8 @@ const pcbSoup: AnyCircuitElement[] = [
     width: 18.979999431040014,
     height: 29.14,
     layer: "top",
-    rotation: 0,
     source_component_id: "source_component_18",
+    rotation: 0,
   },
   {
     type: "pcb_board",

@@ -26,7 +26,6 @@ const pcbSoup: AnyCircuitElement[] = [
     schematic_component_id: "schematic_generic_component_0",
     source_component_id: "generic_0",
     center: { x: 0, y: 0 },
-    rotation: 0,
     size: { width: 0, height: 0 },
   },
   {
@@ -195,6 +194,7 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_position: { x: 6.35, y: 0 },
     anchor_alignment: "center",
     text: "${REFERENCE}",
+    stroke_width: 0.1,
   },
   {
     type: "pcb_fabrication_note_text",
