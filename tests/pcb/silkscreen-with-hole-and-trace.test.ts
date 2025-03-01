@@ -1072,6 +1072,20 @@ const pcbSoup: any[] = [
     ],
     pcb_trace_id: "pcb_trace_for_source_trace_3",
   },
+  {
+    x: 6,
+    y: 6,
+    type: "pcb_plated_hole",
+    shape: "circular_hole_with_rect_pad",
+    layers: ["top", "bottom"],
+    port_hints: ["1"],
+    pcb_port_id: "pcb_port_100",
+    hole_diameter: 1,
+    rect_pad_width: 2,
+    rect_pad_height: 2,
+    pcb_component_id: "pcb_component_100",
+    pcb_plated_hole_id: "pcb_plated_hole_100",
+  },
 ]
 
 test("Silkscreen with PCB Plated Hole", () => {
