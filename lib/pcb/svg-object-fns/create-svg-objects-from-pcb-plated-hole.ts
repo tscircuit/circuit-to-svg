@@ -66,6 +66,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
   }
+
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
     const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
@@ -113,5 +114,55 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
   }
+
+  // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
+  if (hole.shape === "circular_hole_with_rect_pad") {
+    const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
+    const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+
+    const holeRadius = scaledHoleDiameter / 2
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          // Rectangular pad (outer shape)
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-pad",
+              fill: "rgb(200, 52, 52)",
+              x: (x - scaledRectPadWidth / 2).toString(),
+              y: (y - scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+            },
+            value: "",
+            children: [],
+          },
+          // Circular hole inside the rectangle
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              fill: "rgb(255, 38, 226)",
+              cx: x.toString(),
+              cy: y.toString(),
+              r: holeRadius.toString(),
+            },
+            value: "",
+            children: [],
+          },
+        ],
+        value: "",
+        attributes: {},
+      },
+    ]
+  }
+
   return []
 }
