@@ -5,6 +5,7 @@ import {
   applyToPoint,
   toString as matrixToString,
 } from "transformation-matrix"
+import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenRect(
   pcbSilkscreenRect: PcbSilkscreenRect,
@@ -40,6 +41,9 @@ export function createSvgObjectsFromPcbSilkscreenRect(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
+  const color =
+    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+
   const svgObject: SvgObject = {
     name: "rect",
     type: "element",
@@ -50,7 +54,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
       height: transformedHeight.toString(),
       class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
       fill: "none",
-      stroke: "#f2eda1",
+      stroke: color,
       "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
     },

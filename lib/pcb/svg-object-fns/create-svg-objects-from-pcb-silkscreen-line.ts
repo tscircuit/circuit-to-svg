@@ -5,6 +5,7 @@ import {
   applyToPoint,
   toString as matrixToString,
 } from "transformation-matrix"
+import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenLine(
   pcbSilkscreenLine: PcbSilkscreenLine,
@@ -35,6 +36,9 @@ export function createSvgObjectsFromPcbSilkscreenLine(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
+  const color =
+    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+
   return [
     {
       name: "line",
@@ -44,7 +48,7 @@ export function createSvgObjectsFromPcbSilkscreenLine(
         y1: transformedY1.toString(),
         x2: transformedX2.toString(),
         y2: transformedY2.toString(),
-        stroke: "#f2eda1",
+        stroke: color,
         "stroke-width": transformedStrokeWidth.toString(),
         class: `pcb-silkscreen-line pcb-silkscreen-${layer}`,
         "data-pcb-silkscreen-line-id": pcb_silkscreen_line_id,

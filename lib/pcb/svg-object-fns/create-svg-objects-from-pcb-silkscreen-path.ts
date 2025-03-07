@@ -1,6 +1,7 @@
 import type { PcbSilkscreenPath } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenPath(
   silkscreenPath: PcbSilkscreenPath,
@@ -26,15 +27,20 @@ export function createSvgObjectsFromPcbSilkscreenPath(
   ) {
     path += " Z"
   }
+
+  const layer = silkscreenPath.layer || "top"
+  const color =
+    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+
   return [
     {
       name: "path",
       type: "element",
       attributes: {
-        class: `pcb-silkscreen pcb-silkscreen-${silkscreenPath.layer}`,
+        class: `pcb-silkscreen pcb-silkscreen-${layer}`,
         d: path,
         fill: "none",
-        stroke: "#f2eda1",
+        stroke: color,
         "stroke-width": (
           silkscreenPath.stroke_width * Math.abs(transform.a)
         ).toString(),

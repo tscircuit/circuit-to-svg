@@ -5,6 +5,7 @@ import {
   applyToPoint,
   toString as matrixToString,
 } from "transformation-matrix"
+import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenCircle(
   pcbSilkscreenCircle: PcbSilkscreenCircle,
@@ -37,6 +38,9 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
+  const color =
+    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+
   const svgObject: SvgObject = {
     name: "circle",
     type: "element",
@@ -45,7 +49,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       cy: transformedY.toString(),
       r: transformedRadius.toString(),
       class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
-      stroke: "#f2eda1",
+      stroke: color,
       "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
     },
