@@ -51,6 +51,18 @@ test("silkscreen text", () => {
       stroke_width: 0.001,
     },
     {
+      type: "pcb_silkscreen_text",
+      layer: "bottom",
+      pcb_silkscreen_text_id: "pcb_silkscreen_text_1",
+      font: "tscircuit2024",
+      font_size: 1,
+      pcb_component_id: "pcb_generic_component_0",
+      anchor_position: { x: 3, y: -3 },
+      anchor_alignment: "center",
+      text: "BOTTOM TEXT",
+      stroke_width: 0.001,
+    },
+    {
       type: "pcb_fabrication_note_text",
       layer: "top",
       font: "tscircuit2024",

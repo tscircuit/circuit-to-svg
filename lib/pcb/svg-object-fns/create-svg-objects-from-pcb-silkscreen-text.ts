@@ -6,6 +6,7 @@ import {
   compose,
   rotate,
   translate,
+  scale,
   toString as matrixToString,
 } from "transformation-matrix"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
@@ -44,6 +45,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const textTransform = compose(
     translate(transformedX, transformedY),
     rotate((ccw_rotation * Math.PI) / 180),
+    ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 
   const color =
