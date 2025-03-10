@@ -1086,6 +1086,21 @@ const pcbSoup: any[] = [
     pcb_component_id: "pcb_component_100",
     pcb_plated_hole_id: "pcb_plated_hole_100",
   },
+  {
+    x: -6.5,
+    y: -6.5,
+    type: "pcb_plated_hole",
+    shape: "pill_hole_with_rect_pad",
+    layers: ["top", "bottom"],
+    port_hints: ["1"],
+    pcb_port_id: "pcb_port_1001",
+    hole_height: 2,
+    hole_width: 4,
+    rect_pad_width: 5,
+    rect_pad_height: 3,
+    pcb_component_id: "pcb_component_1001",
+    pcb_plated_hole_id: "pcb_plated_hole_1001",
+  },
 ]
 
 test("Silkscreen with PCB Plated Hole", () => {
