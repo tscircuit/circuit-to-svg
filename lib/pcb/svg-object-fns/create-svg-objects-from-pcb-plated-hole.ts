@@ -163,6 +163,59 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
   }
+  if (hole.shape === "pill_hole_with_rect_pad") {
+    const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
+    const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+
+    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
+
+    // Use the minimum of scaledHoleHeight and scaledHoleWidth for the radius
+    const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          // Rectangular pad (outer shape)
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-pad",
+              fill: "rgb(200, 52, 52)",
+              x: (x - scaledRectPadWidth / 2).toString(),
+              y: (y - scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+            },
+            value: "",
+            children: [],
+          },
+          // pill hole inside the rectangle
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              fill: "rgb(255, 38, 226)",
+              x: (x - scaledHoleWidth / 2).toString(),
+              y: (y - scaledHoleHeight / 2).toString(),
+              width: scaledHoleWidth.toString(),
+              height: scaledHoleHeight.toString(),
+              rx: holeRadius.toString(),
+              ry: holeRadius.toString(),
+            },
+            value: "",
+            children: [],
+          },
+        ],
+        value: "",
+        attributes: {},
+      },
+    ]
+  }
 
   return []
 }
