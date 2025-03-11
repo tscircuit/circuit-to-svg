@@ -36,7 +36,6 @@ test("silkscreen text", () => {
       anchor_position: { x: 6.35, y: 0 },
       anchor_alignment: "center",
       text: "${REFERENCE}",
-      stroke_width: 0.001,
     },
     {
       type: "pcb_silkscreen_text",
@@ -48,7 +47,6 @@ test("silkscreen text", () => {
       anchor_position: { x: 0, y: 0 },
       anchor_alignment: "center",
       text: "${REF}",
-      stroke_width: 0.001,
     },
     {
       type: "pcb_silkscreen_text",
@@ -60,7 +58,6 @@ test("silkscreen text", () => {
       anchor_position: { x: 3, y: -3 },
       anchor_alignment: "center",
       text: "BOTTOM TEXT",
-      stroke_width: 0.001,
     },
     {
       type: "pcb_fabrication_note_text",

@@ -35,7 +35,6 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_alignment: "center",
     text: "0° at (0,0)",
     ccw_rotation: 0,
-    stroke_width: 0.1,
   },
   // Add SMT pad to mark the anchor point for horizontal text
   {
@@ -61,7 +60,6 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_alignment: "center",
     text: "90° at (5,0)",
     ccw_rotation: 90,
-    stroke_width: 0.1,
   },
   // Add SMT pad to mark the anchor point for vertical text
   {
@@ -87,7 +85,6 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_alignment: "center",
     text: "180° at (0,5)",
     ccw_rotation: 180,
-    stroke_width: 0.1,
   },
   // Add SMT pad to mark the anchor point for upside down text
   {
@@ -113,7 +110,6 @@ const pcbSoup: AnyCircuitElement[] = [
     anchor_alignment: "center",
     text: "45° at (5,5)",
     ccw_rotation: 45,
-    stroke_width: 0.1,
   },
   // Add SMT pad to mark the anchor point for diagonal text
   {
