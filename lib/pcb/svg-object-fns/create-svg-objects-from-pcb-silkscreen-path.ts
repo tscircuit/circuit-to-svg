@@ -45,6 +45,7 @@ export function createSvgObjectsFromPcbSilkscreenPath(
           silkscreenPath.stroke_width * Math.abs(transform.a)
         ).toString(),
         "stroke-linecap": "round",
+        "stroke-linejoin": "round",
         "data-pcb-component-id": silkscreenPath.pcb_component_id,
         "data-pcb-silkscreen-path-id": silkscreenPath.pcb_silkscreen_path_id,
       },
