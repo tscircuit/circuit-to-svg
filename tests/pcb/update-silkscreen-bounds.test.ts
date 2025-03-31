@@ -47,7 +47,7 @@ test("silkscreen elements bounds calculation", () => {
         { x: 20, y: 15 },
         { x: 25, y: 10 },
       ],
-      stroke_width: 0.1,
+      stroke_width: 1.0,
     },
     // Test fabrication note path
     {
