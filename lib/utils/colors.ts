@@ -301,7 +301,7 @@ export const colors = {
 // Helper function to get color based on theme
 export const getThemeColor = (
   colorKey: keyof typeof colors.light,
-  isDark: boolean = false
+  isDark: boolean = false,
 ) => (isDark ? colors.dark[colorKey] : colors.light[colorKey])
 
 // Function to check if system is in dark mode
