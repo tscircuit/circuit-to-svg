@@ -4,7 +4,7 @@ import type {
   SchematicPort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -54,7 +54,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
       style: "font-family: sans-serif;",
-      fill: colorMap.schematic.pin_number,
+      fill: getActiveColorMap().schematic.pin_number,
       "text-anchor":
         schPort.side_of_component === "left" ||
         schPort.side_of_component === "bottom"

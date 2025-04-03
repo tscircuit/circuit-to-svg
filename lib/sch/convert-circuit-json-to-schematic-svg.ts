@@ -1,6 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
   applyToPoint,
@@ -161,7 +161,7 @@ export function convertCircuitJsonToSchematicSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
-      style: `background-color: ${colorMap.schematic.background}`,
+      style: `background-color: ${getActiveColorMap().schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
     },
     children: [
@@ -176,21 +176,31 @@ export function convertCircuitJsonToSchematicSvg(
             // DO NOT USE THESE CLASSES!!!!
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
-              .boundary { fill: ${colorMap.schematic.background}; }
+              .boundary { fill: ${getActiveColorMap().schematic.background}; }
               .schematic-boundary { fill: none; stroke: #fff; }
-              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
-              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
-              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
+              .component { fill: none; stroke: ${
+                getActiveColorMap().schematic.component_outline
+              }; }
+              .chip { fill: ${
+                getActiveColorMap().schematic.component_body
+              }; stroke: ${getActiveColorMap().schematic.component_outline}; }
+              .component-pin { fill: none; stroke: ${
+                getActiveColorMap().schematic.component_outline
+              }; }
               .trace:hover {
                 filter: invert(1);
               }
               .trace:hover .trace-crossing-outline {
                 opacity: 0;
               }
-              .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
-              .pin-number { fill: ${colorMap.schematic.pin_number}; }
-              .port-label { fill: ${colorMap.schematic.reference}; }
-              .component-name { fill: ${colorMap.schematic.reference}; }
+              .text { font-family: sans-serif; fill: ${
+                getActiveColorMap().schematic.wire
+              }; }
+              .pin-number { fill: ${getActiveColorMap().schematic.pin_number}; }
+              .port-label { fill: ${getActiveColorMap().schematic.reference}; }
+              .component-name { fill: ${
+                getActiveColorMap().schematic.reference
+              }; }
             `,
             name: "",
             attributes: {},

@@ -1,3 +1,7 @@
+/// <reference lib="dom" />
+
+declare const window: Window & typeof globalThis
+
 // Kicad-2020 color scheme
 export const colorMap = {
   "3d_viewer": {
@@ -151,22 +155,6 @@ export const colorMap = {
       "rgb(194, 194, 194)",
       "rgb(132, 0, 132)",
       "rgb(132, 0, 0)",
-      "rgb(132, 132, 0)",
-      "rgb(194, 194, 194)",
-      "rgb(0, 0, 132)",
-      "rgb(0, 132, 0)",
-      "rgb(132, 0, 0)",
-      "rgb(194, 194, 0)",
-      "rgb(194, 0, 194)",
-      "rgb(194, 0, 0)",
-      "rgb(0, 132, 132)",
-      "rgb(0, 132, 0)",
-      "rgb(0, 0, 132)",
-      "rgb(132, 132, 132)",
-      "rgb(132, 0, 132)",
-      "rgb(194, 194, 194)",
-      "rgb(132, 0, 132)",
-      "rgb(132, 0, 0)",
     ],
     negative_objects: "rgb(132, 132, 132)",
     worksheet: "rgb(0, 0, 132)",
@@ -209,7 +197,7 @@ export const colorMap = {
     grid: "rgb(181, 181, 181)",
     grid_axes: "rgb(0, 0, 132)",
     hidden: "rgb(194, 194, 194)",
-    junction: "rgb(0, 150, 0)",
+    junction: "rgb(150, 150, 150)",
     label_global: "rgb(132, 0, 0)",
     label_hier: "rgb(114, 86, 0)",
     label_local: "rgb(15, 15, 15)",
@@ -232,5 +220,102 @@ export const colorMap = {
     wire: "rgb(0, 150, 0)",
     wire_crossing: "rgb(30, 180, 30)",
     worksheet: "rgb(132, 0, 0)",
+    component_name: "rgb(0, 0, 0)",
   },
 }
+
+// Dark theme color map
+export const darkColorMap = {
+  ...colorMap,
+  board: {
+    ...colorMap.board,
+    background: "rgb(40, 40, 85)",
+    grid: "rgb(70, 70, 75)",
+    grid_axes: "rgb(100, 100, 105)",
+    cursor: "rgb(255, 255, 255)",
+    copper: {
+      ...colorMap.board.copper,
+      f: "rgb(240, 90, 90)",
+      b: "rgb(120, 170, 230)",
+    },
+    f_silks: "rgb(255, 255, 200)",
+    b_silks: "rgb(255, 220, 210)",
+    edge_cuts: "rgb(250, 250, 245)",
+    drc_error: "rgba(245, 100, 115, 0.900)",
+    drc_warning: "rgba(255, 220, 80, 0.950)",
+  },
+  schematic: {
+    ...colorMap.schematic,
+    background: "rgb(40, 40, 45)",
+    wire: "rgb(200, 255, 200)",
+    bus: "rgb(0, 150, 150)",
+    junction: "rgb(200, 200, 200)",
+    component_outline: "rgb(255, 70, 70)",
+    component_body: "rgb(255, 255, 210)",
+    pin_number: "rgb(180, 0, 0)",
+    pin_name: "rgb(0, 120, 120)",
+    reference: "rgb(255, 255, 255)",
+    component_name: "rgb(255, 255, 255)",
+    fields: "rgb(150, 0, 150)",
+    label_local: "rgb(237, 0, 0)",
+    label_global: "rgb(150, 0, 0)",
+    label_hier: "rgb(130, 100, 0)",
+    grid: "rgb(55, 55, 60)",
+    grid_axes: "rgb(75, 75, 80)",
+    net_name: "rgb(150, 150, 150)",
+    sheet_label: "rgb(255, 255, 255)",
+    value: "rgb(255, 255, 255)",
+  },
+}
+export let forceDarkMode = false
+
+// Function to detect system color scheme
+export function getPreferredColorScheme() {
+  if (forceDarkMode) return "dark"
+  if (typeof window === "undefined" || typeof window.matchMedia === "undefined")
+    return "light"
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light"
+}
+
+// Function to get the active color map
+export function getActiveColorMap() {
+  return getPreferredColorScheme() === "dark" ? darkColorMap : colorMap
+}
+
+// Color system constants
+export const colors = {
+  light: {
+    background: "#ffffff",
+    text: "#000000",
+    border: "#e5e7eb",
+  },
+  dark: {
+    background: "#1a1a1a",
+    text: "#ffffff",
+    border: "#374151",
+  },
+} as const
+
+// Helper function to get color based on theme
+export const getThemeColor = (
+  colorKey: keyof typeof colors.light,
+  isDark: boolean = false
+) => (isDark ? colors.dark[colorKey] : colors.light[colorKey])
+
+// Function to check if system is in dark mode
+export const isDarkMode = () => {
+  if (typeof window === "undefined") return false
+  return (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  )
+}
+
+// Export color tokens for use in JS/TS files
+export const colorTokens = {
+  background: "var(--background)",
+  text: "var(--text)",
+  border: "var(--border)",
+} as const

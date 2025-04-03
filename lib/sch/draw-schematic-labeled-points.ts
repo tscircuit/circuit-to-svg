@@ -1,4 +1,4 @@
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -28,7 +28,7 @@ export function drawSchematicLabeledPoints(params: {
       type: "element",
       attributes: {
         d: `M${x1},${y1} L${x2},${y2} M${x3},${y3} L${x4},${y4}`,
-        stroke: colorMap.schematic.grid,
+        stroke: getActiveColorMap().schematic.grid,
         "stroke-width": (0.02 * Math.abs(transform.a)).toString(),
         "stroke-opacity": "0.7",
       },
@@ -47,7 +47,7 @@ export function drawSchematicLabeledPoints(params: {
       attributes: {
         x: labelX.toString(),
         y: labelY.toString(),
-        fill: colorMap.schematic.grid,
+        fill: getActiveColorMap().schematic.grid,
         "font-size": (0.1 * Math.abs(transform.a)).toString(),
         "fill-opacity": "0.7",
         "text-anchor": "start",

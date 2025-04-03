@@ -5,7 +5,7 @@ import type {
   SchematicPort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
 import { parseSync } from "svgson"
 import {
@@ -159,7 +159,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
               return `${i === 0 ? "M" : "L"} ${x} ${y}`
             })
             .join(" ") + (closed ? " Z" : ""),
-        stroke: colorMap.schematic.component_outline,
+        stroke: getActiveColorMap().schematic.component_outline,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
       },
@@ -206,7 +206,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       attributes: {
         x: screenTextPos.x.toString(),
         y: (screenTextPos.y + verticalOffset).toString(),
-        fill: colorMap.schematic.label_local,
+        fill: getActiveColorMap().schematic.label_local,
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": dominantBaseline,
@@ -267,7 +267,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
         fill: "none",
-        stroke: colorMap.schematic.component_outline,
+        stroke: getActiveColorMap().schematic.component_outline,
       },
       value: "",
       children: [],

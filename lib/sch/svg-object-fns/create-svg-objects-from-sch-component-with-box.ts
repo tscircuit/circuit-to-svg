@@ -6,7 +6,7 @@ import type {
   SourceSimpleChip,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -52,8 +52,8 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
       width: componentScreenWidth.toString(),
       height: componentScreenHeight.toString(),
       "stroke-width": `${getSchStrokeSize(transform)}px`,
-      fill: colorMap.schematic.component_body,
-      stroke: colorMap.schematic.component_outline,
+      fill: getActiveColorMap().schematic.component_body,
+      stroke: getActiveColorMap().schematic.component_outline,
     },
     children: [],
   })

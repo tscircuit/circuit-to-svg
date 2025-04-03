@@ -1,6 +1,6 @@
 import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
@@ -151,7 +151,7 @@ export const createSvgObjectsForSchNetLabel = (
       class: "net-label",
       d: pathD,
       fill: "#FFFFFF99",
-      stroke: colorMap.schematic.label_global,
+      stroke: getActiveColorMap().schematic.label_global,
       "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
     },
     value: "",
@@ -185,7 +185,7 @@ export const createSvgObjectsForSchNetLabel = (
       class: "net-label-text",
       x: screenTextPos.x.toString(),
       y: screenTextPos.y.toString(),
-      fill: colorMap.schematic.label_global,
+      fill: getActiveColorMap().schematic.label_global,
       "text-anchor": textAnchor,
       "dominant-baseline": "central",
       "font-family": "sans-serif",
