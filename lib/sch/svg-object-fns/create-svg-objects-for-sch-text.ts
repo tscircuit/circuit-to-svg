@@ -1,6 +1,6 @@
 import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -34,7 +34,7 @@ export const createSvgSchText = (
     attributes: {
       x: center.x.toString(),
       y: center.y.toString(),
-      fill: elm.color ?? colorMap.schematic.sheet_label,
+      fill: elm.color ?? getActiveColorMap().schematic.sheet_label,
       "text-anchor": textAnchorMap[elm.anchor],
       "dominant-baseline": dominantBaselineMap[elm.anchor],
       "font-family": "sans-serif",

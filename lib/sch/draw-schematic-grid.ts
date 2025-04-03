@@ -1,4 +1,4 @@
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -37,7 +37,7 @@ export function drawSchematicGrid(params: {
         y1: start.y.toString(),
         x2: end.x.toString(),
         y2: end.y.toString(),
-        stroke: colorMap.schematic.grid,
+        stroke: getActiveColorMap().schematic.grid,
         "stroke-width": (0.01 * Math.abs(params.transform.a)).toString(),
         "stroke-opacity": "0.5",
       },
@@ -57,7 +57,7 @@ export function drawSchematicGrid(params: {
         y1: start.y.toString(),
         x2: end.x.toString(),
         y2: end.y.toString(),
-        stroke: colorMap.schematic.grid,
+        stroke: getActiveColorMap().schematic.grid,
         "stroke-width": (0.01 * Math.abs(params.transform.a)).toString(),
         "stroke-opacity": "0.5",
       },
@@ -80,7 +80,7 @@ export function drawSchematicGrid(params: {
           attributes: {
             x: (point.x - 2.5).toString(),
             y: (point.y - 5).toString(),
-            fill: colorMap.schematic.grid,
+            fill: getActiveColorMap().schematic.grid,
             "font-size": (
               (cellSize / 5) *
               Math.abs(params.transform.a)

@@ -1,6 +1,6 @@
 import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
@@ -183,7 +183,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
       type: "element",
       attributes: {
         d: symbolPath + (path.closed ? " Z" : ""),
-        stroke: colorMap.schematic.component_outline,
+        stroke: getActiveColorMap().schematic.component_outline,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
       },
@@ -226,7 +226,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
       attributes: {
         x: offsetScreenPos.x.toString(),
         y: offsetScreenPos.y.toString(),
-        fill: colorMap.schematic.label_local,
+        fill: getActiveColorMap().schematic.label_local,
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
@@ -289,7 +289,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
         cy: screenCirclePos.y.toString(),
         r: (circle.radius * symbolToScreenScale).toString(),
         fill: "none",
-        stroke: colorMap.schematic.component_outline,
+        stroke: getActiveColorMap().schematic.component_outline,
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
       },
       value: "",

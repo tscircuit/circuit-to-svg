@@ -1,6 +1,6 @@
 import type { SchematicTrace } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -76,7 +76,7 @@ export function createSchematicTrace(
       attributes: {
         class: "trace-crossing-outline",
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
-        stroke: colorMap.schematic.background,
+        stroke: getActiveColorMap().schematic.background,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 1.5}px`,
         "stroke-linecap": "round",
@@ -89,7 +89,7 @@ export function createSchematicTrace(
       type: "element",
       attributes: {
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
-        stroke: colorMap.schematic.wire,
+        stroke: getActiveColorMap().schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
@@ -107,7 +107,7 @@ export function createSchematicTrace(
       attributes: {
         d: path,
         class: "trace-invisible-hover-outline",
-        stroke: colorMap.schematic.wire,
+        stroke: getActiveColorMap().schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
         "stroke-linecap": "round",
@@ -122,7 +122,7 @@ export function createSchematicTrace(
       type: "element",
       attributes: {
         d: path,
-        stroke: colorMap.schematic.wire,
+        stroke: getActiveColorMap().schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
@@ -147,7 +147,7 @@ export function createSchematicTrace(
           cx: screenX.toString(),
           cy: screenY.toString(),
           r: (Math.abs(transform.a) * 0.03).toString(),
-          fill: colorMap.schematic.junction,
+          fill: getActiveColorMap().schematic.junction,
         },
         value: "",
         children: [],

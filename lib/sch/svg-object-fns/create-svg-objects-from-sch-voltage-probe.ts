@@ -1,6 +1,6 @@
 import type { SchematicVoltageProbe } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { getActiveColorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -38,8 +38,8 @@ export function createSvgObjectsFromSchVoltageProbe(
       type: "element",
       attributes: {
         d: arrowPath,
-        stroke: colorMap.schematic.reference,
-        fill: colorMap.schematic.reference,
+        stroke: getActiveColorMap().schematic.reference,
+        fill: getActiveColorMap().schematic.reference,
         "stroke-width": `${getSchStrokeSize(transform)}px`,
       },
       value: "",
@@ -52,7 +52,7 @@ export function createSvgObjectsFromSchVoltageProbe(
       attributes: {
         x: (baseX + 8 - (baseX - baseX)).toString(),
         y: (baseY - 10 + (baseY - baseY)).toString(),
-        fill: colorMap.schematic.reference,
+        fill: getActiveColorMap().schematic.reference,
         "text-anchor": "middle",
         "dominant-baseline": "middle",
         "font-family": "sans-serif",
