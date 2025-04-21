@@ -1,13 +1,27 @@
 import type { SchematicTrace } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorOverrides } from "lib/types/colors"
 import { colorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export function createSchematicTrace(
-  trace: SchematicTrace,
-  transform: Matrix,
-): SvgObject[] {
+export function createSchematicTrace({
+  trace,
+  transform,
+  colorOverrides,
+}: {
+  trace: SchematicTrace
+  transform: Matrix
+  colorOverrides?: ColorOverrides
+}): SvgObject[] {
+  const mergedColorMap = {
+    ...colorMap,
+    schematic: {
+      ...colorMap.schematic,
+      ...(colorOverrides?.schematic ?? {}),
+    },
+  }
+
   const edges = trace.edges
   if (edges.length === 0) return []
   const svgObjects: SvgObject[] = []
@@ -76,7 +90,7 @@ export function createSchematicTrace(
       attributes: {
         class: "trace-crossing-outline",
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
-        stroke: colorMap.schematic.background,
+        stroke: mergedColorMap.schematic.background,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 1.5}px`,
         "stroke-linecap": "round",
@@ -89,7 +103,7 @@ export function createSchematicTrace(
       type: "element",
       attributes: {
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
-        stroke: colorMap.schematic.wire,
+        stroke: mergedColorMap.schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
@@ -107,7 +121,7 @@ export function createSchematicTrace(
       attributes: {
         d: path,
         class: "trace-invisible-hover-outline",
-        stroke: colorMap.schematic.wire,
+        stroke: mergedColorMap.schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
         "stroke-linecap": "round",
@@ -122,7 +136,7 @@ export function createSchematicTrace(
       type: "element",
       attributes: {
         d: path,
-        stroke: colorMap.schematic.wire,
+        stroke: mergedColorMap.schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
@@ -147,7 +161,7 @@ export function createSchematicTrace(
           cx: screenX.toString(),
           cy: screenY.toString(),
           r: (Math.abs(transform.a) * 0.03).toString(),
-          fill: colorMap.schematic.junction,
+          fill: mergedColorMap.schematic.junction,
         },
         value: "",
         children: [],

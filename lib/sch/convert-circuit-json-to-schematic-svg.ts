@@ -21,9 +21,10 @@ import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
+import type { ColorOverrides } from "lib/types/colors"
 
 interface Options {
-  transparentBackground?: boolean
+  colorOverrides?: ColorOverrides
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
@@ -41,7 +42,15 @@ export function convertCircuitJsonToSchematicSvg(
 
   const svgWidth = options?.width ?? 1200
   const svgHeight = options?.height ?? 600
-  const transparentBackground = options?.transparentBackground
+  const colorOverrides = options?.colorOverrides
+
+  const mergedColorMap = {
+    ...colorMap,
+    schematic: {
+      ...colorMap.schematic,
+      ...(colorOverrides?.schematic ?? {}),
+    },
+  }
 
   // Compute the padding such that we maintain the same aspect ratio
   const circuitAspectRatio = realWidth / realHeight
@@ -113,7 +122,10 @@ export function convertCircuitJsonToSchematicSvg(
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
-        ...createSvgObjectsFromSchDebugObject(elm, transform),
+        ...createSvgObjectsFromSchDebugObject({
+          debugObject: elm,
+          transform,
+        }),
       )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
@@ -121,17 +133,40 @@ export function convertCircuitJsonToSchematicSvg(
           component: elm,
           transform,
           circuitJson,
+          colorOverrides: options?.colorOverrides,
         }),
       )
     } else if (elm.type === "schematic_trace") {
-      schTraceSvgs.push(...createSchematicTrace(elm, transform))
+      schTraceSvgs.push(
+        ...createSchematicTrace({
+          trace: elm,
+          transform,
+          colorOverrides: options?.colorOverrides,
+        }),
+      )
     } else if (elm.type === "schematic_net_label") {
-      schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
+      schNetLabel.push(
+        ...createSvgObjectsForSchNetLabel({
+          elm,
+          transform,
+          colorOverrides: options?.colorOverrides,
+        }),
+      )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
-      schText.push(createSvgSchText(elm, transform))
+      schText.push(
+        createSvgSchText({
+          elm,
+          transform,
+          colorOverrides: options?.colorOverrides,
+        }),
+      )
     } else if (elm.type === "schematic_voltage_probe") {
       voltageProbeSvgs.push(
-        ...createSvgObjectsFromSchVoltageProbe(elm, transform),
+        ...createSvgObjectsFromSchVoltageProbe({
+          probe: elm,
+          transform,
+          colorOverrides: options?.colorOverrides,
+        }),
       )
     }
   }
@@ -163,7 +198,7 @@ export function convertCircuitJsonToSchematicSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
-      style: `background-color: ${transparentBackground ? "transparent" : colorMap.schematic.background}`,
+      style: `background-color: ${mergedColorMap.schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
     },
     children: [
@@ -178,21 +213,21 @@ export function convertCircuitJsonToSchematicSvg(
             // DO NOT USE THESE CLASSES!!!!
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
-              .boundary { fill: ${transparentBackground ? "transparent" : colorMap.schematic.background}; }
+              .boundary { fill: ${mergedColorMap.schematic.background}; }
               .schematic-boundary { fill: none; stroke: #fff; }
-              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
-              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
-              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
+              .component { fill: none; stroke: ${mergedColorMap.schematic.component_outline}; }
+              .chip { fill: ${mergedColorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
+              .component-pin { fill: none; stroke: ${mergedColorMap.schematic.component_outline}; }
               .trace:hover {
                 filter: invert(1);
               }
               .trace:hover .trace-crossing-outline {
                 opacity: 0;
               }
-              .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
-              .pin-number { fill: ${colorMap.schematic.pin_number}; }
-              .port-label { fill: ${colorMap.schematic.reference}; }
-              .component-name { fill: ${colorMap.schematic.reference}; }
+              .text { font-family: sans-serif; fill: ${mergedColorMap.schematic.wire}; }
+              .pin-number { fill: ${mergedColorMap.schematic.pin_number}; }
+              .port-label { fill: ${mergedColorMap.schematic.reference}; }
+              .component-name { fill: ${mergedColorMap.schematic.reference}; }
             `,
             name: "",
             attributes: {},

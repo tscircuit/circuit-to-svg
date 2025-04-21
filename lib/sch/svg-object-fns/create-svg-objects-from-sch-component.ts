@@ -1,5 +1,6 @@
 import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorOverrides } from "lib/types/colors"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchematicComponentWithBox } from "./create-svg-objects-from-sch-component-with-box"
 import type { Matrix } from "transformation-matrix"
@@ -8,6 +9,7 @@ export function createSvgObjectsFromSchematicComponent(params: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
+  colorOverrides?: ColorOverrides
 }): SvgObject[] {
   const { component } = params
 

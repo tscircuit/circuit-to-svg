@@ -2,10 +2,13 @@ import type { SchematicDebugObject } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export function createSvgObjectsFromSchDebugObject(
-  debugObject: SchematicDebugObject,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromSchDebugObject({
+  debugObject,
+  transform,
+}: {
+  debugObject: SchematicDebugObject
+  transform: Matrix
+}): SvgObject[] {
   if (debugObject.shape === "rect") {
     // Transform all corners
     let [screenLeft, screenTop] = applyToPoint(transform, [

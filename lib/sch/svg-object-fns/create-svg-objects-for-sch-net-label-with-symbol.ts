@@ -1,5 +1,6 @@
 import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorOverrides } from "lib/types/colors"
 import { colorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
@@ -27,10 +28,23 @@ import {
 } from "../../utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 
-export const createSvgObjectsForSchNetLabelWithSymbol = (
-  schNetLabel: SchematicNetLabel,
-  realToScreenTransform: Matrix,
-): SvgObject[] => {
+export const createSvgObjectsForSchNetLabelWithSymbol = ({
+  schNetLabel,
+  realToScreenTransform,
+  colorOverrides,
+}: {
+  schNetLabel: SchematicNetLabel
+  realToScreenTransform: Matrix
+  colorOverrides?: ColorOverrides
+}): SvgObject[] => {
+  const mergedColorMap = {
+    ...colorMap,
+    schematic: {
+      ...colorMap.schematic,
+      ...(colorOverrides?.schematic ?? {}),
+    },
+  }
+
   if (!schNetLabel.text) return []
   const svgObjects: SvgObject[] = []
 
@@ -183,7 +197,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
       type: "element",
       attributes: {
         d: symbolPath + (path.closed ? " Z" : ""),
-        stroke: colorMap.schematic.component_outline,
+        stroke: mergedColorMap.schematic.component_outline,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
       },
@@ -226,7 +240,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
       attributes: {
         x: offsetScreenPos.x.toString(),
         y: offsetScreenPos.y.toString(),
-        fill: colorMap.schematic.label_local,
+        fill: mergedColorMap.schematic.label_local,
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
@@ -289,7 +303,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = (
         cy: screenCirclePos.y.toString(),
         r: (circle.radius * symbolToScreenScale).toString(),
         fill: "none",
-        stroke: colorMap.schematic.component_outline,
+        stroke: mergedColorMap.schematic.component_outline,
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
       },
       value: "",

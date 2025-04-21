@@ -1,14 +1,28 @@
 import type { SchematicVoltageProbe } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorOverrides } from "lib/types/colors"
 import { colorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export function createSvgObjectsFromSchVoltageProbe(
-  probe: SchematicVoltageProbe,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromSchVoltageProbe({
+  probe,
+  transform,
+  colorOverrides,
+}: {
+  probe: SchematicVoltageProbe
+  transform: Matrix
+  colorOverrides?: ColorOverrides
+}): SvgObject[] {
+  const mergedColorMap = {
+    ...colorMap,
+    schematic: {
+      ...colorMap.schematic,
+      ...(colorOverrides?.schematic ?? {}),
+    },
+  }
+
   const [screenX, screenY] = applyToPoint(transform, [
     probe.position.x,
     probe.position.y,
@@ -38,8 +52,8 @@ export function createSvgObjectsFromSchVoltageProbe(
       type: "element",
       attributes: {
         d: arrowPath,
-        stroke: colorMap.schematic.reference,
-        fill: colorMap.schematic.reference,
+        stroke: mergedColorMap.schematic.reference,
+        fill: mergedColorMap.schematic.reference,
         "stroke-width": `${getSchStrokeSize(transform)}px`,
       },
       value: "",
@@ -52,7 +66,7 @@ export function createSvgObjectsFromSchVoltageProbe(
       attributes: {
         x: (baseX + 8 - (baseX - baseX)).toString(),
         y: (baseY - 10 + (baseY - baseY)).toString(),
-        fill: colorMap.schematic.reference,
+        fill: mergedColorMap.schematic.reference,
         "text-anchor": "middle",
         "dominant-baseline": "middle",
         "font-family": "sans-serif",

@@ -3,7 +3,12 @@ import circuitJson from "../assets/keyboard.json"
 
 export const ResistorCapacitorSch = () => {
   const result = convertCircuitJsonToSchematicSvg(circuitJson as any, {
-    transparentBackground: true,
+    colorOverrides: {
+      schematic: {
+        background: "transparent",
+        component_body: "#FFFFFF",
+      },
+    },
   })
 
   return <div dangerouslySetInnerHTML={{ __html: result }} />
