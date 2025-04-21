@@ -150,7 +150,7 @@ export const createSvgObjectsForSchNetLabel = (
     attributes: {
       class: "net-label",
       d: pathD,
-      fill: "#FFFFFF99",
+      fill: colorMap.schematic.label_background,
       stroke: colorMap.schematic.label_global,
       "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
     },
