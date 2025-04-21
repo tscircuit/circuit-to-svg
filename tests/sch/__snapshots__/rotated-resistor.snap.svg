@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(264.599101051,0,0,-264.599101051,600,300)"><style>
-              .boundary { fill: rgb(245, 241, 237); }
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: transparent" data-real-to-screen-transform="matrix(264.599101051,0,0,-264.599101051,600,300)"><style>
+              .boundary { fill: transparent; }
               .schematic-boundary { fill: none; stroke: #fff; }
               .component { fill: none; stroke: rgb(132, 0, 0); }
-              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .chip { fill: transparent; stroke: rgb(132, 0, 0); }
               .component-pin { fill: none; stroke: rgb(132, 0, 0); }
               .trace:hover {
                 filter: invert(1);
