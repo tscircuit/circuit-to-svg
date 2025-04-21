@@ -2,7 +2,9 @@ import { convertCircuitJsonToSchematicSvg } from "../../lib/index.js"
 import circuitJson from "../assets/keyboard.json"
 
 export const ResistorCapacitorSch = () => {
-  const result = convertCircuitJsonToSchematicSvg(circuitJson as any)
+  const result = convertCircuitJsonToSchematicSvg(circuitJson as any, {
+    transparentBackground: true,
+  })
 
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }

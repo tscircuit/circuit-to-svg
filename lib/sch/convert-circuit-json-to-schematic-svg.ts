@@ -23,6 +23,7 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
 interface Options {
+  transparentBackground?: boolean
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
@@ -40,6 +41,7 @@ export function convertCircuitJsonToSchematicSvg(
 
   const svgWidth = options?.width ?? 1200
   const svgHeight = options?.height ?? 600
+  const transparentBackground = options?.transparentBackground
 
   // Compute the padding such that we maintain the same aspect ratio
   const circuitAspectRatio = realWidth / realHeight
@@ -161,7 +163,7 @@ export function convertCircuitJsonToSchematicSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
-      style: `background-color: ${colorMap.schematic.background}`,
+      style: `background-color: ${transparentBackground ? "transparent" : colorMap.schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
     },
     children: [
@@ -176,7 +178,7 @@ export function convertCircuitJsonToSchematicSvg(
             // DO NOT USE THESE CLASSES!!!!
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
-              .boundary { fill: ${colorMap.schematic.background}; }
+              .boundary { fill: ${transparentBackground ? "transparent" : colorMap.schematic.background}; }
               .schematic-boundary { fill: none; stroke: #fff; }
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }

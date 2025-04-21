@@ -196,7 +196,7 @@ export const colorMap = {
   ],
   schematic: {
     aux_items: "rgb(46, 46, 46)",
-    background: "transparent",
+    background: "rgb(245, 241, 237)",
     brightened: "rgb(255, 0, 255)",
     bus: "rgb(0, 0, 132)",
     bus_junction: "rgb(0, 0, 132)",
