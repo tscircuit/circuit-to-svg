@@ -1,6 +1,6 @@
-import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
+import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
@@ -23,19 +23,24 @@ import {
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
 } from "../../utils/net-label-utils"
 
-export const createSvgObjectsForSchNetLabel = (
-  schNetLabel: SchematicNetLabel,
-  realToScreenTransform: Matrix,
-): SvgObject[] => {
+export const createSvgObjectsForSchNetLabel = ({
+  schNetLabel,
+  realToScreenTransform,
+  colorMap,
+}: {
+  schNetLabel: SchematicNetLabel
+  realToScreenTransform: Matrix
+  colorMap: ColorMap
+}): SvgObject[] => {
   if (!schNetLabel.text) return []
 
   // If symbol_name is provided, use the symbol renderer
-
   if (schNetLabel.symbol_name) {
-    return createSvgObjectsForSchNetLabelWithSymbol(
+    return createSvgObjectsForSchNetLabelWithSymbol({
       schNetLabel,
       realToScreenTransform,
-    )
+      colorMap,
+    })
   }
 
   const svgObjects: SvgObject[] = []
@@ -150,7 +155,7 @@ export const createSvgObjectsForSchNetLabel = (
     attributes: {
       class: "net-label",
       d: pathD,
-      fill: "#FFFFFF99",
+      fill: colorMap.schematic.label_background,
       stroke: colorMap.schematic.label_global,
       "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
     },

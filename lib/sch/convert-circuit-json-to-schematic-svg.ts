@@ -1,6 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { colorMap as defaultColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
   applyToPoint,
@@ -23,10 +23,18 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
 interface Options {
+  colorOverrides?: ColorOverrides
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
+}
+
+export interface ColorOverrides {
+  schematic?: {
+    background?: string
+    component_body?: string
+  }
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -40,6 +48,15 @@ export function convertCircuitJsonToSchematicSvg(
 
   const svgWidth = options?.width ?? 1200
   const svgHeight = options?.height ?? 600
+  const colorOverrides = options?.colorOverrides
+
+  const colorMap = {
+    ...defaultColorMap,
+    schematic: {
+      ...defaultColorMap.schematic,
+      ...(colorOverrides?.schematic ?? {}),
+    },
+  }
 
   // Compute the padding such that we maintain the same aspect ratio
   const circuitAspectRatio = realWidth / realHeight
@@ -111,7 +128,10 @@ export function convertCircuitJsonToSchematicSvg(
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
-        ...createSvgObjectsFromSchDebugObject(elm, transform),
+        ...createSvgObjectsFromSchDebugObject({
+          debugObject: elm,
+          transform,
+        }),
       )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
@@ -119,17 +139,40 @@ export function convertCircuitJsonToSchematicSvg(
           component: elm,
           transform,
           circuitJson,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_trace") {
-      schTraceSvgs.push(...createSchematicTrace(elm, transform))
+      schTraceSvgs.push(
+        ...createSchematicTrace({
+          trace: elm,
+          transform,
+          colorMap,
+        }),
+      )
     } else if (elm.type === "schematic_net_label") {
-      schNetLabel.push(...createSvgObjectsForSchNetLabel(elm, transform))
+      schNetLabel.push(
+        ...createSvgObjectsForSchNetLabel({
+          schNetLabel: elm,
+          realToScreenTransform: transform,
+          colorMap,
+        }),
+      )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
-      schText.push(createSvgSchText(elm, transform))
+      schText.push(
+        createSvgSchText({
+          elm,
+          transform,
+          colorMap,
+        }),
+      )
     } else if (elm.type === "schematic_voltage_probe") {
       voltageProbeSvgs.push(
-        ...createSvgObjectsFromSchVoltageProbe(elm, transform),
+        ...createSvgObjectsFromSchVoltageProbe({
+          probe: elm,
+          transform,
+          colorMap,
+        }),
       )
     }
   }

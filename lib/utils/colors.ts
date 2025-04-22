@@ -211,6 +211,7 @@ export const colorMap = {
     hidden: "rgb(194, 194, 194)",
     junction: "rgb(0, 150, 0)",
     label_global: "rgb(132, 0, 0)",
+    label_background: "rgba(255, 255, 255, 0.6)",
     label_hier: "rgb(114, 86, 0)",
     label_local: "rgb(15, 15, 15)",
     net_name: "rgb(132, 132, 132)",
@@ -234,3 +235,5 @@ export const colorMap = {
     worksheet: "rgb(132, 0, 0)",
   },
 }
+
+export type ColorMap = typeof colorMap

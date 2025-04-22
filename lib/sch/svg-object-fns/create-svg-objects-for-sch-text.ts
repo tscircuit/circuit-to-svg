@@ -1,13 +1,18 @@
 import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export const createSvgSchText = (
-  elm: SchematicText,
-  transform: Matrix,
-): SvgObject => {
+export const createSvgSchText = ({
+  elm,
+  transform,
+  colorMap,
+}: {
+  elm: SchematicText
+  transform: Matrix
+  colorMap: ColorMap
+}): SvgObject => {
   // Apply transformation
   const center = applyToPoint(transform, elm.position)
 

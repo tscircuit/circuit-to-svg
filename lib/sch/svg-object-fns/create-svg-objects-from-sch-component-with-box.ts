@@ -6,7 +6,7 @@ import type {
   SourceSimpleChip,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -20,10 +20,12 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
   transform,
   circuitJson,
+  colorMap,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
+  colorMap: ColorMap
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
@@ -79,7 +81,13 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     if (
       schText.schematic_component_id === schComponent.schematic_component_id
     ) {
-      svgObjects.push(createSvgSchText(schText, transform))
+      svgObjects.push(
+        createSvgSchText({
+          elm: schText,
+          transform,
+          colorMap,
+        }),
+      )
     }
   }
   // // Process ports

@@ -1,13 +1,18 @@
 import type { SchematicTrace } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export function createSchematicTrace(
-  trace: SchematicTrace,
-  transform: Matrix,
-): SvgObject[] {
+export function createSchematicTrace({
+  trace,
+  transform,
+  colorMap,
+}: {
+  trace: SchematicTrace
+  transform: Matrix
+  colorMap: ColorMap
+}): SvgObject[] {
   const edges = trace.edges
   if (edges.length === 0) return []
   const svgObjects: SvgObject[] = []

@@ -5,7 +5,7 @@ import type {
   SchematicPort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
 import { parseSync } from "svgson"
 import {
@@ -55,10 +55,12 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   component: schComponent,
   transform: realToScreenTransform,
   circuitJson,
+  colorMap,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
+  colorMap: ColorMap
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 

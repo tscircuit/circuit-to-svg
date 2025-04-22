@@ -1,14 +1,19 @@
 import type { SchematicVoltageProbe } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export function createSvgObjectsFromSchVoltageProbe(
-  probe: SchematicVoltageProbe,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromSchVoltageProbe({
+  probe,
+  transform,
+  colorMap,
+}: {
+  probe: SchematicVoltageProbe
+  transform: Matrix
+  colorMap: ColorMap
+}): SvgObject[] {
   const [screenX, screenY] = applyToPoint(transform, [
     probe.position.x,
     probe.position.y,

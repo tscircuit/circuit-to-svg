@@ -1,6 +1,5 @@
 import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
@@ -26,11 +25,17 @@ import {
   getTextOffsets,
 } from "../../utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import type { ColorMap } from "lib/utils/colors"
 
-export const createSvgObjectsForSchNetLabelWithSymbol = (
-  schNetLabel: SchematicNetLabel,
-  realToScreenTransform: Matrix,
-): SvgObject[] => {
+export const createSvgObjectsForSchNetLabelWithSymbol = ({
+  schNetLabel,
+  realToScreenTransform,
+  colorMap,
+}: {
+  schNetLabel: SchematicNetLabel
+  realToScreenTransform: Matrix
+  colorMap: ColorMap
+}): SvgObject[] => {
   if (!schNetLabel.text) return []
   const svgObjects: SvgObject[] = []
 
