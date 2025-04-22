@@ -6,8 +6,7 @@ import type {
   SourceSimpleChip,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import type { ColorOverrides } from "lib/types/colors"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -21,21 +20,13 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
   transform,
   circuitJson,
-  colorOverrides,
+  colorMap,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
-  colorOverrides?: ColorOverrides
+  colorMap: ColorMap
 }): SvgObject[] => {
-  const mergedColorMap = {
-    ...colorMap,
-    schematic: {
-      ...colorMap.schematic,
-      ...(colorOverrides?.schematic ?? {}),
-    },
-  }
-
   const svgObjects: SvgObject[] = []
 
   const componentScreenTopLeft = applyToPoint(transform, {
@@ -63,8 +54,8 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
       width: componentScreenWidth.toString(),
       height: componentScreenHeight.toString(),
       "stroke-width": `${getSchStrokeSize(transform)}px`,
-      fill: mergedColorMap.schematic.component_body,
-      stroke: mergedColorMap.schematic.component_outline,
+      fill: colorMap.schematic.component_body,
+      stroke: colorMap.schematic.component_outline,
     },
     children: [],
   })
@@ -94,7 +85,7 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
         createSvgSchText({
           elm: schText,
           transform,
-          colorOverrides,
+          colorMap,
         }),
       )
     }

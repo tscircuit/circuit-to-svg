@@ -1,6 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
+import { colorMap as defaultColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
   applyToPoint,
@@ -44,10 +44,10 @@ export function convertCircuitJsonToSchematicSvg(
   const svgHeight = options?.height ?? 600
   const colorOverrides = options?.colorOverrides
 
-  const mergedColorMap = {
-    ...colorMap,
+  const colorMap = {
+    ...defaultColorMap,
     schematic: {
-      ...colorMap.schematic,
+      ...defaultColorMap.schematic,
       ...(colorOverrides?.schematic ?? {}),
     },
   }
@@ -133,7 +133,7 @@ export function convertCircuitJsonToSchematicSvg(
           component: elm,
           transform,
           circuitJson,
-          colorOverrides: options?.colorOverrides,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_trace") {
@@ -141,15 +141,15 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSchematicTrace({
           trace: elm,
           transform,
-          colorOverrides: options?.colorOverrides,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
-          elm,
+          schNetLabel: elm,
           transform,
-          colorOverrides: options?.colorOverrides,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
@@ -157,7 +157,7 @@ export function convertCircuitJsonToSchematicSvg(
         createSvgSchText({
           elm,
           transform,
-          colorOverrides: options?.colorOverrides,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_voltage_probe") {
@@ -165,7 +165,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsFromSchVoltageProbe({
           probe: elm,
           transform,
-          colorOverrides: options?.colorOverrides,
+          colorMap,
         }),
       )
     }
@@ -198,7 +198,7 @@ export function convertCircuitJsonToSchematicSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
-      style: `background-color: ${mergedColorMap.schematic.background}`,
+      style: `background-color: ${colorMap.schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
     },
     children: [
@@ -213,21 +213,21 @@ export function convertCircuitJsonToSchematicSvg(
             // DO NOT USE THESE CLASSES!!!!
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
-              .boundary { fill: ${mergedColorMap.schematic.background}; }
+              .boundary { fill: ${colorMap.schematic.background}; }
               .schematic-boundary { fill: none; stroke: #fff; }
-              .component { fill: none; stroke: ${mergedColorMap.schematic.component_outline}; }
-              .chip { fill: ${mergedColorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
-              .component-pin { fill: none; stroke: ${mergedColorMap.schematic.component_outline}; }
+              .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
+              .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
+              .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .trace:hover {
                 filter: invert(1);
               }
               .trace:hover .trace-crossing-outline {
                 opacity: 0;
               }
-              .text { font-family: sans-serif; fill: ${mergedColorMap.schematic.wire}; }
-              .pin-number { fill: ${mergedColorMap.schematic.pin_number}; }
-              .port-label { fill: ${mergedColorMap.schematic.reference}; }
-              .component-name { fill: ${mergedColorMap.schematic.reference}; }
+              .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
+              .pin-number { fill: ${colorMap.schematic.pin_number}; }
+              .port-label { fill: ${colorMap.schematic.reference}; }
+              .component-name { fill: ${colorMap.schematic.reference}; }
             `,
             name: "",
             attributes: {},

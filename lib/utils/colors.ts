@@ -200,7 +200,7 @@ export const colorMap = {
     brightened: "rgb(255, 0, 255)",
     bus: "rgb(0, 0, 132)",
     bus_junction: "rgb(0, 0, 132)",
-    component_body: "rgb(255, 255, 255)",
+    component_body: "rgb(255, 255, 194)",
     component_outline: "rgb(132, 0, 0)",
     cursor: "rgb(15, 15, 15)",
     erc_error: "rgba(230, 9, 13, 0.800)",
@@ -235,3 +235,5 @@ export const colorMap = {
     worksheet: "rgb(132, 0, 0)",
   },
 }
+
+export type ColorMap = typeof colorMap

@@ -1,27 +1,18 @@
 import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import type { ColorOverrides } from "lib/types/colors"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
 export const createSvgSchText = ({
   elm,
   transform,
-  colorOverrides,
+  colorMap,
 }: {
   elm: SchematicText
   transform: Matrix
-  colorOverrides?: ColorOverrides
+  colorMap: ColorMap
 }): SvgObject => {
-  const mergedColorMap = {
-    ...colorMap,
-    schematic: {
-      ...colorMap.schematic,
-      ...(colorOverrides?.schematic ?? {}),
-    },
-  }
-
   // Apply transformation
   const center = applyToPoint(transform, elm.position)
 
@@ -48,7 +39,7 @@ export const createSvgSchText = ({
     attributes: {
       x: center.x.toString(),
       y: center.y.toString(),
-      fill: elm.color ?? mergedColorMap.schematic.sheet_label,
+      fill: elm.color ?? colorMap.schematic.sheet_label,
       "text-anchor": textAnchorMap[elm.anchor],
       "dominant-baseline": dominantBaselineMap[elm.anchor],
       "font-family": "sans-serif",

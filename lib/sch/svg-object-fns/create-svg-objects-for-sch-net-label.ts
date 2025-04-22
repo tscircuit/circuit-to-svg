@@ -1,7 +1,6 @@
-import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
+import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import type { ColorOverrides } from "lib/types/colors"
-import { colorMap } from "lib/utils/colors"
+import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
@@ -13,6 +12,7 @@ import {
   compose,
   rotate,
   scale,
+  transform,
   translate,
   type Matrix,
 } from "transformation-matrix"
@@ -25,43 +25,37 @@ import {
 } from "../../utils/net-label-utils"
 
 export const createSvgObjectsForSchNetLabel = ({
-  elm,
-  transform,
-  colorOverrides,
+  schNetLabel,
+  realToScreenTransform,
+  colorMap,
 }: {
-  elm: SchematicNetLabel
-  transform: Matrix
-  colorOverrides?: ColorOverrides
+  schNetLabel: SchematicNetLabel
+  realToScreenTransform: Matrix
+  colorMap: ColorMap
 }): SvgObject[] => {
-  const mergedColorMap = {
-    ...colorMap,
-    schematic: {
-      ...colorMap.schematic,
-      ...(colorOverrides?.schematic ?? {}),
-    },
-  }
-
-  if (!elm.text) return []
+  if (!schNetLabel.text) return []
 
   // If symbol_name is provided, use the symbol renderer
-  if (elm.symbol_name) {
+  if (schNetLabel.symbol_name) {
     return createSvgObjectsForSchNetLabelWithSymbol({
-      schNetLabel: elm,
-      realToScreenTransform: transform,
-      colorOverrides,
+      schNetLabel,
+      realToScreenTransform,
+      colorMap,
     })
   }
 
   const svgObjects: SvgObject[] = []
 
-  const fontSizePx = getSchScreenFontSize(transform, "net_label")
+  const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
-  const textWidthFSR = estimateTextWidth(elm.text || "")
+  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
 
   // Transform the center position to screen coordinates
-  const screenCenter = applyToPoint(transform, elm.center)
+  const screenCenter = applyToPoint(realToScreenTransform, schNetLabel.center)
 
-  const realTextGrowthVec = getUnitVectorFromOutsideToEdge(elm.anchor_side)
+  const realTextGrowthVec = getUnitVectorFromOutsideToEdge(
+    schNetLabel.anchor_side,
+  )
 
   const screenTextGrowthVec = { ...realTextGrowthVec }
   screenTextGrowthVec.y *= -1 // Invert y direction because anchor_side is pre-transform
@@ -69,10 +63,10 @@ export const createSvgObjectsForSchNetLabel = ({
   const fullWidthFsr =
     textWidthFSR +
     ARROW_POINT_WIDTH_FSR * 2 +
-    END_PADDING_EXTRA_PER_CHARACTER_FSR * elm.text.length +
+    END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
     END_PADDING_FSR
-  const screenAnchorPosition = elm.anchor_position
-    ? applyToPoint(transform, elm.anchor_position)
+  const screenAnchorPosition = schNetLabel.anchor_position
+    ? applyToPoint(realToScreenTransform, schNetLabel.anchor_position)
     : {
         x:
           screenCenter.x -
@@ -81,9 +75,13 @@ export const createSvgObjectsForSchNetLabel = ({
           screenCenter.y -
           (screenTextGrowthVec.y * fullWidthFsr * fontSizePx) / 2,
       }
-  const realAnchorPosition = elm.anchor_position ?? {
-    x: elm.center.x - (realTextGrowthVec.x * fullWidthFsr * fontSizeMm) / 2,
-    y: elm.center.y - (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
+  const realAnchorPosition = schNetLabel.anchor_position ?? {
+    x:
+      schNetLabel.center.x -
+      (realTextGrowthVec.x * fullWidthFsr * fontSizeMm) / 2,
+    y:
+      schNetLabel.center.y -
+      (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
   }
 
   // Get rotation angle based on anchor_side
@@ -92,7 +90,7 @@ export const createSvgObjectsForSchNetLabel = ({
     top: -90,
     bottom: 90,
     right: 180,
-  }[elm.anchor_side]
+  }[schNetLabel.anchor_side]
 
   // Calculate the points for the outline
   const screenOutlinePoints: Array<{ x: number; y: number }> = [
@@ -111,7 +109,7 @@ export const createSvgObjectsForSchNetLabel = ({
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        END_PADDING_EXTRA_PER_CHARACTER_FSR * elm.text.length +
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
         textWidthFSR,
       y: 0.6,
     },
@@ -120,7 +118,7 @@ export const createSvgObjectsForSchNetLabel = ({
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        END_PADDING_EXTRA_PER_CHARACTER_FSR * elm.text.length +
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
         textWidthFSR,
       y: -0.6,
     },
@@ -132,7 +130,7 @@ export const createSvgObjectsForSchNetLabel = ({
   ].map((fontRelativePoint) =>
     applyToPoint(
       compose(
-        transform,
+        realToScreenTransform,
         translate(realAnchorPosition.x, realAnchorPosition.y),
         scale(fontSizeMm),
         rotate((pathRotation / 180) * Math.PI),
@@ -158,9 +156,9 @@ export const createSvgObjectsForSchNetLabel = ({
     attributes: {
       class: "net-label",
       d: pathD,
-      fill: mergedColorMap.schematic.label_background,
-      stroke: mergedColorMap.schematic.label_global,
-      "stroke-width": `${getSchStrokeSize(transform)}px`,
+      fill: colorMap.schematic.label_background,
+      stroke: colorMap.schematic.label_global,
+      "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
     },
     value: "",
     children: [],
@@ -176,14 +174,14 @@ export const createSvgObjectsForSchNetLabel = ({
     top: "start",
     bottom: "start",
     right: "end",
-  }[elm.anchor_side]
+  }[schNetLabel.anchor_side]
 
   const textTransformString = {
     left: "",
     right: "",
     top: `rotate(90 ${screenTextPos.x} ${screenTextPos.y})`,
     bottom: `rotate(-90 ${screenTextPos.x} ${screenTextPos.y})`,
-  }[elm.anchor_side]
+  }[schNetLabel.anchor_side]
 
   // Add the label text
   svgObjects.push({
@@ -193,7 +191,7 @@ export const createSvgObjectsForSchNetLabel = ({
       class: "net-label-text",
       x: screenTextPos.x.toString(),
       y: screenTextPos.y.toString(),
-      fill: mergedColorMap.schematic.label_global,
+      fill: colorMap.schematic.label_global,
       "text-anchor": textAnchor,
       "dominant-baseline": "central",
       "font-family": "sans-serif",
@@ -204,7 +202,7 @@ export const createSvgObjectsForSchNetLabel = ({
     children: [
       {
         type: "text",
-        value: elm.text || "",
+        value: schNetLabel.text || "",
         name: "",
         attributes: {},
         children: [],
