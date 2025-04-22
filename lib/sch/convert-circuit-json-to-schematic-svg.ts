@@ -21,7 +21,6 @@ import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
-import type { ColorOverrides } from "lib/types/colors"
 
 interface Options {
   colorOverrides?: ColorOverrides
@@ -29,6 +28,13 @@ interface Options {
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
+}
+
+export interface ColorOverrides {
+  schematic?: {
+    background?: string
+    component_body?: string
+  }
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -148,7 +154,7 @@ export function convertCircuitJsonToSchematicSvg(
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
           schNetLabel: elm,
-          transform,
+          realToScreenTransform: transform,
           colorMap,
         }),
       )
