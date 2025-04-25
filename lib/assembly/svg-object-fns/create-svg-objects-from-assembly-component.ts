@@ -2,6 +2,7 @@ import type { Point } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+
 interface ComponentProps {
   center: Point
   width: number
@@ -58,6 +59,16 @@ function createComponentPath(
   const isTop = pinY > centerY
   const isLeft = pinX < centerX
 
+  // use the *minimum* of width/height so the stroke never exceeds one dimension
+  const size = Math.min(scaledWidth, scaledHeight)
+
+  // ramp up at 10% of size: e.g. size=100 → rawStroke=10px
+  // clamp between 0.2px and 8px
+  const minStroke = 0.2
+  const maxStroke = 8
+  const rawStroke = size * 0.1
+  const strokeWidth = Math.min(maxStroke, Math.max(minStroke, rawStroke))
+
   const path = getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
   return {
     name: "path",
@@ -65,6 +76,7 @@ function createComponentPath(
     attributes: {
       class: "assembly-component",
       d: path,
+      "stroke-width": strokeWidth.toFixed(2),
     },
     value: "",
     children: [],
@@ -77,19 +89,28 @@ function createComponentLabel(
   name: string,
   transform: Matrix,
 ): SvgObject {
-  const scale = Math.min(scaledWidth, scaledHeight) * 0.4
-  const fontSize = getSchScreenFontSize(transform, "net_label") * (scale / 2.5)
-  const scaledFontSize = scale < 25 ? fontSize : fontSize * 0.6
+  const size = Math.min(scaledWidth, scaledHeight)
+
+  // Adjusted font sizing with smaller scale for small components
+  const minFontSize = 3
+  const maxFontSize = 16
+  const fontScale = 0.8 // Smaller scale for small components
+  const fontSize = Math.min(
+    maxFontSize,
+    Math.max(minFontSize, size * fontScale),
+  )
+
   return {
     name: "text",
     type: "element",
     attributes: {
       x: "0",
-      y: `${0 + scaledFontSize / 8}`,
+      y: "0",
       class: "assembly-component-label",
       "text-anchor": "middle",
-      "dominant-baseline": "middle",
-      "font-size": `${scaledFontSize}px`,
+      dy: ".10em",
+      style: "pointer-events: none",
+      "font-size": `${fontSize.toFixed(1)}px`,
       transform: "scale(1, -1)",
     },
     children: [
@@ -126,7 +147,6 @@ function getComponentPathData(
 
   let corners: [number, number][]
   if (isTop && isLeft) {
-    // Top-left corner
     corners = [
       [-w, -h + cornerSize],
       [-w + cornerSize, -h],
@@ -135,7 +155,6 @@ function getComponentPathData(
       [-w, h],
     ]
   } else if (isTop && !isLeft) {
-    // Top-right corner
     corners = [
       [-w, -h],
       [w - cornerSize, -h],
@@ -144,7 +163,6 @@ function getComponentPathData(
       [-w, h],
     ]
   } else if (!isTop && isLeft) {
-    // Bottom-left corner
     corners = [
       [-w, -h],
       [w, -h],
@@ -153,7 +171,6 @@ function getComponentPathData(
       [-w, h - cornerSize],
     ]
   } else {
-    // Bottom-right corner
     corners = [
       [-w, -h],
       [w, -h],
@@ -166,7 +183,7 @@ function getComponentPathData(
   const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
 
   const path = rotatedCorners
-    .map(([x, y], index) => (index === 0 ? `M${x},${y}` : `L${x},${y}`))
+    .map(([x, y], i) => (i === 0 ? `M${x},${y}` : `L${x},${y}`))
     .join(" ")
   return `${path} Z`
 }
