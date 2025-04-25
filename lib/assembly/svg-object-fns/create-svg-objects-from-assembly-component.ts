@@ -147,6 +147,7 @@ function getComponentPathData(
 
   let corners: [number, number][]
   if (isTop && isLeft) {
+    // Top-left corner
     corners = [
       [-w, -h + cornerSize],
       [-w + cornerSize, -h],
@@ -155,6 +156,7 @@ function getComponentPathData(
       [-w, h],
     ]
   } else if (isTop && !isLeft) {
+    // Top-right corner
     corners = [
       [-w, -h],
       [w - cornerSize, -h],
@@ -163,6 +165,7 @@ function getComponentPathData(
       [-w, h],
     ]
   } else if (!isTop && isLeft) {
+    // Bottom-left corner
     corners = [
       [-w, -h],
       [w, -h],
@@ -171,6 +174,7 @@ function getComponentPathData(
       [-w, h - cornerSize],
     ]
   } else {
+    // Bottom-right corner
     corners = [
       [-w, -h],
       [w, -h],
