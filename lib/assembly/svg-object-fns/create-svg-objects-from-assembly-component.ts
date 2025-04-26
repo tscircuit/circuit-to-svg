@@ -95,7 +95,7 @@ function createComponentLabel(
 
   // Adjusted font sizing with smaller scale for small components
   const minFontSize = 3
-  const maxFontSize = 42
+  const maxFontSize = 58
   const fontScale = 0.8 // Smaller scale for small components
   const fontSize = Math.min(
     maxFontSize,
