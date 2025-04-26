@@ -87,14 +87,27 @@ export function convertCircuitJsonToAssemblySvg(
           {
             type: "text",
             value: `
-              .assembly-component { fill: #fff; stroke: #000; stroke-width: 3; }
-              .assembly-board { fill: #f2f2f2; stroke: rgb(0,0,0); stroke-opacity: 0.8; }
+              .assembly-component { 
+                fill: #fff; 
+                stroke: #000; 
+              }
+              .assembly-board { 
+                fill: #f2f2f2; 
+                stroke: rgb(0,0,0); 
+                stroke-opacity: 0.8;
+              }
               .assembly-component-label { 
                 fill: #000; 
                 font-family: Arial, serif;
                 font-weight: bold;
+                dominant-baseline: middle;
+                text-anchor: middle;
               }
-              .assembly-boundary { fill: none; stroke: #fff; stroke-width: 0.3; }
+              .assembly-boundary { 
+                fill: none; 
+                stroke: #fff;
+                stroke-width: 0.2; 
+              }
             `,
             name: "",
             attributes: {},

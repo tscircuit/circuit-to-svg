@@ -2,6 +2,7 @@ import type { Point } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+
 interface ComponentProps {
   center: Point
   width: number
@@ -26,7 +27,7 @@ export function createSvgObjectsFromAssemblyComponent(
     type: "element",
     value: "",
     attributes: {
-      transform: `translate(${x}, ${y}) rotate(${-rotation}) scale(1, -1)`,
+      transform: `translate(${x}, ${y}) scale(1, -1)`,
     },
     children: [
       createComponentPath(
@@ -58,6 +59,8 @@ function createComponentPath(
   const isTop = pinY > centerY
   const isLeft = pinX < centerX
 
+  const strokeWidth = 0.8
+
   const path = getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
   return {
     name: "path",
@@ -65,6 +68,8 @@ function createComponentPath(
     attributes: {
       class: "assembly-component",
       d: path,
+      "stroke-width": strokeWidth.toFixed(2),
+      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],
@@ -77,20 +82,33 @@ function createComponentLabel(
   name: string,
   transform: Matrix,
 ): SvgObject {
-  const scale = Math.min(scaledWidth, scaledHeight) * 0.4
-  const fontSize = getSchScreenFontSize(transform, "net_label") * (scale / 2.5)
-  const scaledFontSize = scale < 25 ? fontSize : fontSize * 0.6
+  // Use the smaller dimension as the scale factor
+  const size = Math.min(scaledWidth, scaledHeight)
+
+  // Adjusted font sizing with smaller scale for small components
+  const minFontSize = 3
+  const maxFontSize = 58
+  const fontScale = 0.8 // Smaller scale for small components
+  const fontSize = Math.min(
+    maxFontSize,
+    Math.max(minFontSize, size * fontScale),
+  )
+
+  // Determine if component is tall (height significantly larger than width)
+  const isTall = scaledHeight > scaledWidth
+
   return {
     name: "text",
     type: "element",
     attributes: {
       x: "0",
-      y: `${0 + scaledFontSize / 8}`,
+      y: "0",
       class: "assembly-component-label",
       "text-anchor": "middle",
-      "dominant-baseline": "middle",
-      "font-size": `${scaledFontSize}px`,
-      transform: "scale(1, -1)",
+      dy: ".10em",
+      style: "pointer-events: none",
+      "font-size": `${fontSize.toFixed(1)}px`,
+      transform: isTall ? "rotate(90) scale(1, -1)" : "scale(1, -1)",
     },
     children: [
       {
@@ -166,7 +184,7 @@ function getComponentPathData(
   const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
 
   const path = rotatedCorners
-    .map(([x, y], index) => (index === 0 ? `M${x},${y}` : `L${x},${y}`))
+    .map(([x, y], i) => (i === 0 ? `M${x},${y}` : `L${x},${y}`))
     .join(" ")
   return `${path} Z`
 }
