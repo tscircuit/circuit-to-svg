@@ -59,15 +59,7 @@ function createComponentPath(
   const isTop = pinY > centerY
   const isLeft = pinX < centerX
 
-  // use the *minimum* of width/height so the stroke never exceeds one dimension
-  const size = Math.min(scaledWidth, scaledHeight)
-
-  // ramp up at 10% of size: e.g. size=100 → rawStroke=10px
-  // clamp between 0.2px and 8px
-  const minStroke = 0.2
-  const maxStroke = 4
-  const rawStroke = size * 0.1
-  const strokeWidth = Math.min(maxStroke, Math.max(minStroke, rawStroke))
+  const strokeWidth = 0.8
 
   const path = getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
   return {
