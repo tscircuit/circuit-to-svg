@@ -65,7 +65,7 @@ function createComponentPath(
   // ramp up at 10% of size: e.g. size=100 → rawStroke=10px
   // clamp between 0.2px and 8px
   const minStroke = 0.2
-  const maxStroke = 8
+  const maxStroke = 4
   const rawStroke = size * 0.1
   const strokeWidth = Math.min(maxStroke, Math.max(minStroke, rawStroke))
 
