@@ -37,7 +37,7 @@ test("chip and resistor in assembly", () => {
         <capacitor
           key={`capacitor-${col}`}
           footprint="0805"
-          name={`C${col}`}
+          name={`D${col}`}
           capacitance={`${1 + col}uF`}
           pcbX={-50 + col * 20}
           pcbY={-50 + 10}
@@ -87,7 +87,7 @@ test("chip and resistor in assembly", () => {
       {Array.from({ length: 2 }).map((_, i) => (
         <chip
           key={`chip-${i * 2}`}
-          name={`U${i * 2}`}
+          name={`F${i * 2}`}
           pinLabels={{
             pin1: "D0",
             pin2: "D1",
