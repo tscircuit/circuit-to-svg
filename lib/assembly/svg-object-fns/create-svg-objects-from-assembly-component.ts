@@ -1,4 +1,4 @@
-import type { AnyCircuitElement, Point } from "circuit-json"
+import type { AnyCircuitElement, LayerRef, Point } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
@@ -8,15 +8,7 @@ interface ComponentProps {
   width: number
   height: number
   rotation?: number
-  layer?:
-    | "top"
-    | "bottom"
-    | "inner1"
-    | "inner2"
-    | "inner3"
-    | "inner4"
-    | "inner5"
-    | "inner6"
+  layer?: LayerRef
 }
 
 export function createSvgObjectsFromAssemblyComponent(
@@ -62,15 +54,7 @@ function createComponentPath(
   pinX: number,
   pinY: number,
   rotation: number,
-  layer:
-    | "top"
-    | "bottom"
-    | "inner1"
-    | "inner2"
-    | "inner3"
-    | "inner4"
-    | "inner5"
-    | "inner6" = "top",
+  layer: LayerRef,
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
