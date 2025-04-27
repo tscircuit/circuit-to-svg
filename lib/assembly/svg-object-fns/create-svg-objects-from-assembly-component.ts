@@ -8,6 +8,7 @@ interface ComponentProps {
   width: number
   height: number
   rotation?: number
+  layer?: "top" | "bottom"
 }
 
 export function createSvgObjectsFromAssemblyComponent(
@@ -16,7 +17,7 @@ export function createSvgObjectsFromAssemblyComponent(
   firstPin: Point,
   name?: string,
 ): SvgObject {
-  const { center, width, height, rotation = 0 } = component
+  const { center, width, height, rotation = 0, layer = "top" } = component
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const [pinX, pinY] = applyToPoint(transform, [firstPin.x, firstPin.y])
   const scaledWidth = width * Math.abs(transform.a)
@@ -38,6 +39,7 @@ export function createSvgObjectsFromAssemblyComponent(
         pinX,
         pinY,
         rotation,
+        layer,
       ),
       createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
     ],
@@ -52,6 +54,7 @@ function createComponentPath(
   pinX: number,
   pinY: number,
   rotation: number,
+  layer: "top" | "bottom" = "top",
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
@@ -70,6 +73,7 @@ function createComponentPath(
       d: path,
       "stroke-width": strokeWidth.toFixed(2),
       transform: `rotate(${-rotation})`,
+      "stroke-dasharray": layer === "bottom" ? "2,2" : "",
     },
     value: "",
     children: [],
