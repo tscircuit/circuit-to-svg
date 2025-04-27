@@ -66,7 +66,7 @@ test("chip and resistor in assembly", () => {
       {Array.from({ length: 2 }).map((_, i) => (
         <chip
           key={`chip-${i}`}
-          name={`U${i}`}
+          name={`E${i}`}
           pinLabels={{
             pin1: "D0",
             pin2: "D1",
