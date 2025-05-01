@@ -23,17 +23,13 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
 interface Options {
-  colorOverrides?: ColorMap
+  colorOverrides?: {
+    schematic?: Partial<ColorMap["schematic"]>
+  }
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
-}
-
-export interface ColorOverrides {
-  schematic?: {
-    [key: string]: string
-  }
 }
 
 export function convertCircuitJsonToSchematicSvg(
