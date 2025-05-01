@@ -1,6 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap as defaultColorMap } from "lib/utils/colors"
+import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
   applyToPoint,
@@ -23,7 +23,7 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
 interface Options {
-  colorOverrides?: ColorOverrides
+  colorOverrides?: ColorMap
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
@@ -49,7 +49,7 @@ export function convertCircuitJsonToSchematicSvg(
   const svgHeight = options?.height ?? 600
   const colorOverrides = options?.colorOverrides
 
-  const colorMap = {
+  const colorMap: ColorMap = {
     ...defaultColorMap,
     schematic: {
       ...defaultColorMap.schematic,
