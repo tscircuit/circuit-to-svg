@@ -22,10 +22,12 @@ import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-s
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 
+export type ColorOverrides = {
+  schematic?: Partial<ColorMap["schematic"]>
+}
+
 interface Options {
-  colorOverrides?: {
-    schematic?: Partial<ColorMap["schematic"]>
-  }
+  colorOverrides?: ColorOverrides
   width?: number
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
