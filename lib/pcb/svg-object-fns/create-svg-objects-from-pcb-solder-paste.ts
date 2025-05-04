@@ -3,28 +3,28 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 
 export function createSvgObjectsFromSolderPaste(
-  solderpaste: PcbSolderPaste,
+  solderPaste: PcbSolderPaste,
   transform: Matrix,
 ): any {
-  const [x, y] = applyToPoint(transform, [solderpaste.x, solderpaste.y])
+  const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
-  if (solderpaste.shape === "rect" || solderpaste.shape === "rotated_rect") {
-    const width = solderpaste.width * Math.abs(transform.a)
-    const height = solderpaste.height * Math.abs(transform.d)
+  if (solderPaste.shape === "rect" || solderPaste.shape === "rotated_rect") {
+    const width = solderPaste.width * Math.abs(transform.a)
+    const height = solderPaste.height * Math.abs(transform.d)
 
-    if (solderpaste.shape === "rotated_rect" && solderpaste.ccw_rotation) {
+    if (solderPaste.shape === "rotated_rect" && solderPaste.ccw_rotation) {
       return [
         {
           name: "rect",
           type: "element",
           attributes: {
             class: "pcb-solder-paste",
-            fill: solderPasteLayerNameToColor(solderpaste.layer),
+            fill: solderPasteLayerNameToColor(solderPaste.layer),
             x: (-width / 2).toString(),
             y: (-height / 2).toString(),
             width: width.toString(),
             height: height.toString(),
-            transform: `translate(${x} ${y}) rotate(${-solderpaste.ccw_rotation})`,
+            transform: `translate(${x} ${y}) rotate(${-solderPaste.ccw_rotation})`,
           },
         },
       ]
@@ -36,7 +36,7 @@ export function createSvgObjectsFromSolderPaste(
         type: "element",
         attributes: {
           class: "pcb-solder-paste",
-          fill: solderPasteLayerNameToColor(solderpaste.layer),
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -46,10 +46,10 @@ export function createSvgObjectsFromSolderPaste(
     ]
   }
   // Implement pill-shaped SMT pad
-  if (solderpaste.shape === "pill") {
-    const width = solderpaste.width * Math.abs(transform.a)
-    const height = solderpaste.height * Math.abs(transform.d)
-    const radius = solderpaste.radius * Math.abs(transform.a)
+  if (solderPaste.shape === "pill") {
+    const width = solderPaste.width * Math.abs(transform.a)
+    const height = solderPaste.height * Math.abs(transform.d)
+    const radius = solderPaste.radius * Math.abs(transform.a)
 
     return [
       {
@@ -57,7 +57,7 @@ export function createSvgObjectsFromSolderPaste(
         type: "element",
         attributes: {
           class: "pcb-solder-paste",
-          fill: solderPasteLayerNameToColor(solderpaste.layer),
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -68,8 +68,8 @@ export function createSvgObjectsFromSolderPaste(
     ]
   }
   // Implement circle-shaped SMT pad
-  if (solderpaste.shape === "circle") {
-    const radius = solderpaste.radius * Math.abs(transform.a)
+  if (solderPaste.shape === "circle") {
+    const radius = solderPaste.radius * Math.abs(transform.a)
 
     return [
       {
@@ -77,7 +77,7 @@ export function createSvgObjectsFromSolderPaste(
         type: "element",
         attributes: {
           class: "pcb-solder-paste",
-          fill: solderPasteLayerNameToColor(solderpaste.layer),
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
           cx: x.toString(),
           cy: y.toString(),
           r: radius.toString(),
