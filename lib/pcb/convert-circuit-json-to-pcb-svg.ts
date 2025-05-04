@@ -18,6 +18,7 @@ import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create
 import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
+import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/create-svg-objects-from-pcb-solder-paste"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
@@ -33,6 +34,7 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_via",
   "pcb_trace",
   "pcb_smtpad",
+  "pcb_solder_paste",
   "pcb_component",
   "pcb_board",
 ]
@@ -248,6 +250,8 @@ function createSvgObjects(
       return createSvgObjectsFromPcbHole(elm, transform)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
+    case "pcb_solder_paste":
+      return createSvgObjectsFromSolderPaste(elm, transform)
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
     case "pcb_silkscreen_rect":
