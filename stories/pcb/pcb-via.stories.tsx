@@ -2025,6 +2025,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     width: 120,
     height: 80,
+    material: "fr4",
   },
   {
     type: "pcb_smtpad",

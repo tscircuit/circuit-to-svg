@@ -22,6 +22,7 @@ const pcbSoup: AnyCircuitElement[] = [
     height: 10,
     thickness: 1.6,
     num_layers: 2,
+    material: "fr4",
   },
   // Horizontal text (0 degrees)
   {

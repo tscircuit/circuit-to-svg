@@ -89,6 +89,7 @@ test("silkscreen elements with mixed components", () => {
       height: 20,
       thickness: 1.6,
       num_layers: 2,
+      material: "fr4",
     },
     // Silkscreen element
     {
@@ -159,6 +160,7 @@ test("silkscreen elements at extreme positions", () => {
       height: 50,
       thickness: 1.6,
       num_layers: 2,
+      material: "fr4",
     },
   ])
 
