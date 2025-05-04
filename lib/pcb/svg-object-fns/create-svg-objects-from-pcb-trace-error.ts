@@ -9,6 +9,7 @@ export function createSvgObjectsFromPcbTraceError(
   shouldDrawErrors?: boolean,
 ): SvgObject[] {
   if (!shouldDrawErrors) return []
+
   const { pcb_port_ids } = pcbTraceError
 
   const port1 = circuitJson.find(
@@ -20,7 +21,52 @@ export function createSvgObjectsFromPcbTraceError(
       el.type === "pcb_port" && el.pcb_port_id === pcb_port_ids?.[1],
   )
 
-  if (!port1 || !port2) return []
+  if (!port1 || !port2) {
+    if (pcbTraceError.center) {
+      const screenCenter = applyToPoint(transform, {
+        x: pcbTraceError.center.x,
+        y: pcbTraceError.center.y,
+      })
+      return [
+        {
+          name: "rect",
+          type: "element",
+          attributes: {
+            x: (screenCenter.x - 5).toString(),
+            y: (screenCenter.y - 5).toString(),
+            width: "10",
+            height: "10",
+            fill: "red",
+            transform: `rotate(45 ${screenCenter.x} ${screenCenter.y})`,
+          },
+          children: [],
+          value: "",
+        },
+        {
+          name: "text",
+          type: "element",
+          attributes: {
+            x: screenCenter.x.toString(),
+            y: (screenCenter.y - 15).toString(),
+            fill: "red",
+            "font-family": "sans-serif",
+            "font-size": "12",
+            "text-anchor": "middle",
+          },
+          children: [
+            {
+              type: "text",
+              value: pcbTraceError.message || "Pcb Trace Error",
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ],
+          value: "",
+        },
+      ]
+    } else return []
+  }
 
   const screenPort1 = applyToPoint(transform, {
     x: port1.x,
