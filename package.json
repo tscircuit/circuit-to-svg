@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@tscircuit/checks": "^0.0.44",
+    "@tscircuit/circuit-json-util": "^0.0.47",
     "@tscircuit/footprinter": "^0.0.91",
     "@tscircuit/routing": "^1.3.5",
     "@tscircuit/soup-util": "^0.0.41",
