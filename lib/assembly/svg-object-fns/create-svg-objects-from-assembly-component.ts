@@ -131,7 +131,6 @@ function createComponentLabel(
   }
 }
 
-// New function for the pin 1 indicator
 function createPin1Indicator(
   scaledWidth: number,
   scaledHeight: number,
@@ -142,11 +141,10 @@ function createPin1Indicator(
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
-  const indicatorSize = Math.min(w, h) * 0.5 // Size of the triangle leg (increased from 0.3)
+  const indicatorSize = Math.min(w, h) * 0.5
 
   let points: [number, number][]
 
-  // Define triangle points based on the corner
   if (isPinTop && isPinLeft) {
     // Top-left corner
     points = [
@@ -188,10 +186,6 @@ function createPin1Indicator(
       fill: "#333", // Dark fill color
       stroke: "none",
       transform: `rotate(${-rotation})`,
-      // Dashed fill isn't standard, consider outline or different fill for bottom
-      // For now, let's keep the fill solid but maybe add a dashed stroke?
-      // Or maybe change fill opacity for bottom layer? Let's stick to solid fill for now.
-      // "stroke-dasharray": layer === "bottom" ? "1,1" : "",
     },
     value: "",
     children: [],
