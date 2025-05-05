@@ -30,10 +30,10 @@
     "@storybook/test": "^8.2.5",
     "@tscircuit/core": "^0.0.332",
     "@tscircuit/plop": "^0.0.10",
-    "@types/bun": "^1.1.9",
+    "@types/bun": "^1.2.8",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.6",
-    "circuit-json": "^0.0.161",
+    "circuit-json": "^0.0.163",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "^18.3.1",
@@ -48,6 +48,8 @@
     "schematic-symbols": "*"
   },
   "dependencies": {
+    "@tscircuit/checks": "^0.0.44",
+    "@tscircuit/circuit-json-util": "^0.0.47",
     "@tscircuit/footprinter": "^0.0.91",
     "@tscircuit/routing": "^1.3.5",
     "@tscircuit/soup-util": "^0.0.41",
