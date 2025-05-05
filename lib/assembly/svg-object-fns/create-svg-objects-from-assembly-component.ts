@@ -26,8 +26,8 @@ export function createSvgObjectsFromAssemblyComponent(
 
   const isChip = ftype?.includes("chip")
   const isTopLayer = layer === "top"
-  const isPinTop = pinY > y // Compare transformed pin Y with transformed center Y
-  const isPinLeft = pinX < x // Compare transformed pin X with transformed center X
+  const isPinTop = pinY > y
+  const isPinLeft = pinX < x
 
   const children: SvgObject[] = [
     createComponentPath(scaledWidth, scaledHeight, rotation, layer),
@@ -67,7 +67,7 @@ function createComponentPath(
   const w = scaledWidth / 2
   const h = scaledHeight / 2
   const strokeWidth = 0.8
-  const path = getRectPathData(w, h, rotation) // Always draw a rectangle now
+  const path = getRectPathData(w, h, rotation)
 
   return {
     name: "path",
@@ -181,9 +181,9 @@ function createPin1Indicator(
     name: "polygon",
     type: "element",
     attributes: {
-      class: "assembly-pin1-indicator", // Add a class for potential styling
+      class: "assembly-pin1-indicator",
       points: pointsString,
-      fill: "#333", // Dark fill color
+      fill: "#333",
       stroke: "none",
       transform: `rotate(${-rotation})`,
     },
