@@ -24,6 +24,29 @@ export function createSvgObjectsFromAssemblyComponent(
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
 
+  const isChip = ftype?.includes("chip")
+  const isTopLayer = layer === "top"
+  const isPinTop = pinY > y // Compare transformed pin Y with transformed center Y
+  const isPinLeft = pinX < x // Compare transformed pin X with transformed center X
+
+  const children: SvgObject[] = [
+    createComponentPath(scaledWidth, scaledHeight, rotation, layer),
+    createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
+  ]
+
+  if (isChip) {
+    children.push(
+      createPin1Indicator(
+        scaledWidth,
+        scaledHeight,
+        rotation,
+        layer,
+        isPinTop,
+        isPinLeft,
+      ),
+    )
+  }
+
   return {
     name: "g",
     type: "element",
@@ -31,46 +54,20 @@ export function createSvgObjectsFromAssemblyComponent(
     attributes: {
       transform: `translate(${x}, ${y}) scale(1, -1)`,
     },
-    children: [
-      createComponentPath(
-        scaledWidth,
-        scaledHeight,
-        x,
-        y,
-        pinX,
-        pinY,
-        rotation,
-        layer,
-        ftype,
-      ),
-      createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
-    ],
+    children,
   }
 }
 
 function createComponentPath(
   scaledWidth: number,
   scaledHeight: number,
-  centerX: number,
-  centerY: number,
-  pinX: number,
-  pinY: number,
   rotation: number,
   layer: LayerRef,
-  ftype?: string,
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
-  const cornerSize = Math.min(w, h) * 0.3
-  const isTop = pinY > centerY
-  const isLeft = pinX < centerX
-
   const strokeWidth = 0.8
-
-  const isChip = ftype?.includes("chip")
-  const path = isChip
-    ? getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
-    : getRectPathData(w, h, rotation)
+  const path = getRectPathData(w, h, rotation) // Always draw a rectangle now
 
   return {
     name: "path",
@@ -134,70 +131,71 @@ function createComponentLabel(
   }
 }
 
-function getComponentPathData(
-  w: number,
-  h: number,
-  cornerSize: number,
-  isTop: boolean,
-  isLeft: boolean,
+// New function for the pin 1 indicator
+function createPin1Indicator(
+  scaledWidth: number,
+  scaledHeight: number,
   rotation: number,
-): string {
-  const rotatePoint = (
-    x: number,
-    y: number,
-    angle: number,
-  ): [number, number] => {
-    const rad = (Math.PI / 180) * angle
-    const cos = Math.cos(rad)
-    const sin = Math.sin(rad)
-    return [x * cos - y * sin, x * sin + y * cos]
-  }
+  layer: LayerRef,
+  isPinTop: boolean,
+  isPinLeft: boolean,
+): SvgObject {
+  const w = scaledWidth / 2
+  const h = scaledHeight / 2
+  const indicatorSize = Math.min(w, h) * 0.5 // Size of the triangle leg (increased from 0.3)
 
-  let corners: [number, number][]
-  if (isTop && isLeft) {
+  let points: [number, number][]
+
+  // Define triangle points based on the corner
+  if (isPinTop && isPinLeft) {
     // Top-left corner
-    corners = [
-      [-w, -h + cornerSize],
-      [-w + cornerSize, -h],
-      [w, -h],
-      [w, h],
-      [-w, h],
+    points = [
+      [-w, -h], // Corner point
+      [-w + indicatorSize, -h], // Point along top edge
+      [-w, -h + indicatorSize], // Point along left edge
     ]
-  } else if (isTop && !isLeft) {
+  } else if (isPinTop && !isPinLeft) {
     // Top-right corner
-    corners = [
-      [-w, -h],
-      [w - cornerSize, -h],
-      [w, -h + cornerSize],
-      [w, h],
-      [-w, h],
+    points = [
+      [w, -h], // Corner point
+      [w - indicatorSize, -h], // Point along top edge
+      [w, -h + indicatorSize], // Point along right edge
     ]
-  } else if (!isTop && isLeft) {
+  } else if (!isPinTop && isPinLeft) {
     // Bottom-left corner
-    corners = [
-      [-w, -h],
-      [w, -h],
-      [w, h],
-      [-w + cornerSize, h],
-      [-w, h - cornerSize],
+    points = [
+      [-w, h], // Corner point
+      [-w + indicatorSize, h], // Point along bottom edge
+      [-w, h - indicatorSize], // Point along left edge
     ]
   } else {
     // Bottom-right corner
-    corners = [
-      [-w, -h],
-      [w, -h],
-      [w, h - cornerSize],
-      [w - cornerSize, h],
-      [-w, h],
+    points = [
+      [w, h], // Corner point
+      [w - indicatorSize, h], // Point along bottom edge
+      [w, h - indicatorSize], // Point along right edge
     ]
   }
 
-  const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
+  const pointsString = points.map((p) => p.join(",")).join(" ")
 
-  const path = rotatedCorners
-    .map(([x, y], i) => (i === 0 ? `M${x},${y}` : `L${x},${y}`))
-    .join(" ")
-  return `${path} Z`
+  return {
+    name: "polygon",
+    type: "element",
+    attributes: {
+      class: "assembly-pin1-indicator", // Add a class for potential styling
+      points: pointsString,
+      fill: "#333", // Dark fill color
+      stroke: "none",
+      transform: `rotate(${-rotation})`,
+      // Dashed fill isn't standard, consider outline or different fill for bottom
+      // For now, let's keep the fill solid but maybe add a dashed stroke?
+      // Or maybe change fill opacity for bottom layer? Let's stick to solid fill for now.
+      // "stroke-dasharray": layer === "bottom" ? "1,1" : "",
+    },
+    value: "",
+    children: [],
+  }
 }
 
 function getRectPathData(w: number, h: number, rotation: number): string {
