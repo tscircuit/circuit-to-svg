@@ -166,6 +166,7 @@ function createSvgObjects(
             transform,
             { x: firstPort.x, y: firstPort.y },
             sourceComponent.name,
+            sourceComponent.ftype,
           ),
         ].filter(Boolean) // Filter out null or undefined results
       }

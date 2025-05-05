@@ -16,6 +16,7 @@ export function createSvgObjectsFromAssemblyComponent(
   transform: Matrix,
   firstPin: Point,
   name?: string,
+  ftype?: string,
 ): SvgObject {
   const { center, width, height, rotation = 0, layer = "top" } = component
   const [x, y] = applyToPoint(transform, [center.x, center.y])
@@ -40,6 +41,7 @@ export function createSvgObjectsFromAssemblyComponent(
         pinY,
         rotation,
         layer,
+        ftype,
       ),
       createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
     ],
@@ -55,6 +57,7 @@ function createComponentPath(
   pinY: number,
   rotation: number,
   layer: LayerRef,
+  ftype?: string,
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
@@ -64,7 +67,11 @@ function createComponentPath(
 
   const strokeWidth = 0.8
 
-  const path = getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
+  const isChip = ftype?.includes("chip")
+  const path = isChip
+    ? getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
+    : getRectPathData(w, h, rotation)
+
   return {
     name: "path",
     type: "element",
@@ -184,6 +191,33 @@ function getComponentPathData(
       [-w, h],
     ]
   }
+
+  const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
+
+  const path = rotatedCorners
+    .map(([x, y], i) => (i === 0 ? `M${x},${y}` : `L${x},${y}`))
+    .join(" ")
+  return `${path} Z`
+}
+
+function getRectPathData(w: number, h: number, rotation: number): string {
+  const rotatePoint = (
+    x: number,
+    y: number,
+    angle: number,
+  ): [number, number] => {
+    const rad = (Math.PI / 180) * angle
+    const cos = Math.cos(rad)
+    const sin = Math.sin(rad)
+    return [x * cos - y * sin, x * sin + y * cos]
+  }
+
+  const corners: [number, number][] = [
+    [-w, -h],
+    [w, -h],
+    [w, h],
+    [-w, h],
+  ]
 
   const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
 
