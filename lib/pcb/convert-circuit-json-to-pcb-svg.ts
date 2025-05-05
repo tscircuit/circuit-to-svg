@@ -49,6 +49,10 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  mode?: {
+    type: "solder_paste"
+    layer: "top" | "bottom"
+  }
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -122,7 +126,13 @@ export function convertCircuitJsonToPcbSvg(
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
     .flatMap((item) =>
-      createSvgObjects(item, transform, soup, options?.shouldDrawErrors),
+      createSvgObjects(
+        item,
+        transform,
+        soup,
+        options?.shouldDrawErrors,
+        options,
+      ),
     )
 
   let strokeWidth = String(0.05 * scaleFactor)
@@ -231,6 +241,7 @@ function createSvgObjects(
   transform: Matrix,
   soup: AnyCircuitElement[],
   shouldDrawErrors?: boolean,
+  options?: Options,
 ): SvgObject[] {
   switch (elm.type) {
     case "pcb_trace_error":
@@ -251,7 +262,14 @@ function createSvgObjects(
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_solder_paste":
-      return createSvgObjectsFromSolderPaste(elm, transform)
+      // Only render solder paste if the mode option is provided and matches the layer
+      if (
+        options?.mode?.type === "solder_paste" &&
+        options.mode.layer === elm.layer
+      ) {
+        return createSvgObjectsFromSolderPaste(elm, transform)
+      }
+      return []
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
     case "pcb_silkscreen_rect":
