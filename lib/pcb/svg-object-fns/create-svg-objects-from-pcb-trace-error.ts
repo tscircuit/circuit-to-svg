@@ -21,9 +21,7 @@ export function createSvgObjectsFromPcbTraceError(
       el.type === "pcb_port" && el.pcb_port_id === pcb_port_ids?.[1],
   )
 
-  // Special handling: if error is about via overlap, draw rotated bounding box and diamond between trace segment and via
   if (!port1 || !port2) {
-    // Try to extract via id from error message
     const viaIdMatch = pcbTraceError.message?.match(
       /pcb_via\[#?(pcb_via_\d+)\]/,
     )
