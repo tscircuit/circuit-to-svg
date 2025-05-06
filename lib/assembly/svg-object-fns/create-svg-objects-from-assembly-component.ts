@@ -3,6 +3,18 @@ import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 
+// Context interface for assembly SVG rendering
+export interface AssemblySvgContext {
+  transform: Matrix
+}
+
+export interface AssemblyComponentParams {
+  elm: AnyCircuitElement
+  portPosition: { x: number; y: number }
+  name: string
+  ftype: string
+}
+
 interface ComponentProps {
   center: Point
   width: number
@@ -12,15 +24,16 @@ interface ComponentProps {
 }
 
 export function createSvgObjectsFromAssemblyComponent(
-  component: ComponentProps,
-  transform: Matrix,
-  firstPin: Point,
-  name?: string,
-  ftype?: string,
-): SvgObject {
-  const { center, width, height, rotation = 0, layer = "top" } = component
+  params: AssemblyComponentParams,
+  ctx: AssemblySvgContext,
+): SvgObject | null {
+  const { elm, portPosition, name, ftype } = params
+  const { transform } = ctx
+  const { center, width, height, rotation = 0, layer = "top" } = elm as any
+  if (!center || typeof width !== "number" || typeof height !== "number")
+    return null
   const [x, y] = applyToPoint(transform, [center.x, center.y])
-  const [pinX, pinY] = applyToPoint(transform, [firstPin.x, firstPin.y])
+  const [pinX, pinY] = applyToPoint(transform, [portPosition.x, portPosition.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
 

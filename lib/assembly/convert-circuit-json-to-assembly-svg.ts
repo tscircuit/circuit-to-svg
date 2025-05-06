@@ -160,15 +160,16 @@ function createSvgObjects(
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
-        return [
-          createSvgObjectsFromAssemblyComponent(
+        const obj = createSvgObjectsFromAssemblyComponent(
+          {
             elm,
-            transform,
-            { x: firstPort.x, y: firstPort.y },
-            sourceComponent.name,
-            sourceComponent.ftype,
-          ),
-        ].filter(Boolean) // Filter out null or undefined results
+            portPosition: { x: firstPort.x, y: firstPort.y },
+            name: sourceComponent.name,
+            ftype: sourceComponent.ftype,
+          },
+          { transform },
+        )
+        return obj ? [obj] : []
       }
 
       return []
