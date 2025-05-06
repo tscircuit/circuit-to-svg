@@ -12,7 +12,7 @@ export interface AssemblyComponentParams {
   elm: AnyCircuitElement
   portPosition: { x: number; y: number }
   name: string
-  ftype: string
+  isChip: boolean
 }
 
 interface ComponentProps {
@@ -27,7 +27,7 @@ export function createSvgObjectsFromAssemblyComponent(
   params: AssemblyComponentParams,
   ctx: AssemblySvgContext,
 ): SvgObject | null {
-  const { elm, portPosition, name, ftype } = params
+  const { elm, portPosition, name, isChip } = params
   const { transform } = ctx
   const { center, width, height, rotation = 0, layer = "top" } = elm as any
   if (!center || typeof width !== "number" || typeof height !== "number")
@@ -37,7 +37,6 @@ export function createSvgObjectsFromAssemblyComponent(
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
 
-  const isChip = ftype?.includes("chip")
   const isTopLayer = layer === "top"
   const isPinTop = pinY > y
   const isPinLeft = pinX < x
