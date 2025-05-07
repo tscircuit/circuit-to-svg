@@ -380,15 +380,15 @@ export function convertCircuitJsonToSolderPasteMask(
 ): string {
   // Filter to only include solder paste elements for the specified layer
   const solderPasteElements = soup.filter(
-    (elm) => elm.type === "pcb_solder_paste" && elm.layer === options.layer
-  );
-  
+    (elm) => elm.type === "pcb_solder_paste" && elm.layer === options.layer,
+  )
+
   // Include other necessary elements like the board
-  const boardElements = soup.filter((elm) => elm.type === "pcb_board");
-  
+  const boardElements = soup.filter((elm) => elm.type === "pcb_board")
+
   // Combine filtered elements
-  const filteredSoup = [...boardElements, ...solderPasteElements];
-  
+  const filteredSoup = [...boardElements, ...solderPasteElements]
+
   return convertCircuitJsonToPcbSvg(filteredSoup, {
     width: options.width,
     height: options.height,
@@ -396,5 +396,5 @@ export function convertCircuitJsonToSolderPasteMask(
       type: "solder_paste",
       layer: options.layer,
     },
-  });
+  })
 }
