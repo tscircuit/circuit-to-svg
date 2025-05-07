@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToPcbSvg } from "lib"
+import { convertCircuitJsonToSolderPasteMask } from "lib"
 
 test("solder paste for smtpads", () => {
-  const bottomCircuitJson = convertCircuitJsonToPcbSvg(
+  const bottomCircuitJson = convertCircuitJsonToSolderPasteMask(
     [
       {
         type: "pcb_solder_paste",
@@ -16,14 +16,11 @@ test("solder paste for smtpads", () => {
       },
     ],
     {
-      mode: {
-        type: "solder_paste",
-        layer: "bottom",
-      },
+      layer: "bottom",
     },
   )
   expect(bottomCircuitJson).toMatchSvgSnapshot(import.meta.path + ".bottom")
-  const topCircuitJson = convertCircuitJsonToPcbSvg(
+  const topCircuitJson = convertCircuitJsonToSolderPasteMask(
     [
       {
         type: "pcb_solder_paste",
@@ -37,10 +34,7 @@ test("solder paste for smtpads", () => {
       },
     ],
     {
-      mode: {
-        type: "solder_paste",
-        layer: "top",
-      },
+      layer: "top",
     },
   )
   expect(topCircuitJson).toMatchSvgSnapshot(import.meta.path + ".top")

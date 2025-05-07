@@ -50,8 +50,8 @@ interface Options {
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
   mode?: {
-    type: "solder_paste"
-    layer: "top" | "bottom"
+    type: "normal" | "solder_paste"
+    layer?: "top" | "bottom"
   }
 }
 
@@ -367,3 +367,23 @@ function createSvgObjectFromPcbBoundary(
  * @deprecated use `convertCircuitJsonToPcbSvg` instead
  */
 export const circuitJsonToPcbSvg = convertCircuitJsonToPcbSvg
+
+/**
+ * Creates an SVG specifically for solder paste mask
+ * @param soup Circuit JSON elements
+ * @param options Configuration options
+ * @returns SVG string representation of the solder paste mask
+ */
+export function convertCircuitJsonToSolderPasteMask(
+  soup: AnyCircuitElement[],
+  options: { layer: "top" | "bottom"; width?: number; height?: number },
+): string {
+  return convertCircuitJsonToPcbSvg(soup, {
+    width: options.width,
+    height: options.height,
+    mode: {
+      type: "solder_paste",
+      layer: options.layer,
+    },
+  })
+}

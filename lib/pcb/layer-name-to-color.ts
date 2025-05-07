@@ -13,14 +13,14 @@ export function layerNameToColor(layerName: string) {
   )
 }
 export const SOLDER_PASTE_LAYER_NAME_TO_COLOR = {
-  bottom: "rgb(169, 169, 169)", // Lighter gray (Light gray)
-  top: "rgb(105, 105, 105)", // Darker gray (Dim gray)
+  bottom: "rgb(105, 105, 105)",
+  top: "rgb(105, 105, 105)",
 }
 
 export function solderPasteLayerNameToColor(layerName: string) {
   return (
     SOLDER_PASTE_LAYER_NAME_TO_COLOR[
       layerName as keyof typeof SOLDER_PASTE_LAYER_NAME_TO_COLOR
-    ] ?? "gray" // Gray color for solder paste
+    ] ?? "rgb(105, 105, 105)"
   )
 }
