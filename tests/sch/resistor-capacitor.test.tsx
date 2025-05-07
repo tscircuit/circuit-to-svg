@@ -6,7 +6,7 @@ import {
 } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("schematic resistor", () => {
+test("schematic resistor", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
@@ -22,6 +22,8 @@ test("schematic resistor", () => {
       <trace from=".R1 .pin1" to=".C1 .pin1" />
     </board>,
   )
+
+  await circuit.renderUntilSettled()
 
   expect(
     convertCircuitJsonToPcbSvg(circuit.getCircuitJson() as any),

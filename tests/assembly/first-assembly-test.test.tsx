@@ -23,7 +23,7 @@ test("chip and resistor in assembly", () => {
       <pinheader
         footprint={"pinrow4"}
         pinCount={4}
-        name="J1"
+        name="P1"
         pcbX={8}
         pcbY={-5}
         pcbRotation={90}
