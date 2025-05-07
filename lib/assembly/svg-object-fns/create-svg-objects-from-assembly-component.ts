@@ -12,7 +12,7 @@ export interface AssemblyComponentParams {
   elm: AnyCircuitElement
   portPosition: { x: number; y: number }
   name: string
-  isChip: boolean
+  arePinsInterchangeable?: boolean
 }
 
 interface ComponentProps {
@@ -27,7 +27,7 @@ export function createSvgObjectsFromAssemblyComponent(
   params: AssemblyComponentParams,
   ctx: AssemblySvgContext,
 ): SvgObject | null {
-  const { elm, portPosition, name, isChip } = params
+  const { elm, portPosition, name, arePinsInterchangeable } = params
   const { transform } = ctx
   const { center, width, height, rotation = 0, layer = "top" } = elm as any
   if (!center || typeof width !== "number" || typeof height !== "number")
@@ -46,7 +46,7 @@ export function createSvgObjectsFromAssemblyComponent(
     createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
   ]
 
-  if (isChip) {
+  if (!arePinsInterchangeable) {
     children.push(
       createPin1Indicator(
         scaledWidth,
