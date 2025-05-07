@@ -49,10 +49,6 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
-  mode?: {
-    type: "normal" | "solder_paste"
-    layer?: "top" | "bottom"
-  }
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -262,14 +258,7 @@ function createSvgObjects(
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
     case "pcb_solder_paste":
-      // Only render solder paste if the mode option is provided and matches the layer
-      if (
-        options?.mode?.type === "solder_paste" &&
-        options.mode.layer === elm.layer
-      ) {
-        return createSvgObjectsFromSolderPaste(elm, transform)
-      }
-      return []
+      return createSvgObjectsFromSolderPaste(elm, transform)
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
     case "pcb_silkscreen_rect":
@@ -392,9 +381,5 @@ export function convertCircuitJsonToSolderPasteMask(
   return convertCircuitJsonToPcbSvg(filteredSoup, {
     width: options.width,
     height: options.height,
-    mode: {
-      type: "solder_paste",
-      layer: options.layer,
-    },
   })
 }
