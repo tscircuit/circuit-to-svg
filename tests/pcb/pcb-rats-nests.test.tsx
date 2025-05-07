@@ -41,6 +41,7 @@ circuit.add(
   </board>,
 )
 
+await circuit.renderUntilSettled()
 const circuitJson = circuit.getCircuitJson()
 
 test("shouldDrawRatsNest true", () => {

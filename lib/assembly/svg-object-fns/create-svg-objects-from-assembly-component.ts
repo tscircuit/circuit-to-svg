@@ -3,6 +3,18 @@ import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 
+// Context interface for assembly SVG rendering
+export interface AssemblySvgContext {
+  transform: Matrix
+}
+
+export interface AssemblyComponentParams {
+  elm: AnyCircuitElement
+  portPosition: { x: number; y: number }
+  name: string
+  arePinsInterchangeable?: boolean
+}
+
 interface ComponentProps {
   center: Point
   width: number
@@ -12,16 +24,40 @@ interface ComponentProps {
 }
 
 export function createSvgObjectsFromAssemblyComponent(
-  component: ComponentProps,
-  transform: Matrix,
-  firstPin: Point,
-  name?: string,
-): SvgObject {
-  const { center, width, height, rotation = 0, layer = "top" } = component
+  params: AssemblyComponentParams,
+  ctx: AssemblySvgContext,
+): SvgObject | null {
+  const { elm, portPosition, name, arePinsInterchangeable } = params
+  const { transform } = ctx
+  const { center, width, height, rotation = 0, layer = "top" } = elm as any
+  if (!center || typeof width !== "number" || typeof height !== "number")
+    return null
   const [x, y] = applyToPoint(transform, [center.x, center.y])
-  const [pinX, pinY] = applyToPoint(transform, [firstPin.x, firstPin.y])
+  const [pinX, pinY] = applyToPoint(transform, [portPosition.x, portPosition.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
+
+  const isTopLayer = layer === "top"
+  const isPinTop = pinY > y
+  const isPinLeft = pinX < x
+
+  const children: SvgObject[] = [
+    createComponentPath(scaledWidth, scaledHeight, rotation, layer),
+    createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
+  ]
+
+  if (!arePinsInterchangeable) {
+    children.push(
+      createPin1Indicator(
+        scaledWidth,
+        scaledHeight,
+        rotation,
+        layer,
+        isPinTop,
+        isPinLeft,
+      ),
+    )
+  }
 
   return {
     name: "g",
@@ -30,41 +66,21 @@ export function createSvgObjectsFromAssemblyComponent(
     attributes: {
       transform: `translate(${x}, ${y}) scale(1, -1)`,
     },
-    children: [
-      createComponentPath(
-        scaledWidth,
-        scaledHeight,
-        x,
-        y,
-        pinX,
-        pinY,
-        rotation,
-        layer,
-      ),
-      createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
-    ],
+    children,
   }
 }
 
 function createComponentPath(
   scaledWidth: number,
   scaledHeight: number,
-  centerX: number,
-  centerY: number,
-  pinX: number,
-  pinY: number,
   rotation: number,
   layer: LayerRef,
 ): SvgObject {
   const w = scaledWidth / 2
   const h = scaledHeight / 2
-  const cornerSize = Math.min(w, h) * 0.3
-  const isTop = pinY > centerY
-  const isLeft = pinX < centerX
-
   const strokeWidth = 0.8
+  const path = getRectPathData(w, h, rotation)
 
-  const path = getComponentPathData(w, h, cornerSize, isTop, isLeft, rotation)
   return {
     name: "path",
     type: "element",
@@ -127,14 +143,68 @@ function createComponentLabel(
   }
 }
 
-function getComponentPathData(
-  w: number,
-  h: number,
-  cornerSize: number,
-  isTop: boolean,
-  isLeft: boolean,
+function createPin1Indicator(
+  scaledWidth: number,
+  scaledHeight: number,
   rotation: number,
-): string {
+  layer: LayerRef,
+  isPinTop: boolean,
+  isPinLeft: boolean,
+): SvgObject {
+  const w = scaledWidth / 2
+  const h = scaledHeight / 2
+  const indicatorSize = Math.min(w, h) * 0.5
+
+  let points: [number, number][]
+
+  if (isPinTop && isPinLeft) {
+    // Top-left corner
+    points = [
+      [-w, -h], // Corner point
+      [-w + indicatorSize, -h], // Point along top edge
+      [-w, -h + indicatorSize], // Point along left edge
+    ]
+  } else if (isPinTop && !isPinLeft) {
+    // Top-right corner
+    points = [
+      [w, -h], // Corner point
+      [w - indicatorSize, -h], // Point along top edge
+      [w, -h + indicatorSize], // Point along right edge
+    ]
+  } else if (!isPinTop && isPinLeft) {
+    // Bottom-left corner
+    points = [
+      [-w, h], // Corner point
+      [-w + indicatorSize, h], // Point along bottom edge
+      [-w, h - indicatorSize], // Point along left edge
+    ]
+  } else {
+    // Bottom-right corner
+    points = [
+      [w, h], // Corner point
+      [w - indicatorSize, h], // Point along bottom edge
+      [w, h - indicatorSize], // Point along right edge
+    ]
+  }
+
+  const pointsString = points.map((p) => p.join(",")).join(" ")
+
+  return {
+    name: "polygon",
+    type: "element",
+    attributes: {
+      class: "assembly-pin1-indicator",
+      points: pointsString,
+      fill: "#333",
+      stroke: "none",
+      transform: `rotate(${-rotation})`,
+    },
+    value: "",
+    children: [],
+  }
+}
+
+function getRectPathData(w: number, h: number, rotation: number): string {
   const rotatePoint = (
     x: number,
     y: number,
@@ -146,44 +216,12 @@ function getComponentPathData(
     return [x * cos - y * sin, x * sin + y * cos]
   }
 
-  let corners: [number, number][]
-  if (isTop && isLeft) {
-    // Top-left corner
-    corners = [
-      [-w, -h + cornerSize],
-      [-w + cornerSize, -h],
-      [w, -h],
-      [w, h],
-      [-w, h],
-    ]
-  } else if (isTop && !isLeft) {
-    // Top-right corner
-    corners = [
-      [-w, -h],
-      [w - cornerSize, -h],
-      [w, -h + cornerSize],
-      [w, h],
-      [-w, h],
-    ]
-  } else if (!isTop && isLeft) {
-    // Bottom-left corner
-    corners = [
-      [-w, -h],
-      [w, -h],
-      [w, h],
-      [-w + cornerSize, h],
-      [-w, h - cornerSize],
-    ]
-  } else {
-    // Bottom-right corner
-    corners = [
-      [-w, -h],
-      [w, -h],
-      [w, h - cornerSize],
-      [w - cornerSize, h],
-      [-w, h],
-    ]
-  }
+  const corners: [number, number][] = [
+    [-w, -h],
+    [w, -h],
+    [w, h],
+    [-w, h],
+  ]
 
   const rotatedCorners = corners.map(([x, y]) => rotatePoint(x, y, rotation))
 

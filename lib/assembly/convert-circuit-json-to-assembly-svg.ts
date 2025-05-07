@@ -160,14 +160,17 @@ function createSvgObjects(
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
-        return [
-          createSvgObjectsFromAssemblyComponent(
+        const arePinsInterchangeable = sourceComponent.are_pins_interchangeable
+        const obj = createSvgObjectsFromAssemblyComponent(
+          {
             elm,
-            transform,
-            { x: firstPort.x, y: firstPort.y },
-            sourceComponent.name,
-          ),
-        ].filter(Boolean) // Filter out null or undefined results
+            portPosition: { x: firstPort.x, y: firstPort.y },
+            name: sourceComponent.name,
+            arePinsInterchangeable,
+          },
+          { transform },
+        )
+        return obj ? [obj] : []
       }
 
       return []
