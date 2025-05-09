@@ -18,7 +18,6 @@ import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create
 import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/create-svg-objects-from-pcb-solder-paste"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
@@ -34,7 +33,6 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_via",
   "pcb_trace",
   "pcb_smtpad",
-  "pcb_solder_paste",
   "pcb_component",
   "pcb_board",
 ]
@@ -49,6 +47,13 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  customCreateSvgObjects?: (
+    elm: AnyCircuitElement,
+    transform: Matrix,
+    soup: AnyCircuitElement[],
+    shouldDrawErrors?: boolean,
+    options?: Options,
+  ) => SvgObject[]
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -121,15 +126,25 @@ export function convertCircuitJsonToPcbSvg(
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) =>
-      createSvgObjects(
+    .flatMap((item) => {
+      // Use custom handler if provided
+      if (options?.customCreateSvgObjects) {
+        return options.customCreateSvgObjects(
+          item,
+          transform,
+          soup,
+          options?.shouldDrawErrors,
+          options,
+        )
+      }
+      return createSvgObjects(
         item,
         transform,
         soup,
         options?.shouldDrawErrors,
         options,
-      ),
-    )
+      )
+    })
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -257,8 +272,6 @@ function createSvgObjects(
       return createSvgObjectsFromPcbHole(elm, transform)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, transform)
-    case "pcb_solder_paste":
-      return createSvgObjectsFromSolderPaste(elm, transform)
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, transform)
     case "pcb_silkscreen_rect":
@@ -356,30 +369,3 @@ function createSvgObjectFromPcbBoundary(
  * @deprecated use `convertCircuitJsonToPcbSvg` instead
  */
 export const circuitJsonToPcbSvg = convertCircuitJsonToPcbSvg
-
-/**
- * Creates an SVG specifically for solder paste mask
- * @param soup Circuit JSON elements
- * @param options Configuration options
- * @returns SVG string representation of the solder paste mask
- */
-export function convertCircuitJsonToSolderPasteMask(
-  soup: AnyCircuitElement[],
-  options: { layer: "top" | "bottom"; width?: number; height?: number },
-): string {
-  // Filter to only include solder paste elements for the specified layer
-  const solderPasteElements = soup.filter(
-    (elm) => elm.type === "pcb_solder_paste" && elm.layer === options.layer,
-  )
-
-  // Include other necessary elements like the board
-  const boardElements = soup.filter((elm) => elm.type === "pcb_board")
-
-  // Combine filtered elements
-  const filteredSoup = [...boardElements, ...solderPasteElements]
-
-  return convertCircuitJsonToPcbSvg(filteredSoup, {
-    width: options.width,
-    height: options.height,
-  })
-}
