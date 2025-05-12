@@ -41,18 +41,18 @@
     "storybook": "^8.2.5",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
-    "vite-tsconfig-paths": "^5.0.1"
+    "vite-tsconfig-paths": "^5.0.1",
+    "@tscircuit/checks": "^0.0.44",
+    "@tscircuit/circuit-json-util": "^0.0.47",
+    "@tscircuit/footprinter": "^0.0.91"
   },
   "peerDependencies": {
     "circuit-json": "*",
+    "@tscircuit/circuit-json-util": "*",
+    "@tscircuit/footprinter": "*",
     "schematic-symbols": "*"
   },
   "dependencies": {
-    "@tscircuit/checks": "^0.0.44",
-    "@tscircuit/circuit-json-util": "^0.0.47",
-    "@tscircuit/footprinter": "^0.0.91",
-    "@tscircuit/routing": "^1.3.5",
-    "@tscircuit/soup-util": "^0.0.41",
     "@types/node": "^22.5.5",
     "bun-types": "^1.1.40",
     "svgson": "^5.3.1",

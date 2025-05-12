@@ -1,6 +1,6 @@
 import type { Point, AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
-import { su } from "@tscircuit/soup-util"
+import { su } from "@tscircuit/circuit-json-util"
 import {
   type Matrix,
   applyToPoint,
