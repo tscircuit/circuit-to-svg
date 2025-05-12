@@ -5,7 +5,7 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-import { su } from "@tscircuit/soup-util"
+import { su } from "@tscircuit/circuit-json-util"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02

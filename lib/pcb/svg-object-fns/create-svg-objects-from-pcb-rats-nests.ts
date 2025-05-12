@@ -6,7 +6,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
-import { su } from "@tscircuit/soup-util"
+import { su } from "@tscircuit/circuit-json-util"
 
 interface RatsNestLine {
   key: string

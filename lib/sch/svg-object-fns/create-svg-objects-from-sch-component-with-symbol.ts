@@ -1,4 +1,4 @@
-import { su } from "@tscircuit/soup-util"
+import { su } from "@tscircuit/circuit-json-util"
 import type {
   AnyCircuitElement,
   SchematicComponent,
