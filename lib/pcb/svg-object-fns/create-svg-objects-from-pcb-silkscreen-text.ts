@@ -10,7 +10,6 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
-
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   transform: Matrix,
@@ -21,6 +20,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     font_size = 1,
     layer = "top",
     ccw_rotation = 0,
+    anchor_alignment = "center",
   } = pcbSilkscreenText
 
   if (
@@ -39,6 +39,36 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const transformedFontSize = font_size * Math.abs(transform.a)
 
+  // Set text-anchor and dominant-baseline based on alignment
+  let textAnchor: string = "middle"
+  let dominantBaseline: string = "central"
+  let dx = 0
+  let dy = 0
+
+  switch (anchor_alignment) {
+    case "top_left":
+      textAnchor = "start"
+      dominantBaseline = "text-before-edge"
+      break
+    case "top_right":
+      textAnchor = "end"
+      dominantBaseline = "text-before-edge"
+      break
+    case "bottom_left":
+      textAnchor = "start"
+      dominantBaseline = "text-after-edge"
+      break
+    case "bottom_right":
+      textAnchor = "end"
+      dominantBaseline = "text-after-edge"
+      break
+    case "center":
+    default:
+      textAnchor = "middle"
+      dominantBaseline = "central"
+      break
+  }
+
   const textTransform = compose(
     translate(transformedX, transformedY),
     rotate((ccw_rotation * Math.PI) / 180),
@@ -54,11 +84,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
     attributes: {
       x: "0",
       y: "0",
+      dx: dx.toString(),
+      dy: dy.toString(),
       fill: color,
       "font-family": "Arial, sans-serif",
       "font-size": transformedFontSize.toString(),
-      "text-anchor": "middle",
-      "dominant-baseline": "central",
+      "text-anchor": textAnchor,
+      "dominant-baseline": dominantBaseline,
       transform: matrixToString(textTransform),
       class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
