@@ -13,6 +13,7 @@ test("schematic text", () => {
       schematic_text_id: "",
       text: "Anas",
       color: "black",
+      font_size: 1,
     },
     {
       type: "schematic_text",
@@ -23,6 +24,7 @@ test("schematic text", () => {
       schematic_text_id: "",
       text: "Ahmed",
       color: "black",
+      font_size: 1,
     },
     {
       type: "schematic_text",
@@ -33,6 +35,7 @@ test("schematic text", () => {
       schematic_text_id: "",
       text: "Abse",
       color: "black",
+      font_size: 1,
     },
   ]
 
