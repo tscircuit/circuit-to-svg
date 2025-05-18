@@ -1,4 +1,9 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
+import type {
+  Point,
+  AnyCircuitElement,
+  pcb_cutout,
+  PcbCutout,
+} from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -22,6 +27,7 @@ import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-object
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
+import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -31,6 +37,7 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_silkscreen_text",
   "pcb_silkscreen_path",
   "pcb_via",
+  "pcb_cutout",
   "pcb_trace",
   "pcb_smtpad",
   "pcb_component",
@@ -220,6 +227,15 @@ export function convertCircuitJsonToPcbSvg(
     } else if (item.type === "pcb_silkscreen_line") {
       updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
       updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
+    } else if (item.type === "pcb_cutout") {
+      const cutout = item as PcbCutout
+      if (cutout.shape === "rect") {
+        updateBounds(cutout.center, cutout.width, cutout.height)
+      } else if (cutout.shape === "circle") {
+        updateBounds(cutout.center, cutout.radius * 2, cutout.radius * 2)
+      } else if (cutout.shape === "polygon") {
+        updateTraceBounds(cutout.points)
+      }
     }
   }
 }
@@ -267,6 +283,8 @@ function createSvgObjects(
       return createSvgObjectsFromPcbBoard(elm, transform)
     case "pcb_via":
       return createSvgObjectsFromPcbVia(elm, transform)
+    case "pcb_cutout":
+      return createSvgObjectsFromPcbCutout(elm as any, transform)
     default:
       return []
   }
