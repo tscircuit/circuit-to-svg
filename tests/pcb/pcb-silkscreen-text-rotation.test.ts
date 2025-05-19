@@ -3,6 +3,18 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("silkscreen text with rotation", () => {
   const result = convertCircuitJsonToPcbSvg([
+    {
+      type: "pcb_board",
+      center: { x: 3, y: 3 },
+      width: 8,
+      height: 8,
+      subcircuit_id: "pcb_generic_component_0",
+      material: "fr4",
+      num_layers: 2,
+      pcb_board_id: "pcb_board_0",
+      thickness: 1,
+      is_subcircuit: false,
+    },
     // Horizontal text (0 degrees)
     {
       type: "pcb_silkscreen_text",
@@ -105,4 +117,4 @@ test("silkscreen text with rotation", () => {
   ])
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
-}, 30000)
+})
