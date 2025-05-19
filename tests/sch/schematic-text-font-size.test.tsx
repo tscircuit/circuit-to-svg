@@ -3,7 +3,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("schematic text font size test", () => {
+test("schematic text font size test!", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
