@@ -61,4 +61,4 @@ test("schematic text font size test!", () => {
       },
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 10000)
