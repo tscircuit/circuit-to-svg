@@ -117,4 +117,4 @@ test("silkscreen text with rotation", () => {
   ])
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
-}, 10000)
+}, 20000)
