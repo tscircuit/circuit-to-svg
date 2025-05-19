@@ -8,13 +8,20 @@ type SchTextType =
   | "net_label"
   | "error"
 
-export const getSchMmFontSize = (textType: SchTextType) => {
-  return textType === "error" ? 0.05 : textType === "pin_number" ? 0.15 : 0.18
+export const getSchMmFontSize = (textType: SchTextType, fontSize?: number) => {
+  return textType === "error"
+    ? 0.05
+    : textType === "pin_number"
+      ? 0.15
+      : fontSize
+        ? fontSize
+        : 0.18
 }
 
 export const getSchScreenFontSize = (
   transform: Matrix,
   textType: SchTextType,
+  fontSize?: number,
 ) => {
-  return Math.abs(transform.a) * getSchMmFontSize(textType)
+  return Math.abs(transform.a) * getSchMmFontSize(textType, fontSize)
 }
