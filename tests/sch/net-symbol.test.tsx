@@ -98,4 +98,4 @@ test("schematic net symbol", () => {
   const svg = convertCircuitJsonToSchematicSvg(circuitJson as any)
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20000)

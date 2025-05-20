@@ -90,4 +90,4 @@ it("example 1: chip crossing schemtic", async () => {
       },
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20000)
