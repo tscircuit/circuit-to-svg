@@ -28,7 +28,7 @@
     "@storybook/react": "^8.2.5",
     "@storybook/react-vite": "^8.2.5",
     "@storybook/test": "^8.2.5",
-    "@tscircuit/core": "https://pkg.pr.new/tscircuit/core/@tscircuit/core@a7878e1",
+    "@tscircuit/core": "0.0.416",
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.2.8",
     "biome": "^0.3.3",
