@@ -50,12 +50,28 @@ export function createSvgObjectsFromPcbSilkscreenText(
       textAnchor = "start"
       dominantBaseline = "text-before-edge"
       break
+    case "top_center":
+      textAnchor = "middle"
+      dominantBaseline = "text-before-edge"
+      break
     case "top_right":
       textAnchor = "end"
       dominantBaseline = "text-before-edge"
       break
+    case "center_left":
+      textAnchor = "start"
+      dominantBaseline = "central"
+      break
+    case "center_right":
+      textAnchor = "end"
+      dominantBaseline = "central"
+      break
     case "bottom_left":
       textAnchor = "start"
+      dominantBaseline = "text-after-edge"
+      break
+    case "bottom_center":
+      textAnchor = "middle"
       dominantBaseline = "text-after-edge"
       break
     case "bottom_right":
