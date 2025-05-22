@@ -15,6 +15,7 @@ test("schematic net label", () => {
       anchor_position: { x: 0, y: 3 },
       anchor_side: "top",
       text: "VCC",
+      schematic_net_label_id: "schematic_net_label_0",
     },
     {
       type: "schematic_net_label",
@@ -23,6 +24,7 @@ test("schematic net label", () => {
       anchor_position: { x: 1, y: 3 },
       anchor_side: "bottom",
       text: "GND",
+      schematic_net_label_id: "schematic_net_label_1",
     },
     {
       type: "schematic_net_label",
@@ -31,6 +33,7 @@ test("schematic net label", () => {
       anchor_position: { x: 0, y: 4 },
       anchor_side: "left",
       text: "SDA",
+      schematic_net_label_id: "schematic_net_label_2",
     },
     {
       type: "schematic_net_label",
@@ -39,6 +42,7 @@ test("schematic net label", () => {
       anchor_position: { x: 2, y: 4 },
       anchor_side: "right",
       text: "SCL",
+      schematic_net_label_id: "schematic_net_label_3",
     },
     {
       type: "schematic_net_label",
@@ -47,6 +51,7 @@ test("schematic net label", () => {
       anchor_position: { x: 0, y: 1 },
       anchor_side: "left",
       text: "short label",
+      schematic_net_label_id: "schematic_net_label_4",
     },
     {
       type: "schematic_net_label",
@@ -55,6 +60,7 @@ test("schematic net label", () => {
       anchor_position: { x: 0, y: 0 },
       anchor_side: "left",
       text: "WWWWWWWWWW", // W is a wide character
+      schematic_net_label_id: "schematic_net_label_5",
     },
     {
       type: "schematic_net_label",
@@ -63,6 +69,7 @@ test("schematic net label", () => {
       anchor_position: { x: 2.5, y: 0 },
       anchor_side: "bottom",
       text: "superlong label. This is a long one!",
+      schematic_net_label_id: "schematic_net_label_6",
     },
     // MISSING ANCHOR POSITION
     {
@@ -71,6 +78,7 @@ test("schematic net label", () => {
       center: { x: 4, y: 1 },
       anchor_side: "left",
       text: "CENTER1",
+      schematic_net_label_id: "schematic_net_label_7",
     },
     {
       type: "schematic_net_label",
@@ -78,6 +86,7 @@ test("schematic net label", () => {
       center: { x: 4, y: 2 },
       anchor_side: "right",
       text: "CENTER2",
+      schematic_net_label_id: "schematic_net_label_8",
     },
     {
       type: "schematic_net_label",
@@ -85,6 +94,7 @@ test("schematic net label", () => {
       center: { x: 4, y: 3 },
       anchor_side: "top",
       text: "CENTER3",
+      schematic_net_label_id: "schematic_net_label_9",
     },
     {
       type: "schematic_net_label",
@@ -92,6 +102,7 @@ test("schematic net label", () => {
       center: { x: 4, y: 4 },
       anchor_side: "bottom",
       text: "CENTER4",
+      schematic_net_label_id: "schematic_net_label_10",
     },
   ]
 
