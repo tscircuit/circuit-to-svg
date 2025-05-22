@@ -16,6 +16,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "top",
       text: "VCC",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_0",
     },
     {
       type: "schematic_net_label",
@@ -25,6 +26,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "bottom",
       text: "GND",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_1",
     },
     {
       type: "schematic_net_label",
@@ -34,6 +36,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "left",
       text: "SDA",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_2",
     },
     {
       type: "schematic_net_label",
@@ -43,6 +46,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "right",
       text: "SCL",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_3",
     },
     {
       type: "schematic_net_label",
@@ -52,6 +56,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "left",
       text: "short label",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_4",
     },
     {
       type: "schematic_net_label",
@@ -61,6 +66,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "left",
       text: "WWWWWWWWWW", // W is a wide character
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_5",
     },
     {
       type: "schematic_net_label",
@@ -70,6 +76,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "bottom",
       text: "superlong label. This is a long one!",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_6",
     },
 
     {
@@ -79,6 +86,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "left",
       text: "CENTER1",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_7",
     },
     {
       type: "schematic_net_label",
@@ -87,6 +95,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "right",
       text: "CENTER2",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_8",
     },
     {
       type: "schematic_net_label",
@@ -95,6 +104,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "top",
       text: "CENTER3",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_9",
     },
     {
       type: "schematic_net_label",
@@ -103,6 +113,7 @@ test("schematic net symbol grid", () => {
       anchor_side: "bottom",
       text: "CENTER4",
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_10",
     },
     {
       type: "schematic_net_label",
@@ -118,6 +129,7 @@ test("schematic net symbol grid", () => {
         y: 0.004194800000000665,
       },
       symbol_name: "ground_horz",
+      schematic_net_label_id: "schematic_net_label_11",
     },
   ]
 
