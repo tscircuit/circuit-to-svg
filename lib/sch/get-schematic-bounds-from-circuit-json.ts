@@ -43,7 +43,7 @@ export function getSchematicBoundsFromCircuitJson(
       const textType = "reference_designator"
       const fontSize = getSchMmFontSize(textType, item.font_size) ?? 0.18
       const text = item.text ?? ""
-      const width = text.length * fontSize * 1.1 // Adds small safe margin for text width
+      const width = text.length * fontSize
       const height = fontSize
       updateBounds(item.position, { width, height }, item.rotation ?? 0)
     } else if (item.type === "schematic_voltage_probe") {
