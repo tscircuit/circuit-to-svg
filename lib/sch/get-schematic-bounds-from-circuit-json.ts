@@ -1,4 +1,5 @@
 import type { AnyCircuitElement } from "circuit-json"
+import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 
 interface Bounds {
   minX: number
@@ -39,7 +40,12 @@ export function getSchematicBoundsFromCircuitJson(
         updateBounds(edge.to, { width: 0.1, height: 0.1 }, 0)
       }
     } else if (item.type === "schematic_text") {
-      updateBounds(item.position, { width: 0.1, height: 0.1 }, 0)
+      const textType = "reference_designator"
+      const fontSize = getSchMmFontSize(textType, item.font_size) ?? 0.18
+      const text = item.text ?? ""
+      const width = text.length * fontSize
+      const height = fontSize
+      updateBounds(item.position, { width, height }, item.rotation ?? 0)
     } else if (item.type === "schematic_voltage_probe") {
       updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and height of the probe (Arrow)
     } else if (item.type === "schematic_box") {
