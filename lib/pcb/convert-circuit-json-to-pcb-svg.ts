@@ -54,19 +54,44 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  layer?: "top" | "bottom"
 }
 
 export function convertCircuitJsonToPcbSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
+  const layer = options?.layer
+  const filteredSoup = layer
+    ? soup.filter((elm) => {
+        if (elm.type === "pcb_trace") {
+          return (
+            Array.isArray(elm.route) &&
+            elm.route.some((pt: any) => {
+              if ("layer" in pt && pt.layer === layer) return true
+              if (pt.route_type === "via")
+                return pt.from_layer === layer || pt.to_layer === layer
+              return false
+            })
+          )
+        }
+        if (elm.type === "pcb_via") {
+          const via: any = elm
+          if (Array.isArray(via.layers)) return via.layers.includes(layer)
+          return via.from_layer === layer || via.to_layer === layer
+        }
+        if ("layer" in elm) return (elm as any).layer === layer
+        return true
+      })
+    : soup
+
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
   // Process all elements to determine bounds
-  for (const item of soup) {
+  for (const item of filteredSoup) {
     if (item.type === "pcb_board") {
       if (
         item.outline &&
@@ -97,7 +122,7 @@ export function convertCircuitJsonToPcbSvg(
   const svgWidth = options?.width ?? 800
   const svgHeight = options?.height ?? 600
   const paths: PointObjectNotation[][] = []
-  for (const item of soup) {
+  for (const item of filteredSoup) {
     if ("route" in item && item.route !== undefined) {
       paths.push(item.route as PointObjectNotation[])
     }
@@ -120,19 +145,25 @@ export function convertCircuitJsonToPcbSvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
-  let svgObjects = soup
+  let svgObjects = filteredSoup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
     .flatMap((item) =>
-      createSvgObjects(item, transform, soup, options?.shouldDrawErrors),
+      createSvgObjects(
+        item,
+        transform,
+        filteredSoup,
+        options?.shouldDrawErrors,
+        layer,
+      ),
     )
 
   let strokeWidth = String(0.05 * scaleFactor)
 
-  for (const element of soup) {
+  for (const element of filteredSoup) {
     if ("stroke_width" in element) {
       strokeWidth = String(scaleFactor * element.stroke_width)
       break
@@ -140,7 +171,7 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   if (options?.shouldDrawRatsNest) {
-    const ratsNestObjects = createSvgObjectsForRatsNest(soup, transform)
+    const ratsNestObjects = createSvgObjectsForRatsNest(filteredSoup, transform)
     svgObjects = svgObjects.concat(ratsNestObjects)
   }
 
@@ -245,6 +276,7 @@ function createSvgObjects(
   transform: Matrix,
   soup: AnyCircuitElement[],
   shouldDrawErrors?: boolean,
+  layerFilter?: "top" | "bottom",
 ): SvgObject[] {
   switch (elm.type) {
     case "pcb_trace_error":
@@ -257,7 +289,7 @@ function createSvgObjects(
     case "pcb_component":
       return [createSvgObjectsFromPcbComponent(elm, transform)].filter(Boolean)
     case "pcb_trace":
-      return createSvgObjectsFromPcbTrace(elm, transform)
+      return createSvgObjectsFromPcbTrace(elm, transform, layerFilter)
     case "pcb_plated_hole":
       return createSvgObjectsFromPcbPlatedHole(elm, transform).filter(Boolean)
     case "pcb_hole":
