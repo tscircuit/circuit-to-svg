@@ -58,3 +58,15 @@ test("bottom and top trace", () => {
     import.meta.path,
   )
 })
+
+test("top layer only", () => {
+  expect(
+    convertCircuitJsonToPcbSvg(circuitJson, { layer: "top" }),
+  ).toMatchSvgSnapshot(import.meta.path + ".top")
+})
+
+test("bottom layer only", () => {
+  expect(
+    convertCircuitJsonToPcbSvg(circuitJson, { layer: "bottom" }),
+  ).toMatchSvgSnapshot(import.meta.path + ".bottom")
+})

@@ -7,6 +7,7 @@ import { LAYER_NAME_TO_COLOR } from "../layer-name-to-color"
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
   transform: Matrix,
+  layerFilter?: "top" | "bottom",
 ): SvgObject[] {
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
@@ -21,6 +22,7 @@ export function createSvgObjectsFromPcbTrace(
     const layer =
       "layer" in start ? start.layer : "layer" in end ? end.layer : null
     if (!layer) continue
+    if (layerFilter && layer !== layerFilter) continue
 
     const layerColor =
       LAYER_NAME_TO_COLOR[layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
