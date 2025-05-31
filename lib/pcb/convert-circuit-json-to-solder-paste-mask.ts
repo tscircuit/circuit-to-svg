@@ -1,14 +1,15 @@
 import type { Point, AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
-  type Matrix,
   applyToPoint,
   compose,
   scale,
   translate,
+  type Matrix,
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
+import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -22,7 +23,7 @@ interface Options {
 }
 
 export function convertCircuitJsonToSolderPasteMask(
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   options: Options,
 ): string {
   let minX = Number.POSITIVE_INFINITY
@@ -31,14 +32,14 @@ export function convertCircuitJsonToSolderPasteMask(
   let maxY = Number.NEGATIVE_INFINITY
 
   // Filter to include only pcb_board and pcb_solder_paste elements for the specified layer
-  const filteredSoup = soup.filter(
+  const filteredCircuitJson = circuitJson.filter(
     (elm) =>
       elm.type === "pcb_board" ||
       (elm.type === "pcb_solder_paste" && elm.layer === options.layer),
   )
 
   // Process filtered elements to determine bounds
-  for (const item of filteredSoup) {
+  for (const item of filteredCircuitJson) {
     if (item.type === "pcb_board") {
       if (
         item.outline &&
@@ -78,14 +79,19 @@ export function convertCircuitJsonToSolderPasteMask(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
+  const ctx: PcbContext = {
+    transform,
+    layer: options.layer,
+  }
+
   // Sort elements by OBJECT_ORDER and convert to SVG objects
-  const svgObjects = filteredSoup
+  const svgObjects = filteredCircuitJson
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, transform))
+    .flatMap((item) => createSvgObjects({ elm: item, ctx }))
 
   const svgObject: SvgObject = {
     name: "svg",
@@ -150,15 +156,18 @@ export function convertCircuitJsonToSolderPasteMask(
   }
 }
 
-function createSvgObjects(
-  elm: AnyCircuitElement,
-  transform: Matrix,
-): SvgObject[] {
+interface CreateSvgObjectsParams {
+  elm: AnyCircuitElement
+  ctx: PcbContext
+}
+
+function createSvgObjects({ elm, ctx }: CreateSvgObjectsParams): SvgObject[] {
+  const { transform } = ctx
   switch (elm.type) {
     case "pcb_board":
-      return createSvgObjectsFromPcbBoard(elm, transform)
+      return createSvgObjectsFromPcbBoard(elm, ctx)
     case "pcb_solder_paste":
-      return createSvgObjectsFromSolderPaste(elm, transform)
+      return createSvgObjectsFromSolderPaste(elm, ctx)
     default:
       return []
   }

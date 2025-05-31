@@ -1,18 +1,14 @@
 import type { PcbFabricationNoteText } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
-import {
-  type Matrix,
-  applyToPoint,
-  compose,
-  rotate,
-  translate,
-} from "transformation-matrix"
+import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbFabricationNoteText(
   pcbFabNoteText: PcbFabricationNoteText,
-  transform: Matrix,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform, layer: layerFilter } = ctx
   const {
     anchor_position,
     anchor_alignment,
@@ -21,6 +17,8 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     layer = "top",
     color,
   } = pcbFabNoteText
+
+  if (layerFilter && layer !== layerFilter) return []
 
   if (
     !anchor_position ||
