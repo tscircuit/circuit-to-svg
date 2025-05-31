@@ -1,16 +1,14 @@
 import type { PcbSilkscreenRect } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import {
-  type Matrix,
-  applyToPoint,
-  toString as matrixToString,
-} from "transformation-matrix"
+import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenRect(
   pcbSilkscreenRect: PcbSilkscreenRect,
-  transform: Matrix,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform, layer: layerFilter } = ctx
   const {
     center,
     width,
@@ -19,6 +17,8 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     pcb_silkscreen_rect_id,
     stroke_width = 1,
   } = pcbSilkscreenRect
+
+  if (layerFilter && layer !== layerFilter) return []
 
   if (
     !center ||

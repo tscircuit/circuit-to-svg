@@ -1,13 +1,14 @@
 import type { PcbTraceError, PcbPort, AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "../../../lib/svg-object"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbTraceError(
   pcbTraceError: PcbTraceError,
-  transform: Matrix,
   circuitJson: AnyCircuitElement[],
-  shouldDrawErrors?: boolean,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform, shouldDrawErrors } = ctx
   if (!shouldDrawErrors) return []
 
   const { pcb_port_ids } = pcbTraceError
@@ -31,7 +32,7 @@ export function createSvgObjectsFromPcbTraceError(
     ) as { x: number; y: number; type: string } | undefined
 
     if (via && via.type === "pcb_via") {
-      return createSvgObjectsForViaTraceError(pcbTraceError, via, transform)
+      return createSvgObjectsForViaTraceError(pcbTraceError, via, ctx)
     }
 
     if (pcbTraceError.center) {
@@ -180,8 +181,9 @@ export function createSvgObjectsFromPcbTraceError(
 function createSvgObjectsForViaTraceError(
   pcbTraceError: PcbTraceError,
   via: { x: number; y: number },
-  transform: Matrix,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform } = ctx
   if (pcbTraceError.center && via) {
     const screenCenter = applyToPoint(transform, {
       x: pcbTraceError.center.x,

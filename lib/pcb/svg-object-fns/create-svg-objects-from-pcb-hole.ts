@@ -1,12 +1,14 @@
 import type { PCBHole } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { HOLE_COLOR } from "../colors"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
-  transform: Matrix,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {

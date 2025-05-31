@@ -1,16 +1,14 @@
 import type { PcbSilkscreenCircle } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import {
-  type Matrix,
-  applyToPoint,
-  toString as matrixToString,
-} from "transformation-matrix"
+import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenCircle(
   pcbSilkscreenCircle: PcbSilkscreenCircle,
-  transform: Matrix,
+  ctx: PcbContext,
 ): SvgObject[] {
+  const { transform, layer: layerFilter } = ctx
   const {
     center,
     radius,
@@ -18,6 +16,8 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     pcb_silkscreen_circle_id,
     stroke_width = 1,
   } = pcbSilkscreenCircle
+
+  if (layerFilter && layer !== layerFilter) return []
 
   if (
     !center ||
