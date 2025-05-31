@@ -5,13 +5,7 @@ import type {
   PcbCutout,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
-import {
-  type Matrix,
-  applyToPoint,
-  compose,
-  scale,
-  translate,
-} from "transformation-matrix"
+import { applyToPoint, compose, scale, translate } from "transformation-matrix"
 import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
@@ -28,6 +22,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import type { PcbContext } from "./pcb-context"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -54,19 +49,44 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  layer?: "top" | "bottom"
 }
 
 export function convertCircuitJsonToPcbSvg(
   soup: AnyCircuitElement[],
   options?: Options,
 ): string {
+  const layer = options?.layer
+  const filteredSoup = layer
+    ? soup.filter((elm) => {
+        if (elm.type === "pcb_trace") {
+          return (
+            Array.isArray(elm.route) &&
+            elm.route.some((pt: any) => {
+              if ("layer" in pt && pt.layer === layer) return true
+              if (pt.route_type === "via")
+                return pt.from_layer === layer || pt.to_layer === layer
+              return false
+            })
+          )
+        }
+        if (elm.type === "pcb_via") {
+          const via: any = elm
+          if (Array.isArray(via.layers)) return via.layers.includes(layer)
+          return via.from_layer === layer || via.to_layer === layer
+        }
+        if ("layer" in elm) return (elm as any).layer === layer
+        return true
+      })
+    : soup
+
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
   // Process all elements to determine bounds
-  for (const item of soup) {
+  for (const item of filteredSoup) {
     if (item.type === "pcb_board") {
       if (
         item.outline &&
@@ -97,7 +117,7 @@ export function convertCircuitJsonToPcbSvg(
   const svgWidth = options?.width ?? 800
   const svgHeight = options?.height ?? 600
   const paths: PointObjectNotation[][] = []
-  for (const item of soup) {
+  for (const item of filteredSoup) {
     if ("route" in item && item.route !== undefined) {
       paths.push(item.route as PointObjectNotation[])
     }
@@ -120,19 +140,26 @@ export function convertCircuitJsonToPcbSvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
-  let svgObjects = soup
+  const ctx: PcbContext = { transform, layer }
+
+  let svgObjects = filteredSoup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
     .flatMap((item) =>
-      createSvgObjects(item, transform, soup, options?.shouldDrawErrors),
+      createSvgObjects({
+        elm: item,
+        soup: filteredSoup,
+        ctx,
+        shouldDrawErrors: options?.shouldDrawErrors,
+      }),
     )
 
   let strokeWidth = String(0.05 * scaleFactor)
 
-  for (const element of soup) {
+  for (const element of filteredSoup) {
     if ("stroke_width" in element) {
       strokeWidth = String(scaleFactor * element.stroke_width)
       break
@@ -140,7 +167,10 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   if (options?.shouldDrawRatsNest) {
-    const ratsNestObjects = createSvgObjectsForRatsNest(soup, transform)
+    const ratsNestObjects = createSvgObjectsForRatsNest({
+      soup: filteredSoup,
+      ctx,
+    })
     svgObjects = svgObjects.concat(ratsNestObjects)
   }
 
@@ -240,57 +270,74 @@ export function convertCircuitJsonToPcbSvg(
   }
 }
 
-function createSvgObjects(
-  elm: AnyCircuitElement,
-  transform: Matrix,
-  soup: AnyCircuitElement[],
-  shouldDrawErrors?: boolean,
-): SvgObject[] {
+function createSvgObjects({
+  elm,
+  ctx,
+  soup,
+  shouldDrawErrors,
+}: {
+  elm: AnyCircuitElement
+  ctx: PcbContext
+  soup: AnyCircuitElement[]
+  shouldDrawErrors?: boolean
+}): SvgObject[] {
+  const { transform, layer: layerFilter } = ctx
   switch (elm.type) {
     case "pcb_trace_error":
-      return createSvgObjectsFromPcbTraceError(
-        elm,
-        transform,
+      return createSvgObjectsFromPcbTraceError({
+        error: elm,
         soup,
+        ctx,
         shouldDrawErrors,
-      ).filter(Boolean)
+      }).filter(Boolean)
     case "pcb_component":
-      return [createSvgObjectsFromPcbComponent(elm, transform)].filter(Boolean)
+      return [createSvgObjectsFromPcbComponent({ component: elm, ctx })].filter(
+        Boolean,
+      )
     case "pcb_trace":
-      return createSvgObjectsFromPcbTrace(elm, transform)
+      return createSvgObjectsFromPcbTrace({ trace: elm, ctx })
     case "pcb_plated_hole":
-      return createSvgObjectsFromPcbPlatedHole(elm, transform).filter(Boolean)
+      return createSvgObjectsFromPcbPlatedHole({ hole: elm, ctx }).filter(
+        Boolean,
+      )
     case "pcb_hole":
-      return createSvgObjectsFromPcbHole(elm, transform)
+      return createSvgObjectsFromPcbHole({ hole: elm, ctx })
     case "pcb_smtpad":
-      return createSvgObjectsFromSmtPad(elm, transform)
+      return createSvgObjectsFromSmtPad({ pad: elm, ctx })
     case "pcb_silkscreen_text":
-      return createSvgObjectsFromPcbSilkscreenText(elm, transform)
+      return createSvgObjectsFromPcbSilkscreenText({ text: elm, ctx })
     case "pcb_silkscreen_rect":
-      return createSvgObjectsFromPcbSilkscreenRect(elm, transform)
+      return createSvgObjectsFromPcbSilkscreenRect({ rect: elm, ctx })
     case "pcb_silkscreen_circle":
-      return createSvgObjectsFromPcbSilkscreenCircle(elm, transform)
+      return createSvgObjectsFromPcbSilkscreenCircle({ circle: elm, ctx })
     case "pcb_silkscreen_line":
-      return createSvgObjectsFromPcbSilkscreenLine(elm, transform)
+      return createSvgObjectsFromPcbSilkscreenLine({ line: elm, ctx })
 
     case "pcb_fabrication_note_path":
-      return createSvgObjectsFromPcbFabricationNotePath(elm, transform)
+      return createSvgObjectsFromPcbFabricationNotePath({ note: elm, ctx })
     case "pcb_fabrication_note_text":
-      return createSvgObjectsFromPcbFabricationNoteText(elm, transform)
+      return createSvgObjectsFromPcbFabricationNoteText({ note: elm, ctx })
     case "pcb_silkscreen_path":
-      return createSvgObjectsFromPcbSilkscreenPath(elm, transform)
+      return createSvgObjectsFromPcbSilkscreenPath({ path: elm, ctx })
     case "pcb_board":
-      return createSvgObjectsFromPcbBoard(elm, transform)
+      return createSvgObjectsFromPcbBoard({ pcbBoard: elm, ctx })
     case "pcb_via":
-      return createSvgObjectsFromPcbVia(elm, transform)
+      return createSvgObjectsFromPcbVia({ hole: elm, ctx })
     case "pcb_cutout":
-      return createSvgObjectsFromPcbCutout(elm as any, transform)
+      return createSvgObjectsFromPcbCutout({ cutout: elm as any, ctx })
     default:
       return []
   }
 }
 
-function createSvgObjectsFromPcbComponent(component: any, transform: any): any {
+function createSvgObjectsFromPcbComponent({
+  component,
+  ctx,
+}: {
+  component: any
+  ctx: PcbContext
+}): any {
+  const { transform } = ctx
   const { center, width, height, rotation = 0 } = component
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const scaledWidth = width * Math.abs(transform.a)

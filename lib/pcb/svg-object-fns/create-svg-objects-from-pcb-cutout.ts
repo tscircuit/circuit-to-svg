@@ -7,7 +7,6 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import {
-  type Matrix,
   applyToPoint,
   compose,
   rotate,
@@ -15,11 +14,16 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import { HOLE_COLOR } from "../colors"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbCutout(
-  cutout: PcbCutout,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbCutout({
+  cutout,
+  ctx,
+}: {
+  cutout: PcbCutout
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
   if (cutout.shape === "rect") {
     const rectCutout = cutout as PcbCutoutRect
     const [cx, cy] = applyToPoint(transform, [

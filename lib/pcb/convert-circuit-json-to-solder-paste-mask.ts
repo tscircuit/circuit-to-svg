@@ -9,6 +9,7 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
+import type { PcbContext } from "./pcb-context"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -79,13 +80,15 @@ export function convertCircuitJsonToSolderPasteMask(
   )
 
   // Sort elements by OBJECT_ORDER and convert to SVG objects
+  const ctx: PcbContext = { transform, layer: options.layer }
+
   const svgObjects = filteredSoup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, transform))
+    .flatMap((item) => createSvgObjects({ elm: item, ctx }))
 
   const svgObject: SvgObject = {
     name: "svg",
@@ -150,15 +153,18 @@ export function convertCircuitJsonToSolderPasteMask(
   }
 }
 
-function createSvgObjects(
-  elm: AnyCircuitElement,
-  transform: Matrix,
-): SvgObject[] {
+function createSvgObjects({
+  elm,
+  ctx,
+}: {
+  elm: AnyCircuitElement
+  ctx: PcbContext
+}): SvgObject[] {
   switch (elm.type) {
     case "pcb_board":
-      return createSvgObjectsFromPcbBoard(elm, transform)
+      return createSvgObjectsFromPcbBoard({ pcbBoard: elm, ctx })
     case "pcb_solder_paste":
-      return createSvgObjectsFromSolderPaste(elm, transform)
+      return createSvgObjectsFromSolderPaste({ solderPaste: elm, ctx })
     default:
       return []
   }

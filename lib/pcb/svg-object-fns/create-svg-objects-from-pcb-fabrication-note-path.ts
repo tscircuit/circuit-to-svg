@@ -1,11 +1,17 @@
 import type { PcbSilkscreenPath, PcbFabricationNotePath } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbFabricationNotePath(
-  fabNotePath: PcbFabricationNotePath,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbFabricationNotePath({
+  note,
+  ctx,
+}: {
+  note: PcbFabricationNotePath
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
+  const fabNotePath = note
   if (!fabNotePath.route || !Array.isArray(fabNotePath.route)) return []
 
   // Close the path if the first and last points are the same

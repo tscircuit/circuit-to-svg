@@ -1,12 +1,17 @@
 import type { PcbSilkscreenPath } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbSilkscreenPath(
-  silkscreenPath: PcbSilkscreenPath,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbSilkscreenPath({
+  path: silkscreenPath,
+  ctx,
+}: {
+  path: PcbSilkscreenPath
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
   if (!silkscreenPath.route || !Array.isArray(silkscreenPath.route)) return []
 
   let path = silkscreenPath.route

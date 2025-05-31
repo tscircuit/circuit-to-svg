@@ -1,11 +1,16 @@
 import type { PCBPlatedHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbPlatedHole(
-  hole: PCBPlatedHole,
-  transform: any,
-): SvgObject[] {
+export function createSvgObjectsFromPcbPlatedHole({
+  hole,
+  ctx,
+}: {
+  hole: PCBPlatedHole
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   if (hole.shape === "pill") {

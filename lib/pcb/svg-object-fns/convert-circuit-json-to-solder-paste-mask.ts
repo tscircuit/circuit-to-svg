@@ -1,11 +1,16 @@
 import type { PcbSolderPaste } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromSolderPaste(
-  solderPaste: PcbSolderPaste,
-  transform: Matrix,
-): any {
+export function createSvgObjectsFromSolderPaste({
+  solderPaste,
+  ctx,
+}: {
+  solderPaste: PcbSolderPaste
+  ctx: PcbContext
+}): any {
+  const { transform } = ctx
   const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
   if (solderPaste.shape === "rect" || solderPaste.shape === "rotated_rect") {

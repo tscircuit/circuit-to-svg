@@ -1,11 +1,16 @@
 import type { PCBBoard, Point } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbBoard(
-  pcbBoard: PCBBoard,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbBoard({
+  pcbBoard,
+  ctx,
+}: {
+  pcbBoard: PCBBoard
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
   const { width, height, center, outline } = pcbBoard
 
   let path: string

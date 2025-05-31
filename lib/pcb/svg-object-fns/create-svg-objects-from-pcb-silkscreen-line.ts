@@ -1,16 +1,18 @@
 import type { PcbSilkscreenLine } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import {
-  type Matrix,
-  applyToPoint,
-  toString as matrixToString,
-} from "transformation-matrix"
+import { applyToPoint, toString as matrixToString } from "transformation-matrix"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbSilkscreenLine(
-  pcbSilkscreenLine: PcbSilkscreenLine,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbSilkscreenLine({
+  line,
+  ctx,
+}: {
+  line: PcbSilkscreenLine
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
+  const pcbSilkscreenLine = line
   const {
     x1,
     y1,

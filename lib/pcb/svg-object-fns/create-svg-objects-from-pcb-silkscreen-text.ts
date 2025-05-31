@@ -1,7 +1,6 @@
 import type { PcbSilkscreenText } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import {
-  type Matrix,
   applyToPoint,
   compose,
   rotate,
@@ -10,10 +9,15 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
-export function createSvgObjectsFromPcbSilkscreenText(
-  pcbSilkscreenText: PcbSilkscreenText,
-  transform: Matrix,
-): SvgObject[] {
+import type { PcbContext } from "../pcb-context"
+export function createSvgObjectsFromPcbSilkscreenText({
+  text: pcbSilkscreenText,
+  ctx,
+}: {
+  text: PcbSilkscreenText
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
   const {
     anchor_position,
     text,

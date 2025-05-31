@@ -1,11 +1,16 @@
 import type { PcbSmtPad } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromSmtPad(
-  pad: PcbSmtPad,
-  transform: Matrix,
-): any {
+export function createSvgObjectsFromSmtPad({
+  pad,
+  ctx,
+}: {
+  pad: PcbSmtPad
+  ctx: PcbContext
+}): any {
+  const { transform } = ctx
   const [x, y] = applyToPoint(transform, [pad.x, pad.y])
 
   if (pad.shape === "rect" || pad.shape === "rotated_rect") {

@@ -1,18 +1,18 @@
 import type { PcbFabricationNoteText } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
-import {
-  type Matrix,
-  applyToPoint,
-  compose,
-  rotate,
-  translate,
-} from "transformation-matrix"
+import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbFabricationNoteText(
-  pcbFabNoteText: PcbFabricationNoteText,
-  transform: Matrix,
-): SvgObject[] {
+export function createSvgObjectsFromPcbFabricationNoteText({
+  note,
+  ctx,
+}: {
+  note: PcbFabricationNoteText
+  ctx: PcbContext
+}): SvgObject[] {
+  const { transform } = ctx
+  const pcbFabNoteText = note
   const {
     anchor_position,
     anchor_alignment,

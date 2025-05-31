@@ -1,7 +1,15 @@
 import type { PCBVia } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
+import type { PcbContext } from "../pcb-context"
 
-export function createSvgObjectsFromPcbVia(hole: PCBVia, transform: any): any {
+export function createSvgObjectsFromPcbVia({
+  hole,
+  ctx,
+}: {
+  hole: PCBVia
+  ctx: PcbContext
+}): any {
+  const { transform } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
   const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
