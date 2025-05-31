@@ -32,7 +32,7 @@
         "esbuild": "^0.20.2",
         "performance-now": "^2.1.0",
         "react": "^18.3.1",
-        "schematic-symbols": "^0.0.125",
+        "schematic-symbols": "^0.0.140",
         "storybook": "^8.2.5",
         "tsup": "^8.0.2",
         "typescript": "^5.4.5",
@@ -42,7 +42,7 @@
         "@tscircuit/circuit-json-util": "*",
         "@tscircuit/footprinter": "*",
         "circuit-json": "*",
-        "schematic-symbols": "*",
+        "schematic-symbols": "^0.0.140",
       },
     },
   },
@@ -971,7 +971,7 @@
 
     "scheduler": ["scheduler@0.26.0", "", {}, "sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA=="],
 
-    "schematic-symbols": ["schematic-symbols@0.0.125", "", { "peerDependencies": { "typescript": "^5.5.4" } }, "sha512-HWUwPBeXyAbvyGsnrrP6th89QlTyxVwMY2MVlNw4iaaRRelYT6gDMjGcbcH+JUs+xQ71+5Xpu5+IOMSi6EsB9Q=="],
+    "schematic-symbols": ["schematic-symbols@0.0.140", "", { "peerDependencies": { "typescript": "^5.5.4" } }, "sha512-npQDxRNFFMHs/OFpnFCh//WIsIrzcxI5MG0TLozxAkyv+8JzZWDxHXtPjMNOgw93F6yQIadvRPXtFynrc0V86A=="],
 
     "semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
 
