@@ -50,6 +50,12 @@ Converts a schematic circuit description to an SVG string.
 
 Converts a PCB layout description to an SVG string.
 
+#### Options
+
+- `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
+- `matchBoardAspectRatio` – if `true`, adjust the SVG dimensions so the
+  resulting aspect ratio matches the `pcb_board` found in the circuit JSON.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

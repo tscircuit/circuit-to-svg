@@ -55,6 +55,7 @@ interface Options {
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
   layer?: "top" | "bottom"
+  matchBoardAspectRatio?: boolean
 }
 
 export interface PcbContext {
@@ -74,6 +75,12 @@ export function convertCircuitJsonToPcbSvg(
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
+  // Track bounds for pcb_board specifically
+  let boardMinX = Number.POSITIVE_INFINITY
+  let boardMinY = Number.POSITIVE_INFINITY
+  let boardMaxX = Number.NEGATIVE_INFINITY
+  let boardMaxY = Number.NEGATIVE_INFINITY
+
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_board") {
@@ -81,18 +88,25 @@ export function convertCircuitJsonToPcbSvg(
         circuitJsonElm.outline &&
         Array.isArray(circuitJsonElm.outline) &&
         circuitJsonElm.outline.length >= 3
-      )
+      ) {
         updateBoundsToIncludeOutline(circuitJsonElm.outline)
-      else if (
+        updateBoardBoundsToIncludeOutline(circuitJsonElm.outline)
+      } else if (
         "center" in circuitJsonElm &&
         "width" in circuitJsonElm &&
         "height" in circuitJsonElm
-      )
+      ) {
         updateBounds(
           circuitJsonElm.center,
           circuitJsonElm.width,
           circuitJsonElm.height,
         )
+        updateBoardBounds(
+          circuitJsonElm.center,
+          circuitJsonElm.width,
+          circuitJsonElm.height,
+        )
+      }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
     } else if ("route" in circuitJsonElm) {
@@ -111,8 +125,23 @@ export function convertCircuitJsonToPcbSvg(
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
-  const svgWidth = options?.width ?? 800
-  const svgHeight = options?.height ?? 600
+  let svgWidth = options?.width ?? 800
+  let svgHeight = options?.height ?? 600
+
+  if (options?.matchBoardAspectRatio) {
+    const boardWidth = boardMaxX - boardMinX
+    const boardHeight = boardMaxY - boardMinY
+    if (boardWidth > 0 && boardHeight > 0) {
+      const aspect = boardWidth / boardHeight
+      if (options?.width && !options?.height) {
+        svgHeight = options.width / aspect
+      } else if (options?.height && !options?.width) {
+        svgWidth = options.height * aspect
+      } else {
+        svgHeight = svgWidth / aspect
+      }
+    }
+  }
   const paths: PointObjectNotation[][] = []
   for (const circuitJsonElm of circuitJson) {
     if ("route" in circuitJsonElm && circuitJsonElm.route !== undefined) {
@@ -218,12 +247,30 @@ export function convertCircuitJsonToPcbSvg(
     maxY = Math.max(maxY, center.y + halfHeight)
   }
 
+  function updateBoardBounds(center: any, width: any, height: any) {
+    const halfWidth = width / 2
+    const halfHeight = height / 2
+    boardMinX = Math.min(boardMinX, center.x - halfWidth)
+    boardMinY = Math.min(boardMinY, center.y - halfHeight)
+    boardMaxX = Math.max(boardMaxX, center.x + halfWidth)
+    boardMaxY = Math.max(boardMaxY, center.y + halfHeight)
+  }
+
   function updateBoundsToIncludeOutline(outline: Point[]) {
     for (const point of outline) {
       minX = Math.min(minX, point.x)
       minY = Math.min(minY, point.y)
       maxX = Math.max(maxX, point.x)
       maxY = Math.max(maxY, point.y)
+    }
+  }
+
+  function updateBoardBoundsToIncludeOutline(outline: Point[]) {
+    for (const point of outline) {
+      boardMinX = Math.min(boardMinX, point.x)
+      boardMinY = Math.min(boardMinY, point.y)
+      boardMaxX = Math.max(boardMaxX, point.x)
+      boardMaxY = Math.max(boardMaxY, point.y)
     }
   }
 
