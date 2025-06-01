@@ -42,7 +42,7 @@
         "@tscircuit/circuit-json-util": "*",
         "@tscircuit/footprinter": "*",
         "circuit-json": "*",
-        "schematic-symbols": "^0.0.140",
+        "schematic-symbols": "*",
       },
     },
   },
