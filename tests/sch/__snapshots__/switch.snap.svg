@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(334.3875271669,0,0,-334.3875271669,600,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace:hover {
+                filter: invert(1);
+              }
+              .trace:hover .trace-crossing-outline {
+                opacity: 0;
+              }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_0"><rect class="component-overlay" x="481.506987612557" y="242.43630739643402" width="239.14897705561242" height="79.1360518630604" fill="transparent"/><path d="M 481.506987612557 289.2849362375927 L 557.2220210014311 289.2849362375927" stroke="rgb(132, 0, 0)" fill="none" stroke-width="6.687750543338px"/><path d="M 575.4670070137223 289.2331396096347 L 637.4792408043294 253.1852278959668" stroke="rgb(132, 0, 0)" fill="none" stroke-width="6.687750543338px"/><path d="M 634.89258608793 321.5723592594944 L 715.3933737656166 321.5723592594944" stroke="rgb(132, 0, 0)" fill="none" stroke-width="6.687750543338px"/><path d="M 640.1551769904827 242.43630739643402 L 720.6559646681694 242.43630739643402" stroke="rgb(132, 0, 0)" fill="none" stroke-width="6.687750543338px"/><text x="600" y="167.21742955344703" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="60.189754890041996px">SW3</text><text x="600" y="432.782570446553" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="60.189754890041996px"></text><circle cx="476.85385141701903" cy="289.28493623759294" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="723.1461485829809" cy="321.57235925949465" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="723.1461485829809" cy="242.43630739643433" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="627.4208054693319" cy="321.7953790207386" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="566.8946065688309" cy="290.47664322628674" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="627.4208054693319" cy="242.20178470425572" r="6.687750543338px" stroke-width="6.687750543338px" fill="none" stroke="rgb(132, 0, 0)"/></g></svg>
