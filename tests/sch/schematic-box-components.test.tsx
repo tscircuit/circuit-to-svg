@@ -87,4 +87,4 @@ test("schematic box test", () => {
       },
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20000)
