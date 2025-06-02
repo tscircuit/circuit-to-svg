@@ -1,5 +1,4 @@
 import { test, expect } from "bun:test"
-import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
@@ -7,7 +6,7 @@ test("schematic box test", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board width="10mm" height="10mm" routingDisabled>
       <chip
         name="U1"
         footprint={"soic8"}
