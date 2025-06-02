@@ -11,7 +11,8 @@ test("schematic switch", async () => {
 
   circuit.add(
     <board width="10mm" height="10mm">
-      <switch name="SW3" type="spdt" schX={0} schY={0} />
+      <switch name="SW3" type="spdt" schX={0} schY={-3} />
+      <transistor name="Q2" type="pnp" schRotation={270} />
     </board>,
   )
 
