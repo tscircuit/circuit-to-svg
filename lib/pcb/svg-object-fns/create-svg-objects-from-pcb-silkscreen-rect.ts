@@ -15,7 +15,10 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     height,
     layer = "top",
     pcb_silkscreen_rect_id,
-    stroke_width = 1,
+    stroke_width,
+    is_filled,
+    has_stroke,
+    is_stroke_dashed,
   } = pcbSilkscreenRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -44,20 +47,40 @@ export function createSvgObjectsFromPcbSilkscreenRect(
   const color =
     layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
 
+  const attributes: { [key: string]: string } = {
+    x: (transformedX - transformedWidth / 2).toString(),
+    y: (transformedY - transformedHeight / 2).toString(),
+    width: transformedWidth.toString(),
+    height: transformedHeight.toString(),
+    class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
+    "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
+  }
+
+  attributes.fill = is_filled ? color : "none"
+
+  let actualHasStroke: boolean
+  if (has_stroke === undefined) {
+    actualHasStroke = transformedStrokeWidth > 0
+  } else {
+    actualHasStroke = has_stroke
+  }
+
+  if (actualHasStroke) {
+    attributes.stroke = color
+    attributes["stroke-width"] = transformedStrokeWidth.toString()
+    if (is_stroke_dashed) {
+      const dashLength = 0.1 * Math.abs(transform.a) // 0.1mm dash
+      const gapLength = 0.05 * Math.abs(transform.a) // 0.05mm gap
+      attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
+    }
+  } else {
+    attributes.stroke = "none"
+  }
+
   const svgObject: SvgObject = {
     name: "rect",
     type: "element",
-    attributes: {
-      x: (transformedX - transformedWidth / 2).toString(),
-      y: (transformedY - transformedHeight / 2).toString(),
-      width: transformedWidth.toString(),
-      height: transformedHeight.toString(),
-      class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
-      fill: "none",
-      stroke: color,
-      "stroke-width": transformedStrokeWidth.toString(),
-      "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
-    },
+    attributes,
     value: "",
     children: [],
   }
