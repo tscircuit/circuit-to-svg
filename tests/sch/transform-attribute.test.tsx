@@ -10,6 +10,7 @@ test("svg should have data-real-to-screen-transform attribute", () => {
       width: 10,
       height: 10,
       schematic_component_id: "1",
+      is_dashed: true,
     },
   ])
 
@@ -20,6 +21,6 @@ test("svg should have data-real-to-screen-transform attribute", () => {
   const match = svg.match(/data-real-to-screen-transform="([^"]+)"/)
   // @ts-ignore
   expect(match[1]).toMatchInlineSnapshot(
-    `"matrix(54.5454545455,0,0,-54.5454545455,600,300)"`,
+    `"matrix(54.5454545455,0,0,-54.5454545455,327.2727272727,572.7272727273)"`,
   )
 })

@@ -50,7 +50,10 @@ export function getSchematicBoundsFromCircuitJson(
       updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and height of the probe (Arrow)
     } else if (item.type === "schematic_box") {
       updateBounds(
-        { x: item.x, y: item.y },
+        {
+          x: item.x + item.width / 2,
+          y: item.y + item.height / 2,
+        },
         { width: item.width, height: item.height },
         0,
       )
