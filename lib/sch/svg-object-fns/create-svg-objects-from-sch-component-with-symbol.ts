@@ -275,18 +275,20 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       children: [],
     })
   }
+
   for (const circle of circles) {
     const screenCirclePos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       circle,
     )
+    const screenRadius = Math.abs(circle.radius * realToScreenTransform.a)
     svgObjects.push({
       type: "element",
       name: "circle",
       attributes: {
         cx: screenCirclePos.x.toString(),
         cy: screenCirclePos.y.toString(),
-        r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
+        r: `${screenRadius}px`,
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
         fill: "none",
         stroke: colorMap.schematic.component_outline,
