@@ -57,6 +57,8 @@ Converts a PCB layout description to an SVG string.
   resulting aspect ratio matches the `pcb_board` found in the circuit JSON.
 - `backgroundColor` – fill color for the SVG background rectangle. Defaults to
   `"#000"`.
+- `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
+  padding around it. Defaults to `true`.
 
 ## Contributing
 
