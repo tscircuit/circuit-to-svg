@@ -6,11 +6,11 @@ import {
 } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("schematic resistor", async () => {
+test("schematic resistor and capacitor", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm" routingDisabled>
+    <board width="10mm" height="10mm">
       <resistor name="R1" resistance="10" footprint="0402" pcbX={-3} />
       <capacitor
         name="C1"
