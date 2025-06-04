@@ -242,7 +242,11 @@ export function convertCircuitJsonToPcbSvg(
         },
       ],
     },
-    {
+  ]
+
+  // Only add background rect if backgroundColor is explicitly provided
+  if (options?.backgroundColor) {
+    children.push({
       name: "rect",
       type: "element",
       value: "",
@@ -250,13 +254,13 @@ export function convertCircuitJsonToPcbSvg(
         class: "boundary",
         x: "0",
         y: "0",
-        fill: options?.backgroundColor ?? "#000",
+        fill: options.backgroundColor,
         width: svgWidth.toString(),
         height: svgHeight.toString(),
       },
       children: [],
-    },
-  ]
+    })
+  }
 
   if (drawPaddingOutsideBoard) {
     children.push(
@@ -281,8 +285,7 @@ export function convertCircuitJsonToPcbSvg(
   try {
     return stringify(svgObject as SvgObject)
   } catch (error) {
-    console.error("Error stringifying SVG object:", error)
-    throw error
+    throw new Error(`Error stringifying SVG object: ${error}`)
   }
 
   function updateBounds(center: any, width: any, height: any) {
