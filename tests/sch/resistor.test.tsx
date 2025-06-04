@@ -3,11 +3,11 @@ import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("schematic resistor", () => {
+test("schematic resistor", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board width="10mm" height="10mm" routingDisabled>
       <resistor
         name="R1"
         resistance="10"
@@ -17,21 +17,9 @@ test("schematic resistor", () => {
     </board>,
   )
 
+  await circuit.renderUntilSettled()
+
   expect(
-    // @ts-ignore
-    convertCircuitJsonToSchematicSvg(
-      circuit
-        .getCircuitJson()
-        // TEMPORARY HACK: until @tscircuit/core supports symbol_display_value
-        .map((elm) => {
-          if (elm.type === "schematic_component") {
-            return {
-              ...elm,
-              symbol_display_value: "10Ω",
-            }
-          }
-          return elm
-        }) as AnyCircuitElement[],
-    ),
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
   ).toMatchSvgSnapshot(import.meta.path)
 })

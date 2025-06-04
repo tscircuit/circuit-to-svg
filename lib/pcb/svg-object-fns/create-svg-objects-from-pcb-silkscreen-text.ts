@@ -8,13 +8,12 @@ import {
   scale,
   toString as matrixToString,
 } from "transformation-matrix"
-import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,
     text,
@@ -95,7 +94,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   )
 
   const color =
-    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
   const svgObject: SvgObject = {
     name: "text",

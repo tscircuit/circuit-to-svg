@@ -10,6 +10,7 @@ import {
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
+import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -82,6 +83,7 @@ export function convertCircuitJsonToSolderPasteMask(
   const ctx: PcbContext = {
     transform,
     layer: options.layer,
+    colorMap: DEFAULT_PCB_COLOR_MAP,
   }
 
   // Sort elements by OBJECT_ORDER and convert to SVG objects

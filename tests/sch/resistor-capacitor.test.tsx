@@ -6,7 +6,7 @@ import {
 } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("schematic resistor", async () => {
+test("schematic resistor and capacitor", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(

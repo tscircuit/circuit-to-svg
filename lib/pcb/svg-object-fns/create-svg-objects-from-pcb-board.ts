@@ -7,7 +7,7 @@ export function createSvgObjectsFromPcbBoard(
   pcbBoard: PCBBoard,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, colorMap } = ctx
   const { width, height, center, outline } = pcbBoard
 
   let path: string
@@ -58,7 +58,7 @@ export function createSvgObjectsFromPcbBoard(
         class: "pcb-board",
         d: path,
         fill: "none",
-        stroke: "rgba(255, 255, 255, 0.5)",
+        stroke: colorMap.boardOutline,
         "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
       },
     },

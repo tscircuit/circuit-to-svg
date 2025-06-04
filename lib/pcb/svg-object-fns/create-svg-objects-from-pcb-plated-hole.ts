@@ -7,7 +7,7 @@ export function createSvgObjectsFromPcbPlatedHole(
   hole: PCBPlatedHole,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   if (hole.shape === "pill") {
@@ -33,7 +33,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-outer",
-              fill: "rgb(200, 52, 52)",
+              fill: colorMap.copper.top,
               d:
                 `M${x - outerRadiusX},${y - straightLength / 2} ` +
                 `v${straightLength} ` +
@@ -50,7 +50,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-inner",
-              fill: "rgb(255, 38, 226)",
+              fill: colorMap.drill,
 
               d:
                 `M${x - innerRadiusX},${y - (scaledHoleHeight - scaledHoleWidth) / 2} ` +
@@ -88,7 +88,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-outer",
-              fill: "rgb(200, 52, 52)",
+              fill: colorMap.copper.top,
               cx: x.toString(),
               cy: y.toString(),
               r: outerRadius.toString(),
@@ -101,7 +101,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-inner",
-              fill: "rgb(255, 38, 226)",
+              fill: colorMap.drill,
 
               cx: x.toString(),
               cy: y.toString(),
@@ -136,7 +136,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-outer-pad",
-              fill: "rgb(200, 52, 52)",
+              fill: colorMap.copper.top,
               x: (x - scaledRectPadWidth / 2).toString(),
               y: (y - scaledRectPadHeight / 2).toString(),
               width: scaledRectPadWidth.toString(),
@@ -151,7 +151,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-inner",
-              fill: "rgb(255, 38, 226)",
+              fill: colorMap.drill,
               cx: x.toString(),
               cy: y.toString(),
               r: holeRadius.toString(),
@@ -186,7 +186,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-outer-pad",
-              fill: "rgb(200, 52, 52)",
+              fill: colorMap.copper.top,
               x: (x - scaledRectPadWidth / 2).toString(),
               y: (y - scaledRectPadHeight / 2).toString(),
               width: scaledRectPadWidth.toString(),
@@ -201,7 +201,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             type: "element",
             attributes: {
               class: "pcb-hole-inner",
-              fill: "rgb(255, 38, 226)",
+              fill: colorMap.drill,
               x: (x - scaledHoleWidth / 2).toString(),
               y: (y - scaledHoleHeight / 2).toString(),
               width: scaledHoleWidth.toString(),
