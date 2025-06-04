@@ -28,7 +28,9 @@ test("should render a hole", () => {
 
   const circuitJson = circuit.getCircuitJson()
 
-  const svg = convertCircuitJsonToPcbSvg(circuitJson as any)
+  const svg = convertCircuitJsonToPcbSvg(circuitJson as any, {
+    backgroundColor: "transparent",
+  })
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

@@ -33,6 +33,7 @@ import {
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
+import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -98,6 +99,21 @@ export function convertCircuitJsonToPcbSvg(
     },
     boardOutline:
       colorOverrides?.boardOutline ?? DEFAULT_PCB_COLOR_MAP.boardOutline,
+    soldermask: {
+      top:
+        colorOverrides?.soldermask?.top ?? DEFAULT_PCB_COLOR_MAP.soldermask.top,
+      bottom:
+        colorOverrides?.soldermask?.bottom ??
+        DEFAULT_PCB_COLOR_MAP.soldermask.bottom,
+    },
+    debugComponent: {
+      fill:
+        colorOverrides?.debugComponent?.fill ??
+        DEFAULT_PCB_COLOR_MAP.debugComponent.fill,
+      stroke:
+        colorOverrides?.debugComponent?.stroke ??
+        DEFAULT_PCB_COLOR_MAP.debugComponent.stroke,
+    },
   }
 
   let minX = Number.POSITIVE_INFINITY
@@ -366,14 +382,13 @@ function createSvgObjects({
   circuitJson,
   ctx,
 }: CreateSvgObjectsParams): SvgObject[] {
-  const { transform, layer: layerFilter, shouldDrawErrors } = ctx
   switch (elm.type) {
     case "pcb_trace_error":
       return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
         Boolean,
       )
     case "pcb_component":
-      return [createSvgObjectsFromPcbComponent(elm, ctx)].filter(Boolean)
+      return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, ctx)
     case "pcb_plated_hole":
@@ -407,48 +422,6 @@ function createSvgObjects({
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     default:
       return []
-  }
-}
-
-function createSvgObjectsFromPcbComponent(
-  component: any,
-  ctx: PcbContext,
-): any {
-  const { transform } = ctx
-  const { center, width, height, rotation = 0 } = component
-  const [x, y] = applyToPoint(transform, [center.x, center.y])
-  const scaledWidth = width * Math.abs(transform.a)
-  const scaledHeight = height * Math.abs(transform.d)
-  const transformStr = `translate(${x}, ${y}) rotate(${-rotation}) scale(1, -1)`
-
-  return {
-    name: "g",
-    type: "element",
-    attributes: { transform: transformStr },
-    children: [
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-component",
-          x: (-scaledWidth / 2).toString(),
-          y: (-scaledHeight / 2).toString(),
-          width: scaledWidth.toString(),
-          height: scaledHeight.toString(),
-        },
-      },
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-component-outline",
-          x: (-scaledWidth / 2).toString(),
-          y: (-scaledHeight / 2).toString(),
-          width: scaledWidth.toString(),
-          height: scaledHeight.toString(),
-        },
-      },
-    ],
   }
 }
 
