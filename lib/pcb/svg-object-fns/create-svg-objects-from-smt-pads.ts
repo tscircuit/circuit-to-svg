@@ -7,7 +7,7 @@ export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
 ): any {
-  const { transform, layer: layerFilter } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [pad.x, pad.y])
 
   if (layerFilter && pad.layer !== layerFilter) return []
@@ -23,7 +23,7 @@ export function createSvgObjectsFromSmtPad(
           type: "element",
           attributes: {
             class: "pcb-pad",
-            fill: layerNameToColor(pad.layer),
+            fill: layerNameToColor(pad.layer, colorMap),
             x: (-width / 2).toString(),
             y: (-height / 2).toString(),
             width: width.toString(),
@@ -40,7 +40,7 @@ export function createSvgObjectsFromSmtPad(
         type: "element",
         attributes: {
           class: "pcb-pad",
-          fill: layerNameToColor(pad.layer),
+          fill: layerNameToColor(pad.layer, colorMap),
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -62,7 +62,7 @@ export function createSvgObjectsFromSmtPad(
         type: "element",
         attributes: {
           class: "pcb-pad",
-          fill: layerNameToColor(pad.layer),
+          fill: layerNameToColor(pad.layer, colorMap),
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),

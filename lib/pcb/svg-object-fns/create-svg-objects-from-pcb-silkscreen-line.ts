@@ -2,13 +2,12 @@ import type { PcbSilkscreenLine } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, toString as matrixToString } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { SILKSCREEN_TOP_COLOR, SILKSCREEN_BOTTOM_COLOR } from "../colors"
 
 export function createSvgObjectsFromPcbSilkscreenLine(
   pcbSilkscreenLine: PcbSilkscreenLine,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   const {
     x1,
     y1,
@@ -37,7 +36,7 @@ export function createSvgObjectsFromPcbSilkscreenLine(
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
   const color =
-    layer === "bottom" ? SILKSCREEN_BOTTOM_COLOR : SILKSCREEN_TOP_COLOR
+    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
   return [
     {

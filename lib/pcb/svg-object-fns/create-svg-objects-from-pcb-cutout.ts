@@ -13,14 +13,13 @@ import {
   translate,
   toString as matrixToString,
 } from "transformation-matrix"
-import { HOLE_COLOR } from "../colors"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbCutout(
   cutout: PcbCutout,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, colorMap } = ctx
   if (cutout.shape === "rect") {
     const rectCutout = cutout as PcbCutoutRect
     const [cx, cy] = applyToPoint(transform, [
@@ -41,7 +40,7 @@ export function createSvgObjectsFromPcbCutout(
           y: (-scaledHeight / 2).toString(),
           width: scaledWidth.toString(),
           height: scaledHeight.toString(),
-          fill: HOLE_COLOR,
+          fill: colorMap.drill,
           transform: matrixToString(
             compose(translate(cx, cy), rotate((svgRotation * Math.PI) / 180)),
           ),
@@ -68,7 +67,7 @@ export function createSvgObjectsFromPcbCutout(
           cx: cx.toString(),
           cy: cy.toString(),
           r: scaledRadius.toString(),
-          fill: HOLE_COLOR,
+          fill: colorMap.drill,
         },
         children: [],
         value: "",
@@ -93,7 +92,7 @@ export function createSvgObjectsFromPcbCutout(
         attributes: {
           class: "pcb-cutout pcb-cutout-polygon",
           points: pointsString,
-          fill: HOLE_COLOR,
+          fill: colorMap.drill,
         },
         children: [],
         value: "",

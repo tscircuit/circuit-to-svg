@@ -28,6 +28,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { DEFAULT_PCB_COLOR_MAP, type PcbColorMap } from "./colors"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -50,6 +51,7 @@ interface PointObjectNotation {
 }
 
 interface Options {
+  colorOverrides?: Partial<PcbColorMap>
   width?: number
   height?: number
   shouldDrawErrors?: boolean
@@ -65,6 +67,7 @@ export interface PcbContext {
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
   drawPaddingOutsideBoard?: boolean
+  colorMap: PcbColorMap
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -73,6 +76,22 @@ export function convertCircuitJsonToPcbSvg(
 ): string {
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
+  const colorOverrides = options?.colorOverrides
+
+  const colorMap: PcbColorMap = {
+    copper: {
+      top: colorOverrides?.copper?.top ?? DEFAULT_PCB_COLOR_MAP.copper.top,
+      bottom: colorOverrides?.copper?.bottom ?? DEFAULT_PCB_COLOR_MAP.copper.bottom,
+    },
+    drill: colorOverrides?.drill ?? DEFAULT_PCB_COLOR_MAP.drill,
+    silkscreen: {
+      top: colorOverrides?.silkscreen?.top ?? DEFAULT_PCB_COLOR_MAP.silkscreen.top,
+      bottom:
+        colorOverrides?.silkscreen?.bottom ?? DEFAULT_PCB_COLOR_MAP.silkscreen.bottom,
+    },
+    boardOutline:
+      colorOverrides?.boardOutline ?? DEFAULT_PCB_COLOR_MAP.boardOutline,
+  }
 
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
@@ -175,6 +194,7 @@ export function convertCircuitJsonToPcbSvg(
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
     drawPaddingOutsideBoard,
+    colorMap,
   }
 
   let svgObjects = circuitJson

@@ -1,14 +1,13 @@
 import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
-import { HOLE_COLOR } from "../colors"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
@@ -25,7 +24,7 @@ export function createSvgObjectsFromPcbHole(
             cx: x.toString(),
             cy: y.toString(),
             r: radius.toString(),
-            fill: HOLE_COLOR,
+            fill: colorMap.drill,
           },
           children: [],
           value: "",
@@ -43,7 +42,7 @@ export function createSvgObjectsFromPcbHole(
           y: (y - radius).toString(),
           width: scaledDiameter.toString(),
           height: scaledDiameter.toString(),
-          fill: HOLE_COLOR,
+          fill: colorMap.drill,
         },
         children: [],
         value: "",
@@ -66,7 +65,7 @@ export function createSvgObjectsFromPcbHole(
           cy: y.toString(),
           rx: rx.toString(),
           ry: ry.toString(),
-          fill: HOLE_COLOR,
+          fill: colorMap.drill,
         },
         children: [],
         value: "",

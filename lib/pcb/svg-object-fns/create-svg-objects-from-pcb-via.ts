@@ -3,7 +3,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
-  const { transform } = ctx
+  const { transform, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
   const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
@@ -21,7 +21,7 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
         type: "element",
         attributes: {
           class: "pcb-hole-outer",
-          fill: "rgb(200, 52, 52)",
+          fill: colorMap.copper.top,
           cx: x.toString(),
           cy: y.toString(),
           r: outerRadius.toString(),
@@ -32,7 +32,7 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
         type: "element",
         attributes: {
           class: "pcb-hole-inner",
-          fill: "rgb(255, 38, 226)",
+          fill: colorMap.drill,
 
           cx: x.toString(),
           cy: y.toString(),

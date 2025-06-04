@@ -2,14 +2,14 @@ import type { PCBTrace } from "circuit-json"
 import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
-import { LAYER_NAME_TO_COLOR } from "../layer-name-to-color"
+import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
 
@@ -25,8 +25,7 @@ export function createSvgObjectsFromPcbTrace(
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
 
-    const layerColor =
-      LAYER_NAME_TO_COLOR[layer as keyof typeof LAYER_NAME_TO_COLOR] ?? "white"
+    const layerColor = layerNameToColor(layer, colorMap)
 
     const traceWidth =
       "width" in start ? start.width : "width" in end ? end.width : null

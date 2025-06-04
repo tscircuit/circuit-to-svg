@@ -1,15 +1,20 @@
 /**
  * TODO use @tscircuit/pcb-colors when it's published
  */
+import type { PcbColorMap } from "./colors"
+import { DEFAULT_PCB_COLOR_MAP } from "./colors"
+
 export const LAYER_NAME_TO_COLOR = {
-  top: "rgb(200, 52, 52)",
-  bottom: "rgb(77, 127, 196)",
+  top: DEFAULT_PCB_COLOR_MAP.copper.top,
+  bottom: DEFAULT_PCB_COLOR_MAP.copper.bottom,
 }
 
-export function layerNameToColor(layerName: string) {
+export function layerNameToColor(
+  layerName: string,
+  colorMap: PcbColorMap = DEFAULT_PCB_COLOR_MAP,
+) {
   return (
-    LAYER_NAME_TO_COLOR[layerName as keyof typeof LAYER_NAME_TO_COLOR] ??
-    "white"
+    colorMap.copper[layerName as keyof typeof colorMap.copper] ?? "white"
   )
 }
 
