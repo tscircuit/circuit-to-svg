@@ -8,13 +8,13 @@ export function createSvgObjectsFromSmtPad(
   ctx: PcbContext,
 ): any {
   const { transform, layer: layerFilter, colorMap } = ctx
-  const [x, y] = applyToPoint(transform, [pad.x, pad.y])
 
   if (layerFilter && pad.layer !== layerFilter) return []
 
   if (pad.shape === "rect" || pad.shape === "rotated_rect") {
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
+    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
 
     if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
       return [
@@ -50,11 +50,11 @@ export function createSvgObjectsFromSmtPad(
     ]
   }
 
-  // Implement pill-shaped SMT pad
   if (pad.shape === "pill") {
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
+    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
 
     return [
       {
@@ -69,6 +69,24 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
+        },
+      },
+    ]
+  }
+
+  if (pad.shape === "polygon") {
+    const points = (pad.points ?? []).map((point) =>
+      applyToPoint(transform, [point.x, point.y]),
+    )
+
+    return [
+      {
+        name: "polygon",
+        type: "element",
+        attributes: {
+          class: "pcb-pad",
+          fill: layerNameToColor(pad.layer),
+          points: points,
         },
       },
     ]
