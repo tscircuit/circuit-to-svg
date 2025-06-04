@@ -56,18 +56,22 @@ interface Options {
   shouldDrawRatsNest?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
+  backgroundColor?: string
+  drawPaddingOutsideBoard?: boolean
 }
 
 export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
+  drawPaddingOutsideBoard?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
+  const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
 
   let minX = Number.POSITIVE_INFINITY
@@ -121,7 +125,7 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  const padding = 1 // Reduced padding for tighter boundary
+  const padding = drawPaddingOutsideBoard ? 1 : 0
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
@@ -170,6 +174,7 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
+    drawPaddingOutsideBoard,
   }
 
   let svgObjects = circuitJson
@@ -194,6 +199,46 @@ export function convertCircuitJsonToPcbSvg(
     svgObjects = svgObjects.concat(ratsNestObjects)
   }
 
+  const children: SvgObject[] = [
+    {
+      name: "style",
+      type: "element",
+      value: "",
+      attributes: {},
+      children: [
+        {
+          type: "text",
+          value: "",
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    },
+    {
+      name: "rect",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "boundary",
+        x: "0",
+        y: "0",
+        fill: options?.backgroundColor ?? "#000",
+        width: svgWidth.toString(),
+        height: svgHeight.toString(),
+      },
+      children: [],
+    },
+  ]
+
+  if (drawPaddingOutsideBoard) {
+    children.push(
+      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
+    )
+  }
+
+  children.push(...svgObjects)
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -203,32 +248,7 @@ export function convertCircuitJsonToPcbSvg(
       height: svgHeight.toString(),
     },
     value: "",
-    children: [
-      {
-        name: "style",
-        type: "element",
-        children: [
-          {
-            type: "text",
-            value: "",
-          },
-        ],
-      },
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "boundary",
-          x: "0",
-          y: "0",
-          fill: "#000",
-          width: svgWidth.toString(),
-          height: svgHeight.toString(),
-        },
-      },
-      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
-      ...svgObjects,
-    ].filter((child): child is SvgObject => child !== null),
+    children: children.filter((child): child is SvgObject => child !== null),
   }
 
   try {
@@ -351,7 +371,9 @@ function createSvgObjects({
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_board":
-      return createSvgObjectsFromPcbBoard(elm, ctx)
+      return ctx.drawPaddingOutsideBoard
+        ? createSvgObjectsFromPcbBoard(elm, ctx)
+        : []
     case "pcb_via":
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
