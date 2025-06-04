@@ -78,7 +78,6 @@ export function createSvgObjectsFromSmtPad(
     const points = (pad.points ?? []).map((point) =>
       applyToPoint(transform, [point.x, point.y]),
     )
-    const pointStr = points.map(([x, y]) => `${x},${y}`).join(" ")
 
     return [
       {
@@ -87,7 +86,7 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad",
           fill: layerNameToColor(pad.layer),
-          points: pointStr,
+          points: points,
         },
       },
     ]
