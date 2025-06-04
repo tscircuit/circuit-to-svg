@@ -168,8 +168,17 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
-  const circuitWidth = maxX - minX + 2 * padding
-  const circuitHeight = maxY - minY + 2 * padding
+  const boundsMinX =
+    drawPaddingOutsideBoard || !isFinite(boardMinX) ? minX : boardMinX
+  const boundsMinY =
+    drawPaddingOutsideBoard || !isFinite(boardMinY) ? minY : boardMinY
+  const boundsMaxX =
+    drawPaddingOutsideBoard || !isFinite(boardMaxX) ? maxX : boardMaxX
+  const boundsMaxY =
+    drawPaddingOutsideBoard || !isFinite(boardMaxY) ? maxY : boardMaxY
+
+  const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
+  const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
 
   let svgWidth = options?.width ?? 800
   let svgHeight = options?.height ?? 600
@@ -206,8 +215,8 @@ export function convertCircuitJsonToPcbSvg(
 
   const transform = compose(
     translate(
-      offsetX - minX * scaleFactor + padding * scaleFactor,
-      svgHeight - offsetY + minY * scaleFactor - padding * scaleFactor,
+      offsetX - boundsMinX * scaleFactor + padding * scaleFactor,
+      svgHeight - offsetY + boundsMinY * scaleFactor - padding * scaleFactor,
     ),
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
