@@ -7,12 +7,7 @@ export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
 ): any {
-<<<<<<< Updated upstream
   const { transform, layer: layerFilter, colorMap } = ctx
-  const [x, y] = applyToPoint(transform, [pad.x, pad.y])
-=======
-  const { transform, layer: layerFilter } = ctx
->>>>>>> Stashed changes
 
   if (layerFilter && pad.layer !== layerFilter) return []
 
