@@ -76,10 +76,10 @@ export function createSvgObjectsFromSmtPad(
 
   if (pad.shape === "polygon") {
     const points = (pad.points ?? []).map((point) =>
-      applyToPoint(transform, [point.x, point.y])
-    );
-    const pointStr = points.map(([x, y]) => `${x},${y}`).join(" ");
-  
+      applyToPoint(transform, [point.x, point.y]),
+    )
+    const pointStr = points.map(([x, y]) => `${x},${y}`).join(" ")
+
     return [
       {
         name: "polygon",
@@ -90,9 +90,8 @@ export function createSvgObjectsFromSmtPad(
           points: pointStr,
         },
       },
-    ];
+    ]
   }
-  
 
   // TODO: Implement SMT pad circles/ovals etc.
   return []
