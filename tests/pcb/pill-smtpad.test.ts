@@ -40,3 +40,26 @@ test("pill smtpad shape", () => {
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })
+test("polygon smtpad shape", () => {
+  const result = convertCircuitJsonToPcbSvg([
+    {
+      type: "pcb_smtpad",
+      layer: "top" as const,
+      x: 0,
+      y: 0,
+      shape: "polygon",
+      points: [
+        { x: 0.9, y: 0.6 },
+        { x: 1.2, y: -0.6 },
+        { x: -1.2, y: -0.6 },
+        { x: -0.9, y: 0.6 },
+      ],
+      pcb_smtpad_id: "test_polygon_pad_1",
+    },
+  ])
+
+  expect(result).toMatchSvgSnapshot(
+    import.meta.path,
+    "polygon_smtpad_shapes.svg",
+  )
+})

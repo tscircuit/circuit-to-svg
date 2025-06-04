@@ -52,6 +52,8 @@ export function createSvgObjectsFromSmtPad(
 
   // Implement pill-shaped SMT pad
   if (pad.shape === "pill") {
+    console.log("Transforming points with matrix:", transform)
+
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
@@ -69,6 +71,23 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
+        },
+      },
+    ]
+  }
+  if (pad.shape === "polygon") {
+    const points = pad.points
+      .map((point) => applyToPoint(transform, [point.x, point.y]))
+      .map(([px, py]) => `${px},${py}`)
+      .join(" ")
+    return [
+      {
+        name: "polygon",
+        type: "element",
+        attributes: {
+          class: "pcb-pad",
+          fill: layerNameToColor(pad.layer),
+          points: points,
         },
       },
     ]
