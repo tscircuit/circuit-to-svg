@@ -55,6 +55,8 @@ Converts a PCB layout description to an SVG string.
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `matchBoardAspectRatio` – if `true`, adjust the SVG dimensions so the
   resulting aspect ratio matches the `pcb_board` found in the circuit JSON.
+- `backgroundColor` – fill color for the SVG background rectangle. Defaults to
+  `"#000"`.
 
 ## Contributing
 

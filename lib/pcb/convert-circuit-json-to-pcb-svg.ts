@@ -56,6 +56,7 @@ interface Options {
   shouldDrawRatsNest?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
+  backgroundColor?: string
 }
 
 export interface PcbContext {
@@ -221,7 +222,7 @@ export function convertCircuitJsonToPcbSvg(
           class: "boundary",
           x: "0",
           y: "0",
-          fill: "#000",
+          fill: options?.backgroundColor ?? "#000",
           width: svgWidth.toString(),
           height: svgHeight.toString(),
         },
