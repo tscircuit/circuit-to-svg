@@ -31,10 +31,12 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   schNetLabel,
   realToScreenTransform,
   colorMap,
+  drawSymbolDebugBoxes,
 }: {
   schNetLabel: SchematicNetLabel
   realToScreenTransform: Matrix
   colorMap: ColorMap
+  drawSymbolDebugBoxes?: boolean
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
   const svgObjects: SvgObject[] = []
@@ -170,6 +172,25 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     },
     children: [],
   })
+  if (drawSymbolDebugBoxes) {
+    const strokeWidth = getSchStrokeSize(realToScreenTransform)
+    svgObjects.push({
+      name: "rect",
+      type: "element",
+      value: "",
+      attributes: {
+        x: rectX.toString(),
+        y: rectY.toString(),
+        width: rectWidth.toString(),
+        height: rectHeight.toString(),
+        fill: "rgba(255,0,0,0.2)",
+        stroke: "rgba(255,0,0,0.2)",
+        "stroke-width": `${strokeWidth}px`,
+        "stroke-dasharray": `${strokeWidth * 2},${strokeWidth * 2}`,
+      },
+      children: [],
+    })
+  }
 
   // Draw symbol paths
   for (const path of symbolPaths) {

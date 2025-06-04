@@ -56,11 +56,13 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   transform: realToScreenTransform,
   circuitJson,
   colorMap,
+  drawSymbolDebugBoxes,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
   colorMap: ColorMap
+  drawSymbolDebugBoxes?: boolean
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
@@ -145,6 +147,25 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     },
     children: [],
   })
+  if (drawSymbolDebugBoxes) {
+    const strokeWidth = getSchStrokeSize(realToScreenTransform)
+    svgObjects.push({
+      name: "rect",
+      type: "element",
+      value: "",
+      attributes: {
+        x: rectX.toString(),
+        y: rectY.toString(),
+        width: rectWidth.toString(),
+        height: rectHeight.toString(),
+        fill: "rgba(255,0,0,0.2)",
+        stroke: "rgba(255,0,0,0.2)",
+        "stroke-width": `${strokeWidth}px`,
+        "stroke-dasharray": `${strokeWidth * 2},${strokeWidth * 2}`,
+      },
+      children: [],
+    })
+  }
   for (const path of paths) {
     const { points, color, closed, fill } = path
     svgObjects.push({
