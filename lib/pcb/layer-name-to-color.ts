@@ -13,9 +13,7 @@ export function layerNameToColor(
   layerName: string,
   colorMap: PcbColorMap = DEFAULT_PCB_COLOR_MAP,
 ) {
-  return (
-    colorMap.copper[layerName as keyof typeof colorMap.copper] ?? "white"
-  )
+  return colorMap.copper[layerName as keyof typeof colorMap.copper] ?? "white"
 }
 
 export const SOLDER_PASTE_LAYER_NAME_TO_COLOR = {

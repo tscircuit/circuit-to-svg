@@ -11,6 +11,13 @@ export interface PcbColorMap {
   boardOutline: string
 }
 
+export interface PcbColorOverrides {
+  copper?: Partial<PcbColorMap["copper"]>
+  drill?: string
+  silkscreen?: Partial<PcbColorMap["silkscreen"]>
+  boardOutline?: string
+}
+
 export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   copper: {
     top: "rgb(200, 52, 52)",
