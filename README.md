@@ -2,9 +2,10 @@
 
 A TypeScript library for converting Circuit JSON to Schematic, PCB and Assembly SVG representations.
 
-![](https://api.tscircuit.com/packages/images/seveibar/keyboard-default60/pcb.svg?fs_sha=md5-e4fc4758380cab0efcc1b3b12bdcf36d)
-
-![](https://api.tscircuit.com/packages/images/seveibar/usb-c-flashlight/schematic.svg?fs_sha=)
+<div align="center">
+  <img src="https://api.tscircuit.com/packages/images/seveibar/keyboard-default60/pcb.svg?fs_sha=md5-e4fc4758380cab0efcc1b3b12bdcf36d" alt="Keyboard PCB" height="200" />
+  <img src="https://api.tscircuit.com/packages/images/seveibar/usb-c-flashlight/schematic.svg?fs_sha=" alt="Flashlight schematic" height="200" />
+</div>
 
 ```bash
 npm add circuit-to-svg
@@ -39,24 +40,41 @@ npm install circuit-to-svg
 ## Usage
 
 ```typescript
-import { convertCircuitJsonToSchematicSvg, convertCircuitJsonToPcbSvg } from 'circuit-to-svg';
+import { readFileSync, writeFileSync } from 'fs'
+import {
+  convertCircuitJsonToSchematicSvg,
+  convertCircuitJsonToPcbSvg,
+} from 'circuit-to-svg'
 
-// For schematic circuits
-const schematicCircuitJson = [...]; // Your schematic circuit description
-const schematicSvg = convertCircuitJsonToSchematicSvg(schematicCircuitJson);
+const circuitJson = JSON.parse(readFileSync('circuit.json', 'utf8'))
 
-// For PCB layouts
-const pcbCircuitJson = [...]; // Your PCB layout description
-const pcbSvg = convertCircuitJsonToPcbSvg(pcbCircuitJson);
+// Generate a schematic with a grid
+const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
+  width: 1000,
+  height: 600,
+  grid: true,
+})
+
+// Generate a PCB image using the board's aspect ratio
+const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
+  matchBoardAspectRatio: true,
+  backgroundColor: '#1e1e1e',
+})
+
+writeFileSync('board.svg', pcbSvg)
 ```
 
 ## API
 
-### `convertCircuitJsonToSchematicSvg(circuitJson: AnyCircuitElement[]): string`
+### convertCircuitJsonToSchematicSvg
+
+`convertCircuitJsonToSchematicSvg(circuitJson: AnyCircuitElement[], options?): string`
 
 Converts a schematic circuit description to an SVG string.
 
-### `convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[]): string`
+### convertCircuitJsonToPcbSvg
+
+`convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[], options?): string`
 
 Converts a PCB layout description to an SVG string.
 
@@ -69,6 +87,16 @@ Converts a PCB layout description to an SVG string.
   `"#000"`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
+
+### convertCircuitJsonToAssemblySvg
+
+`convertCircuitJsonToAssemblySvg(circuitJson: AnyCircuitElement[], options?): string`
+
+Converts circuit JSON into an assembly view of the board and components.
+
+#### Options
+
+- `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 
 ## Contributing
 
