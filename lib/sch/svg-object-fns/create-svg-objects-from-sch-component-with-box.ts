@@ -21,11 +21,13 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
   transform,
   circuitJson,
   colorMap,
+  drawSymbolDebugBoxes,
 }: {
   component: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
   colorMap: ColorMap
+  drawSymbolDebugBoxes?: boolean
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
