@@ -84,8 +84,8 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad",
           fill: layerNameToColor(pad.layer, colorMap),
-          x: x.toString(),
-          y: y.toString(),
+          cx: x.toString(),
+          cy: y.toString(),
           r: radius.toString(),
         },
       },
