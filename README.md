@@ -1,10 +1,20 @@
 # circuit-to-svg
 
-A TypeScript library for converting circuit descriptions (soup) to SVG representations.
+A TypeScript library for converting Circuit JSON to Schematic, PCB and Assembly SVG representations.
+
+![](https://api.tscircuit.com/packages/images/seveibar/keyboard-default60/pcb.svg?fs_sha=md5-e4fc4758380cab0efcc1b3b12bdcf36d)
+
+![](https://api.tscircuit.com/packages/images/seveibar/usb-c-flashlight/schematic.svg?fs_sha=)
+
+```bash
+npm add circuit-to-svg
+# or...
+bun add circuit-to-svg
+```
 
 ## Overview
 
-This library provides functionality to convert circuit descriptions, referred to as "soup", into SVG (Scalable Vector Graphics) representations. It supports both schematic and PCB (Printed Circuit Board) layouts.
+This library provides functionality to convert Circuit JSON into SVG (Scalable Vector Graphics) representations. It supports both schematic and PCB (Printed Circuit Board), and Assembly layouts.
 
 ## Features
 
