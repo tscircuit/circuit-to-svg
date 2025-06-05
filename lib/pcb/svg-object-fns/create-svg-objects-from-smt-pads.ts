@@ -73,6 +73,24 @@ export function createSvgObjectsFromSmtPad(
       },
     ]
   }
+  if (pad.shape === "circle") {
+    const radius = pad.radius * Math.abs(transform.a)
+    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+
+    return [
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-pad",
+          fill: layerNameToColor(pad.layer, colorMap),
+          cx: x.toString(),
+          cy: y.toString(),
+          r: radius.toString(),
+        },
+      },
+    ]
+  }
 
   if (pad.shape === "polygon") {
     const points = (pad.points ?? []).map((point) =>

@@ -1099,6 +1099,17 @@ const pcbSoup: any[] = [
     pcb_smtpad_id: "test_polygon_pad_1",
   },
   {
+    type: "pcb_smtpad",
+    shape: "circle",
+    layer: "top" as const,
+    x: 3.3,
+    y: 6,
+    radius: 1.2,
+    pcb_port_id: "pcb_port_04",
+    pcb_smtpad_id: "pcb_smtpad_04",
+    pcb_component_id: "pcb_component_04",
+  },
+  {
     x: -6.5,
     y: -6.5,
     type: "pcb_plated_hole",
