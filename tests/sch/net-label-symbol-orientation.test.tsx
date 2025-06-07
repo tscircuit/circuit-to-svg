@@ -24,7 +24,7 @@ test("net label symbol orientation", () => {
       anchor_position: { x: 1, y: 0 },
       anchor_side: "bottom",
       text: "VCC",
-      symbol_name: "VCC_up",
+      symbol_name: "vcc_up",
       schematic_net_label_id: "nl2",
     },
   ]

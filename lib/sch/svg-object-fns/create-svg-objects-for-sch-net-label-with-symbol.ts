@@ -119,10 +119,15 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     ),
   }
 
-  const symbolEndPoint = {
-    x: symbolBounds.minX,
-    y: (symbolBounds.minY + symbolBounds.maxY) / 2,
-  }
+  // Use the first port as the connection point when available. This
+  // accounts for symbols whose anchor is not the leftmost edge (e.g.
+  // vertically oriented ground/VCC symbols).
+  const symbolEndPoint = symbol.ports?.[0]
+    ? { x: symbol.ports[0].x, y: symbol.ports[0].y }
+    : {
+        x: symbolBounds.minX,
+        y: (symbolBounds.minY + symbolBounds.maxY) / 2,
+      }
 
   const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolEndPoint)
 
