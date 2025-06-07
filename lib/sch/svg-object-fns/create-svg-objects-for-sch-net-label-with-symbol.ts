@@ -87,13 +87,9 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
   }
 
-  // Rotation angle based on anchor side
-  const pathRotation = {
-    left: 0,
-    top: -90,
-    bottom: 90,
-    right: 180,
-  }[schNetLabel.anchor_side]
+  // Symbols referenced by name already encode their orientation, so
+  // no additional rotation should be applied based on `anchor_side`.
+  const pathRotation = 0
 
   // Create transformation matrix that matches net label positioning
   // Calculate the rotation matrix based on the path rotation
@@ -123,10 +119,15 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     ),
   }
 
-  const symbolEndPoint = {
-    x: symbolBounds.minX,
-    y: (symbolBounds.minY + symbolBounds.maxY) / 2,
-  }
+  // Use the first port as the connection point when available. This
+  // accounts for symbols whose anchor is not the leftmost edge (e.g.
+  // vertically oriented ground/VCC symbols).
+  const symbolEndPoint = symbol.ports?.[0]
+    ? { x: symbol.ports[0].x, y: symbol.ports[0].y }
+    : {
+        x: symbolBounds.minX,
+        y: (symbolBounds.minY + symbolBounds.maxY) / 2,
+      }
 
   const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolEndPoint)
 
