@@ -238,6 +238,9 @@ export function convertCircuitJsonToSchematicSvg(
               .trace:hover .trace-crossing-outline {
                 opacity: 0;
               }
+              .trace:hover .trace-junction {
+                filter: invert(1);
+              }
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
