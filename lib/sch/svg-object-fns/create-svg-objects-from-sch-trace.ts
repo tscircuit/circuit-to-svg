@@ -152,6 +152,7 @@ export function createSchematicTrace({
           cx: screenX.toString(),
           cy: screenY.toString(),
           r: (Math.abs(transform.a) * 0.03).toString(),
+          class: "trace-junction",
           fill: colorMap.schematic.junction,
         },
         value: "",
