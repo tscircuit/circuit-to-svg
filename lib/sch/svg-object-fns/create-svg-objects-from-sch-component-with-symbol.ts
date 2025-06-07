@@ -38,17 +38,17 @@ const ninePointAnchorToTextAnchor: Record<
 
 const ninePointAnchorToDominantBaseline: Record<
   TextPrimitive["anchor"],
-  "auto" | "hanging" | "middle"
+  "hanging" | "ideographic" | "middle"
 > = {
-  top_left: "auto",
-  top_right: "auto",
-  bottom_left: "hanging",
-  bottom_right: "hanging",
-  center: "auto",
+  top_left: "hanging",
+  top_right: "hanging",
+  bottom_left: "ideographic",
+  bottom_right: "ideographic",
+  center: "middle",
   middle_left: "middle",
   middle_right: "middle",
-  middle_top: "auto",
-  middle_bottom: "hanging",
+  middle_top: "hanging",
+  middle_bottom: "ideographic",
 }
 
 export const createSvgObjectsFromSchematicComponentWithSymbol = ({
