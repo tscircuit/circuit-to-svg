@@ -87,13 +87,9 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
   }
 
-  // Rotation angle based on anchor side
-  const pathRotation = {
-    left: 0,
-    top: -90,
-    bottom: 90,
-    right: 180,
-  }[schNetLabel.anchor_side]
+  // Symbols referenced by name already encode their orientation, so
+  // no additional rotation should be applied based on `anchor_side`.
+  const pathRotation = 0
 
   // Create transformation matrix that matches net label positioning
   // Calculate the rotation matrix based on the path rotation
@@ -123,10 +119,15 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     ),
   }
 
-  const symbolEndPoint = {
-    x: symbolBounds.minX,
-    y: (symbolBounds.minY + symbolBounds.maxY) / 2,
-  }
+  // Use the first port as the connection point when available. This
+  // accounts for symbols whose anchor is not the leftmost edge (e.g.
+  // vertically oriented ground/VCC symbols).
+  const symbolEndPoint = symbol.ports?.[0]
+    ? { x: symbol.ports[0].x, y: symbol.ports[0].y }
+    : {
+        x: symbolBounds.minX,
+        y: (symbolBounds.minY + symbolBounds.maxY) / 2,
+      }
 
   const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolEndPoint)
 
@@ -217,12 +218,11 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     const scale = Math.abs(realToScreenTransform.a)
     const baseOffset = scale * 0.1 // Base offset unit in screen coordinates
 
-    // Apply rotation-specific text offset with scale
-    const rotationOffset = getTextOffsets(pathRotation, realToScreenTransform)
-
+    // Symbols define their own text placement, so no additional
+    // offsets should be applied based on path rotation.
     const offsetScreenPos = {
-      x: screenTextPos.x + rotationOffset.x,
-      y: screenTextPos.y + rotationOffset.y,
+      x: screenTextPos.x,
+      y: screenTextPos.y,
     }
 
     svgObjects.push({
