@@ -33,6 +33,7 @@ interface Options {
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
+  drawSymbolDebugBoxes?: boolean
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -139,6 +140,7 @@ export function convertCircuitJsonToSchematicSvg(
           transform,
           circuitJson,
           colorMap,
+          drawSymbolDebugBoxes: options?.drawSymbolDebugBoxes,
         }),
       )
     } else if (elm.type === "schematic_box") {
@@ -163,6 +165,7 @@ export function convertCircuitJsonToSchematicSvg(
           schNetLabel: elm,
           realToScreenTransform: transform,
           colorMap,
+          drawSymbolDebugBoxes: options?.drawSymbolDebugBoxes,
         }),
       )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
