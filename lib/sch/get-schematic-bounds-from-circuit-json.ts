@@ -1,6 +1,14 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
-
+import {
+  ARROW_POINT_WIDTH_FSR,
+  END_PADDING_EXTRA_PER_CHARACTER_FSR,
+  END_PADDING_FSR,
+  getPathRotation,
+  calculateAnchorPosition,
+} from "lib/utils/net-label-utils"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import { estimateTextWidth } from "./estimate-text-width"
 interface Bounds {
   minX: number
   minY: number
@@ -33,7 +41,29 @@ export function getSchematicBoundsFromCircuitJson(
         updateBounds(item.end, { width: 0.1, height: 0.1 }, 0)
       }
     } else if (item.type === "schematic_net_label") {
-      updateBounds(item.center, { width: 1, height: 1 }, 0)
+      const fontSizeMm = getSchMmFontSize("net_label")
+      const textWidth = estimateTextWidth(item.text || "")
+      const fullWidthFsr =
+        textWidth +
+        ARROW_POINT_WIDTH_FSR * 2 +
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * (item.text?.length || 0) +
+        END_PADDING_FSR
+      const width = fullWidthFsr * fontSizeMm
+      const height = 1.2 * fontSizeMm
+      const rotation = (getPathRotation(item.anchor_side) / 180) * Math.PI
+
+      const anchorPosition = calculateAnchorPosition(
+        item,
+        fontSizeMm,
+        textWidth,
+      )
+      const growthVec = getUnitVectorFromOutsideToEdge(item.anchor_side)
+      const center = {
+        x: anchorPosition.x + (growthVec.x * width) / 2,
+        y: anchorPosition.y + (growthVec.y * width) / 2,
+      }
+
+      updateBounds(center, { width, height }, rotation)
     } else if (item.type === "schematic_trace") {
       for (const edge of item.edges) {
         updateBounds(edge.from, { width: 0.1, height: 0.1 }, 0)
