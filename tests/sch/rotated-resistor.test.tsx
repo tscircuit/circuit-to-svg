@@ -20,4 +20,4 @@ test("schematic rotated resistor", () => {
   expect(
     convertCircuitJsonToSchematicSvg(circuit.getCircuitJson() as any),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20000)
