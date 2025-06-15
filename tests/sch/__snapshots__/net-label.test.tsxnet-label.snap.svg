@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(189.8503873475,0,0,-189.8503873475,601.7416937819,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace:hover {
+                filter: invert(1);
+              }
+              .trace:hover .trace-crossing-outline {
+                opacity: 0;
+              }
+              .trace:hover .trace-junction {
+                filter: invert(1);
+              }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_0"><rect class="component-overlay" x="311.3938520116912" y="274.7648681858246" width="200.92498694775787" height="50.231260975718385" fill="transparent"/><path d="M 311.3938520116912 299.8804986736838 L 361.6250940023709 299.8804986736838" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><path d="M 462.0875779837306 299.8804986736838 L 512.3188389594491 299.8804986736838" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><path d="M 411.85631700801196 274.7648681858246 L 462.0875589986917 274.7648681858246 L 462.0875589986917 324.99612916154297 L 361.62505603229323 324.99612916154297 L 361.62505603229323 274.7648681858246 L 411.8563170080117 274.7648681858246" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><text x="408.56892465581876" y="265.10852960773104" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="34.17306972255px">R1</text><text x="408.56892465581876" y="338.8904599663183" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="34.17306972255px">10Ω</text><circle cx="307.22855349832554" cy="299.9481233816574" r="3.7970077469500003px" stroke-width="3.7970077469500003px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="516.5540593704745" cy="300.0518766183426" r="3.7970077469500003px" stroke-width="3.7970077469500003px" fill="none" stroke="rgb(132, 0, 0)"/></g><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_1"><rect class="component-overlay" x="879.7974254177917" y="249.64925668300452" width="200.92498694775793" height="100.46248398135958" fill="transparent"/><path d="M 1080.7224123655496 299.880498673684 L 995.3293028798978 299.880498673684" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><path d="M 965.1905538884822 299.880498673684 L 879.7974254177917 299.880498673684" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><path d="M 995.3293028798977 249.64925668300452 L 995.3293028798978 350.1117406643641" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><path d="M 965.1905538884822 249.64925668300452 L 965.1905538884822 350.1117406643641" stroke="rgb(132, 0, 0)" fill="none" stroke-width="3.7970077469500003px"/><text x="979.0001381688681" y="223.4758041789296" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="34.17306972255px">C1</text><text x="980.7114495604185" y="382.8475806425313" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="34.17306972255px">100mF</text><circle cx="876.7951693623556" cy="300.05189560338135" r="3.7970077469500003px" stroke-width="3.7970077469500003px" fill="none" stroke="rgb(132, 0, 0)"/><circle cx="1086.0897675914443" cy="299.94810439661865" r="3.7970077469500003px" stroke-width="3.7970077469500003px" fill="none" stroke="rgb(132, 0, 0)"/></g><path class="net-label" d="
+    M 876.7951693623556,300.05189560338135
+    L 866.5432484455906,320.55573743691133
+    L 777.8704608618183,320.55573743691133
+    L 777.8704608618183,279.5480537698513
+    L 866.5432484455906,279.5480537698514
+    Z
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="3.7970077469500003px"/><text class="net-label-text" x="859.7086345010806" y="300.05189560338135" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="34.17306972255px" transform="">DTR</text><path class="net-label" d="
+    M 516.5540593704745,300.0518766183426
+    L 526.8059802872395,279.5480347848126
+    L 1091.9526133432773,279.5480347848126
+    L 1091.9526133432773,320.55571845187256
+    L 526.8059802872395,320.55571845187256
+    Z
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="3.7970077469500003px"/><text class="net-label-text" x="533.6405942317496" y="300.0518766183426" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="34.17306972255px" transform="">label1label2label1label2label1label2</text><path class="net-label" d="
+    M 307.2285534983256,299.9481233816574
+    L 296.9766325815606,320.4519652151874
+    L 94.92519367386129,320.4519652151874
+    L 94.92519367386129,279.4442815481274
+    L 296.9766325815606,279.44428154812744
+    Z
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="3.7970077469500003px"/><text class="net-label-text" x="290.14201863705057" y="299.9481233816574" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="34.17306972255px" transform="">label1label2</text></svg>

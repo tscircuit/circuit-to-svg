@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import type { SchematicNetLabel } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("schematic net label", () => {
   // NOTE: center isn't computed properly where anchor_position is defined but
@@ -83,6 +84,14 @@ test("schematic net label", () => {
     {
       type: "schematic_net_label",
       source_net_id: "net5",
+      center: { x: 4, y: 3 },
+      anchor_side: "left",
+      text: "CENTER1/CENTER4/CENTER4",
+      schematic_net_label_id: "schematic_net_label_7",
+    },
+    {
+      type: "schematic_net_label",
+      source_net_id: "net5",
       center: { x: 4, y: 2 },
       anchor_side: "right",
       text: "CENTER2",
@@ -125,4 +134,37 @@ test("schematic net label", () => {
       ],
     }),
   ).toMatchSvgSnapshot(import.meta.path)
+})
+
+test("schematic resistor", async () => {
+  const { circuit } = getTestFixture()
+
+  circuit.add(
+    <board width="10mm" height="10mm" routingDisabled>
+      <resistor
+        name="R1"
+        resistance="10"
+        footprint="0402"
+        pcbX={-2}
+        schX={-1}
+        symbolName="boxresistor_right"
+      />
+      <capacitor
+        name="C1"
+        capacitance="0.1"
+        footprint="0402"
+        pcbX={2}
+        schX={2}
+      />
+      <trace from="net.DTR" to=".C1 > .pin1" />
+      <trace from="net.label1label2label1label2label1label2" to=".R1 > .pin2" />
+      <trace from="net.label1label2" to=".R1 > .pin1" />
+    </board>,
+  )
+
+  await circuit.renderUntilSettled()
+
+  expect(
+    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
+  ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
 })
