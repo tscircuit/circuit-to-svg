@@ -157,7 +157,7 @@ test("schematic resistor", async () => {
         schX={2}
       />
       <trace from="net.DTR" to=".C1 > .pin1" />
-      <trace from="net.label1label2label1label2label1label2" to=".R1 > .pin2" />
+      <trace from="net.label1label2label1label2label1label2" to=".C1 > .pin2" />
       <trace from="net.label1label2" to=".R1 > .pin1" />
     </board>,
   )
