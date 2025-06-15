@@ -1,6 +1,7 @@
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import type { SchematicBox } from "circuit-json"
 
 export const createSvgObjectsFromSchematicBox = ({
@@ -32,7 +33,7 @@ export const createSvgObjectsFromSchematicBox = ({
     y: yTop.toString(),
     width: (xRight - xLeft).toString(),
     height: (yBottom - yTop).toString(),
-    "stroke-width": "2px",
+    "stroke-width": `${getSchStrokeSize(transform)}px`,
     stroke: colorMap.schematic.component_outline || "black",
     fill: "transparent",
   }
