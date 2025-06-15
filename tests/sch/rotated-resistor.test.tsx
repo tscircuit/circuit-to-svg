@@ -7,7 +7,7 @@ test("schematic rotated resistor", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board width="10mm" height="10mm" routingDisabled pcbDisabled>
       <resistor
         name="R1"
         resistance="10k"
@@ -20,4 +20,4 @@ test("schematic rotated resistor", () => {
   expect(
     convertCircuitJsonToSchematicSvg(circuit.getCircuitJson() as any),
   ).toMatchSvgSnapshot(import.meta.path)
-}, 20000)
+})
