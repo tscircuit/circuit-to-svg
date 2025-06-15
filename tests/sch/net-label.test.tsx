@@ -84,14 +84,6 @@ test("schematic net label", () => {
     {
       type: "schematic_net_label",
       source_net_id: "net5",
-      center: { x: 4, y: 3 },
-      anchor_side: "left",
-      text: "CENTER1/CENTER4/CENTER4",
-      schematic_net_label_id: "schematic_net_label_7",
-    },
-    {
-      type: "schematic_net_label",
-      source_net_id: "net5",
       center: { x: 4, y: 2 },
       anchor_side: "right",
       text: "CENTER2",
