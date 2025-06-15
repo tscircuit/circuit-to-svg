@@ -7,7 +7,7 @@ test("schematic rotated resistor", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board routingDisabled>
       <resistor
         name="R1"
         resistance="10k"
