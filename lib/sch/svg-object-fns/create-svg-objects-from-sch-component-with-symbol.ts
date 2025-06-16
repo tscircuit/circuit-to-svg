@@ -164,6 +164,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         stroke: colorMap.schematic.component_outline,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+        "stroke-linecap": "round",
       },
       value: "",
       children: [],
