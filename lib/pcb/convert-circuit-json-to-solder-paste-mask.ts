@@ -11,6 +11,7 @@ import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-object
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -95,6 +96,8 @@ export function convertCircuitJsonToSolderPasteMask(
     )
     .flatMap((item) => createSvgObjects({ elm: item, ctx }))
 
+  const softwareUsedString = getSoftwareUsedString(circuitJson)
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -102,6 +105,9 @@ export function convertCircuitJsonToSolderPasteMask(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
     },
     value: "",
     children: [
