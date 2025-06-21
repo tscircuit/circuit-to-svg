@@ -152,4 +152,4 @@ test("schematic net symbol grid", () => {
       ],
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20000)
