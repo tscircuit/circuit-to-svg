@@ -10,6 +10,7 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = ["pcb_board", "pcb_component"]
 
@@ -70,6 +71,8 @@ export function convertCircuitJsonToAssemblySvg(
     )
     .flatMap((item) => createSvgObjects(item, transform, soup))
 
+  const softwareUsedString = getSoftwareUsedString(soup)
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -77,6 +80,9 @@ export function convertCircuitJsonToAssemblySvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
     },
     value: "",
     children: [

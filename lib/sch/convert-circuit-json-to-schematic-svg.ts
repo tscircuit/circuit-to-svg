@@ -22,6 +22,7 @@ import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-s
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
+import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -205,6 +206,8 @@ export function convertCircuitJsonToSchematicSvg(
     )
   }
 
+  const softwareUsedString = getSoftwareUsedString(circuitJson)
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -214,6 +217,9 @@ export function convertCircuitJsonToSchematicSvg(
       height: svgHeight.toString(),
       style: `background-color: ${colorMap.schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
     },
     children: [
       // Add styles

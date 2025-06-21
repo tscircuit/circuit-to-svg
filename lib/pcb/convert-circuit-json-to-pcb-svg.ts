@@ -34,6 +34,7 @@ import {
   type PcbColorOverrides,
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -291,6 +292,8 @@ export function convertCircuitJsonToPcbSvg(
 
   children.push(...svgObjects)
 
+  const softwareUsedString = getSoftwareUsedString(circuitJson)
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -298,6 +301,9 @@ export function convertCircuitJsonToPcbSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
     },
     value: "",
     children: children.filter((child): child is SvgObject => child !== null),
