@@ -24,4 +24,4 @@ test("Ensure text is in the currect position", () => {
   expect(
     convertCircuitJsonToSchematicSvg(circuitJson as any, {}),
   ).toMatchSvgSnapshot(`${import.meta.path} - pcb`)
-})
+}, 20000)

@@ -39,7 +39,10 @@ export const createSvgObjectsFromSchematicBox = ({
   }
 
   if (schematicBox.is_dashed) {
-    attributes["stroke-dasharray"] = "20 8"
+    const scale = Math.abs(transform.a)
+    const dashLength = 0.12 * scale
+    const gapLength = 0.05 * scale
+    attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
   }
 
   return [
