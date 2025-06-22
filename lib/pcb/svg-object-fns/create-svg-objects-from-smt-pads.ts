@@ -29,6 +29,7 @@ export function createSvgObjectsFromSmtPad(
             width: width.toString(),
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
+            "data-layer": pad.layer,
           },
         },
       ]
@@ -45,6 +46,7 @@ export function createSvgObjectsFromSmtPad(
           y: (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
+          "data-layer": pad.layer,
         },
       },
     ]
@@ -69,6 +71,7 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
+          "data-layer": pad.layer,
         },
       },
     ]
@@ -87,6 +90,7 @@ export function createSvgObjectsFromSmtPad(
           cx: x.toString(),
           cy: y.toString(),
           r: radius.toString(),
+          "data-layer": pad.layer,
         },
       },
     ]
@@ -105,6 +109,7 @@ export function createSvgObjectsFromSmtPad(
           class: "pcb-pad",
           fill: layerNameToColor(pad.layer),
           points: points,
+          "data-layer": pad.layer,
         },
       },
     ]
