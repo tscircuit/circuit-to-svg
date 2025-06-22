@@ -3,6 +3,7 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
+  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -45,8 +46,9 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_silkscreen_path",
   "pcb_via",
   "pcb_cutout",
-  "pcb_trace",
+  // Draw traces before SMT pads so pads appear on top
   "pcb_smtpad",
+  "pcb_trace",
   "pcb_component",
   "pcb_board",
 ]
@@ -230,12 +232,49 @@ export function convertCircuitJsonToPcbSvg(
     colorMap,
   }
 
+  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
+    if (elm.type === "pcb_smtpad") {
+      return elm.layer === "top" || elm.layer === "bottom"
+        ? elm.layer
+        : undefined
+    }
+    if (elm.type === "pcb_trace") {
+      for (const seg of elm.route ?? []) {
+        const candidate =
+          ("layer" in seg && seg.layer) ||
+          ("from_layer" in seg && seg.from_layer) ||
+          ("to_layer" in seg && seg.to_layer) ||
+          undefined
+
+        if (candidate === "top" || candidate === "bottom") {
+          return candidate
+        }
+      }
+    }
+    return undefined
+  }
+
+  function isCopper(elm: AnyCircuitElement) {
+    return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
+  }
+
   let svgObjects = circuitJson
-    .sort(
-      (a, b) =>
+    .sort((a, b) => {
+      const layerA = getLayer(a)
+      const layerB = getLayer(b)
+
+      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
+        if (layerA === "top") return 1
+        if (layerB === "top") return -1
+        if (layerA === "bottom") return -1
+        if (layerB === "bottom") return 1
+      }
+
+      return (
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999),
-    )
+        (OBJECT_ORDER.indexOf(a.type) ?? 9999)
+      )
+    })
     .flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
 
   let strokeWidth = String(0.05 * scaleFactor)
