@@ -3,6 +3,7 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
+  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -231,15 +232,23 @@ export function convertCircuitJsonToPcbSvg(
     colorMap,
   }
 
-  function getLayer(elm: AnyCircuitElement): "top" | "bottom" | undefined {
-    if (elm.type === "pcb_smtpad") return elm.layer
+  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
+    if (elm.type === "pcb_smtpad") {
+      return elm.layer === "top" || elm.layer === "bottom"
+        ? elm.layer
+        : undefined
+    }
     if (elm.type === "pcb_trace") {
       for (const seg of elm.route ?? []) {
-        if ("layer" in seg && seg.layer) return seg.layer as "top" | "bottom"
-        if ("from_layer" in seg && seg.from_layer)
-          return seg.from_layer as "top" | "bottom"
-        if ("to_layer" in seg && seg.to_layer)
-          return seg.to_layer as "top" | "bottom"
+        const candidate =
+          ("layer" in seg && seg.layer) ||
+          ("from_layer" in seg && seg.from_layer) ||
+          ("to_layer" in seg && seg.to_layer) ||
+          undefined
+
+        if (candidate === "top" || candidate === "bottom") {
+          return candidate
+        }
       }
     }
     return undefined
