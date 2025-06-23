@@ -78,6 +78,38 @@ export const createSvgSchText = ({
     center_left: "middle",
   }
 
+  const lines = elm.text.split("\n")
+
+  const children: SvgObject[] =
+    lines.length === 1
+      ? [
+          {
+            type: "text",
+            value: elm.text,
+            name: elm.schematic_text_id,
+            attributes: {},
+            children: [],
+          },
+        ]
+      : lines.map((line, idx) => ({
+          type: "element",
+          name: "tspan",
+          value: "",
+          attributes: {
+            x: center.x.toString(),
+            ...(idx > 0 ? { dy: "1em" } : {}),
+          },
+          children: [
+            {
+              type: "text",
+              value: line,
+              name: idx === 0 ? elm.schematic_text_id : "",
+              attributes: {},
+              children: [],
+            },
+          ],
+        }))
+
   return {
     type: "element",
     name: "text",
@@ -92,14 +124,6 @@ export const createSvgSchText = ({
       "font-size": `${getSchScreenFontSize(transform, "reference_designator", elm.font_size)}px`,
       transform: `rotate(${elm.rotation}, ${center.x}, ${center.y})`,
     },
-    children: [
-      {
-        type: "text",
-        value: elm.text,
-        name: elm.schematic_text_id,
-        attributes: {},
-        children: [],
-      },
-    ],
+    children,
   }
 }
