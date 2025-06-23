@@ -20,6 +20,7 @@ import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
+import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -111,6 +112,13 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   const texts = symbol.primitives.filter((p) => p.type === "text")
   const circles = symbol.primitives.filter((p) => p.type === "circle")
   const boxes = symbol.primitives.filter((p) => p.type === "box")
+
+  const connectedSymbolPorts = new Set<SchSymbol["ports"][number]>()
+  for (const match of schPortsWithSymbolPorts) {
+    if (isSourcePortConnected(circuitJson, match.schPort.source_port_id)) {
+      connectedSymbolPorts.add(match.symbolPort)
+    }
+  }
 
   const bounds = {
     minX: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
@@ -257,6 +265,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   // Draw Ports for debugging
   for (const port of symbol.ports) {
+    if (connectedSymbolPorts.has(port)) continue
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       port,

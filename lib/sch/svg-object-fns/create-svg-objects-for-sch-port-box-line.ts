@@ -6,6 +6,7 @@ import type {
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import { su } from "@tscircuit/circuit-json-util"
+import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
@@ -91,20 +92,24 @@ export const createSvgObjectsForSchPortBoxLine = ({
     children: [],
   })
 
-  // Add port circle
-  svgObjects.push({
-    name: "circle",
-    type: "element",
-    attributes: {
-      class: "component-pin",
-      cx: screenSchPortPos.x.toString(),
-      cy: screenSchPortPos.y.toString(),
-      r: (Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM).toString(),
-      "stroke-width": `${getSchStrokeSize(transform)}px`,
-    },
-    value: "",
-    children: [],
-  })
+  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
+
+  if (!isConnected) {
+    // Add port circle if the port is not connected
+    svgObjects.push({
+      name: "circle",
+      type: "element",
+      attributes: {
+        class: "component-pin",
+        cx: screenSchPortPos.x.toString(),
+        cy: screenSchPortPos.y.toString(),
+        r: (Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM).toString(),
+        "stroke-width": `${getSchStrokeSize(transform)}px`,
+      },
+      value: "",
+      children: [],
+    })
+  }
 
   return svgObjects
 }
