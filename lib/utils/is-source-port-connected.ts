@@ -9,9 +9,7 @@ export const isSourcePortConnected = (
     const trace = elm as any
     if (
       Array.isArray(trace.connected_source_port_ids) &&
-      trace.connected_source_port_ids.includes(sourcePortId) &&
-      Array.isArray(trace.connected_source_net_ids) &&
-      trace.connected_source_net_ids.length > 0
+      trace.connected_source_port_ids.includes(sourcePortId)
     ) {
       return true
     }
