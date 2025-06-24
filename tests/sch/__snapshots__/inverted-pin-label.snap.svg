@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(326.0869565217,0,0,-326.0869565217,600,300)" data-software-used-string="@tscircuit/core@0.0.477"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace:hover {
+                filter: invert(1);
+              }
+              .trace:hover .trace-crossing-outline {
+                opacity: 0;
+              }
+              .trace:hover .trace-junction {
+                filter: invert(1);
+              }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_0"><rect class="component chip" x="355.43478260872496" y="234.78260869565997" width="489.1304347825501" height="130.43478260868005" stroke-width="6.521739130434001px" fill="rgb(255, 255, 194)" stroke="rgb(132, 0, 0)"/><rect class="component-overlay" x="355.43478260872496" y="234.78260869565997" width="489.1304347825501" height="130.43478260868005" fill="transparent"/><text x="355.43478260872496" y="407.60869565216103" fill="#006464" text-anchor="start" dominant-baseline="middle" font-family="sans-serif" font-size="58.695652173906px" transform="rotate(0, 355.43478260872496, 407.60869565216103)"></text><text x="355.43478260872496" y="192.39130434783897" fill="#006464" text-anchor="start" dominant-baseline="middle" font-family="sans-serif" font-size="58.695652173906px" transform="rotate(0, 355.43478260872496, 192.39130434783897)">U1</text><line class="component-pin" x1="231.52173913047903" y1="300" x2="355.434782608725" y2="300" stroke-width="6.521739130434001px"/><circle class="component-pin" cx="225.00000000004502" cy="300" r="6.521739130434001" stroke-width="6.521739130434001px"/><text class="pin-number" x="290.217391304385" y="293.478260869566" style="font-family: sans-serif;" fill="rgb(169, 0, 0)" text-anchor="middle" dominant-baseline="auto" font-size="48.913043478255px" transform="">1</text><text class="pin-number" x="388.04347826089503" y="300" style="font-family: sans-serif; text-decoration: overline;" fill="rgb(169, 0, 0)" text-anchor="start" dominant-baseline="middle" font-size="48.913043478255px" transform="">CS</text><line class="component-pin" x1="968.4782608695209" y1="300" x2="844.5652173912749" y2="300" stroke-width="6.521739130434001px"/><circle class="component-pin" cx="974.999999999955" cy="300" r="6.521739130434001" stroke-width="6.521739130434001px"/><text class="pin-number" x="909.782608695615" y="293.478260869566" style="font-family: sans-serif;" fill="rgb(169, 0, 0)" text-anchor="middle" dominant-baseline="auto" font-size="48.913043478255px" transform="">8</text><text class="pin-number" x="811.956521739105" y="300" style="font-family: sans-serif;" fill="rgb(169, 0, 0)" text-anchor="end" dominant-baseline="middle" font-size="48.913043478255px" transform="">VCC</text></g></svg>

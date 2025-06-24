@@ -46,6 +46,9 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   if (!label) return []
 
+  const isNegated = label.startsWith("N_")
+  const displayLabel = isNegated ? label.slice(2) : label
+
   svgObjects.push({
     name: "text",
     type: "element",
@@ -53,7 +56,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: "pin-number",
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: "font-family: sans-serif;",
+      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
       fill: colorMap.schematic.pin_number,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -71,7 +74,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     children: [
       {
         type: "text",
-        value: label || "",
+        value: displayLabel || "",
         name: "",
         attributes: {},
         children: [],

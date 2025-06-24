@@ -37,6 +37,8 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   colorMap: ColorMap
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
+  const isNegated = schNetLabel.text.startsWith("N_")
+  const labelText = isNegated ? schNetLabel.text.slice(2) : schNetLabel.text
   const svgObjects: SvgObject[] = []
 
   // If symbol name is provided, draw the symbol
@@ -66,12 +68,12 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
 
   // Use the same positioning logic as the net label text
   const fontSizeMm = getSchMmFontSize("net_label")
-  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
+  const textWidthFSR = estimateTextWidth(labelText || "")
 
   const fullWidthFsr =
     textWidthFSR +
     ARROW_POINT_WIDTH_FSR * 2 +
-    END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+    END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
     END_PADDING_FSR
 
   const realTextGrowthVec = getUnitVectorFromOutsideToEdge(
@@ -208,7 +210,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
 
     let textValue = text.text
     if (textValue === "{REF}") {
-      textValue = schNetLabel.text || ""
+      textValue = labelText || ""
     } else if (textValue === "{VAL}") {
       textValue = "" // You can modify this if needed
     }
@@ -237,6 +239,9 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
         "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
+        ...(isNegated && textValue === labelText
+          ? { style: "text-decoration: overline;" }
+          : {}),
       },
       children: [
         {
