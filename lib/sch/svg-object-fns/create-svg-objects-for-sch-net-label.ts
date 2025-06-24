@@ -34,6 +34,9 @@ export const createSvgObjectsForSchNetLabel = ({
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
 
+  const isNegated = schNetLabel.text.startsWith("N_")
+  const labelText = isNegated ? schNetLabel.text.slice(2) : schNetLabel.text
+
   // If symbol_name is provided, use the symbol renderer
   if (schNetLabel.symbol_name) {
     return createSvgObjectsForSchNetLabelWithSymbol({
@@ -47,7 +50,7 @@ export const createSvgObjectsForSchNetLabel = ({
 
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
-  const textWidthFSR = estimateTextWidth(schNetLabel.text || "")
+  const textWidthFSR = estimateTextWidth(labelText || "")
 
   // Transform the center position to screen coordinates
   const screenCenter = applyToPoint(realToScreenTransform, schNetLabel.center)
@@ -62,7 +65,7 @@ export const createSvgObjectsForSchNetLabel = ({
   const fullWidthFsr =
     textWidthFSR +
     ARROW_POINT_WIDTH_FSR * 2 +
-    END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+    END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
     END_PADDING_FSR
   const screenAnchorPosition = schNetLabel.anchor_position
     ? applyToPoint(realToScreenTransform, schNetLabel.anchor_position)
@@ -108,7 +111,7 @@ export const createSvgObjectsForSchNetLabel = ({
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
         textWidthFSR,
       y: 0.6,
     },
@@ -117,7 +120,7 @@ export const createSvgObjectsForSchNetLabel = ({
       x:
         ARROW_POINT_WIDTH_FSR * 2 +
         END_PADDING_FSR +
-        END_PADDING_EXTRA_PER_CHARACTER_FSR * schNetLabel.text.length +
+        END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
         textWidthFSR,
       y: -0.6,
     },
@@ -197,11 +200,12 @@ export const createSvgObjectsForSchNetLabel = ({
       "font-variant-numeric": "tabular-nums",
       "font-size": `${fontSizePx}px`,
       transform: textTransformString,
+      ...(isNegated ? { style: "text-decoration: overline;" } : {}),
     },
     children: [
       {
         type: "text",
-        value: schNetLabel.text || "",
+        value: labelText || "",
         name: "",
         attributes: {},
         children: [],
