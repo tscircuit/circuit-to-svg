@@ -70,7 +70,7 @@ export interface PcbSilkscreenText {
   font: "tscircuit2024"
   font_size: Length
   pcb_component_id: string
-  text: string
+  text: string // supports "\n" for multi-line text
   layer: LayerRef
   is_mirrored?: boolean
   anchor_position: Point
