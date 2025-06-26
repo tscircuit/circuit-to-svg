@@ -264,25 +264,36 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   }
 
   // Draw Ports for debugging
-  for (const port of symbol.ports) {
-    if (connectedSymbolPorts.has(port)) continue
+  for (const match of schPortsWithSymbolPorts) {
+    if (connectedSymbolPorts.has(match.symbolPort)) continue
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
-      port,
+      match.symbolPort,
     )
     svgObjects.push({
       type: "element",
-      name: "circle",
+      name: "g",
       attributes: {
-        cx: screenPortPos.x.toString(),
-        cy: screenPortPos.y.toString(),
-        r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
-        "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
-        fill: "none",
-        stroke: colorMap.schematic.component_outline,
+        class: "schematic-port",
+        "data-schematic-port-id": match.schPort.schematic_port_id,
       },
       value: "",
-      children: [],
+      children: [
+        {
+          type: "element",
+          name: "circle",
+          attributes: {
+            cx: screenPortPos.x.toString(),
+            cy: screenPortPos.y.toString(),
+            r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
+            "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+            fill: "none",
+            stroke: colorMap.schematic.component_outline,
+          },
+          value: "",
+          children: [],
+        },
+      ],
     })
   }
 
