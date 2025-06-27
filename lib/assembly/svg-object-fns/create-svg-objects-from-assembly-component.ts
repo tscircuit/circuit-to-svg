@@ -2,11 +2,7 @@ import type { AnyCircuitElement, LayerRef, Point } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-
-// Context interface for assembly SVG rendering
-export interface AssemblySvgContext {
-  transform: Matrix
-}
+import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
   elm: AnyCircuitElement
