@@ -10,13 +10,26 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
+import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
+import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
+import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 
-const OBJECT_ORDER: AnyCircuitElement["type"][] = ["pcb_board", "pcb_component"]
+const OBJECT_ORDER: AnyCircuitElement["type"][] = [
+  "pcb_component",
+  "pcb_smtpad",
+  "pcb_hole",
+  "pcb_plated_hole",
+  "pcb_board",
+]
 
 interface Options {
   width?: number
   height?: number
+}
+
+export interface AssemblySvgContext {
+  transform: Matrix
 }
 
 export function convertCircuitJsonToAssemblySvg(
@@ -63,13 +76,15 @@ export function convertCircuitJsonToAssemblySvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
+  const ctx: AssemblySvgContext = { transform }
+
   const svgObjects = soup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, transform, soup))
+    .flatMap((item) => createSvgObjects(item, ctx, soup))
 
   const softwareUsedString = getSoftwareUsedString(soup)
 
@@ -94,7 +109,7 @@ export function convertCircuitJsonToAssemblySvg(
             type: "text",
             value: `
               .assembly-component { 
-                fill: #fff; 
+                fill: none; 
                 stroke: #000; 
               }
               .assembly-board { 
@@ -146,14 +161,14 @@ export function convertCircuitJsonToAssemblySvg(
 
 function createSvgObjects(
   elm: AnyCircuitElement,
-  transform: Matrix,
+  ctx: AssemblySvgContext,
   soup: AnyCircuitElement[],
 ): SvgObject[] {
   const sourceComponents = su(soup).source_component.list()
 
   switch (elm.type) {
     case "pcb_board":
-      return createSvgObjectsFromAssemblyBoard(elm, transform)
+      return createSvgObjectsFromAssemblyBoard(elm, ctx.transform)
 
     case "pcb_component": {
       const sourceComponent = sourceComponents.find(
@@ -174,13 +189,19 @@ function createSvgObjects(
             name: sourceComponent.name,
             arePinsInterchangeable,
           },
-          { transform },
+          ctx,
         )
         return obj ? [obj] : []
       }
 
       return []
     }
+    case "pcb_smtpad":
+      return createSvgObjectsFromAssemblySmtPad(elm, ctx)
+    case "pcb_hole":
+      return createSvgObjectsFromAssemblyHole(elm, ctx)
+    case "pcb_plated_hole":
+      return createSvgObjectsFromAssemblyPlatedHole(elm, ctx)
 
     default:
       return []

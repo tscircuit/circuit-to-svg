@@ -17,7 +17,7 @@ test("chip and resistor in assembly", () => {
           footprint="0402"
           name={`R${col}`}
           resistance={1000 + col * 100}
-          pcbX={-40 + col * 20}
+          pcbX={-30 + col * 20}
           pcbY={-40}
         />
       ))}
@@ -39,30 +39,11 @@ test("chip and resistor in assembly", () => {
           footprint="0805"
           name={`CC${col}`}
           capacitance={`${1 + col}uF`}
-          pcbX={-50 + col * 20}
+          pcbX={-40 + col * 20}
           pcbY={-50 + 10}
         />
       ))}
 
-      {Array.from({ length: 2 }).map((_, i) => (
-        <chip
-          key={`chip-${i}`}
-          name={`U${i}`}
-          pinLabels={{
-            pin1: "D0",
-            pin2: "D1",
-            pin3: "D2",
-            pin4: "GND",
-            pin5: "D3",
-            pin6: "EN",
-            pin7: "D4",
-            pin8: "VCC",
-          }}
-          footprint="soic16"
-          pcbX={-45 + i * 10}
-          pcbY={20}
-        />
-      ))}
       {Array.from({ length: 2 }).map((_, i) => (
         <chip
           key={`chip-${i}`}
