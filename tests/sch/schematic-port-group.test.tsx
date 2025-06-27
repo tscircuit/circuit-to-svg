@@ -26,4 +26,7 @@ test("schematic port group", async () => {
 
   expect(svg).toContain('class="schematic-port"')
   expect(svg).toContain("data-schematic-port-id")
+  expect(svg).toMatch(
+    /<g[^>]*class="schematic-port"[^>]*>\s*<rect[^>]*opacity="0"/,
+  )
 })

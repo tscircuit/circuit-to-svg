@@ -265,11 +265,47 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   // Draw Ports for debugging
   for (const match of schPortsWithSymbolPorts) {
-    if (connectedSymbolPorts.has(match.symbolPort)) continue
+    const isConnected = connectedSymbolPorts.has(match.symbolPort)
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       match.symbolPort,
     )
+    const radius = Math.abs(realToScreenTransform.a) * 0.02
+
+    const children: SvgObject[] = [
+      {
+        type: "element",
+        name: "rect",
+        attributes: {
+          x: (screenPortPos.x - radius).toString(),
+          y: (screenPortPos.y - radius).toString(),
+          width: (radius * 2).toString(),
+          height: (radius * 2).toString(),
+          fill: "transparent",
+          opacity: "0",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    if (!isConnected) {
+      children.push({
+        type: "element",
+        name: "circle",
+        attributes: {
+          cx: screenPortPos.x.toString(),
+          cy: screenPortPos.y.toString(),
+          r: `${radius}px`,
+          "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+          fill: "none",
+          stroke: colorMap.schematic.component_outline,
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     svgObjects.push({
       type: "element",
       name: "g",
@@ -278,22 +314,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         "data-schematic-port-id": match.schPort.schematic_port_id,
       },
       value: "",
-      children: [
-        {
-          type: "element",
-          name: "circle",
-          attributes: {
-            cx: screenPortPos.x.toString(),
-            cy: screenPortPos.y.toString(),
-            r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
-            "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
-            fill: "none",
-            stroke: colorMap.schematic.component_outline,
-          },
-          value: "",
-          children: [],
-        },
-      ],
+      children,
     })
   }
 
