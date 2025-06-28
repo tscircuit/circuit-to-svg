@@ -12,6 +12,7 @@ import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circui
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { roundSvgNumbers } from "../utils/round-svg-numbers"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -139,6 +140,7 @@ export function convertCircuitJsonToSolderPasteMask(
   }
 
   try {
+    roundSvgNumbers(svgObject)
     return stringify(svgObject)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)

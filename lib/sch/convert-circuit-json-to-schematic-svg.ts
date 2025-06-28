@@ -23,6 +23,7 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
+import { roundSvgNumbers } from "lib/utils/round-svg-numbers"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -265,6 +266,7 @@ export function convertCircuitJsonToSchematicSvg(
     value: "",
   }
 
+  roundSvgNumbers(svgObject)
   return stringify(svgObject)
 }
 
