@@ -10,6 +10,7 @@ export function createSvgObjectsFromSchematicComponent(params: {
   transform: Matrix
   circuitJson: AnyCircuitElement[]
   colorMap: ColorMap
+  drawSymbolDebugBoxes?: boolean
 }): SvgObject[] {
   const { component } = params
 

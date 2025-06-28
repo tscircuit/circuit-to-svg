@@ -27,10 +27,12 @@ export const createSvgObjectsForSchNetLabel = ({
   schNetLabel,
   realToScreenTransform,
   colorMap,
+  drawSymbolDebugBoxes,
 }: {
   schNetLabel: SchematicNetLabel
   realToScreenTransform: Matrix
   colorMap: ColorMap
+  drawSymbolDebugBoxes?: boolean
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
 
@@ -43,6 +45,7 @@ export const createSvgObjectsForSchNetLabel = ({
       schNetLabel,
       realToScreenTransform,
       colorMap,
+      drawSymbolDebugBoxes,
     })
   }
 
