@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
@@ -27,9 +27,21 @@ test("schematic inverted pin label", async () => {
 
   await circuit.renderUntilSettled()
 
-  const svg = convertCircuitJsonToSchematicSvg(
-    circuit.getCircuitJson() as AnyCircuitElement[],
-  )
+  const netLabels: SchematicNetLabel[] = [
+    {
+      type: "schematic_net_label",
+      source_net_id: "net_cs",
+      center: { x: 2, y: -1 },
+      anchor_position: { x: 2, y: -1 },
+      anchor_side: "top",
+      text: "N_CS",
+      schematic_net_label_id: "nl1",
+    },
+  ]
+
+  const circuitJson = circuit.getCircuitJson() as AnyCircuitElement[]
+
+  const svg = convertCircuitJsonToSchematicSvg([...circuitJson, ...netLabels])
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

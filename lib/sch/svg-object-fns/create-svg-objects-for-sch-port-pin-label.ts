@@ -67,7 +67,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: "pin-number",
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
+      "font-family": "sans-serif",
       fill: colorMap.schematic.pin_number,
       "text-anchor":
         schPort.side_of_component === "left" ||
