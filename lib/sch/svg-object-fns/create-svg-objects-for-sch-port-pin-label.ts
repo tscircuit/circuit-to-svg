@@ -49,6 +49,11 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
 
+  let fontSizePx = getSchScreenFontSize(
+    transform,
+    isNegated ? "negated_pin_number" : "pin_number",
+  )
+
   svgObjects.push({
     name: "text",
     type: "element",
@@ -64,7 +69,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? "start"
           : "end",
       "dominant-baseline": "middle",
-      "font-size": `${getSchScreenFontSize(transform, "pin_number")}px`,
+      "font-size": `${fontSizePx}px`,
       transform:
         schPort.side_of_component === "top" ||
         schPort.side_of_component === "bottom"

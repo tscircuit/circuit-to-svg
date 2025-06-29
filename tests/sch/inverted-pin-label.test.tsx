@@ -9,16 +9,20 @@ test("schematic inverted pin label", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="10mm">
+    <board width="10mm" height="10mm" routingDisabled>
       <chip
         name="U1"
         footprint="soic8"
         pinLabels={{
-          pin1: "N_CS",
+          pin1: "GND",
+          pin2: "N_CS",
           pin8: "VCC",
         }}
+        connections={{
+          pin2: "net.N_CS",
+        }}
         schPortArrangement={{
-          leftSide: { pins: [1], direction: "top-to-bottom" },
+          leftSide: { pins: [1, 2], direction: "top-to-bottom" },
           rightSide: { pins: [8], direction: "top-to-bottom" },
         }}
       />
