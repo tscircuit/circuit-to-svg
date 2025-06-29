@@ -34,8 +34,7 @@ export const createSvgObjectsForSchNetLabel = ({
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
 
-  const isNegated = schNetLabel.text.startsWith("N_")
-  const labelText = isNegated ? schNetLabel.text.slice(2) : schNetLabel.text
+  const labelText = schNetLabel.text
 
   // If symbol_name is provided, use the symbol renderer
   if (schNetLabel.symbol_name) {
@@ -200,7 +199,6 @@ export const createSvgObjectsForSchNetLabel = ({
       "font-variant-numeric": "tabular-nums",
       "font-size": `${fontSizePx}px`,
       transform: textTransformString,
-      ...(isNegated ? { style: "text-decoration: overline;" } : {}),
     },
     children: [
       {
