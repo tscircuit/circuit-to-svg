@@ -14,6 +14,7 @@ import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-ob
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { roundSvgNumbers } from "../utils/round-svg-numbers"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -156,6 +157,7 @@ export function convertCircuitJsonToAssemblySvg(
     ].filter((child): child is SvgObject => child !== null),
   }
 
+  roundSvgNumbers(svgObject)
   return stringify(svgObject)
 }
 

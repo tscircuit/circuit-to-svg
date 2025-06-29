@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(129.707761208,0,0,-129.707761208,411.1161900507,300)" data-software-used-string="@tscircuit/core@0.0.477"><style>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(129.7,0,0,-129.7,411.1,300)" data-software-used-string="@tscircuit/core@00.5"><style>
               .boundary { fill: rgb(245, 241, 237); }
               .schematic-boundary { fill: none; stroke: #fff; }
               .component { fill: none; stroke: rgb(132, 0, 0); }
@@ -17,25 +17,25 @@
               .pin-number { fill: rgb(169, 0, 0); }
               .port-label { fill: rgb(0, 100, 100); }
               .component-name { fill: rgb(0, 100, 100); }
-            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_0"><rect class="component-overlay" x="212.7475216810364" y="282.75909521630706" width="137.27404295487457" height="34.31852046680069" fill="transparent"/><path d="M 212.7475216810364 299.9183554497074 L 247.06602917706098 299.9183554497074" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><path d="M 315.70304416911034 299.9183554497074 L 350.021564635911 299.9183554497074" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><path d="M 281.3845237023095 282.75909521630706 L 315.7030311983341 282.75909521630706 L 315.7030311983341 317.07761568310775 L 247.06600323550862 317.07761568310775 L 247.06600323550862 282.75909521630706 L 281.38452370230925 282.75909521630706" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><text x="279.13854302156005" y="276.1701658922367" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="23.34739701744px">R1</text><text x="279.13854302156005" y="326.56198541907276" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="23.34739701744px">10Ω</text><circle cx="352.91511131449124" cy="300.03544264575" r="2.59415522416px" stroke-width="2.59415522416px" fill="none" stroke="rgb(132, 0, 0)"/></g><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_1"><rect class="component-overlay" x="601.0867608008623" y="265.59984795368314" width="137.27404295487463" height="68.63701499204927" fill="transparent"/><path d="M 738.3608037557369 299.9183554497075 L 680.0193423095726 299.9183554497075" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><path d="M 659.4282352178027 299.9183554497075 L 601.0867608008623 299.9183554497075" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><path d="M 680.0193423095726 265.59984795368314 L 680.0193423095726 334.2368629457324" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><path d="M 659.4282352178027 265.59984795368314 L 659.4282352178027 334.2368629457324" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.59415522416px" stroke-linecap="round"/><text x="668.8630869726397" y="247.734636152559" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="23.34739701744px">C1</text><text x="670.0322727321685" y="356.5855661915483" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="23.34739701744px">100mF</text></g><path class="net-label" d="
-    M 599.0355882066712,300.0354556165262
-    L 592.0313691014392,314.0438938269902
-    L 531.4491974332226,314.04389382699014
-    L 531.4491974332226,286.02701740606216
-    L 592.0313691014392,286.02701740606216
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_0"><rect class="component-overlay" x="212.7" y="282.8" width="137.3" height="34.3" fill="transparent"/><path d="M 212.7 299.9 L 247.1 299.9" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><path d="M 315.7 299.9 L 350 299.9" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><path d="M 281.4 282.8 L 315.7 282.8 L 315.7 317.1 L 247.1 317.1 L 247.1 282.8 L 281.4 282.8" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><text x="279.1" y="276.2" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="23.3px">R1</text><text x="279.1" y="326.6" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="23.3px">10Ω</text><circle cx="352.9" cy="300" r="2.6px" stroke-width="2.6px" fill="none" stroke="rgb(132, 0, 0)"/></g><g data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_1"><rect class="component-overlay" x="601.1" y="265.6" width="137.3" height="68.6" fill="transparent"/><path d="M 738.4 299.9 L 680 299.9" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><path d="M 659.4 299.9 L 601.1 299.9" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><path d="M 680 265.6 L 680 334.2" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><path d="M 659.4 265.6 L 659.4 334.2" stroke="rgb(132, 0, 0)" fill="none" stroke-width="2.6px" stroke-linecap="round"/><text x="668.9" y="247.7" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="23.3px">C1</text><text x="670" y="356.6" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="23.3px">100mF</text></g><path class="net-label" d="
+    M 599,300
+    L 592,314
+    L 531.4,314
+    L 531.4,286
+    L 592,286
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.59415522416px"/><text class="net-label-text" x="587.3618896979511" y="300.0354556165262" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.34739701744px" transform="">DTR</text><path class="net-label" d="
-    M 742.0278367267288,299.9645443834738
-    L 749.0320558319607,285.9561061730098
-    L 1135.146119395935,285.9561061730098
-    L 1135.146119395935,313.97298259393784
-    L 749.0320558319607,313.97298259393784
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.6px"/><text class="net-label-text" x="587.4" y="300" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.3px" transform="">DTR</text><path class="net-label" d="
+    M 742,300
+    L 749,286
+    L 1135.1,286
+    L 1135.1,314
+    L 749,314
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.59415522416px"/><text class="net-label-text" x="753.7015352354488" y="299.9645443834738" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.34739701744px" transform="">label1label2label1label2label1label2</text><path class="net-label" d="
-    M 209.90174637090885,299.96455735425
-    L 202.89752726567684,313.97299556471404
-    L 64.85388060404273,313.972995564714
-    L 64.85388060404273,285.956119143786
-    L 202.89752726567684,285.956119143786
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.6px"/><text class="net-label-text" x="753.7" y="300" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.3px" transform="">label1label2label1label2label1label2</text><path class="net-label" d="
+    M 209.9,300
+    L 202.9,314
+    L 64.9,314
+    L 64.9,286
+    L 202.9,286
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.59415522416px"/><text class="net-label-text" x="198.22804786218884" y="299.96455735425" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.34739701744px" transform="">label1label2</text></svg>
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.6px"/><text class="net-label-text" x="198.2" y="300" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="23.3px" transform="">label1label2</text></svg>
