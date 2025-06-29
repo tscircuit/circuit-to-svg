@@ -51,6 +51,7 @@ export const createSvgObjectsForSchNetLabel = ({
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
   const textWidthFSR = estimateTextWidth(labelText || "")
+  const textWidthPx = textWidthFSR * fontSizePx
 
   // Transform the center position to screen coordinates
   const screenCenter = applyToPoint(realToScreenTransform, schNetLabel.center)
@@ -200,7 +201,6 @@ export const createSvgObjectsForSchNetLabel = ({
       "font-variant-numeric": "tabular-nums",
       "font-size": `${fontSizePx}px`,
       transform: textTransformString,
-      ...(isNegated ? { style: "text-decoration: overline;" } : {}),
     },
     children: [
       {
@@ -213,6 +213,44 @@ export const createSvgObjectsForSchNetLabel = ({
     ],
     value: "",
   })
+
+  if (isNegated) {
+    const localStartX = textAnchor === "end" ? -textWidthPx : 0
+    const localEndX = textAnchor === "end" ? 0 : textWidthPx
+
+    const rotationAngle =
+      { left: 0, top: 90, bottom: -90, right: 180 }[schNetLabel.anchor_side] ??
+      0
+
+    const transformMatrix = compose(
+      translate(screenTextPos.x, screenTextPos.y),
+      rotate((rotationAngle / 180) * Math.PI),
+    )
+
+    const [x1, y1] = applyToPoint(transformMatrix, [
+      localStartX,
+      -fontSizePx * 0.6,
+    ])
+    const [x2, y2] = applyToPoint(transformMatrix, [
+      localEndX,
+      -fontSizePx * 0.6,
+    ])
+
+    svgObjects.push({
+      name: "line",
+      type: "element",
+      attributes: {
+        x1: x1.toString(),
+        y1: y1.toString(),
+        x2: x2.toString(),
+        y2: y2.toString(),
+        stroke: colorMap.schematic.label_global,
+        "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+      },
+      value: "",
+      children: [],
+    })
+  }
 
   return svgObjects
 }
