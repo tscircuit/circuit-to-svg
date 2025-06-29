@@ -7,7 +7,15 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { estimateTextWidth } from "../estimate-text-width"
+import {
+  applyToPoint,
+  rotate,
+  translate,
+  compose,
+  type Matrix,
+} from "transformation-matrix"
 
 const LABEL_DIST_FROM_EDGE_MM = 0.1
 
@@ -49,6 +57,9 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
 
+  const fontSizePx = getSchScreenFontSize(transform, "pin_number")
+  const textWidthPx = estimateTextWidth(displayLabel || "") * fontSizePx
+
   svgObjects.push({
     name: "text",
     type: "element",
@@ -64,7 +75,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? "start"
           : "end",
       "dominant-baseline": "middle",
-      "font-size": `${getSchScreenFontSize(transform, "pin_number")}px`,
+      "font-size": `${fontSizePx}px`,
       transform:
         schPort.side_of_component === "top" ||
         schPort.side_of_component === "bottom"
@@ -82,6 +93,52 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     ],
     value: "",
   })
+
+  if (isNegated) {
+    const textAnchor =
+      schPort.side_of_component === "left" ||
+      schPort.side_of_component === "bottom"
+        ? "start"
+        : "end"
+
+    const rotation =
+      schPort.side_of_component === "top" ||
+      schPort.side_of_component === "bottom"
+        ? -90
+        : 0
+
+    const localStartX = textAnchor === "end" ? -textWidthPx : 0
+    const localEndX = textAnchor === "end" ? 0 : textWidthPx
+
+    const transformMatrix = compose(
+      translate(screenPinNumberTextPos.x, screenPinNumberTextPos.y),
+      rotate((rotation / 180) * Math.PI),
+    )
+
+    const [x1, y1] = applyToPoint(transformMatrix, [
+      localStartX,
+      -fontSizePx * 0.6,
+    ])
+    const [x2, y2] = applyToPoint(transformMatrix, [
+      localEndX,
+      -fontSizePx * 0.6,
+    ])
+
+    svgObjects.push({
+      name: "line",
+      type: "element",
+      attributes: {
+        x1: x1.toString(),
+        y1: y1.toString(),
+        x2: x2.toString(),
+        y2: y2.toString(),
+        stroke: colorMap.schematic.pin_number,
+        "stroke-width": `${getSchStrokeSize(transform)}px`,
+      },
+      value: "",
+      children: [],
+    })
+  }
 
   return svgObjects
 }

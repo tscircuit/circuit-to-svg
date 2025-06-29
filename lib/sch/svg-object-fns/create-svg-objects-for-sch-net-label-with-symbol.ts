@@ -69,6 +69,11 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   // Use the same positioning logic as the net label text
   const fontSizeMm = getSchMmFontSize("net_label")
   const textWidthFSR = estimateTextWidth(labelText || "")
+  const fontSizePx = getSchScreenFontSize(
+    realToScreenTransform,
+    "reference_designator",
+  )
+  const textWidthPx = textWidthFSR * fontSizePx
 
   const fullWidthFsr =
     textWidthFSR +
@@ -238,10 +243,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
-        "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
-        ...(isNegated && textValue === labelText
-          ? { style: "text-decoration: overline;" }
-          : {}),
+        "font-size": `${fontSizePx}px`,
       },
       children: [
         {
@@ -254,6 +256,51 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       ],
       value: "",
     })
+
+    if (isNegated && textValue === labelText) {
+      const anchor = ninePointAnchorToTextAnchor[text.anchor]
+      const localStartX =
+        anchor === "end"
+          ? -textWidthPx
+          : anchor === "middle"
+            ? -textWidthPx / 2
+            : 0
+      const localEndX =
+        anchor === "end"
+          ? 0
+          : anchor === "middle"
+            ? textWidthPx / 2
+            : textWidthPx
+
+      const rotationMatrix = compose(
+        translate(offsetScreenPos.x, offsetScreenPos.y),
+        rotate(0),
+      )
+
+      const [x1, y1] = applyToPoint(rotationMatrix, [
+        localStartX,
+        -fontSizePx * 0.6,
+      ])
+      const [x2, y2] = applyToPoint(rotationMatrix, [
+        localEndX,
+        -fontSizePx * 0.6,
+      ])
+
+      svgObjects.push({
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: x1.toString(),
+          y1: y1.toString(),
+          x2: x2.toString(),
+          y2: y2.toString(),
+          stroke: colorMap.schematic.label_local,
+          "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+        },
+        value: "",
+        children: [],
+      })
+    }
   }
   // Draw symbol boxes
   for (const box of symbolBoxes) {
