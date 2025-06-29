@@ -36,6 +36,7 @@ import {
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { roundSvgNumbers } from "../utils/round-svg-numbers"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -349,6 +350,7 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   try {
+    roundSvgNumbers(svgObject as SvgObject)
     return stringify(svgObject as SvgObject)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
