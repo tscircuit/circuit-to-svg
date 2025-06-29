@@ -49,6 +49,8 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
 
+  const fontSizePx = getSchScreenFontSize(transform, "pin_number")
+
   svgObjects.push({
     name: "text",
     type: "element",
@@ -56,7 +58,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: "pin-number",
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated ? ` text-decoration: underline; text-underline-offset: -${(fontSizePx * 1).toFixed(2)}px;` : ""}`,
       fill: colorMap.schematic.pin_number,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -64,7 +66,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? "start"
           : "end",
       "dominant-baseline": "middle",
-      "font-size": `${getSchScreenFontSize(transform, "pin_number")}px`,
+      "font-size": `${fontSizePx}px`,
       transform:
         schPort.side_of_component === "top" ||
         schPort.side_of_component === "bottom"

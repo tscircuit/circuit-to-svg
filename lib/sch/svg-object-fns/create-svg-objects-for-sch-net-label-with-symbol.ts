@@ -240,7 +240,14 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
         "dominant-baseline": ninePointAnchorToDominantBaseline[text.anchor],
         "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
         ...(isNegated && textValue === labelText
-          ? { style: "text-decoration: overline;" }
+          ? {
+              style: `text-decoration: underline; text-underline-offset: -${(
+                getSchScreenFontSize(
+                  realToScreenTransform,
+                  "reference_designator",
+                ) * 1
+              ).toFixed(2)}px;`,
+            }
           : {}),
       },
       children: [

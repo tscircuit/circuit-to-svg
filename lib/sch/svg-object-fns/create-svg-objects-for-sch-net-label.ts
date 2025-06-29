@@ -200,7 +200,13 @@ export const createSvgObjectsForSchNetLabel = ({
       "font-variant-numeric": "tabular-nums",
       "font-size": `${fontSizePx}px`,
       transform: textTransformString,
-      ...(isNegated ? { style: "text-decoration: overline;" } : {}),
+      ...(isNegated
+        ? {
+            style: `text-decoration: underline; text-underline-offset: -${(
+              fontSizePx * 1
+            ).toFixed(2)}px;`,
+          }
+        : {}),
     },
     children: [
       {
