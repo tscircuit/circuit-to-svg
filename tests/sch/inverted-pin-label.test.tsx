@@ -14,14 +14,15 @@ test("schematic inverted pin label", async () => {
         name="U1"
         footprint="soic8"
         pinLabels={{
-          pin1: "N_CS",
+          pin1: "GND",
+          pin2: "N_CS",
           pin8: "VCC",
         }}
         connections={{
-          pin1: "net.N_CS",
+          pin2: "net.N_CS",
         }}
         schPortArrangement={{
-          leftSide: { pins: [1], direction: "top-to-bottom" },
+          leftSide: { pins: [1, 2], direction: "top-to-bottom" },
           rightSide: { pins: [8], direction: "top-to-bottom" },
         }}
       />
