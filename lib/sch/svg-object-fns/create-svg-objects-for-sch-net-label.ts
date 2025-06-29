@@ -203,7 +203,7 @@ export const createSvgObjectsForSchNetLabel = ({
       ...(isNegated
         ? {
             style: `text-decoration: underline; text-underline-offset: -${(
-              fontSizePx * 1
+              fontSizePx * 1.3
             ).toFixed(2)}px;`,
           }
         : {}),

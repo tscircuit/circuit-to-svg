@@ -245,7 +245,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
                 getSchScreenFontSize(
                   realToScreenTransform,
                   "reference_designator",
-                ) * 1
+                ) * 1.3
               ).toFixed(2)}px;`,
             }
           : {}),
