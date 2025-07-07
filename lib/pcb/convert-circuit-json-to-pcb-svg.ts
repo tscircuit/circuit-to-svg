@@ -36,6 +36,7 @@ import {
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -68,6 +69,7 @@ interface Options {
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
+  includeVersion?: boolean
 }
 
 export interface PcbContext {
@@ -332,6 +334,7 @@ export function convertCircuitJsonToPcbSvg(
   children.push(...svgObjects)
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
+  const version = CIRCUIT_TO_SVG_VERSION
 
   const svgObject: SvgObject = {
     name: "svg",
@@ -342,6 +345,9 @@ export function convertCircuitJsonToPcbSvg(
       height: svgHeight.toString(),
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
+      }),
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
       }),
     },
     value: "",

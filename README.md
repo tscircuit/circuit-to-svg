@@ -72,6 +72,11 @@ writeFileSync('board.svg', pcbSvg)
 
 Converts a schematic circuit description to an SVG string.
 
+#### Options
+
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
+
 ### convertCircuitJsonToPcbSvg
 
 `convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[], options?): string`
@@ -87,6 +92,8 @@ Converts a PCB layout description to an SVG string.
   `"#000"`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
 
 ### convertCircuitJsonToAssemblySvg
 
@@ -97,6 +104,8 @@ Converts circuit JSON into an assembly view of the board and components.
 #### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
 
 ## Contributing
 
