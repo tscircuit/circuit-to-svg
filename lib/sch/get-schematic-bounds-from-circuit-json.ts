@@ -1,4 +1,5 @@
 import type { AnyCircuitElement } from "circuit-json"
+import { getTableDimensions } from "./get-table-dimensions"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 import {
   ARROW_POINT_WIDTH_FSR,
@@ -85,6 +86,37 @@ export function getSchematicBoundsFromCircuitJson(
           y: item.y + item.height / 2,
         },
         { width: item.width, height: item.height },
+        0,
+      )
+    } else if (item.type === "schematic_table") {
+      const { column_widths, row_heights } = getTableDimensions(item, soup)
+      const totalWidth = column_widths.reduce((a, b) => a + b, 0)
+      const totalHeight = row_heights.reduce((a, b) => a + b, 0)
+      const anchor = item.anchor ?? "center"
+
+      let topLeftX = item.anchor_position.x
+      let topLeftY = item.anchor_position.y
+
+      // Horizontal alignment
+      if (anchor.includes("center")) {
+        topLeftX -= totalWidth / 2
+      } else if (anchor.includes("right")) {
+        topLeftX -= totalWidth
+      }
+
+      // Vertical alignment
+      if (anchor.includes("center")) {
+        topLeftY += totalHeight / 2
+      } else if (anchor.includes("bottom")) {
+        topLeftY += totalHeight
+      }
+
+      const centerX = topLeftX + totalWidth / 2
+      const centerY = topLeftY - totalHeight / 2
+
+      updateBounds(
+        { x: centerX, y: centerY },
+        { width: totalWidth, height: totalHeight },
         0,
       )
     }
