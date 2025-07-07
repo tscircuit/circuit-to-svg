@@ -23,6 +23,7 @@ import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-obje
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
+import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -125,6 +126,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
   const schBoxSvgs: SvgObject[] = []
+  const schTableSvgs: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -182,6 +184,15 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
+    } else if (elm.type === "schematic_table") {
+      schTableSvgs.push(
+        ...createSvgObjectsFromSchematicTable({
+          schematicTable: elm,
+          transform,
+          colorMap,
+          circuitJson,
+        }),
+      )
     }
   }
 
@@ -194,6 +205,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schText,
     ...schBoxSvgs,
     ...voltageProbeSvgs,
+    ...schTableSvgs,
   )
 
   // Add labeled points if provided
