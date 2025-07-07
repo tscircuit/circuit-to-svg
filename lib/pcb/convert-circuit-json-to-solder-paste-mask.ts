@@ -23,6 +23,7 @@ interface Options {
   layer: "top" | "bottom"
   width?: number
   height?: number
+  includeVersion?: boolean
 }
 
 export function convertCircuitJsonToSolderPasteMask(
@@ -110,7 +111,9 @@ export function convertCircuitJsonToSolderPasteMask(
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
       }),
-      "data-circuit-to-svg-version": version,
+      ...(options.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
     },
     value: "",
     children: [

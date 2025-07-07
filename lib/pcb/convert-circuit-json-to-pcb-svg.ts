@@ -69,6 +69,7 @@ interface Options {
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
+  includeVersion?: boolean
 }
 
 export interface PcbContext {
@@ -345,7 +346,9 @@ export function convertCircuitJsonToPcbSvg(
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
       }),
-      "data-circuit-to-svg-version": version,
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
     },
     value: "",
     children: children.filter((child): child is SvgObject => child !== null),

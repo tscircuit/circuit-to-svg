@@ -27,6 +27,7 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
 interface Options {
   width?: number
   height?: number
+  includeVersion?: boolean
 }
 
 export interface AssemblySvgContext {
@@ -100,7 +101,9 @@ export function convertCircuitJsonToAssemblySvg(
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
       }),
-      "data-circuit-to-svg-version": version,
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
     },
     value: "",
     children: [

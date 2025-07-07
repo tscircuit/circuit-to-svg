@@ -36,6 +36,7 @@ interface Options {
   height?: number
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
+  includeVersion?: boolean
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -234,7 +235,9 @@ export function convertCircuitJsonToSchematicSvg(
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
       }),
-      "data-circuit-to-svg-version": version,
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
     },
     children: [
       // Add styles
