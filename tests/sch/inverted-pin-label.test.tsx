@@ -5,7 +5,7 @@ import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 // Test that N_ prefix is rendered with overline
 
-test.skip("schematic inverted pin label", async () => {
+test("schematic inverted pin label", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
@@ -36,4 +36,4 @@ test.skip("schematic inverted pin label", async () => {
   )
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-}, 20000)
+})
