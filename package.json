@@ -32,7 +32,7 @@
     "@tscircuit/plop": "^0.0.10",
     "@types/bun": "^1.2.8",
     "biome": "^0.3.3",
-    "bun-match-svg": "^0.0.6",
+    "bun-match-svg": "^0.0.12",
     "circuit-json": "^0.0.218",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
