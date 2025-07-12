@@ -102,6 +102,7 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
         schComponent,
         transform,
         circuitJson,
+        colorMap,
       }),
     )
   }

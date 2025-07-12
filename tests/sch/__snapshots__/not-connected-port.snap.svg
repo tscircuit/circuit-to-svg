@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(428.5714285714,0,0,-428.5714285714,600,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .trace:hover {
+                filter: invert(1);
+              }
+              .trace:hover .trace-crossing-outline {
+                opacity: 0;
+              }
+              .trace:hover .trace-junction {
+                filter: invert(1);
+              }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g data-circuit-json-type="schematic_component" data-schematic-component-id="sc1"><rect class="component-overlay" x="332.8780206530554" y="236.3935272448732" width="493.64666435007837" height="123.41170107035492" fill="transparent"/><path d="M 332.8780206530554 298.0993777800507 L 456.2896750796296 298.0993777800507" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><path d="M 703.1129839327789 298.0993777800507 L 826.5246850031338 298.0993777800507" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><path d="M 579.7012828624233 236.3935272448732 L 703.1129372889975 236.3935272448732 L 703.1129372889975 359.80522831522813 L 456.28958179206757 359.80522831522813 L 456.28958179206757 236.3935272448732 L 579.7012828624225 236.3935272448732" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><text x="571.6245857142877" y="212.6329456267303" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="auto" font-size="77.142857142852px">R1</text><text x="571.6245857142877" y="393.97800782883223" fill="rgb(15, 15, 15)" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging" font-size="77.142857142852px">1kΩ</text><path d="M 300.00000000001995 257.14285714286 L 214.28571428573997 342.85714285714" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><path d="M 300.00000000001995 342.85714285714 L 214.28571428573994 257.14285714286" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><path d="M 342.85714285715994 300 L 257.14285714287996 300" stroke="rgb(132, 0, 0)" fill="none" stroke-width="8.571428571428001px" stroke-linecap="round"/><circle cx="836.9300729065989" cy="298.52043118913207" r="8.571428571428001px" stroke-width="8.571428571428001px" fill="none" stroke="rgb(132, 0, 0)"/></g></svg>

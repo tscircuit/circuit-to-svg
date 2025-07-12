@@ -21,6 +21,7 @@ import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import { createSvgObjectsForNotConnectedSymbol } from "./create-svg-objects-for-not-connected-symbol"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -263,9 +264,20 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     })
   }
 
-  // Draw Ports for debugging
+  // Draw Ports for debugging and not connected symbols
   for (const port of symbol.ports) {
     if (connectedSymbolPorts.has(port)) continue
+    const match = schPortsWithSymbolPorts.find((m) => m.symbolPort === port)
+    if (match && match.schPort.is_connected === false) {
+      svgObjects.push(
+        ...createSvgObjectsForNotConnectedSymbol({
+          schPort: match.schPort,
+          transform: realToScreenTransform,
+          colorMap,
+        }),
+      )
+      continue
+    }
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       port,
