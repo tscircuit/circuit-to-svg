@@ -98,7 +98,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const pinChildren: SvgObject[] = []
 
-  if (!isConnected) {
+  if (!isConnected && schPort.is_connected !== false) {
     pinChildren.push({
       name: "circle",
       type: "element",
