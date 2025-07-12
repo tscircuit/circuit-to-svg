@@ -273,7 +273,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         compose(realToScreenTransform, transformFromSymbolToReal),
         match.symbolPort,
       )
-      const crossHalfPx = Math.abs(realToScreenTransform.a) * 0.025
+      const crossHalfPx = Math.abs(realToScreenTransform.a) * 0.05 * 0.5
       svgObjects.push(
         {
           name: "line",
@@ -283,7 +283,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
             y1: (screenPortPos.y - crossHalfPx).toString(),
             x2: (screenPortPos.x + crossHalfPx).toString(),
             y2: (screenPortPos.y + crossHalfPx).toString(),
-            stroke: colorMap.schematic.no_connect,
+            stroke: colorMap.schematic.pin,
             "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
           },
           value: "",
@@ -297,7 +297,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
             y1: (screenPortPos.y + crossHalfPx).toString(),
             x2: (screenPortPos.x + crossHalfPx).toString(),
             y2: (screenPortPos.y - crossHalfPx).toString(),
-            stroke: colorMap.schematic.no_connect,
+            stroke: colorMap.schematic.pin,
             "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
           },
           value: "",

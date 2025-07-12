@@ -59,21 +59,25 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const screenRealEdgePos = applyToPoint(transform, realEdgePos)
 
   // Subtract the pin circle radius from the pin line length to get the end
+  // When the port is explicitly unconnected, the line should extend to the
+  // center of the X (no circle), so skip shortening in that case
   const realLineEnd = { ...schPort.center }
 
-  switch (schPort.side_of_component) {
-    case "left":
-      realLineEnd.x += PIN_CIRCLE_RADIUS_MM
-      break
-    case "right":
-      realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "top":
-      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "bottom":
-      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
-      break
+  if (schPort.is_connected !== false) {
+    switch (schPort.side_of_component) {
+      case "left":
+        realLineEnd.x += PIN_CIRCLE_RADIUS_MM
+        break
+      case "right":
+        realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "top":
+        realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "bottom":
+        realLineEnd.y += PIN_CIRCLE_RADIUS_MM
+        break
+    }
   }
   const screenLineEnd = applyToPoint(transform, realLineEnd)
 
@@ -115,7 +119,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
   }
 
   if (schPort.is_connected === false) {
-    const crossHalfPx = Math.abs(transform.a) * 0.025
+    const crossHalfPx = Math.abs(transform.a) * 0.05 * 0.5
     pinChildren.push(
       {
         name: "line",
@@ -125,7 +129,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
           y1: (screenSchPortPos.y - crossHalfPx).toString(),
           x2: (screenSchPortPos.x + crossHalfPx).toString(),
           y2: (screenSchPortPos.y + crossHalfPx).toString(),
-          stroke: colorMap.schematic.no_connect,
+          stroke: colorMap.schematic.pin,
           "stroke-width": `${getSchStrokeSize(transform)}px`,
         },
         value: "",
@@ -139,7 +143,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
           y1: (screenSchPortPos.y + crossHalfPx).toString(),
           x2: (screenSchPortPos.x + crossHalfPx).toString(),
           y2: (screenSchPortPos.y - crossHalfPx).toString(),
-          stroke: colorMap.schematic.no_connect,
+          stroke: colorMap.schematic.pin,
           "stroke-width": `${getSchStrokeSize(transform)}px`,
         },
         value: "",
