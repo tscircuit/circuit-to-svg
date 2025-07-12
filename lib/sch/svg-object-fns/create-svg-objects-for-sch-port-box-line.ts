@@ -93,23 +93,49 @@ export const createSvgObjectsForSchPortBoxLine = ({
   })
 
   const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
+  const pinRadiusPx = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM
+
+  const pinChildren: SvgObject[] = []
 
   if (!isConnected) {
-    // Add port circle if the port is not connected
-    svgObjects.push({
+    pinChildren.push({
       name: "circle",
       type: "element",
       attributes: {
         class: "component-pin",
         cx: screenSchPortPos.x.toString(),
         cy: screenSchPortPos.y.toString(),
-        r: (Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM).toString(),
+        r: pinRadiusPx.toString(),
         "stroke-width": `${getSchStrokeSize(transform)}px`,
       },
       value: "",
       children: [],
     })
   }
+
+  pinChildren.push({
+    name: "rect",
+    type: "element",
+    attributes: {
+      x: (screenSchPortPos.x - pinRadiusPx).toString(),
+      y: (screenSchPortPos.y - pinRadiusPx).toString(),
+      width: (pinRadiusPx * 2).toString(),
+      height: (pinRadiusPx * 2).toString(),
+      opacity: "0",
+    },
+    value: "",
+    children: [],
+  })
+
+  svgObjects.push({
+    name: "g",
+    type: "element",
+    value: "",
+    attributes: {
+      "data-schematic-port-id": schPort.source_port_id,
+    },
+    children: pinChildren,
+  })
 
   return svgObjects
 }
