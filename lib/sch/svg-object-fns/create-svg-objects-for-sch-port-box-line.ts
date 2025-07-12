@@ -92,12 +92,15 @@ export const createSvgObjectsForSchPortBoxLine = ({
     children: [],
   })
 
-  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
+  const isConnected =
+    schPort.is_connected === false
+      ? false
+      : isSourcePortConnected(circuitJson, schPort.source_port_id)
   const pinRadiusPx = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM
 
   const pinChildren: SvgObject[] = []
 
-  if (!isConnected) {
+  if (!isConnected && schPort.is_connected !== false) {
     pinChildren.push({
       name: "circle",
       type: "element",
