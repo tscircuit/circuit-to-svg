@@ -17,7 +17,7 @@ test("schematic no-connect cross", () => {
       schematic_port_id: "schematic_port_0",
       source_port_id: "source_port_0",
       schematic_component_id: "schematic_component_0",
-      center: { x: 0.5, y: 0 },
+      center: { x: 0.7, y: 0 },
       side_of_component: "right",
       distance_from_component_edge: 0.5,
       is_connected: false,
