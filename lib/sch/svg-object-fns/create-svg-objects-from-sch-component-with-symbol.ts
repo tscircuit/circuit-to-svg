@@ -263,6 +263,46 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     })
   }
 
+  for (const match of schPortsWithSymbolPorts) {
+    if (match.schPort.is_connected === false) {
+      const screenPortPos = applyToPoint(
+        compose(realToScreenTransform, transformFromSymbolToReal),
+        match.symbolPort,
+      )
+      const crossHalfPx = Math.abs(realToScreenTransform.a) * 0.025
+      svgObjects.push(
+        {
+          name: "line",
+          type: "element",
+          attributes: {
+            x1: (screenPortPos.x - crossHalfPx).toString(),
+            y1: (screenPortPos.y - crossHalfPx).toString(),
+            x2: (screenPortPos.x + crossHalfPx).toString(),
+            y2: (screenPortPos.y + crossHalfPx).toString(),
+            stroke: colorMap.schematic.no_connect,
+            "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+          },
+          value: "",
+          children: [],
+        },
+        {
+          name: "line",
+          type: "element",
+          attributes: {
+            x1: (screenPortPos.x - crossHalfPx).toString(),
+            y1: (screenPortPos.y + crossHalfPx).toString(),
+            x2: (screenPortPos.x + crossHalfPx).toString(),
+            y2: (screenPortPos.y - crossHalfPx).toString(),
+            stroke: colorMap.schematic.no_connect,
+            "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+          },
+          value: "",
+          children: [],
+        },
+      )
+    }
+  }
+
   // Draw Ports for debugging
   for (const port of symbol.ports) {
     if (connectedSymbolPorts.has(port)) continue

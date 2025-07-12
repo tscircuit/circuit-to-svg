@@ -8,6 +8,7 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { su } from "@tscircuit/circuit-json-util"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { colorMap } from "lib/utils/colors"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
 
@@ -111,6 +112,40 @@ export const createSvgObjectsForSchPortBoxLine = ({
       value: "",
       children: [],
     })
+  }
+
+  if (schPort.is_connected === false) {
+    const crossHalfPx = Math.abs(transform.a) * 0.025
+    pinChildren.push(
+      {
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: (screenSchPortPos.x - crossHalfPx).toString(),
+          y1: (screenSchPortPos.y - crossHalfPx).toString(),
+          x2: (screenSchPortPos.x + crossHalfPx).toString(),
+          y2: (screenSchPortPos.y + crossHalfPx).toString(),
+          stroke: colorMap.schematic.no_connect,
+          "stroke-width": `${getSchStrokeSize(transform)}px`,
+        },
+        value: "",
+        children: [],
+      },
+      {
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: (screenSchPortPos.x - crossHalfPx).toString(),
+          y1: (screenSchPortPos.y + crossHalfPx).toString(),
+          x2: (screenSchPortPos.x + crossHalfPx).toString(),
+          y2: (screenSchPortPos.y - crossHalfPx).toString(),
+          stroke: colorMap.schematic.no_connect,
+          "stroke-width": `${getSchStrokeSize(transform)}px`,
+        },
+        value: "",
+        children: [],
+      },
+    )
   }
 
   pinChildren.push({
