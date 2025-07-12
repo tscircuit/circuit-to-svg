@@ -6,7 +6,6 @@ test("schematic no-connect cross", () => {
   const circuitJson: AnyCircuitElement[] = [
     {
       type: "schematic_component",
-      rotation: 0,
       size: { width: 1, height: 1 },
       center: { x: 0, y: 0 },
       source_component_id: "source_component_0",
