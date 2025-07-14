@@ -229,6 +229,7 @@ export const colorMap = {
     sheet_filename: "rgb(114, 86, 0)",
     sheet_label: "rgb(0, 100, 100)",
     sheet_name: "rgb(0, 100, 100)",
+    table: "rgb(102, 102, 102)",
     value: "rgb(0, 100, 100)",
     wire: "rgb(0, 150, 0)",
     wire_crossing: "rgb(30, 180, 30)",
