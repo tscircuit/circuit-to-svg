@@ -242,7 +242,7 @@ export const createSvgObjectsFromSchematicTable = ({
           "font-size": `${fontSize}px`,
           "text-anchor": textAnchorMap[horizontal_align],
           "dominant-baseline": dominantBaselineMap[vertical_align],
-          fill: colorMap.schematic.sheet_label,
+          fill: "#666",
           "font-family": "sans-serif",
         },
         children: [
