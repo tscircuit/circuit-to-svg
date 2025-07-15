@@ -25,6 +25,7 @@ import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-ob
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
+import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -129,6 +130,7 @@ export function convertCircuitJsonToSchematicSvg(
   const voltageProbeSvgs: SvgObject[] = []
   const schBoxSvgs: SvgObject[] = []
   const schTableSvgs: SvgObject[] = []
+  const schPortHoverSvgs: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -144,6 +146,13 @@ export function convertCircuitJsonToSchematicSvg(
           transform,
           circuitJson,
           colorMap,
+        }),
+      )
+      schPortHoverSvgs.push(
+        ...createSvgObjectsForSchComponentPortHovers({
+          component: elm,
+          transform,
+          circuitJson,
         }),
       )
     } else if (elm.type === "schematic_box") {
@@ -203,6 +212,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schDebugObjectSvgs,
     ...schComponentSvgs,
     ...schTraceSvgs,
+    ...schPortHoverSvgs,
     ...schNetLabel,
     ...schText,
     ...schBoxSvgs,
