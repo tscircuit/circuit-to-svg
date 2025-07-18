@@ -40,7 +40,7 @@
       },
       "peerDependencies": {
         "@tscircuit/circuit-json-util": "*",
-        "@tscircuit/footprinter": "^0.0.203",
+        "@tscircuit/footprinter": "*",
         "circuit-json": "*",
         "schematic-symbols": "*",
       },
