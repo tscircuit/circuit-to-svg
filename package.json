@@ -44,7 +44,7 @@
     "vite-tsconfig-paths": "^5.0.1",
     "@tscircuit/checks": "^0.0.44",
     "@tscircuit/circuit-json-util": "^0.0.47",
-    "@tscircuit/footprinter": "^0.0.91"
+    "@tscircuit/footprinter": "^0.0.203"
   },
   "peerDependencies": {
     "circuit-json": "*",
