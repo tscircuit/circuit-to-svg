@@ -23,7 +23,7 @@
         "@tscircuit/checks": "^0.0.44",
         "@tscircuit/circuit-json-util": "^0.0.47",
         "@tscircuit/core": "0.0.477",
-        "@tscircuit/footprinter": "^0.0.91",
+        "@tscircuit/footprinter": "^0.0.203",
         "@tscircuit/plop": "^0.0.10",
         "@types/bun": "^1.2.8",
         "biome": "^0.3.3",
