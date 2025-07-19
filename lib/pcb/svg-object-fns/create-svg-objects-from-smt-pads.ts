@@ -108,7 +108,7 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad",
           fill: layerNameToColor(pad.layer),
-          points: points,
+          points: points.map((p) => p.join(",")).join(" "),
           "data-layer": pad.layer,
         },
       },
