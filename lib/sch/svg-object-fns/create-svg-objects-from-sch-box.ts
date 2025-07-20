@@ -34,7 +34,6 @@ export const createSvgObjectsFromSchematicBox = ({
     width: (xRight - xLeft).toString(),
     height: (yBottom - yTop).toString(),
     "stroke-width": `${getSchStrokeSize(transform)}px`,
-    "vector-effect": "non-scaling-stroke",
     stroke: colorMap.schematic.component_outline || "black",
     fill: "transparent",
   }
