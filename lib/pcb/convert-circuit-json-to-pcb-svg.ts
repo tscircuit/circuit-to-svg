@@ -160,6 +160,19 @@ export function convertCircuitJsonToPcbSvg(
       }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
+    } else if (circuitJsonElm.type === "pcb_smtpad") {
+      const pad = circuitJsonElm as any
+      if (
+        pad.shape === "rect" ||
+        pad.shape === "rotated_rect" ||
+        pad.shape === "pill"
+      ) {
+        updateBounds({ x: pad.x, y: pad.y }, pad.width, pad.height)
+      } else if (pad.shape === "circle") {
+        updateBounds({ x: pad.x, y: pad.y }, pad.radius * 2, pad.radius * 2)
+      } else if (pad.shape === "polygon") {
+        updateTraceBounds(pad.points)
+      }
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
     } else if (
