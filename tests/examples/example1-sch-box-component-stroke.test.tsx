@@ -5,7 +5,7 @@ import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 // Test that N_ prefix is rendered with overline
 
-test("schematic inverted pin label", async () => {
+test("schematic box component stroke rendering", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
