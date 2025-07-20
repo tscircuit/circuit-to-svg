@@ -27,19 +27,23 @@ export const createSvgObjectsFromSchematicBox = ({
   const xLeft = Math.min(topLeft.x, bottomRight.x)
   const xRight = Math.max(topLeft.x, bottomRight.x)
 
+  const strokeWidthPx = getSchStrokeSize(transform)
   const attributes: Record<string, string> = {
     class: "schematic-box",
     x: xLeft.toString(),
     y: yTop.toString(),
     width: (xRight - xLeft).toString(),
     height: (yBottom - yTop).toString(),
-    "stroke-width": `${getSchStrokeSize(transform)}px`,
+    "stroke-width": `${strokeWidthPx}px`,
     stroke: colorMap.schematic.component_outline || "black",
     fill: "transparent",
   }
 
   if (schematicBox.is_dashed) {
-    attributes["stroke-dasharray"] = "20 8"
+    // Scale dash length according to zoom level
+    const dashLength = 8 * strokeWidthPx
+    const gapLength = 4 * strokeWidthPx
+    attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
   }
 
   return [
