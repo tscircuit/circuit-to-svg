@@ -1,7 +1,14 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const holes = [
+const circuit = [
+  {
+    type: "pcb_board",
+    pcb_board_id: "board_0",
+    center: { x: 0, y: 0 },
+    width: 8,
+    height: 8,
+  },
   {
     type: "pcb_plated_hole" as const,
     shape: "rotated_pill_hole_with_rect_pad" as const,
@@ -21,5 +28,7 @@ const holes = [
 ]
 
 test("rotated pill hole with rect pad", () => {
-  expect(convertCircuitJsonToPcbSvg(holes)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(circuit)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
 })
