@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuit = [
+const circuit: any = [
   {
     type: "pcb_board",
     pcb_board_id: "board_0",
