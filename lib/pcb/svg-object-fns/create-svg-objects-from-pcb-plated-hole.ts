@@ -219,5 +219,58 @@ export function createSvgObjectsFromPcbPlatedHole(
     ]
   }
 
+  if (hole.shape === "rotated_pill_hole_with_rect_pad") {
+    const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
+    const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+
+    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
+
+    const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-pad",
+              fill: colorMap.copper.top,
+              x: (-scaledRectPadWidth / 2).toString(),
+              y: (-scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+              transform: `translate(${x} ${y}) rotate(${-hole.rect_ccw_rotation})`,
+            },
+            value: "",
+            children: [],
+          },
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-inner",
+              fill: colorMap.drill,
+              x: (-scaledHoleWidth / 2).toString(),
+              y: (-scaledHoleHeight / 2).toString(),
+              width: scaledHoleWidth.toString(),
+              height: scaledHoleHeight.toString(),
+              rx: holeRadius.toString(),
+              ry: holeRadius.toString(),
+              transform: `translate(${x} ${y}) rotate(${-hole.hole_ccw_rotation})`,
+            },
+            value: "",
+            children: [],
+          },
+        ],
+        value: "",
+        attributes: {},
+      },
+    ]
+  }
+
   return []
 }
