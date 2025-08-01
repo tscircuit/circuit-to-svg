@@ -28,7 +28,7 @@ test("schematic box component stroke rendering", async () => {
             pins: ["pin1", "pin2", "pin3", "pin4"],
           },
           topSide: {
-            direction: "left-to-right",
+            direction: "right-to-left",
             pins: ["pin5", "pin6", "pin7", "pin8"],
           },
         }}
