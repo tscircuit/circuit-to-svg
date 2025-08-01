@@ -23,11 +23,11 @@ test("schematic box component stroke rendering", async () => {
         footprint={"soic8"}
         schY={-2}
         schPinArrangement={{
-          topSide: {
+          bottomSide: {
             direction: "left-to-right",
             pins: ["pin1", "pin2", "pin3", "pin4"],
           },
-          bottomSide: {
+          topSide: {
             direction: "left-to-right",
             pins: ["pin5", "pin6", "pin7", "pin8"],
           },
