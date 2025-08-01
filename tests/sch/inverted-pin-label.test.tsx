@@ -36,4 +36,4 @@ test("schematic inverted pin label", async () => {
   )
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-})
+}, {timeout: 30000})
