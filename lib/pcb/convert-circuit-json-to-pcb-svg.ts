@@ -29,6 +29,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
 import {
   DEFAULT_PCB_COLOR_MAP,
   type PcbColorMap,
@@ -52,6 +53,7 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace",
   "pcb_component",
   "pcb_board",
+  "pcb_group",
 ]
 
 interface PointObjectNotation {
@@ -70,6 +72,7 @@ interface Options {
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
+  drawPcbGroups?: boolean
 }
 
 export interface PcbContext {
@@ -78,6 +81,7 @@ export interface PcbContext {
   shouldDrawErrors?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
+  drawPcbGroups?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -245,6 +249,7 @@ export function convertCircuitJsonToPcbSvg(
     shouldDrawErrors: options?.shouldDrawErrors,
     drawPaddingOutsideBoard,
     colorMap,
+    drawPcbGroups: options?.drawPcbGroups,
   }
 
   function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
@@ -493,6 +498,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
+    case "pcb_group":
+      return ctx.drawPcbGroups
+        ? createSvgObjectsFromPcbGroup(elm as any, circuitJson, ctx)
+        : []
     default:
       return []
   }

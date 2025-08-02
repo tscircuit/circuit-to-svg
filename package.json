@@ -46,6 +46,7 @@
   "dependencies": {
     "@types/node": "^22.5.5",
     "bun-types": "^1.1.40",
+    "circuit-json": "^0.0.225",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
   }
