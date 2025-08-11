@@ -13,8 +13,6 @@
     "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
     "format": "biome format . --write",
     "format:check": "biome format .",
-    "storybook": "cosmos",
-    "build-storybook": "cosmos-export",
     "cosmos": "cosmos",
     "cosmos-export": "cosmos-export"
   },
