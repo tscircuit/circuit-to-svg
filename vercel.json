@@ -1,9 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run cosmos-export",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/cosmos-export/index.html"
-    }
-  ]
+  "outputDirectory": "cosmos-export"
 }
