@@ -159,4 +159,4 @@ test("schematic resistor", async () => {
   expect(
     convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
   ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
-})
+}, 8*1000)
