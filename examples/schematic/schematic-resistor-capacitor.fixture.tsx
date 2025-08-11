@@ -783,13 +783,10 @@ const soup: any = [
   },
 ]
 
-export const ResistorCapacitorSch = () => {
+const Component = () => {
   const result = convertCircuitJsonToSchematicSvg(soup)
 
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }
 
-export default {
-  title: "Resistor and Capacitor Schematic",
-  component: ResistorCapacitorSch,
-}
+export default <Component />

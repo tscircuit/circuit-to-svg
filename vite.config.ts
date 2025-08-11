@@ -1,6 +1,18 @@
 import { defineConfig } from "vite"
-import tsconfigPaths from "vite-tsconfig-paths"
+import react from "@vitejs/plugin-react"
+import { resolve, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [react()],
+  resolve: {
+    alias: {
+      lib: resolve(__dirname, "lib"),
+    },
+  },
+  define: {
+    global: {},
+  },
 })

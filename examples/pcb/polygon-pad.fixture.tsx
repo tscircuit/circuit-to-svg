@@ -1,17 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
-export const PolygonPad = () => {
-  const result = convertCircuitJsonToPcbSvg(circuit)
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: example rendering
-  return <div dangerouslySetInnerHTML={{ __html: result }} />
-}
-
-export default {
-  title: "Polygon SMT Pad",
-  component: PolygonPad,
-}
-
 const circuit: AnyCircuitElement[] = [
   {
     type: "pcb_board",
@@ -35,3 +24,11 @@ const circuit: AnyCircuitElement[] = [
     ],
   },
 ]
+
+const Component = () => {
+  const result = convertCircuitJsonToPcbSvg(circuit)
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: example rendering
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
+
+export default <Component />
