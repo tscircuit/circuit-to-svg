@@ -128,35 +128,42 @@ test("schematic net label", () => {
   ).toMatchSvgSnapshot(import.meta.path)
 })
 
-test("schematic resistor", async () => {
-  const { circuit } = getTestFixture()
+test(
+  "schematic resistor",
+  async () => {
+    const { circuit } = getTestFixture()
 
-  circuit.add(
-    <board width="10mm" height="10mm" routingDisabled>
-      <resistor
-        name="R1"
-        resistance="10"
-        footprint="0402"
-        pcbX={-2}
-        schX={-1}
-        symbolName="boxresistor_right"
-      />
-      <capacitor
-        name="C1"
-        capacitance="0.1"
-        footprint="0402"
-        pcbX={2}
-        schX={2}
-      />
-      <trace from="net.DTR" to=".C1 > .pin1" />
-      <trace from="net.label1label2label1label2label1label2" to=".C1 > .pin2" />
-      <trace from="net.label1label2" to=".R1 > .pin1" />
-    </board>,
-  )
+    circuit.add(
+      <board width="10mm" height="10mm" routingDisabled>
+        <resistor
+          name="R1"
+          resistance="10"
+          footprint="0402"
+          pcbX={-2}
+          schX={-1}
+          symbolName="boxresistor_right"
+        />
+        <capacitor
+          name="C1"
+          capacitance="0.1"
+          footprint="0402"
+          pcbX={2}
+          schX={2}
+        />
+        <trace from="net.DTR" to=".C1 > .pin1" />
+        <trace
+          from="net.label1label2label1label2label1label2"
+          to=".C1 > .pin2"
+        />
+        <trace from="net.label1label2" to=".R1 > .pin1" />
+      </board>,
+    )
 
-  await circuit.renderUntilSettled()
+    await circuit.renderUntilSettled()
 
-  expect(
-    convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
-  ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
-}, 8*1000)
+    expect(
+      convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
+    ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
+  },
+  8 * 1000,
+)
