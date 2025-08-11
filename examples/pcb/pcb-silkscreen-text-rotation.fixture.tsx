@@ -1,18 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
-export const PcbSilkScreenTextRotation = () => {
-  const result = convertCircuitJsonToPcbSvg(pcbSoup)
-
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-  return <div dangerouslySetInnerHTML={{ __html: result }} />
-}
-
-export default {
-  title: "Pcb Silkscreen Text Rotation",
-  component: PcbSilkScreenTextRotation,
-}
-
 const pcbSoup: AnyCircuitElement[] = [
   {
     type: "pcb_board",
@@ -124,3 +112,12 @@ const pcbSoup: AnyCircuitElement[] = [
     shape: "rect",
   },
 ]
+
+const Component = () => {
+  const result = convertCircuitJsonToPcbSvg(pcbSoup)
+
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
+
+export default <Component />

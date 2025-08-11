@@ -1,18 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "../../lib/index.js"
 
-export const PcbViaInNullTraceHit = () => {
-  const result = convertCircuitJsonToPcbSvg(pcbSoup)
-
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-  return <div dangerouslySetInnerHTML={{ __html: result }} />
-}
-
-export default {
-  title: "Silkscreen with PCB Plated Hole",
-  component: PcbViaInNullTraceHit,
-}
-
 const pcbSoup: AnyCircuitElement[] = [
   {
     type: "source_port",
@@ -4967,3 +4955,12 @@ const pcbSoup: AnyCircuitElement[] = [
     ],
   },
 ]
+
+const Component = () => {
+  const result = convertCircuitJsonToPcbSvg(pcbSoup)
+
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+  return <div dangerouslySetInnerHTML={{ __html: result }} />
+}
+
+export default <Component />
