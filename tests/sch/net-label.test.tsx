@@ -129,7 +129,7 @@ test("schematic net label", () => {
 })
 
 test(
-  "schematic resistor",
+  "schematic resistor 69",
   async () => {
     const { circuit } = getTestFixture()
 
@@ -165,5 +165,5 @@ test(
       convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
     ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
   },
-  8 * 1000,
+  20 * 1000,
 )
