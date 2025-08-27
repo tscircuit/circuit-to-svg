@@ -9,7 +9,7 @@ test("schematic trace overlap", () => {
   circuit.add(
     <board width="20mm" height="20mm">
       <resistor
-        name="R1"
+        name="VeryLongComponentNameThatCoversTrace"
         resistance="10k"
         footprint="0402"
         schX={0}
@@ -24,9 +24,15 @@ test("schematic trace overlap", () => {
       />
       <resistor name="R3" resistance="10k" footprint="0402" schX={0} schY={2} />
 
-      <trace from=".R1 > .pin2" to=".R3 > .pin1" />
+      <trace
+        from=".VeryLongComponentNameThatCoversTrace > .pin2"
+        to=".R3 > .pin1"
+      />
       <trace from=".R2 > .pin2" to=".R3 > .pin2" />
-      <trace from=".R1 > .pin1" to=".R3 > .pin1" />
+      <trace
+        from=".VeryLongComponentNameThatCoversTrace > .pin1"
+        to=".R3 > .pin1"
+      />
     </board>,
   )
 
