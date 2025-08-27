@@ -8,6 +8,7 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { su } from "@tscircuit/circuit-json-util"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { colorMap } from "lib/utils/colors"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
 
@@ -58,21 +59,25 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const screenRealEdgePos = applyToPoint(transform, realEdgePos)
 
   // Subtract the pin circle radius from the pin line length to get the end
+  // When the port is explicitly unconnected, the line should extend to the
+  // center of the X (no circle), so skip shortening in that case
   const realLineEnd = { ...schPort.center }
 
-  switch (schPort.side_of_component) {
-    case "left":
-      realLineEnd.x += PIN_CIRCLE_RADIUS_MM
-      break
-    case "right":
-      realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "top":
-      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "bottom":
-      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
-      break
+  if (schPort.is_connected !== false) {
+    switch (schPort.side_of_component) {
+      case "left":
+        realLineEnd.x += PIN_CIRCLE_RADIUS_MM
+        break
+      case "right":
+        realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "top":
+        realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "bottom":
+        realLineEnd.y += PIN_CIRCLE_RADIUS_MM
+        break
+    }
   }
   const screenLineEnd = applyToPoint(transform, realLineEnd)
 
@@ -97,7 +102,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const pinChildren: SvgObject[] = []
 
-  if (!isConnected) {
+  if (!isConnected && schPort.is_connected !== false) {
     pinChildren.push({
       name: "circle",
       type: "element",
@@ -111,6 +116,40 @@ export const createSvgObjectsForSchPortBoxLine = ({
       value: "",
       children: [],
     })
+  }
+
+  if (schPort.is_connected === false) {
+    const crossHalfPx = Math.abs(transform.a) * 0.05 * 0.5
+    pinChildren.push(
+      {
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: (screenSchPortPos.x - crossHalfPx).toString(),
+          y1: (screenSchPortPos.y - crossHalfPx).toString(),
+          x2: (screenSchPortPos.x + crossHalfPx).toString(),
+          y2: (screenSchPortPos.y + crossHalfPx).toString(),
+          stroke: colorMap.schematic.pin,
+          "stroke-width": `${getSchStrokeSize(transform)}px`,
+        },
+        value: "",
+        children: [],
+      },
+      {
+        name: "line",
+        type: "element",
+        attributes: {
+          x1: (screenSchPortPos.x - crossHalfPx).toString(),
+          y1: (screenSchPortPos.y + crossHalfPx).toString(),
+          x2: (screenSchPortPos.x + crossHalfPx).toString(),
+          y2: (screenSchPortPos.y - crossHalfPx).toString(),
+          stroke: colorMap.schematic.pin,
+          "stroke-width": `${getSchStrokeSize(transform)}px`,
+        },
+        value: "",
+        children: [],
+      },
+    )
   }
 
   pinChildren.push({
