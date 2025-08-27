@@ -210,8 +210,8 @@ export function convertCircuitJsonToSchematicSvg(
   // Add elements in correct order
   svgChildren.push(
     ...schDebugObjectSvgs,
-    ...schComponentSvgs,
     ...schTraceSvgs,
+    ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schNetLabel,
     ...schText,

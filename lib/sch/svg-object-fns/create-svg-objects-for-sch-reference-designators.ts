@@ -18,6 +18,7 @@ import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -168,6 +169,9 @@ export const createSvgObjectsForSchReferenceDesignators = ({
           x: screenTextPos.x.toString(),
           y: (screenTextPos.y + verticalOffset).toString(),
           fill: colorMap.schematic.reference,
+          stroke: colorMap.schematic.background,
+          "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+          "paint-order": "stroke",
           "font-family": "sans-serif",
           "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
           "dominant-baseline": dominantBaseline,

@@ -210,13 +210,20 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       : text.anchor.includes("top")
         ? "hanging"
         : "middle"
-
+    const isReferenceText = text.text === "{REF}"
     svgObjects.push({
       name: "text",
       type: "element",
       attributes: {
         x: screenTextPos.x.toString(),
         y: (screenTextPos.y + verticalOffset).toString(),
+        ...(isReferenceText
+          ? {
+              stroke: colorMap.schematic.background,
+              "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
+              "paint-order": "stroke",
+            }
+          : {}),
         fill: colorMap.schematic.label_local,
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
