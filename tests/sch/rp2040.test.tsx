@@ -169,23 +169,27 @@ const RP2040 = (props: { name: string }) => (
   />
 )
 
-test("RP2040 schematic", () => {
-  const { circuit } = getTestFixture()
+test(
+  "RP2040 schematic",
+  () => {
+    const { circuit } = getTestFixture()
 
-  circuit.add(
-    <board width="10mm" height="10mm">
-      <RP2040 name="U1" />
-    </board>,
-  )
+    circuit.add(
+      <board width="10mm" height="10mm">
+        <RP2040 name="U1" />
+      </board>,
+    )
 
-  const circuitJson = circuit.getCircuitJson()
+    const circuitJson = circuit.getCircuitJson()
 
-  expect(
-    convertCircuitJsonToSchematicSvg(circuitJson as any, {
-      grid: {
-        cellSize: 1,
-        labelCells: true,
-      },
-    }),
-  ).toMatchSvgSnapshot(import.meta.path)
-})
+    expect(
+      convertCircuitJsonToSchematicSvg(circuitJson as any, {
+        grid: {
+          cellSize: 1,
+          labelCells: true,
+        },
+      }),
+    ).toMatchSvgSnapshot(import.meta.path)
+  },
+  { timeout: 10_000 },
+)

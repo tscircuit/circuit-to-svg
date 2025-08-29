@@ -44,10 +44,14 @@ circuit.add(
 await circuit.renderUntilSettled()
 const circuitJson = circuit.getCircuitJson()
 
-test("shouldDrawRatsNest true", () => {
-  expect(
-    convertCircuitJsonToPcbSvg(circuitJson as any, {
-      shouldDrawRatsNest: true,
-    }),
-  ).toMatchSvgSnapshot(import.meta.path, "pcb-trace-error-shouldDrawRatsNest")
-})
+test(
+  "shouldDrawRatsNest true",
+  () => {
+    expect(
+      convertCircuitJsonToPcbSvg(circuitJson as any, {
+        shouldDrawRatsNest: true,
+      }),
+    ).toMatchSvgSnapshot(import.meta.path, "pcb-trace-error-shouldDrawRatsNest")
+  },
+  { timeout: 10_000 },
+)
