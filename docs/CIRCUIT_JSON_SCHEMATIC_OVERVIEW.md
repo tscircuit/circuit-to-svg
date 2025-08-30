@@ -124,6 +124,8 @@ interface SchematicPort {
   schematic_component_id?: string
   center: { x: number; y: number }
   facing_direction?: "up" | "down" | "left" | "right"
+  has_input_arrow?: boolean
+  has_output_arrow?: boolean
 }
 
 interface SchematicNetLabel {
