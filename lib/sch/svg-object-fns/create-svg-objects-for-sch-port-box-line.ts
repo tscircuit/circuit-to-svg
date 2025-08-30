@@ -8,8 +8,40 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { su } from "@tscircuit/circuit-json-util"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { colorMap } from "lib/utils/colors"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
+
+const createArrow = (
+  tip: { x: number; y: number },
+  angle: number,
+  size: number,
+  color: string,
+  strokeWidth: number,
+): SvgObject => {
+  const arrowAngle = Math.PI / 6 // 30 degrees
+  const p1 = {
+    x: tip.x - size * Math.cos(angle - arrowAngle),
+    y: tip.y - size * Math.sin(angle - arrowAngle),
+  }
+  const p2 = {
+    x: tip.x - size * Math.cos(angle + arrowAngle),
+    y: tip.y - size * Math.sin(angle + arrowAngle),
+  }
+
+  return {
+    name: "polygon",
+    type: "element",
+    attributes: {
+      points: `${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`,
+      fill: "white",
+      stroke: color,
+      "stroke-width": `${strokeWidth}px`,
+    },
+    value: "",
+    children: [],
+  }
+}
 
 /**
  * The schematic port box line is the line and circle that goes from the edge
@@ -136,6 +168,76 @@ export const createSvgObjectsForSchPortBoxLine = ({
     },
     children: pinChildren,
   })
+
+  const { has_input_arrow, has_output_arrow } = schPort as any
+
+  if ((has_input_arrow || has_output_arrow) && schPort.side_of_component) {
+    const arrowSize = Math.abs(transform.a) * 0.15
+    const arrowColor = colorMap.schematic.component_outline
+    const arrowAxialLength = arrowSize * Math.cos(Math.PI / 6)
+    const strokeWidth = getSchStrokeSize(transform) / 2
+
+    let inputAngleRads: number = 0
+    let outputAngleRads: number = 0
+
+    if (schPort.side_of_component === "left") {
+      inputAngleRads = 0
+      outputAngleRads = Math.PI
+    } else if (schPort.side_of_component === "right") {
+      inputAngleRads = Math.PI
+      outputAngleRads = 0
+    } else if (schPort.side_of_component === "top") {
+      inputAngleRads = Math.PI / 2
+      outputAngleRads = -Math.PI / 2
+    } else if (schPort.side_of_component === "bottom") {
+      inputAngleRads = -Math.PI / 2
+      outputAngleRads = Math.PI / 2
+    }
+
+    const both = has_input_arrow && has_output_arrow
+    let inputArrowTip = { ...screenRealEdgePos }
+    let outputArrowBase = { ...screenRealEdgePos }
+
+    if (both) {
+      const offset = arrowAxialLength
+      if (schPort.side_of_component === "left") {
+        outputArrowBase.x -= offset
+      } else if (schPort.side_of_component === "right") {
+        outputArrowBase.x += offset
+      } else if (schPort.side_of_component === "top") {
+        outputArrowBase.y -= offset
+      } else if (schPort.side_of_component === "bottom") {
+        outputArrowBase.y += offset
+      }
+    }
+
+    if (has_input_arrow) {
+      svgObjects.push(
+        createArrow(
+          inputArrowTip,
+          inputAngleRads,
+          arrowSize,
+          arrowColor,
+          strokeWidth,
+        ),
+      )
+    }
+    if (has_output_arrow) {
+      const outputArrowTip = {
+        x: outputArrowBase.x + arrowSize * Math.cos(outputAngleRads),
+        y: outputArrowBase.y + arrowSize * Math.sin(outputAngleRads),
+      }
+      svgObjects.push(
+        createArrow(
+          outputArrowTip,
+          outputAngleRads,
+          arrowSize,
+          arrowColor,
+          strokeWidth,
+        ),
+      )
+    }
+  }
 
   return svgObjects
 }
