@@ -35,8 +35,8 @@ try {
   console.log("Testing SVG conversion...")
   const svg = convertCircuitJsonToSchematicSvg(testCircuitJson)
   
-  console.log("✅ SVG conversion successful")
-  console.log(`✅ Generated SVG length: ${svg.length} characters`)
+  console.log("SVG conversion successful")
+  console.log(`Generated SVG length: ${svg.length} characters`)
   
   // Check for expected elements
   const checks = [
@@ -51,18 +51,18 @@ try {
   
   console.log("\n=== Verification Results ===")
   checks.forEach(({ name, check }) => {
-    console.log(`${check ? "✅" : "❌"} ${name}: ${check ? "PASS" : "FAIL"}`)
+    console.log(`${check ? "PASS" : "FAIL"} ${name}: ${check ? "PASS" : "FAIL"}`)
   })
   
   const passedChecks = checks.filter(c => c.check).length
   const totalChecks = checks.length
   
-  console.log(`\n🎯 Overall: ${passedChecks}/${totalChecks} checks passed`)
+  console.log(`\nOverall: ${passedChecks}/${totalChecks} checks passed`)
   
   if (passedChecks === totalChecks) {
-    console.log("🎉 All tests passed! The refactor is working correctly.")
+    console.log("All tests passed! The refactor is working correctly.")
   } else {
-    console.log("⚠️  Some tests failed. Please review the implementation.")
+    console.log("Some tests failed. Please review the implementation.")
   }
   
   // Additional analysis
@@ -73,11 +73,11 @@ try {
   
   // Check if the refactor is working by looking for the improved structure
   if (svg.includes("<path") && svg.includes("<text") && svg.includes("<svg")) {
-    console.log("✅ The refactored function is successfully rendering symbols with proper text anchors")
-    console.log("✅ The function now works with any symbol type, not just ground symbols")
+    console.log("The refactored function is successfully rendering symbols with proper text anchors")
+    console.log("The function now works with any symbol type, not just ground symbols")
   }
   
 } catch (error) {
-  console.error("❌ Error during verification:", error.message)
+  console.error("Error during verification:", error.message)
   console.error("Stack trace:", error.stack)
 }
