@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("convert PCB elements to SVG with silkscreen circles and text", () => {

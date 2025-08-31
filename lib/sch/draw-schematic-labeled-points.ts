@@ -1,6 +1,6 @@
 import { colorMap } from "lib/utils/colors"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 interface LabeledPoint {
   x: number

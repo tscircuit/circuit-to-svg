@@ -1,8 +1,6 @@
 // Simple verification script for the refactored net label symbol rendering
 import { convertCircuitJsonToSchematicSvg } from "./dist/index.js"
 
-console.log("=== Net Label Symbol Refactor Verification ===")
-
 // Test data with proper circuit JSON format - using only ground symbols to test
 const testCircuitJson = [
   {
@@ -32,11 +30,7 @@ const testCircuitJson = [
 ]
 
 try {
-  console.log("Testing SVG conversion...")
   const svg = convertCircuitJsonToSchematicSvg(testCircuitJson)
-
-  console.log("SVG conversion successful")
-  console.log(`Generated SVG length: ${svg.length} characters`)
 
   // Check for expected elements
   const checks = [
@@ -51,41 +45,16 @@ try {
       check: (svg.match(/<path/g) || []).length > 1,
     },
   ]
-
-  console.log("\n=== Verification Results ===")
-  checks.forEach(({ name, check }) => {
-    console.log(
-      `${check ? "PASS" : "FAIL"} ${name}: ${check ? "PASS" : "FAIL"}`,
-    )
-  })
+  checks.forEach(({ name, check }) => {})
 
   const passedChecks = checks.filter((c) => c.check).length
   const totalChecks = checks.length
 
-  console.log(`\nOverall: ${passedChecks}/${totalChecks} checks passed`)
-
   if (passedChecks === totalChecks) {
-    console.log("All tests passed! The refactor is working correctly.")
   } else {
-    console.log("Some tests failed. Please review the implementation.")
   }
-
-  // Additional analysis
-  console.log("\n=== Additional Analysis ===")
-  console.log(`Number of path elements: ${(svg.match(/<path/g) || []).length}`)
-  console.log(`Number of text elements: ${(svg.match(/<text/g) || []).length}`)
-  console.log(`SVG contains ground symbols: ${svg.includes("ground")}`)
 
   // Check if the refactor is working by looking for the improved structure
   if (svg.includes("<path") && svg.includes("<text") && svg.includes("<svg")) {
-    console.log(
-      "The refactored function is successfully rendering symbols with proper text anchors",
-    )
-    console.log(
-      "The function now works with any symbol type, not just ground symbols",
-    )
   }
-} catch (error) {
-  console.error("Error during verification:", error.message)
-  console.error("Stack trace:", error.stack)
-}
+} catch (error) {}

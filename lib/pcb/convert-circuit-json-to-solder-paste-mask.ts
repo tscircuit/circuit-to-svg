@@ -1,18 +1,18 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, Point } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
-import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
-import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
-import { DEFAULT_PCB_COLOR_MAP } from "./colors"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { DEFAULT_PCB_COLOR_MAP } from "./colors"
+import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
+import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
+import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -143,13 +143,7 @@ export function convertCircuitJsonToSolderPasteMask(
       ...svgObjects,
     ].filter((child): child is SvgObject => child !== null),
   }
-
-  try {
-    return stringify(svgObject)
-  } catch (error) {
-    console.error("Error stringifying SVG object:", error)
-    throw error
-  }
+  return stringify(svgObject)
 
   function updateBounds(center: any, width: any, height: any) {
     const halfWidth = width / 2

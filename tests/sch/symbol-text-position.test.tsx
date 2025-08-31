@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("Ensure text is in the currect position", () => {
   const { circuit } = getTestFixture()

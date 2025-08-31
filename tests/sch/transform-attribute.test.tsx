@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 
 test("svg should have data-real-to-screen-transform attribute", () => {

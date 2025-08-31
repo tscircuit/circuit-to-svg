@@ -26,7 +26,6 @@ export function createSvgObjectsFromPcbSilkscreenLine(
     typeof x2 !== "number" ||
     typeof y2 !== "number"
   ) {
-    console.error("Invalid coordinates:", { x1, y1, x2, y2 })
     return []
   }
 

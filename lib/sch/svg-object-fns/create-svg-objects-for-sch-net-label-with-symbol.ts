@@ -1,31 +1,31 @@
 import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import { symbols } from "schematic-symbols"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   rotate,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
-import { symbols } from "schematic-symbols"
-import { createSvgSchErrorText } from "./create-svg-error-text"
 import {
-  ninePointAnchorToTextAnchor,
-  ninePointAnchorToDominantBaseline,
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
   getTextOffsets,
+  ninePointAnchorToDominantBaseline,
+  ninePointAnchorToTextAnchor,
 } from "../../utils/net-label-utils"
-import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import type { ColorMap } from "lib/utils/colors"
+import { estimateTextWidth } from "../estimate-text-width"
+import { createSvgSchErrorText } from "./create-svg-error-text"
 
 /**
  * Calculate bounds for all symbol primitives, not just paths
@@ -75,7 +75,6 @@ function calculateSymbolBounds(symbol: any) {
  * Get the optimal connection point for a symbol based on its type and orientation
  */
 function getSymbolConnectionPoint(symbol: any, anchorSide: string) {
-
   // If symbol has ports defined, use the first port
   if (symbol.ports && symbol.ports.length > 0 && symbol.ports[0]) {
     return { x: symbol.ports[0].x, y: symbol.ports[0].y }

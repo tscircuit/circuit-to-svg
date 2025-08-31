@@ -7,14 +7,14 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
+import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
-import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,

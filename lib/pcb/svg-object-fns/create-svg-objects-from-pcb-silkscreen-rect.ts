@@ -29,7 +29,6 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error("Invalid rectangle data:", { center, width, height })
     return []
   }
 

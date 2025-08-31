@@ -6,21 +6,21 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
+import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
+import { type SchSymbol, getSvg, symbols } from "schematic-symbols"
+import type { TextPrimitive } from "schematic-symbols"
 import { parseSync } from "svgson"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
-import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
-import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],

@@ -1,13 +1,13 @@
+import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement } from "circuit-json"
 import {
-  ConnectivityMap,
+  type ConnectivityMap,
   getFullConnectivityMapFromCircuitJson,
 } from "circuit-json-to-connectivity-map"
-import type { AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
+import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
-import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
-import { su } from "@tscircuit/circuit-json-util"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { findNearestPointInNet } from "../create-svg-objects-from-pcb-rats-nest/find-nearest-point-in-nest"
 
 interface RatsNestLine {
   key: string

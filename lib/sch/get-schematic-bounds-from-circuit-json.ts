@@ -1,15 +1,15 @@
 import type { AnyCircuitElement } from "circuit-json"
-import { getTableDimensions } from "./get-table-dimensions"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
-  getPathRotation,
   calculateAnchorPosition,
+  getPathRotation,
 } from "lib/utils/net-label-utils"
-import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { estimateTextWidth } from "./estimate-text-width"
+import { getTableDimensions } from "./get-table-dimensions"
 interface Bounds {
   minX: number
   minY: number

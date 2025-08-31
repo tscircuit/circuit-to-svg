@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test"
 import {
-  convertCircuitJsonToPcbSvg,
+  CIRCUIT_TO_SVG_VERSION,
   convertCircuitJsonToAssemblySvg,
+  convertCircuitJsonToPcbSvg,
   convertCircuitJsonToSchematicSvg,
   convertCircuitJsonToSolderPasteMask,
-  CIRCUIT_TO_SVG_VERSION,
 } from "lib"
 
 const basicPcb = [

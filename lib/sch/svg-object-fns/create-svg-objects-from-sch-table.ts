@@ -7,7 +7,7 @@ import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getTableDimensions } from "../get-table-dimensions"
 
 export const createSvgObjectsFromSchematicTable = ({
@@ -190,7 +190,7 @@ export const createSvgObjectsFromSchematicTable = ({
       const horizontal_align = cell.horizontal_align ?? "center"
       const vertical_align = cell.vertical_align ?? "middle"
 
-      let realTextAnchorPos = {
+      const realTextAnchorPos = {
         x: cellTopLeftX + cellWidth / 2,
         y: cellTopLeftY - cellHeight / 2,
       }

@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
+import { convertCircuitJsonToSchematicSvg } from "lib/index"
 
 test("schematic port arrows", () => {
   const circuitJson: AnyCircuitElement[] = [

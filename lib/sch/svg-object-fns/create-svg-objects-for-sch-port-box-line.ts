@@ -1,14 +1,14 @@
+import { su } from "@tscircuit/circuit-json-util"
 import type {
   AnyCircuitElement,
   SchematicComponent,
   SchematicPort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { applyToPoint, type Matrix } from "transformation-matrix"
-import { su } from "@tscircuit/circuit-json-util"
-import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
-import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { colorMap } from "lib/utils/colors"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
 
@@ -177,8 +177,8 @@ export const createSvgObjectsForSchPortBoxLine = ({
     const arrowAxialLength = arrowSize * Math.cos(Math.PI / 6)
     const strokeWidth = getSchStrokeSize(transform) / 2
 
-    let inputAngleRads: number = 0
-    let outputAngleRads: number = 0
+    let inputAngleRads = 0
+    let outputAngleRads = 0
 
     if (schPort.side_of_component === "left") {
       inputAngleRads = 0
@@ -195,8 +195,8 @@ export const createSvgObjectsForSchPortBoxLine = ({
     }
 
     const both = has_input_arrow && has_output_arrow
-    let inputArrowTip = { ...screenRealEdgePos }
-    let outputArrowBase = { ...screenRealEdgePos }
+    const inputArrowTip = { ...screenRealEdgePos }
+    const outputArrowBase = { ...screenRealEdgePos }
 
     if (both) {
       const offset = arrowAxialLength

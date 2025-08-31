@@ -7,7 +7,7 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 const LABEL_DIST_FROM_EDGE_MM = 0.1
 
@@ -49,7 +49,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
 
-  let fontSizePx = getSchScreenFontSize(
+  const fontSizePx = getSchScreenFontSize(
     transform,
     isNegated ? "negated_pin_number" : "pin_number",
   )

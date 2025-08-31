@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { convertCircuitJsonToPcbSvg } from "lib"
+import { expect, test } from "bun:test"
 import { Circuit } from "@tscircuit/core"
+import { convertCircuitJsonToPcbSvg } from "lib"
 
 const circuit = new Circuit()
 

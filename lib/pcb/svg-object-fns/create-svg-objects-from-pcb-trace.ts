@@ -2,8 +2,8 @@ import type { PCBTrace } from "circuit-json"
 import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
-import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { layerNameToColor } from "../layer-name-to-color"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,

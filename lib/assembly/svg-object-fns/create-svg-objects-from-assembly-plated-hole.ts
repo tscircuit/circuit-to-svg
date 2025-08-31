@@ -1,6 +1,6 @@
 import type { PCBPlatedHole } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { applyToPoint } from "transformation-matrix"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 const PAD_COLOR = "rgb(210, 210, 210)" // Lighter gray for pads

@@ -24,7 +24,6 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     typeof center.y !== "number" ||
     typeof radius !== "number"
   ) {
-    console.error("Invalid PCB Silkscreen Circle data:", { center, radius })
     return []
   }
 

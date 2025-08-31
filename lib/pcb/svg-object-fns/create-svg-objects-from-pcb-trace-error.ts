@@ -1,6 +1,6 @@
-import type { PcbTraceError, PcbPort, AnyCircuitElement } from "circuit-json"
-import type { SvgObject } from "../../../lib/svg-object"
+import type { AnyCircuitElement, PcbPort, PcbTraceError } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
+import type { SvgObject } from "../../../lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbTraceError(
@@ -78,7 +78,8 @@ export function createSvgObjectsFromPcbTraceError(
           value: "",
         },
       ]
-    } else return []
+    }
+    return []
   }
 
   const screenPort1 = applyToPoint(transform, {
@@ -96,12 +97,12 @@ export function createSvgObjectsFromPcbTraceError(
   }
 
   if (
-    isNaN(screenPort1.x) ||
-    isNaN(screenPort1.y) ||
-    isNaN(screenPort2.x) ||
-    isNaN(screenPort2.y) ||
-    isNaN(errorCenter.x) ||
-    isNaN(errorCenter.y)
+    Number.isNaN(screenPort1.x) ||
+    Number.isNaN(screenPort1.y) ||
+    Number.isNaN(screenPort2.x) ||
+    Number.isNaN(screenPort2.y) ||
+    Number.isNaN(errorCenter.x) ||
+    Number.isNaN(errorCenter.y)
   ) {
     return []
   }

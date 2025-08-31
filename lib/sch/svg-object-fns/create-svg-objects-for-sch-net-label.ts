@@ -8,20 +8,20 @@ import {
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   rotate,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
-import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
 import {
   ARROW_POINT_WIDTH_FSR,
-  END_PADDING_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
+  END_PADDING_FSR,
 } from "../../utils/net-label-utils"
+import { estimateTextWidth } from "../estimate-text-width"
+import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
 
 export const createSvgObjectsForSchNetLabel = ({
   schNetLabel,
