@@ -32,7 +32,7 @@ import type { ColorMap } from "lib/utils/colors"
  */
 function calculateSymbolBounds(symbol: any) {
   const allPoints: { x: number; y: number }[] = []
-  
+
   // Collect points from all primitive types
   for (const primitive of symbol.primitives) {
     switch (primitive.type) {
@@ -50,21 +50,24 @@ function calculateSymbolBounds(symbol: any) {
           { x: primitive.x, y: primitive.y },
           { x: primitive.x + primitive.width, y: primitive.y },
           { x: primitive.x, y: primitive.y + primitive.height },
-          { x: primitive.x + primitive.width, y: primitive.y + primitive.height }
+          {
+            x: primitive.x + primitive.width,
+            y: primitive.y + primitive.height,
+          },
         )
         break
     }
   }
-  
+
   if (allPoints.length === 0) {
     return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
   }
-  
+
   return {
-    minX: Math.min(...allPoints.map(p => p.x)),
-    maxX: Math.max(...allPoints.map(p => p.x)),
-    minY: Math.min(...allPoints.map(p => p.y)),
-    maxY: Math.max(...allPoints.map(p => p.y)),
+    minX: Math.min(...allPoints.map((p) => p.x)),
+    maxX: Math.max(...allPoints.map((p) => p.x)),
+    minY: Math.min(...allPoints.map((p) => p.y)),
+    maxY: Math.max(...allPoints.map((p) => p.y)),
   }
 }
 
@@ -78,9 +81,8 @@ function getSymbolConnectionPoint(symbol: any, anchorSide: string) {
     return { x: symbol.ports[0].x, y: symbol.ports[0].y }
   }
 
-  
   const bounds = calculateSymbolBounds(symbol)
-  
+
   // Determine connection point based on anchor side
   switch (anchorSide) {
     case "left":
@@ -123,7 +125,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     )
     return svgObjects
   }
-  
+
   const symbolPaths = symbol.primitives.filter((p) => p.type === "path")
   const symbolTexts = symbol.primitives.filter((p) => p.type === "text")
   const symbolCircles = symbol.primitives.filter((p) => p.type === "circle")
@@ -164,7 +166,10 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   const rotationMatrix = rotate((pathRotation / 180) * Math.PI)
 
   // Get the optimal connection point for this symbol
-  const symbolConnectionPoint = getSymbolConnectionPoint(symbol, schNetLabel.anchor_side)
+  const symbolConnectionPoint = getSymbolConnectionPoint(
+    symbol,
+    schNetLabel.anchor_side,
+  )
   const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolConnectionPoint)
 
   // Adjust the translation to account for rotated symbol end
@@ -287,7 +292,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       value: "",
     })
   }
-  
+
   // Draw symbol boxes
   for (const box of symbolBoxes) {
     const screenBoxPos = applyToPoint(

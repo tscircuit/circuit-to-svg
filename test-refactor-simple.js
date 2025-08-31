@@ -12,16 +12,16 @@ const test1Data = [
     symbol_name: "ground_down",
     center: { x: 0, y: 0 },
     anchor_side: "left",
-    anchor_position: { x: -5, y: 0 }
+    anchor_position: { x: -5, y: 0 },
   },
   {
-    type: "schematic_net_label", 
+    type: "schematic_net_label",
     text: "GND2",
     symbol_name: "ground_up",
     center: { x: 10, y: 0 },
     anchor_side: "right",
-    anchor_position: { x: 15, y: 0 }
-  }
+    anchor_position: { x: 15, y: 0 },
+  },
 ]
 
 try {
@@ -45,16 +45,16 @@ const test2Data = [
     symbol_name: "ground_left",
     center: { x: -5, y: 0 },
     anchor_side: "left",
-    anchor_position: { x: -10, y: 0 }
+    anchor_position: { x: -10, y: 0 },
   },
   {
     type: "schematic_net_label",
-    text: "GND_RIGHT", 
+    text: "GND_RIGHT",
     symbol_name: "ground_right",
     center: { x: 5, y: 0 },
     anchor_side: "right",
-    anchor_position: { x: 10, y: 0 }
-  }
+    anchor_position: { x: 10, y: 0 },
+  },
 ]
 
 try {
@@ -78,8 +78,8 @@ const test3Data = [
     symbol_name: "ground_down",
     center: { x: 0, y: 0 },
     anchor_side: "left",
-    anchor_position: { x: -5, y: 0 }
-  }
+    anchor_position: { x: -5, y: 0 },
+  },
 ]
 
 try {
@@ -87,7 +87,9 @@ try {
   console.log("PASS: Negated labels test")
   console.log(`  - SVG length: ${svg3.length}`)
   console.log(`  - Contains ground: ${svg3.includes("ground")}`)
-  console.log(`  - Contains overline: ${svg3.includes("text-decoration: overline")}`)
+  console.log(
+    `  - Contains overline: ${svg3.includes("text-decoration: overline")}`,
+  )
   console.log(`  - Contains paths: ${svg3.includes("<path")}`)
   console.log(`  - Contains text: ${svg3.includes("<text")}`)
 } catch (error) {
@@ -96,4 +98,6 @@ try {
 }
 
 console.log("\n=== Test Summary ===")
-console.log("All tests completed. The refactored function is working correctly.")
+console.log(
+  "All tests completed. The refactored function is working correctly.",
+)
