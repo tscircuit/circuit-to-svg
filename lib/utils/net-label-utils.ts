@@ -1,7 +1,7 @@
 import type { SchematicNetLabel } from "circuit-json"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import { type Matrix } from "transformation-matrix"
-import { type TextPrimitive } from "schematic-symbols"
+import type { TextPrimitive } from "schematic-symbols"
+import type { Matrix } from "transformation-matrix"
 
 export const ARROW_POINT_WIDTH_FSR = 0.3
 export const END_PADDING_FSR = 0.3

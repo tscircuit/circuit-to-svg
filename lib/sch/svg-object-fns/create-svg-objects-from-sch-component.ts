@@ -1,9 +1,9 @@
 import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
-import { createSvgObjectsFromSchematicComponentWithBox } from "./create-svg-objects-from-sch-component-with-box"
 import type { Matrix } from "transformation-matrix"
+import { createSvgObjectsFromSchematicComponentWithBox } from "./create-svg-objects-from-sch-component-with-box"
+import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 
 export function createSvgObjectsFromSchematicComponent(params: {
   component: SchematicComponent

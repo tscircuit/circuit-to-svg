@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { convertCircuitJsonToSchematicSvg } from "lib"
+import { expect, test } from "bun:test"
 import { Circuit } from "@tscircuit/core"
+import { convertCircuitJsonToSchematicSvg } from "lib"
 // this test needs core update and  PR to support net symbols
 test("schematic net symbol", () => {
   const circuit = new Circuit()

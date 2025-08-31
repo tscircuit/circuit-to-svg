@@ -1,6 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
+import type { ConnectivityMap } from "circuit-json-to-connectivity-map"
 import { getElementPosition } from "./get-element-position"
-import { ConnectivityMap } from "circuit-json-to-connectivity-map"
 
 export const findNearestPointInNet = (
   sourcePoint: { x: number; y: number },
@@ -10,7 +10,7 @@ export const findNearestPointInNet = (
 ): { x: number; y: number } | null => {
   const connectedIds = connectivity.getIdsConnectedToNet(netId)
   let nearestPoint: { x: number; y: number } | null = null
-  let minDistance = Infinity
+  let minDistance = Number.POSITIVE_INFINITY
 
   for (const id of connectedIds) {
     const pos = getElementPosition(id, circuitJson)

@@ -18,9 +18,9 @@ export const getTableDimensions = (
   ) {
     const unitToMm = (v: number | string) => {
       if (typeof v === "number") return v
-      if (v.endsWith("mm")) return parseFloat(v)
-      if (v.endsWith("in")) return parseFloat(v) * 25.4
-      return parseFloat(v)
+      if (v.endsWith("mm")) return Number.parseFloat(v)
+      if (v.endsWith("in")) return Number.parseFloat(v) * 25.4
+      return Number.parseFloat(v)
     }
     return {
       column_widths: schematicTable.column_widths.map(unitToMm),

@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 const circuitJson: any = [
@@ -62,11 +62,11 @@ test("bottom and top trace", () => {
 test("top layer only", () => {
   expect(
     convertCircuitJsonToPcbSvg(circuitJson, { layer: "top" }),
-  ).toMatchSvgSnapshot(import.meta.path + ".top")
+  ).toMatchSvgSnapshot(`${import.meta.path}.top`)
 })
 
 test("bottom layer only", () => {
   expect(
     convertCircuitJsonToPcbSvg(circuitJson, { layer: "bottom" }),
-  ).toMatchSvgSnapshot(import.meta.path + ".bottom")
+  ).toMatchSvgSnapshot(`${import.meta.path}.bottom`)
 })

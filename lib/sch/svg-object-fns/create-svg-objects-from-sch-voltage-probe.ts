@@ -1,9 +1,9 @@
 import type { SchematicVoltageProbe } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 export function createSvgObjectsFromSchVoltageProbe({
   probe,

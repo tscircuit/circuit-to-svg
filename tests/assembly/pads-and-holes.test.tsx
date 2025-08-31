@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToAssemblySvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("assembly should render pads and holes", () => {
   const { circuit } = getTestFixture()

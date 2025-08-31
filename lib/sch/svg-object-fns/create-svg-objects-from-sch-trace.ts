@@ -2,7 +2,7 @@ import type { SchematicTrace } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 export function createSchematicTrace({
   trace,

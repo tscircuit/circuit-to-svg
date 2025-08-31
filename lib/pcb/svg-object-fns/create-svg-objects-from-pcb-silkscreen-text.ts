@@ -3,10 +3,10 @@ import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
   compose,
-  rotate,
-  translate,
-  scale,
   toString as matrixToString,
+  rotate,
+  scale,
+  translate,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 export function createSvgObjectsFromPcbSilkscreenText(
@@ -30,7 +30,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error("Invalid anchor_position:", anchor_position)
     return []
   }
 
@@ -42,10 +41,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   // Set text-anchor and dominant-baseline based on alignment
-  let textAnchor: string = "middle"
-  let dominantBaseline: string = "central"
-  let dx = 0
-  let dy = 0
+  let textAnchor = "middle"
+  let dominantBaseline = "central"
+  const dx = 0
+  const dy = 0
 
   switch (anchor_alignment) {
     case "top_left":
@@ -80,7 +79,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       textAnchor = "end"
       dominantBaseline = "text-after-edge"
       break
-    case "center":
     default:
       textAnchor = "middle"
       dominantBaseline = "central"

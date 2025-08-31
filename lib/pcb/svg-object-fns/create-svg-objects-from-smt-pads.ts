@@ -1,7 +1,7 @@
 import type { PcbSmtPad } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
-import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { layerNameToColor } from "../layer-name-to-color"
 
 export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,

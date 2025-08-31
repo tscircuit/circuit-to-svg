@@ -1,7 +1,7 @@
-import { expect, test, describe } from "bun:test"
-import circuitJson from "../assets/via-too-close-to-trace.json"
-import { convertCircuitJsonToPcbSvg } from "lib/index"
+import { describe, expect, test } from "bun:test"
 import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
+import { convertCircuitJsonToPcbSvg } from "lib/index"
+import circuitJson from "../assets/via-too-close-to-trace.json"
 
 describe("PCB vias in non-overlapping trace checks", () => {
   test("non-overlapping functionality should include vias as collidable objects", async () => {

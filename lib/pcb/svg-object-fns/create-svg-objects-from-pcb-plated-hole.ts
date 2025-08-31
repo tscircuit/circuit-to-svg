@@ -1,6 +1,6 @@
 import type { PCBPlatedHole } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbPlatedHole(

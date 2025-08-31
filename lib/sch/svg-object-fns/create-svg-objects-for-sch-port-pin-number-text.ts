@@ -7,7 +7,7 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 export const createSvgObjectsForSchPortPinNumberText = (params: {
   schPort: SchematicPort

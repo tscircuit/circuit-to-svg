@@ -1,6 +1,6 @@
 import type { SvgObject } from "lib/svg-object"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Point, type Matrix } from "transformation-matrix"
+import { type Matrix, type Point, applyToPoint } from "transformation-matrix"
 
 export const createSvgSchErrorText = ({
   text,

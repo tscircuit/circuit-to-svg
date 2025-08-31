@@ -1,7 +1,7 @@
 import type { PcbSolderPaste } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
-import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 
 export function createSvgObjectsFromSolderPaste(
   solderPaste: PcbSolderPaste,

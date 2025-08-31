@@ -1,31 +1,31 @@
 import type { AnyCircuitElement } from "circuit-json"
+import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
+import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
+import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
 import {
+  type Matrix,
   applyToPoint,
   compose,
-  scale,
-  translate,
   fromTriangles,
-  type Matrix,
   fromTwoMovingPoints,
+  scale,
   toSVG,
+  translate,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
-import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
-import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
-import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
-import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
+import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
-import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
+import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
-import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
+import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>

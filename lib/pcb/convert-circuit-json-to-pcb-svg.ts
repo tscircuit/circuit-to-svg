@@ -1,9 +1,9 @@
 import type {
-  Point,
   AnyCircuitElement,
-  pcb_cutout,
   PcbCutout,
+  Point,
   VisibleLayer,
+  pcb_cutout,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -13,30 +13,30 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
-import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
-import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
-import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
-import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
-import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
-import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
-import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
-import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
-import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
-import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
-import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
-import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
-import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
-import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import {
   DEFAULT_PCB_COLOR_MAP,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
+import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
+import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
+import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
+import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
+import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
+import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
+import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
+import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
+import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
+import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -187,13 +187,13 @@ export function convertCircuitJsonToPcbSvg(
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
   const boundsMinX =
-    drawPaddingOutsideBoard || !isFinite(boardMinX) ? minX : boardMinX
+    drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
   const boundsMinY =
-    drawPaddingOutsideBoard || !isFinite(boardMinY) ? minY : boardMinY
+    drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
   const boundsMaxX =
-    drawPaddingOutsideBoard || !isFinite(boardMaxX) ? maxX : boardMaxX
+    drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
   const boundsMaxY =
-    drawPaddingOutsideBoard || !isFinite(boardMaxY) ? maxY : boardMaxY
+    drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -366,13 +366,7 @@ export function convertCircuitJsonToPcbSvg(
     value: "",
     children: children.filter((child): child is SvgObject => child !== null),
   }
-
-  try {
-    return stringify(svgObject as SvgObject)
-  } catch (error) {
-    console.error("Error stringifying SVG object:", error)
-    throw error
-  }
+  return stringify(svgObject as SvgObject)
 
   function updateBounds(center: any, width: any, height: any) {
     const halfWidth = width / 2

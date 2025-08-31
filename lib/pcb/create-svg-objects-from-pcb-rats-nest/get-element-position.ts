@@ -1,5 +1,5 @@
-import type { AnyCircuitElement } from "circuit-json"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement } from "circuit-json"
 
 interface Position {
   x: number

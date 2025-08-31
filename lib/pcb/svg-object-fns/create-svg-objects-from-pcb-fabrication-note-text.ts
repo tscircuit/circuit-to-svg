@@ -25,7 +25,6 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error("Invalid anchor_position:", anchor_position)
     return []
   }
 

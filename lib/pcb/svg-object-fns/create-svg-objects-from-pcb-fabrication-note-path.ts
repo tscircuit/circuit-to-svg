@@ -1,6 +1,6 @@
-import type { PcbSilkscreenPath, PcbFabricationNotePath } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
+import type { PcbFabricationNotePath, PcbSilkscreenPath } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbFabricationNotePath(

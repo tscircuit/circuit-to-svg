@@ -1,6 +1,6 @@
 import type { PCBHole } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { applyToPoint } from "transformation-matrix"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 const HOLE_COLOR = "rgb(190, 190, 190)" // Darker gray for holes

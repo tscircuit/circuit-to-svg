@@ -1,7 +1,7 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { createUseComponent } from "@tscircuit/core"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const pinLabels = {
   pin1: ["IOVDD1"],

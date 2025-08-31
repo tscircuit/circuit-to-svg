@@ -163,7 +163,7 @@ test(
 
     expect(
       convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
-    ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
+    ).toMatchSvgSnapshot(`${import.meta.path}net-label.test.tsx`)
   },
   20 * 1000,
 )

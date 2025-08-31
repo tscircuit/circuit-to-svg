@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test"
-import { convertCircuitJsonToSchematicSvg } from "lib"
+import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
+import { convertCircuitJsonToSchematicSvg } from "lib"
 
 test("schematic table", () => {
   const circuitJson: AnyCircuitElement[] = [
@@ -49,7 +49,7 @@ test("schematic table", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-default")
+  ).toMatchSvgSnapshot(`${import.meta.path}-default`)
 })
 
 test("schematic table with different font sizes", () => {
@@ -112,7 +112,7 @@ test("schematic table with different font sizes", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-font-sizes")
+  ).toMatchSvgSnapshot(`${import.meta.path}-font-sizes`)
 })
 
 test("schematic table with different alignments", () => {
@@ -243,7 +243,7 @@ test("schematic table with different alignments", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-alignments")
+  ).toMatchSvgSnapshot(`${import.meta.path}-alignments`)
 })
 
 test("schematic table with custom border width", () => {
@@ -284,7 +284,7 @@ test("schematic table with custom border width", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-custom-border-width")
+  ).toMatchSvgSnapshot(`${import.meta.path}-custom-border-width`)
 })
 
 test("schematic table with empty cells", () => {
@@ -344,7 +344,7 @@ test("schematic table with empty cells", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-empty-cells")
+  ).toMatchSvgSnapshot(`${import.meta.path}-empty-cells`)
 })
 
 test("complex schematic table", () => {
@@ -451,7 +451,7 @@ test("complex schematic table", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-complex")
+  ).toMatchSvgSnapshot(`${import.meta.path}-complex`)
 })
 
 test("schematic table with top_left anchor", () => {
@@ -480,7 +480,7 @@ test("schematic table with top_left anchor", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-top-left-anchor")
+  ).toMatchSvgSnapshot(`${import.meta.path}-top-left-anchor`)
 })
 
 test("schematic table with specified dimensions", () => {
@@ -522,7 +522,7 @@ test("schematic table with specified dimensions", () => {
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-specified-dims")
+  ).toMatchSvgSnapshot(`${import.meta.path}-specified-dims`)
 })
 
 test("schematic table with different alignments and specified dimensions", () => {
@@ -655,5 +655,5 @@ test("schematic table with different alignments and specified dimensions", () =>
         labelCells: true,
       },
     }),
-  ).toMatchSvgSnapshot(import.meta.path + "-alignments-specified-dims")
+  ).toMatchSvgSnapshot(`${import.meta.path}-alignments-specified-dims`)
 })

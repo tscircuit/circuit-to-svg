@@ -1,6 +1,6 @@
+import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import type { SvgObject } from "lib/svg-object"
 
 export function createSvgObjectsFromPcbComponent(
   component: any,

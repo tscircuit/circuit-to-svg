@@ -1,6 +1,6 @@
-import { convertCircuitJsonToSchematicSvg } from "lib/sch/convert-circuit-json-to-schematic-svg"
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import type { SchematicVoltageProbe } from "circuit-json"
+import { convertCircuitJsonToSchematicSvg } from "lib/sch/convert-circuit-json-to-schematic-svg"
 
 test("should render voltage probe", async () => {
   const circuitJson: SchematicVoltageProbe[] = [

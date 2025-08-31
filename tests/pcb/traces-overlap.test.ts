@@ -1,7 +1,7 @@
-import { expect, test, describe } from "bun:test"
-import circuitJson from "../assets/traces-too-close.json"
-import { convertCircuitJsonToPcbSvg } from "lib/index"
+import { describe, expect, test } from "bun:test"
 import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
+import { convertCircuitJsonToPcbSvg } from "lib/index"
+import circuitJson from "../assets/traces-too-close.json"
 
 describe("PCB traces in non-overlapping trace checks", () => {
   test("Should draw error as two traces are too close", async () => {

@@ -19,7 +19,7 @@ test("solder paste for smtpads", () => {
       layer: "bottom",
     },
   )
-  expect(bottomCircuitJson).toMatchSvgSnapshot(import.meta.path + ".bottom")
+  expect(bottomCircuitJson).toMatchSvgSnapshot(`${import.meta.path}.bottom`)
   const topCircuitJson = convertCircuitJsonToSolderPasteMask(
     [
       {
@@ -37,5 +37,5 @@ test("solder paste for smtpads", () => {
       layer: "top",
     },
   )
-  expect(topCircuitJson).toMatchSvgSnapshot(import.meta.path + ".top")
+  expect(topCircuitJson).toMatchSvgSnapshot(`${import.meta.path}.top`)
 })

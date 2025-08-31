@@ -1,6 +1,6 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject, stringify } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point } from "circuit-json"
+import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -8,13 +8,13 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",

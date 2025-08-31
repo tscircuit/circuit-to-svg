@@ -1,10 +1,10 @@
-import { test, expect } from "bun:test"
-import { createUseComponent, PinHeader } from "@tscircuit/core"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
+import { expect, test } from "bun:test"
+import { PinHeader, createUseComponent } from "@tscircuit/core"
 import {
   convertCircuitJsonToAssemblySvg,
   convertCircuitJsonToPcbSvg,
 } from "lib/index"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("chip and resistor in assembly", () => {
   const { circuit } = getTestFixture()
