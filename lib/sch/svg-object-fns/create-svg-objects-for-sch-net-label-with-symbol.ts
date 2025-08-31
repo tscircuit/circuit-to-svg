@@ -27,6 +27,74 @@ import {
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import type { ColorMap } from "lib/utils/colors"
 
+/**
+ * Calculate bounds for all symbol primitives, not just paths
+ */
+function calculateSymbolBounds(symbol: any) {
+  const allPoints: { x: number; y: number }[] = []
+  
+  // Collect points from all primitive types
+  for (const primitive of symbol.primitives) {
+    switch (primitive.type) {
+      case "path":
+        allPoints.push(...primitive.points)
+        break
+      case "text":
+        allPoints.push({ x: primitive.x, y: primitive.y })
+        break
+      case "circle":
+        allPoints.push({ x: primitive.x, y: primitive.y })
+        break
+      case "box":
+        allPoints.push(
+          { x: primitive.x, y: primitive.y },
+          { x: primitive.x + primitive.width, y: primitive.y },
+          { x: primitive.x, y: primitive.y + primitive.height },
+          { x: primitive.x + primitive.width, y: primitive.y + primitive.height }
+        )
+        break
+    }
+  }
+  
+  if (allPoints.length === 0) {
+    return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
+  }
+  
+  return {
+    minX: Math.min(...allPoints.map(p => p.x)),
+    maxX: Math.max(...allPoints.map(p => p.x)),
+    minY: Math.min(...allPoints.map(p => p.y)),
+    maxY: Math.max(...allPoints.map(p => p.y)),
+  }
+}
+
+/**
+ * Get the optimal connection point for a symbol based on its type and orientation
+ */
+function getSymbolConnectionPoint(symbol: any, anchorSide: string) {
+  // If symbol has ports defined, use the first port
+  if (symbol.ports && symbol.ports.length > 0) {
+    return { x: symbol.ports[0].x, y: symbol.ports[0].y }
+  }
+  
+  const bounds = calculateSymbolBounds(symbol)
+  
+  // Determine connection point based on anchor side
+  switch (anchorSide) {
+    case "left":
+      return { x: bounds.minX, y: (bounds.minY + bounds.maxY) / 2 }
+    case "right":
+      return { x: bounds.maxX, y: (bounds.minY + bounds.maxY) / 2 }
+    case "top":
+      return { x: (bounds.minX + bounds.maxX) / 2, y: bounds.minY }
+    case "bottom":
+      return { x: (bounds.minX + bounds.maxX) / 2, y: bounds.maxY }
+    default:
+      // Default to left side for unknown anchor sides
+      return { x: bounds.minX, y: (bounds.minY + bounds.maxY) / 2 }
+  }
+}
+
 export const createSvgObjectsForSchNetLabelWithSymbol = ({
   schNetLabel,
   realToScreenTransform,
@@ -53,18 +121,14 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     )
     return svgObjects
   }
+  
   const symbolPaths = symbol.primitives.filter((p) => p.type === "path")
   const symbolTexts = symbol.primitives.filter((p) => p.type === "text")
   const symbolCircles = symbol.primitives.filter((p) => p.type === "circle")
   const symbolBoxes = symbol.primitives.filter((p) => p.type === "box")
 
-  // Calculate symbol bounds for overlay
-  const bounds = {
-    minX: Math.min(...symbolPaths.flatMap((p) => p.points.map((pt) => pt.x))),
-    maxX: Math.max(...symbolPaths.flatMap((p) => p.points.map((pt) => pt.x))),
-    minY: Math.min(...symbolPaths.flatMap((p) => p.points.map((pt) => pt.y))),
-    maxY: Math.max(...symbolPaths.flatMap((p) => p.points.map((pt) => pt.y))),
-  }
+  // Calculate comprehensive symbol bounds including all primitive types
+  const symbolBounds = calculateSymbolBounds(symbol)
 
   // Use the same positioning logic as the net label text
   const fontSizeMm = getSchMmFontSize("net_label")
@@ -97,41 +161,9 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   // Calculate the rotation matrix based on the path rotation
   const rotationMatrix = rotate((pathRotation / 180) * Math.PI)
 
-  // Calculate the symbol's end point after rotation
-  const symbolBounds = {
-    minX: Math.min(
-      ...symbol.primitives.flatMap((p) =>
-        p.type === "path" ? p.points.map((pt) => pt.x) : [],
-      ),
-    ),
-    maxX: Math.max(
-      ...symbol.primitives.flatMap((p) =>
-        p.type === "path" ? p.points.map((pt) => pt.x) : [],
-      ),
-    ),
-    minY: Math.min(
-      ...symbol.primitives.flatMap((p) =>
-        p.type === "path" ? p.points.map((pt) => pt.y) : [],
-      ),
-    ),
-    maxY: Math.max(
-      ...symbol.primitives.flatMap((p) =>
-        p.type === "path" ? p.points.map((pt) => pt.y) : [],
-      ),
-    ),
-  }
-
-  // Use the first port as the connection point when available. This
-  // accounts for symbols whose anchor is not the leftmost edge (e.g.
-  // vertically oriented ground/VCC symbols).
-  const symbolEndPoint = symbol.ports?.[0]
-    ? { x: symbol.ports[0].x, y: symbol.ports[0].y }
-    : {
-        x: symbolBounds.minX,
-        y: (symbolBounds.minY + symbolBounds.maxY) / 2,
-      }
-
-  const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolEndPoint)
+  // Get the optimal connection point for this symbol
+  const symbolConnectionPoint = getSymbolConnectionPoint(symbol, schNetLabel.anchor_side)
+  const rotatedSymbolEnd = applyToPoint(rotationMatrix, symbolConnectionPoint)
 
   // Adjust the translation to account for rotated symbol end
   const symbolToRealTransform = compose(
@@ -143,14 +175,14 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     scale(1), // Use full symbol size
   )
 
-  // Calculate screen bounds
+  // Calculate screen bounds using the comprehensive bounds
   const [screenMinX, screenMinY] = applyToPoint(
     compose(realToScreenTransform, symbolToRealTransform),
-    [bounds.minX, bounds.minY],
+    [symbolBounds.minX, symbolBounds.minY],
   )
   const [screenMaxX, screenMaxY] = applyToPoint(
     compose(realToScreenTransform, symbolToRealTransform),
-    [bounds.maxX, bounds.maxY],
+    [symbolBounds.maxX, symbolBounds.maxY],
   )
 
   const rectHeight = Math.abs(screenMaxY - screenMinY)
@@ -201,7 +233,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     })
   }
 
-  // Draw symbol texts
+  // Draw symbol texts with improved anchor handling
   for (const text of symbolTexts) {
     const screenTextPos = applyToPoint(
       compose(realToScreenTransform, symbolToRealTransform),
@@ -214,8 +246,6 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     } else if (textValue === "{VAL}") {
       textValue = "" // You can modify this if needed
     }
-
-    // Adjust vertical positioning for left anchor side
 
     // Calculate scale-adjusted text offset based on transform
     const scale = Math.abs(realToScreenTransform.a)
@@ -255,6 +285,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       value: "",
     })
   }
+  
   // Draw symbol boxes
   for (const box of symbolBoxes) {
     const screenBoxPos = applyToPoint(
