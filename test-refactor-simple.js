@@ -97,4 +97,3 @@ try {
 
 console.log("\n=== Test Summary ===")
 console.log("All tests completed. The refactored function is working correctly.")
-console.log("The implementation successfully addresses issue #157.")

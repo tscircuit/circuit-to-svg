@@ -14,11 +14,15 @@ The refactored implementation is ready and has been successfully tested.
 
 ### **Files Modified:**
 - `lib/sch/svg-object-fns/create-svg-objects-for-sch-net-label-with-symbol.ts` - Main refactor
-- `tests/sch/net-symbol-refactor.test.tsx` - Comprehensive tests
+- `tests/sch/net-symbol-refactor1.test.tsx` - Test different symbol types
+- `tests/sch/net-symbol-refactor2.test.tsx` - Test different anchor sides
+- `tests/sch/net-symbol-refactor3.test.tsx` - Test negated labels
 - `verify-refactor.js` - Verification script
+- `test-refactor-simple.js` - Simple test script (runs without bun)
 
 ### **Verification Results:**
-- All 7/7 tests passed
+- All 7/7 verification checks passed
+- All 3 simple tests passed (different symbol types, anchor sides, negated labels)
 - SVG conversion successful
 - Multiple symbols rendered correctly
 - Proper text anchors working
