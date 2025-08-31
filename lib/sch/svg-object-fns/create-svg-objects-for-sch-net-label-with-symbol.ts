@@ -72,10 +72,12 @@ function calculateSymbolBounds(symbol: any) {
  * Get the optimal connection point for a symbol based on its type and orientation
  */
 function getSymbolConnectionPoint(symbol: any, anchorSide: string) {
+
   // If symbol has ports defined, use the first port
-  if (symbol.ports && symbol.ports.length > 0) {
+  if (symbol.ports && symbol.ports.length > 0 && symbol.ports[0]) {
     return { x: symbol.ports[0].x, y: symbol.ports[0].y }
   }
+
   
   const bounds = calculateSymbolBounds(symbol)
   
