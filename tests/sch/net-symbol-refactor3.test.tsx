@@ -34,16 +34,10 @@ test("schematic net symbols with negated labels", async () => {
   // Verify that path elements are present
   expect(svg).toContain("<path")
   
-  // Check for negated label styling - be more flexible in what we check
-  const hasNegatedStyling = svg.includes("text-decoration: overline") || 
-                           svg.includes("overline") || 
-                           svg.includes("style=")
+  // Verify that the SVG contains proper structure
+  expect(svg).toContain("<svg")
   
-  // If negated styling is not found, check if the text content is correct
-  if (!hasNegatedStyling) {
-    // Check if the text content shows the correct label (GND instead of N_GND)
-    expect(svg).toContain("GND")
-  } else {
-    expect(hasNegatedStyling).toBe(true)
-  }
+  // For negated labels, we expect the text to be processed correctly
+  // The negated labels should be rendered with proper styling
+  expect(svg).toContain("GND")
 })
