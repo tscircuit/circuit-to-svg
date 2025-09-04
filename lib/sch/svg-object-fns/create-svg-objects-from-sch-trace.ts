@@ -181,6 +181,10 @@ export function createSchematicTrace({
         "data-layer": "base",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
+        ...(trace.subcircuit_connectivity_map_key && {
+          "data-subcircuit-connectivity-map-key":
+            trace.subcircuit_connectivity_map_key,
+        }),
       },
       children: baseObjects,
     },
@@ -193,6 +197,10 @@ export function createSchematicTrace({
         "data-layer": "overlay",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
+        ...(trace.subcircuit_connectivity_map_key && {
+          "data-subcircuit-connectivity-map-key":
+            trace.subcircuit_connectivity_map_key,
+        }),
       },
       children: overlayObjects,
     },
