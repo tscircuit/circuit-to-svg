@@ -207,10 +207,19 @@ export function convertCircuitJsonToSchematicSvg(
     }
   }
 
+  // Split traces into base vs overlays, ensure overlays render on top of all base wires
+  const schTraceBaseSvgs = schTraceSvgs.filter(
+    (o) => (o.attributes as any)?.["data-layer"] !== "overlay",
+  )
+  const schTraceOverlaySvgs = schTraceSvgs.filter(
+    (o) => (o.attributes as any)?.["data-layer"] === "overlay",
+  )
+
   // Add elements in correct order
   svgChildren.push(
     ...schDebugObjectSvgs,
-    ...schTraceSvgs,
+    ...schTraceBaseSvgs,
+    ...schTraceOverlaySvgs,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schNetLabel,

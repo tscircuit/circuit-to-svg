@@ -15,7 +15,9 @@ export function createSchematicTrace({
 }): SvgObject[] {
   const edges = trace.edges
   if (edges.length === 0) return []
-  const svgObjects: SvgObject[] = []
+  // Split into base vs overlay to control global z-order
+  const baseObjects: SvgObject[] = []
+  const overlayObjects: SvgObject[] = []
 
   let path = ""
 
@@ -43,7 +45,45 @@ export function createSchematicTrace({
     }
   }
 
+  // Note: draw the base wire first (below), then draw
+  // the crossing outline + hop on top for correct z-ordering.
+
+  if (path) {
+    // Makes hovering over trace (which inverts the colors) easier
+    baseObjects.push({
+      name: "path",
+      type: "element",
+      attributes: {
+        d: path,
+        class: "trace-invisible-hover-outline",
+        stroke: colorMap.schematic.wire,
+        fill: "none",
+        "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
+        "stroke-linecap": "round",
+        opacity: "0",
+        "stroke-linejoin": "round",
+      },
+      value: "",
+      children: [],
+    })
+    baseObjects.push({
+      name: "path",
+      type: "element",
+      attributes: {
+        d: path,
+        stroke: colorMap.schematic.wire,
+        fill: "none",
+        "stroke-width": `${getSchStrokeSize(transform)}px`,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      },
+      value: "",
+      children: [],
+    })
+  }
+
   // Process wire crossings with little "hops" or arcs
+  // These must be added AFTER the base wire so they render on top.
   for (const edge of edges) {
     if (!edge.is_crossing) continue
 
@@ -74,8 +114,9 @@ export function createSchematicTrace({
     const controlX = midX + perpX
     const controlY = midY - Math.abs(perpY)
 
-    // Arc Shadow
-    svgObjects.push({
+    // Arc Shadow (masking the underlying wire under the hop)
+    // Arc Shadow (masking the underlying wire under the hop)
+    overlayObjects.push({
       name: "path",
       type: "element",
       attributes: {
@@ -84,12 +125,13 @@ export function createSchematicTrace({
         stroke: colorMap.schematic.background,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 1.5}px`,
-        "stroke-linecap": "round",
+        "stroke-linecap": "butt",
       },
       value: "",
       children: [],
     })
-    svgObjects.push({
+    // Hop stroke on top
+    overlayObjects.push({
       name: "path",
       type: "element",
       attributes: {
@@ -98,40 +140,6 @@ export function createSchematicTrace({
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform)}px`,
         "stroke-linecap": "round",
-      },
-      value: "",
-      children: [],
-    })
-  }
-
-  if (path) {
-    // Makes hovering over trace (which inverts the colors) easier
-    svgObjects.push({
-      name: "path",
-      type: "element",
-      attributes: {
-        d: path,
-        class: "trace-invisible-hover-outline",
-        stroke: colorMap.schematic.wire,
-        fill: "none",
-        "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
-        "stroke-linecap": "round",
-        opacity: "0",
-        "stroke-linejoin": "round",
-      },
-      value: "",
-      children: [],
-    })
-    svgObjects.push({
-      name: "path",
-      type: "element",
-      attributes: {
-        d: path,
-        stroke: colorMap.schematic.wire,
-        fill: "none",
-        "stroke-width": `${getSchStrokeSize(transform)}px`,
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round",
       },
       value: "",
       children: [],
@@ -145,7 +153,8 @@ export function createSchematicTrace({
         junction.x,
         junction.y,
       ])
-      svgObjects.push({
+      // Draw junctions above wires
+      overlayObjects.push({
         name: "circle",
         type: "element",
         attributes: {
@@ -161,6 +170,7 @@ export function createSchematicTrace({
     }
   }
 
+  // Return separate groups for base and overlays
   return [
     {
       name: "g",
@@ -168,10 +178,23 @@ export function createSchematicTrace({
       value: "",
       attributes: {
         class: "trace",
+        "data-layer": "base",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
       },
-      children: svgObjects,
+      children: baseObjects,
+    },
+    {
+      name: "g",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "trace-overlays",
+        "data-layer": "overlay",
+        "data-circuit-json-type": "schematic_trace",
+        "data-schematic-trace-id": trace.schematic_trace_id,
+      },
+      children: overlayObjects,
     },
   ]
 }
