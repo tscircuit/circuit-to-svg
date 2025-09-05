@@ -1,9 +1,6 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
-import type { AnyCircuitElement } from "circuit-json"
-
-// Using "any" for PcbCopperPour to avoid typescript errors since the type is not in the dependency yet
-type PcbCopperPour = any
+import type { AnyCircuitElement, PcbCopperPour } from "circuit-json"
 
 test("pcb copper pours", () => {
   const soup: AnyCircuitElement[] = [

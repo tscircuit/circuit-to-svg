@@ -1,4 +1,4 @@
-import type { LayerRef, Length, Point, Rotation } from "circuit-json"
+import type { PcbCopperPour } from "circuit-json"
 import {
   applyToPoint,
   compose,
@@ -9,28 +9,6 @@ import {
 import type { SvgObject } from "lib/svg-object"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-
-// Based on the spec from the user
-export interface PcbCopperPourRect {
-  type: "pcb_copper_pour"
-  shape: "rect"
-  pcb_copper_pour_id: string
-  layer: LayerRef
-  center: Point
-  width: Length
-  height: Length
-  rotation?: Rotation
-}
-
-export interface PcbCopperPourPolygon {
-  type: "pcb_copper_pour"
-  shape: "polygon"
-  pcb_copper_pour_id: string
-  layer: LayerRef
-  points: Point[]
-}
-
-export type PcbCopperPour = PcbCopperPourRect | PcbCopperPourPolygon
 
 export function createSvgObjectsFromPcbCopperPour(
   pour: PcbCopperPour,
