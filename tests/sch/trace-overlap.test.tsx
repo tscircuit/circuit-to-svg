@@ -7,7 +7,7 @@ test("schematic trace overlap", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="20mm" height="20mm">
+    <board width="20mm" height="20mm" schMaxTraceDistance={5}>
       <resistor
         name="VeryLongComponentNameThatCoversTrace"
         resistance="10k"

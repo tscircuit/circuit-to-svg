@@ -6,7 +6,7 @@ test("555 timer", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board pcbPack>
+    <board pcbPack schMaxTraceDistance={5}>
       <chip
         name="U1"
         footprint="soic8"

@@ -26,10 +26,10 @@
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
     "react-cosmos": "7.0.0",
     "react-cosmos-plugin-vite": "7.0.0",
-    "tscircuit": "^0.0.617",
+    "react-dom": "19.1.0",
+    "tscircuit": "^0.0.622",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1"
