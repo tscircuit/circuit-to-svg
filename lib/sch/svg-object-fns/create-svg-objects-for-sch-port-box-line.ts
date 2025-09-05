@@ -172,10 +172,10 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const { has_input_arrow, has_output_arrow } = schPort as any
 
   if ((has_input_arrow || has_output_arrow) && schPort.side_of_component) {
-    const arrowSize = Math.abs(transform.a) * 0.1
+    const arrowSize = Math.abs(transform.a) * 0.15
     const arrowColor = colorMap.schematic.component_outline
     const arrowAxialLength = arrowSize * Math.cos(Math.PI / 6)
-    const strokeWidth = getSchStrokeSize(transform) / 3
+    const strokeWidth = getSchStrokeSize(transform) / 2
 
     let inputAngleRads: number = 0
     let outputAngleRads: number = 0
