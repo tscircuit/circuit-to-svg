@@ -16,6 +16,8 @@ test("schematic switch", async () => {
     </board>,
   )
 
+  await circuit.renderUntilSettled()
+
   expect(
     convertCircuitJsonToSchematicSvg(
       circuit.getCircuitJson() as AnyCircuitElement[],

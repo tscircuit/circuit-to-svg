@@ -6,7 +6,7 @@ test("schematic net symbol", () => {
   const circuit = new Circuit()
 
   circuit.add(
-    <board width="22mm" height="22mm">
+    <board width="22mm" height="22mm" schMaxTraceDistance={5}>
       <resistor name="R1" resistance="10k" footprint="0402" schX={3} schY={0} />
       <resistor
         name="R2"
