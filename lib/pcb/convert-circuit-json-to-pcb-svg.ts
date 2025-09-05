@@ -29,6 +29,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
   DEFAULT_PCB_COLOR_MAP,
   type PcbColorMap,
@@ -47,6 +48,7 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_silkscreen_path",
   "pcb_via",
   "pcb_cutout",
+  "pcb_copper_pour",
   // Draw traces before SMT pads so pads appear on top
   "pcb_smtpad",
   "pcb_trace",
@@ -182,6 +184,16 @@ export function convertCircuitJsonToPcbSvg(
       circuitJsonElm.type === "pcb_silkscreen_line"
     ) {
       updateSilkscreenBounds(circuitJsonElm)
+    } else if (circuitJsonElm.type === "pcb_copper_pour") {
+      if (circuitJsonElm.shape === "rect") {
+        updateBounds(
+          circuitJsonElm.center,
+          circuitJsonElm.width,
+          circuitJsonElm.height,
+        )
+      } else if (circuitJsonElm.shape === "polygon") {
+        updateTraceBounds(circuitJsonElm.points)
+      }
     }
   }
 
@@ -464,6 +476,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, ctx)
+    case "pcb_copper_pour":
+      return createSvgObjectsFromPcbCopperPour(elm as any, ctx)
     case "pcb_plated_hole":
       return createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean)
     case "pcb_hole":
