@@ -9,7 +9,7 @@ test("Ensure text is in the currect position", () => {
     <board width="20mm" height="20mm" pcbX={0} pcbY={0}>
       <battery name="C1" footprint="0805" pcbX={-7} pcbY={-5} schX={0} />
       <potentiometer
-        name="R1"
+        name="P1"
         footprint="0805"
         maxResistance={3}
         pcbX={-7}
