@@ -3,7 +3,7 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 import type { AnyCircuitElement, PcbCopperPour } from "circuit-json"
 
 test("pcb copper pours", () => {
-  const soup: AnyCircuitElement[] = [
+  const circuitJson: AnyCircuitElement[] = [
     {
       type: "pcb_board",
       pcb_board_id: "board1",
@@ -56,6 +56,6 @@ test("pcb copper pours", () => {
       ],
     } as PcbCopperPour,
   ]
-  const result = convertCircuitJsonToPcbSvg(soup)
+  const result = convertCircuitJsonToPcbSvg(circuitJson)
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })

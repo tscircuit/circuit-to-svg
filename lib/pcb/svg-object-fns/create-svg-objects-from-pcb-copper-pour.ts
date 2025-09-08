@@ -9,6 +9,7 @@ import {
 import type { SvgObject } from "lib/svg-object"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { ringToPathD } from "lib/utils/ring-to-path-d"
 
 export function createSvgObjectsFromPcbCopperPour(
   pour: PcbCopperPour,
@@ -69,6 +70,31 @@ export function createSvgObjectsFromPcbCopperPour(
           class: "pcb-copper-pour pcb-copper-pour-polygon",
           points: pointsString,
           fill: color,
+          "fill-opacity": opacity,
+          "data-layer": layer,
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
+  if (pour.shape === "brep") {
+    const { brep_shape } = pour
+    let d = ringToPathD(brep_shape.outer_ring.vertices, transform)
+    for (const inner_ring of brep_shape.inner_rings ?? []) {
+      d += ` ${ringToPathD(inner_ring.vertices, transform)}`
+    }
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-copper-pour pcb-copper-pour-brep",
+          d,
+          fill: color,
+          "fill-rule": "evenodd",
           "fill-opacity": opacity,
           "data-layer": layer,
         },
