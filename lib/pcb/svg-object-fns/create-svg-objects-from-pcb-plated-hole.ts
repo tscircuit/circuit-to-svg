@@ -1,10 +1,10 @@
-import type { PCBPlatedHole } from "circuit-json"
+import type { PcbPlatedHole, PcbHoleCircularWithRectPad } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbPlatedHole(
-  hole: PCBPlatedHole,
+  hole: PcbPlatedHole,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, colorMap } = ctx
@@ -119,11 +119,16 @@ export function createSvgObjectsFromPcbPlatedHole(
 
   // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
   if (hole.shape === "circular_hole_with_rect_pad") {
+    const h = hole as PcbHoleCircularWithRectPad
     const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
     const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
     const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
 
     const holeRadius = scaledHoleDiameter / 2
+    const [holeCx, holeCy] = applyToPoint(transform, [
+      h.x + (h.hole_offset_x ?? 0),
+      h.y + (h.hole_offset_y ?? 0),
+    ])
 
     return [
       {
@@ -145,15 +150,15 @@ export function createSvgObjectsFromPcbPlatedHole(
             value: "",
             children: [],
           },
-          // Circular hole inside the rectangle
+          // Circular hole inside the rectangle (with optional offset)
           {
             name: "circle",
             type: "element",
             attributes: {
               class: "pcb-hole-inner",
               fill: colorMap.drill,
-              cx: x.toString(),
-              cy: y.toString(),
+              cx: holeCx.toString(),
+              cy: holeCy.toString(),
               r: holeRadius.toString(),
             },
             value: "",
