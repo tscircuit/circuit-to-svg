@@ -23,10 +23,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_alignment = "center",
     is_knockout = false,
     knockout_padding = {
-      left: "0.2mm",
-      right: "0.2mm",
-      top: "0.2mm",
-      bottom: "0.2mm",
+      left: 0.2,
+      right: 0.2,
+      top: 0.2,
+      bottom: 0.2,
     },
   } = pcbSilkscreenText
 
@@ -162,16 +162,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   if (!is_knockout) return [svgObject]
 
-  const parseMm = (mmString: string | undefined) => {
-    if (!mmString) return 0
-    const match = /([0-9.]+)/.exec(mmString)
-    return match ? parseFloat(match[1]) : 0
-  }
-
-  const paddingLeft = parseMm(knockout_padding.left) * Math.abs(transform.a)
-  const paddingRight = parseMm(knockout_padding.right) * Math.abs(transform.a)
-  const paddingTop = parseMm(knockout_padding.top) * Math.abs(transform.a)
-  const paddingBottom = parseMm(knockout_padding.bottom) * Math.abs(transform.a)
+  const paddingLeft = knockout_padding.left * Math.abs(transform.a)
+  const paddingRight = knockout_padding.right * Math.abs(transform.a)
+  const paddingTop = knockout_padding.top * Math.abs(transform.a)
+  const paddingBottom = knockout_padding.bottom * Math.abs(transform.a)
 
   const maxLineLength = Math.max(...lines.map((l) => l.length), 0)
   const textWidth = maxLineLength * transformedFontSize

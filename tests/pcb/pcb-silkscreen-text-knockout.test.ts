@@ -25,10 +25,10 @@ test("silkscreen text knockout with uniform padding", () => {
     {
       ...baseText,
       knockout_padding: {
-        left: "0.5mm",
-        top: "0.5mm",
-        bottom: "0.5mm",
-        right: "0.5mm",
+        left: 0.5,
+        top: 0.5,
+        bottom: 0.5,
+        right: 0.5,
       },
     },
   ])
@@ -41,10 +41,10 @@ test("silkscreen text knockout with asymmetric padding", () => {
     {
       ...baseText,
       knockout_padding: {
-        left: "0.1mm",
-        top: "0.4mm",
-        bottom: "0.2mm",
-        right: "0.6mm",
+        left: 0.1,
+        top: 0.4,
+        bottom: 0.2,
+        right: 0.6,
       },
     },
   ])
