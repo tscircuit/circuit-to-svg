@@ -123,6 +123,8 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
     const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
     const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+    const scaledRectBorderRadius =
+      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
 
     const holeRadius = scaledHoleDiameter / 2
     const [holeCx, holeCy] = applyToPoint(transform, [
@@ -146,6 +148,12 @@ export function createSvgObjectsFromPcbPlatedHole(
               y: (y - scaledRectPadHeight / 2).toString(),
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
             },
             value: "",
             children: [],
@@ -173,6 +181,8 @@ export function createSvgObjectsFromPcbPlatedHole(
   if (hole.shape === "pill_hole_with_rect_pad") {
     const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
     const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+    const scaledRectBorderRadius =
+      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
 
     const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
     const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
@@ -196,6 +206,12 @@ export function createSvgObjectsFromPcbPlatedHole(
               y: (y - scaledRectPadHeight / 2).toString(),
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
             },
             value: "",
             children: [],
@@ -227,6 +243,8 @@ export function createSvgObjectsFromPcbPlatedHole(
   if (hole.shape === "rotated_pill_hole_with_rect_pad") {
     const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
     const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
+    const scaledRectBorderRadius =
+      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
 
     const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
     const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
@@ -249,6 +267,12 @@ export function createSvgObjectsFromPcbPlatedHole(
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
               transform: `translate(${x} ${y}) rotate(${-hole.rect_ccw_rotation})`,
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
             },
             value: "",
             children: [],
