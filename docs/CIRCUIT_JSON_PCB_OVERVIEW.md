@@ -141,7 +141,8 @@ export interface PcbHoleCircularWithRectPad {
   pad_shape: "rect"
   hole_diameter: number
   rect_pad_width: number
-  rect_pad_height: number 
+  rect_pad_height: number
+  rect_border_radius?: number
   x: Distance
   y: Distance
   layers: LayerRef[]
@@ -271,6 +272,7 @@ export interface PcbSmtPadRect {
   y: Distance
   width: number
   height: number
+  rect_border_radius?: number
   layer: LayerRef
   port_hints?: string[]
   pcb_component_id?: string
