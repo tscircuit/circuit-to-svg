@@ -74,5 +74,7 @@ test("rect border radius elements", () => {
     },
   ]
 
-  expect(convertCircuitJsonToPcbSvg(circuit)).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToPcbSvg(circuit)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
 })

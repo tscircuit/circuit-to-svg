@@ -33,7 +33,10 @@ export function createSvgObjectsFromSmtPad(
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-layer": pad.layer,
             ...(scaledBorderRadius
-              ? { rx: scaledBorderRadius.toString(), ry: scaledBorderRadius.toString() }
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
               : {}),
           },
         },
@@ -53,7 +56,10 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           "data-layer": pad.layer,
           ...(scaledBorderRadius
-            ? { rx: scaledBorderRadius.toString(), ry: scaledBorderRadius.toString() }
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
             : {}),
         },
       },

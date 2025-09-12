@@ -33,7 +33,10 @@ export function createSvgObjectsFromAssemblySmtPad(
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-layer": pad.layer,
             ...(scaledBorderRadius
-              ? { rx: scaledBorderRadius.toString(), ry: scaledBorderRadius.toString() }
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
               : {}),
           },
           value: "",
@@ -55,7 +58,10 @@ export function createSvgObjectsFromAssemblySmtPad(
           height: height.toString(),
           "data-layer": pad.layer,
           ...(scaledBorderRadius
-            ? { rx: scaledBorderRadius.toString(), ry: scaledBorderRadius.toString() }
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
             : {}),
         },
         value: "",
