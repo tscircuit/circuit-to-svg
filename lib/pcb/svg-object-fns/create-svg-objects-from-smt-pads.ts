@@ -15,6 +15,8 @@ export function createSvgObjectsFromSmtPad(
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const scaledBorderRadius =
+      ((pad as any).rect_border_radius ?? 0) * Math.abs(transform.a)
 
     if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
       return [
@@ -30,6 +32,12 @@ export function createSvgObjectsFromSmtPad(
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-layer": pad.layer,
+            ...(scaledBorderRadius
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
+              : {}),
           },
         },
       ]
@@ -47,6 +55,12 @@ export function createSvgObjectsFromSmtPad(
           width: width.toString(),
           height: height.toString(),
           "data-layer": pad.layer,
+          ...(scaledBorderRadius
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
+            : {}),
         },
       },
     ]
