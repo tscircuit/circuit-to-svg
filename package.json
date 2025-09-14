@@ -29,7 +29,7 @@
     "react-cosmos": "7.0.0",
     "react-cosmos-plugin-vite": "7.0.0",
     "react-dom": "19.1.0",
-    "tscircuit": "^0.0.645",
+    "tscircuit": "^0.0.646",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1"
@@ -38,10 +38,8 @@
     "tscircuit": "*"
   },
   "dependencies": {
-    "@tscircuit/core": "^0.0.727",
     "@types/node": "^22.5.5",
     "bun-types": "^1.1.40",
-    "circuit-json": "^0.0.251",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
   }
