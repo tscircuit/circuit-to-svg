@@ -9,6 +9,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
@@ -41,18 +42,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
     return []
   }
 
-  const [transformedX, transformedY] = applyToPoint(transform, [
-    anchor_position.x,
-    anchor_position.y,
-  ])
-
+  // Position & size after board transform
+  const [tx, ty] = applyToPoint(transform, [anchor_position.x, anchor_position.y])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Set text-anchor and dominant-baseline based on alignment
-  let textAnchor: string = "middle"
-  let dominantBaseline: string = "central"
-  let dx = 0
-  let dy = 0
+  // Alignment → SVG text attributes
+  let textAnchor = "middle"
+  let dominantBaseline = "central"
 
   switch (anchor_alignment) {
     case "top_left":
@@ -94,8 +90,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
       break
   }
 
+  // Compose transform (mirror bottom layer horizontally)
   const textTransform = compose(
-    translate(transformedX, transformedY),
+    translate(tx, ty),
     rotate((ccw_rotation * Math.PI) / 180),
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
@@ -103,11 +100,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const silkscreenColor =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
-  const boardColor =
-    layer === "bottom" ? colorMap.soldermask.bottom : colorMap.soldermask.top
-
+  // Handle multi-line
   const lines = text.split("\n")
-
   const children: SvgObject[] =
     lines.length === 1
       ? [
@@ -138,76 +132,130 @@ export function createSvgObjectsFromPcbSilkscreenText(
           ],
         }))
 
-  const svgObject: SvgObject = {
+  const textAttributes = {
+    x: "0",
+    y: "0",
+    dx: "0",
+    dy: "0",
+    fill: silkscreenColor,
+    "font-family": "Arial, sans-serif",
+    "font-size": transformedFontSize.toString(),
+    "text-anchor": textAnchor,
+    "dominant-baseline": dominantBaseline,
+    transform: matrixToString(textTransform),
+    class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
+    "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+    stroke: "none",
+  }
+
+  const textObject: SvgObject = {
+    name: "text",
+    type: "element",
+    attributes: textAttributes,
+    children,
+    value: "",
+  }
+
+  // Simple "text is painted" case
+  if (!is_knockout) return [textObject]
+
+  // Knockout case: build a mask (white keeps, black cuts text)
+  const padL = knockout_padding.left * Math.abs(transform.a)
+  const padR = knockout_padding.right * Math.abs(transform.a)
+  const padT = knockout_padding.top * Math.abs(transform.a)
+  const padB = knockout_padding.bottom * Math.abs(transform.a)
+
+  // Approximate width/height (character-count based)
+  const maxLineLen = Math.max(...lines.map((l) => l.length), 0)
+  const textWidth = maxLineLen * transformedFontSize
+  const textHeight = lines.length * transformedFontSize
+
+  const rectWidth = textWidth + padL + padR
+  const rectHeight = textHeight + padT + padB
+
+  let rectX = -padL
+  let rectY = -padT
+
+  switch (anchor_alignment) {
+    case "top_center":
+      rectX = -textWidth / 2 - padL
+      break
+    case "top_right":
+      rectX = -textWidth - padL
+      break
+    case "center_left":
+      rectY = -textHeight / 2 - padT
+      break
+    case "center":
+      rectX = -textWidth / 2 - padL
+      rectY = -textHeight / 2 - padT
+      break
+    case "center_right":
+      rectX = -textWidth - padL
+      rectY = -textHeight / 2 - padT
+      break
+    case "bottom_left":
+      rectY = -textHeight - padT
+      break
+    case "bottom_center":
+      rectX = -textWidth / 2 - padL
+      rectY = -textHeight - padT
+      break
+    case "bottom_right":
+      rectX = -textWidth - padL
+      rectY = -textHeight - padT
+      break
+  }
+
+  const maskId = `pcb-silkscreen-text-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}`
+
+  // In a luminance mask: WHITE keeps, BLACK cuts.
+  const maskRect: SvgObject = {
+    name: "rect",
+    type: "element",
+    attributes: {
+      x: rectX.toString(),
+      y: rectY.toString(),
+      width: rectWidth.toString(),
+      height: rectHeight.toString(),
+      fill: "white", // IMPORTANT: white keeps the painted area
+      transform: matrixToString(textTransform),
+    },
+    children: [],
+    value: "",
+  }
+
+  const maskText: SvgObject = {
     name: "text",
     type: "element",
     attributes: {
-      x: "0",
-      y: "0",
-      dx: dx.toString(),
-      dy: dy.toString(),
-      fill: is_knockout ? boardColor : silkscreenColor,
-      "font-family": "Arial, sans-serif",
-      "font-size": transformedFontSize.toString(),
-      "text-anchor": textAnchor,
-      "dominant-baseline": dominantBaseline,
-      transform: matrixToString(textTransform),
-      class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-      "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
-      stroke: "none",
+      ...textAttributes,
+      fill: "black", // IMPORTANT: black punches a hole (transparent)
+      "fill-opacity": "1",
     },
     children,
     value: "",
   }
 
-  if (!is_knockout) return [svgObject]
-
-  const paddingLeft = knockout_padding.left * Math.abs(transform.a)
-  const paddingRight = knockout_padding.right * Math.abs(transform.a)
-  const paddingTop = knockout_padding.top * Math.abs(transform.a)
-  const paddingBottom = knockout_padding.bottom * Math.abs(transform.a)
-
-  const maxLineLength = Math.max(...lines.map((l) => l.length), 0)
-  const textWidth = maxLineLength * transformedFontSize
-  const textHeight = lines.length * transformedFontSize
-
-  const rectWidth = textWidth + paddingLeft + paddingRight
-  const rectHeight = textHeight + paddingTop + paddingBottom
-
-  let rectX = -paddingLeft
-  let rectY = -paddingTop
-
-  switch (anchor_alignment) {
-    case "top_center":
-      rectX = -textWidth / 2 - paddingLeft
-      break
-    case "top_right":
-      rectX = -textWidth - paddingLeft
-      break
-    case "center_left":
-      rectY = -textHeight / 2 - paddingTop
-      break
-    case "center":
-      rectX = -textWidth / 2 - paddingLeft
-      rectY = -textHeight / 2 - paddingTop
-      break
-    case "center_right":
-      rectX = -textWidth - paddingLeft
-      rectY = -textHeight / 2 - paddingTop
-      break
-    case "bottom_left":
-      rectY = -textHeight - paddingTop
-      break
-    case "bottom_center":
-      rectX = -textWidth / 2 - paddingLeft
-      rectY = -textHeight - paddingTop
-      break
-    case "bottom_right":
-      rectX = -textWidth - paddingLeft
-      rectY = -textHeight - paddingTop
-      break
+  const maskObject: SvgObject = {
+    name: "mask",
+    type: "element",
+    attributes: {
+      id: maskId,
+      maskUnits: "userSpaceOnUse",
+      maskContentUnits: "userSpaceOnUse",
+      // Bound the mask to the rect in local coords
+      x: rectX.toString(),
+      y: rectY.toString(),
+      width: rectWidth.toString(),
+      height: rectHeight.toString(),
+      style: "mask-type:luminance",
+    },
+    children: [maskRect, maskText],
+    value: "",
   }
 
+  // Painted rectangle that gets punched by the mask
   const rectObject: SvgObject = {
     name: "rect",
     type: "element",
@@ -216,17 +264,16 @@ export function createSvgObjectsFromPcbSilkscreenText(
       y: rectY.toString(),
       width: rectWidth.toString(),
       height: rectHeight.toString(),
-      fill: silkscreenColor,
+      fill: silkscreenColor, // the paint color
       transform: matrixToString(textTransform),
+      mask: `url(#${maskId})`,
       class: `pcb-silkscreen-text-knockout-area pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
-      stroke: "none",
     },
     children: [],
     value: "",
   }
 
-  svgObject.attributes.transform = matrixToString(textTransform)
-
-  return [rectObject, svgObject]
+  // Ensure mask is defined before its first use
+  return [maskObject, rectObject]
 }
