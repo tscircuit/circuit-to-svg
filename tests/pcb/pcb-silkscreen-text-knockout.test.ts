@@ -33,8 +33,8 @@ test(" knockout silkscreen text", () => {
       font_size: 1,
       pcb_component_id: "pcb_generic_component_0",
       anchor_position: { x: 3, y: 3 },
-      anchor_alignment: "bottom_right",
-      text: "bottom_right",
+      anchor_alignment: "center",
+      text: "center",
       is_knockout: true,
     },
     {
@@ -48,12 +48,7 @@ test(" knockout silkscreen text", () => {
       anchor_alignment: "center",
       text: "center",
       is_knockout: true,
-      knockout_padding: {
-        left: 0.2,
-        right: 0.2,
-        top: 0.3,
-        bottom: 0,
-      },
+      knockout_padding: { left: 0.2, right: 0.8, top: 0, bottom: 0.8 },
     },
   ])
 

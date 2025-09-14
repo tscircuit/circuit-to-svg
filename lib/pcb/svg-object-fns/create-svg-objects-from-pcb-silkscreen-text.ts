@@ -43,7 +43,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
   }
 
   // Position & size after board transform
-  const [tx, ty] = applyToPoint(transform, [anchor_position.x, anchor_position.y])
+  const [tx, ty] = applyToPoint(transform, [
+    anchor_position.x,
+    anchor_position.y,
+  ])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   // Alignment → SVG text attributes
@@ -156,18 +159,15 @@ export function createSvgObjectsFromPcbSilkscreenText(
     value: "",
   }
 
-  // Simple "text is painted" case
   if (!is_knockout) return [textObject]
 
-  // Knockout case: build a mask (white keeps, black cuts text)
   const padL = knockout_padding.left * Math.abs(transform.a)
   const padR = knockout_padding.right * Math.abs(transform.a)
   const padT = knockout_padding.top * Math.abs(transform.a)
   const padB = knockout_padding.bottom * Math.abs(transform.a)
 
-  // Approximate width/height (character-count based)
   const maxLineLen = Math.max(...lines.map((l) => l.length), 0)
-  const textWidth = maxLineLen * transformedFontSize
+  const textWidth = (maxLineLen * transformedFontSize) / 2
   const textHeight = lines.length * transformedFontSize
 
   const rectWidth = textWidth + padL + padR
@@ -209,7 +209,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const maskId = `pcb-silkscreen-text-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}`
 
-  // In a luminance mask: WHITE keeps, BLACK cuts.
   const maskRect: SvgObject = {
     name: "rect",
     type: "element",
@@ -218,8 +217,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       y: rectY.toString(),
       width: rectWidth.toString(),
       height: rectHeight.toString(),
-      fill: "white", // IMPORTANT: white keeps the painted area
-      transform: matrixToString(textTransform),
+      fill: "white",
     },
     children: [],
     value: "",
@@ -229,9 +227,19 @@ export function createSvgObjectsFromPcbSilkscreenText(
     name: "text",
     type: "element",
     attributes: {
-      ...textAttributes,
-      fill: "black", // IMPORTANT: black punches a hole (transparent)
+      x: "0",
+      y: "0",
+      dx: "0",
+      dy: "0",
+      "font-family": "Arial, sans-serif",
+      "font-size": transformedFontSize.toString(),
+      "text-anchor": textAnchor,
+      "dominant-baseline": dominantBaseline,
+      fill: "black",
       "fill-opacity": "1",
+      class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
+      "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+      stroke: "none",
     },
     children,
     value: "",
@@ -244,18 +252,12 @@ export function createSvgObjectsFromPcbSilkscreenText(
       id: maskId,
       maskUnits: "userSpaceOnUse",
       maskContentUnits: "userSpaceOnUse",
-      // Bound the mask to the rect in local coords
-      x: rectX.toString(),
-      y: rectY.toString(),
-      width: rectWidth.toString(),
-      height: rectHeight.toString(),
       style: "mask-type:luminance",
     },
     children: [maskRect, maskText],
     value: "",
   }
 
-  // Painted rectangle that gets punched by the mask
   const rectObject: SvgObject = {
     name: "rect",
     type: "element",
@@ -264,7 +266,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       y: rectY.toString(),
       width: rectWidth.toString(),
       height: rectHeight.toString(),
-      fill: silkscreenColor, // the paint color
+      fill: silkscreenColor,
       transform: matrixToString(textTransform),
       mask: `url(#${maskId})`,
       class: `pcb-silkscreen-text-knockout-area pcb-silkscreen-${layer}`,
@@ -274,6 +276,5 @@ export function createSvgObjectsFromPcbSilkscreenText(
     value: "",
   }
 
-  // Ensure mask is defined before its first use
   return [maskObject, rectObject]
 }
