@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-test(" knockout silkscreen text", () => {
+test("knockout silkscreen text", () => {
   const result = convertCircuitJsonToPcbSvg([
     {
       type: "pcb_board",
@@ -16,19 +16,19 @@ test(" knockout silkscreen text", () => {
     {
       type: "pcb_silkscreen_text",
       layer: "top",
-      pcb_silkscreen_text_id: "pcb_silkscreen_text_top_left",
+      pcb_silkscreen_text_id: "pcb_silkscreen_text_center_1",
       font: "tscircuit2024",
       font_size: 1,
       pcb_component_id: "pcb_generic_component_0",
       anchor_position: { x: -3, y: -3 },
-      anchor_alignment: "top_left",
-      text: "top_left",
+      anchor_alignment: "center",
+      text: "center",
       is_knockout: true,
     },
     {
       type: "pcb_silkscreen_text",
       layer: "top",
-      pcb_silkscreen_text_id: "pcb_silkscreen_text_bottom_right",
+      pcb_silkscreen_text_id: "pcb_silkscreen_text_center_2",
       font: "tscircuit2024",
       font_size: 1,
       pcb_component_id: "pcb_generic_component_0",
@@ -36,6 +36,7 @@ test(" knockout silkscreen text", () => {
       anchor_alignment: "center",
       text: "center",
       is_knockout: true,
+      knockout_padding: { left: 0, right: 0, top: 0, bottom: 0 },
     },
     {
       type: "pcb_silkscreen_text",
@@ -48,9 +49,9 @@ test(" knockout silkscreen text", () => {
       anchor_alignment: "center",
       text: "center",
       is_knockout: true,
-      knockout_padding: { left: 0.2, right: 0.8, top: 0, bottom: 0.8 },
+      knockout_padding: { left: 0.8, right: 0.8, top: 0.8, bottom: 0.8 },
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path + "knockout_padding")
+  expect(result).toMatchSvgSnapshot(import.meta.path)
 })
