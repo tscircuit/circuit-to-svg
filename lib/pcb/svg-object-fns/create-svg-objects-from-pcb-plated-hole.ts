@@ -21,6 +21,14 @@ export function createSvgObjectsFromPcbPlatedHole(
     const innerRadiusX = scaledHoleWidth / 2
     const innerRadiusY = scaledHoleHeight / 2
     const straightLength = scaledOuterHeight - scaledOuterWidth
+    const rotation = hole.ccw_rotation || 0
+
+    const outerTransform = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : `translate(${x} ${y})`
+    const innerTransform = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : `translate(${x} ${y})`
 
     return [
       {
@@ -35,11 +43,12 @@ export function createSvgObjectsFromPcbPlatedHole(
               class: "pcb-hole-outer",
               fill: colorMap.copper.top,
               d:
-                `M${x - outerRadiusX},${y - straightLength / 2} ` +
+                `M${-outerRadiusX},${-straightLength / 2} ` +
                 `v${straightLength} ` +
                 `a${outerRadiusX},${outerRadiusX} 0 0 0 ${scaledOuterWidth},0 ` +
                 `v-${straightLength} ` +
                 `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
+              transform: outerTransform,
             },
             value: "",
             children: [],
@@ -51,13 +60,13 @@ export function createSvgObjectsFromPcbPlatedHole(
             attributes: {
               class: "pcb-hole-inner",
               fill: colorMap.drill,
-
               d:
-                `M${x - innerRadiusX},${y - (scaledHoleHeight - scaledHoleWidth) / 2} ` +
+                `M${-innerRadiusX},${-(scaledHoleHeight - scaledHoleWidth) / 2} ` +
                 `v${scaledHoleHeight - scaledHoleWidth} ` +
                 `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
                 `v-${scaledHoleHeight - scaledHoleWidth} ` +
                 `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+              transform: innerTransform,
             },
             value: "",
             children: [],

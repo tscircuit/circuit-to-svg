@@ -40,6 +40,7 @@ const pcbSoup: AnyCircuitElement[] = [
     port_hints: [],
     pcb_component_id: "pcb_generic_component_0",
     pcb_plated_hole_id: "pcb_plated_hole_0",
+    ccw_rotation: 0,
   },
   {
     type: "pcb_silkscreen_path",
