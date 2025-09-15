@@ -45,7 +45,6 @@ const approxMeasure = (lines: string[], fs: number) => {
   const height = fs * (lines.length <= 1 ? 1.2 : lines.length - 1 + 1.2)
   return { width, height }
 }
-
 ;(globalThis as any).__KO_COUNTER__ ??= 0
 
 export function createSvgObjectsFromPcbSilkscreenText(
@@ -267,8 +266,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
           ),
           mask: `url(#${maskId})`,
           class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-          "data-pcb-silkscreen-text-id":
-            (pcbSilkscreenText as any).pcb_component_id,
+          "data-pcb-silkscreen-text-id":(pcbSilkscreenText as any).pcb_component_id,
         },
         children: [],
       },
