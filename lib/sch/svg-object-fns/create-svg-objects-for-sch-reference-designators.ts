@@ -75,7 +75,7 @@ export const createSvgObjectsForSchReferenceDesignators = ({
     }) as SchematicPort[]
 
     const srcComponent = su(circuitJson as any).source_component.get(
-      schComponent.source_component_id,
+      schComponent.source_component_id!,
     )
 
     // Match schPorts to symbol ports
