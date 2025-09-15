@@ -19,7 +19,6 @@ test("pcb silkscreen text (no knockout)", () => {
     },
   ] as any);
 
-  // snapshot z bun/test
   expect(svg).toMatchSnapshot();
 });
 
@@ -39,10 +38,8 @@ test("pcb silkscreen text (knockout + padding)", () => {
     },
   ] as any);
 
-  // ustvarimo datoteko za PR screenshot
   writeFileSync("knockout-demo.svg", svg);
 
-  // vsaj preveri, da je maska v SVG-ju
   expect(svg).toContain("<mask");
   expect(svg).toMatchSnapshot();
 });
