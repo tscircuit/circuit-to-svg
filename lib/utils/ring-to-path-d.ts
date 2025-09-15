@@ -26,7 +26,7 @@ export function ringToPathD(
       const dist = Math.hypot(dx, dy)
 
       const radius = Math.abs((dist / 4 / bulge) * (bulge * bulge + 1))
-      const sweepFlag = bulge < 0 ? 0 : 1
+      const sweepFlag = bulge < 0 ? 1 : 0
       const largeArcFlag = Math.abs(bulge) > 1 ? 1 : 0
       d += ` A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`
     } else {
