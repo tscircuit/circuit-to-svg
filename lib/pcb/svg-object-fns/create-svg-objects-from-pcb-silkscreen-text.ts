@@ -162,6 +162,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
         "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any)
           .pcb_component_id,
+
         stroke: "none",
       },
       children: makeTextChildren(lines, transformedFontSize),
