@@ -39,9 +39,10 @@ const makeTextChildren = (lines: string[], fs: number): SvgObject[] =>
           },
         ],
       }))
+
 const approxMeasure = (lines: string[], fs: number) => {
   const maxLen = Math.max(...lines.map((s) => s.length), 1)
-  const width = maxLen * 0.6 * fs // ~0.6 em/znak
+  const width = maxLen * 0.6 * fs // ~0.6 em/char
   const height = fs * (lines.length <= 1 ? 1.2 : lines.length - 1 + 1.2)
   return { width, height }
 }
@@ -158,8 +159,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
         "dominant-baseline": dominantBaseline,
         transform: matrixToString(textTransform),
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-        "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any).pcb_component_id,
-
+        "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any)
+          .pcb_component_id,
         stroke: "none",
       },
       children: makeTextChildren(lines, transformedFontSize),
@@ -235,7 +236,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
                   y: "0",
                   dx: dx.toString(),
                   dy: dy.toString(),
-                  fill: "black", // izrez
+                  fill: "black", // cuts out the text from the rect
                   "font-family": "Arial, sans-serif",
                   "font-size": transformedFontSize.toString(),
                   "text-anchor": textAnchor,
@@ -266,7 +267,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
           ),
           mask: `url(#${maskId})`,
           class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-          "data-pcb-silkscreen-text-id":(pcbSilkscreenText as any).pcb_component_id,
+          "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any)
+            .pcb_component_id,
         },
         children: [],
       },
