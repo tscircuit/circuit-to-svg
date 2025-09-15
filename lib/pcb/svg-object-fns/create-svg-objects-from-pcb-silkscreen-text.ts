@@ -39,7 +39,6 @@ const makeTextChildren = (lines: string[], fs: number): SvgObject[] =>
           },
         ],
       }))
-
 const approxMeasure = (lines: string[], fs: number) => {
   const maxLen = Math.max(...lines.map((s) => s.length), 1)
   const width = maxLen * 0.6 * fs // ~0.6 em/znak
@@ -160,8 +159,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         "dominant-baseline": dominantBaseline,
         transform: matrixToString(textTransform),
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-        "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any)
-          .pcb_component_id,
+        "data-pcb-silkscreen-text-id": (pcbSilkscreenText as any).pcb_component_id,
 
         stroke: "none",
       },
