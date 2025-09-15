@@ -37,27 +37,25 @@ export function createSvgObjectsFromPcbTrace(
       ? (traceWidth * Math.abs(transform.a)).toString()
       : "0.3"
 
-    const copperObject: SvgObject = {
-      name: "path",
-      type: "element",
-      value: "",
-      children: [],
-      attributes: {
-        class: "pcb-trace",
-        stroke: copperColor,
-        fill: "none",
-        d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-        "stroke-width": width,
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round",
-        "shape-rendering": "crispEdges",
-        "data-layer": layer,
-      },
-    }
-
-    svgObjects.push(copperObject)
-
     if (renderSolderMask) {
+      const copperObject: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-trace",
+          stroke: copperColor,
+          fill: "none",
+          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+          "stroke-width": width,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "shape-rendering": "crispEdges",
+          "data-layer": layer,
+        },
+      }
+
       const maskObject: SvgObject = {
         name: "path",
         type: "element",
@@ -76,7 +74,27 @@ export function createSvgObjectsFromPcbTrace(
         },
       }
 
-      svgObjects.push(maskObject)
+      svgObjects.push(maskObject, copperObject)
+    } else {
+      const maskOnlyObject: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-trace",
+          stroke: maskColor,
+          fill: "none",
+          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+          "stroke-width": width,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "shape-rendering": "crispEdges",
+          "data-layer": layer,
+        },
+      }
+
+      svgObjects.push(maskOnlyObject)
     }
   }
 

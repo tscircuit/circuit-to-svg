@@ -19,12 +19,23 @@ const circuit: any = [
   },
 ]
 
-test("traces use soldermask color when specified", () => {
+test("does not render soldermask overlay by default", () => {
   const svg = convertCircuitJsonToPcbSvg(circuit, {
     colorOverrides: {
       copper: { top: "#ff0000" },
       soldermask: { top: "#00ff00" },
     },
   })
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "disabled")
+})
+
+test("renders soldermask overlay when enabled", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuit, {
+    colorOverrides: {
+      copper: { top: "#ff0000" },
+      soldermask: { top: "#00ff00" },
+    },
+    renderSolderMask: true,
+  })
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "enabled")
 })
