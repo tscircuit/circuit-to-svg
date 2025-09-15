@@ -72,6 +72,7 @@ interface Options {
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
+  renderSolderMask?: boolean
 }
 
 export interface PcbContext {
@@ -80,6 +81,7 @@ export interface PcbContext {
   shouldDrawErrors?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
+  renderSolderMask?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -257,6 +259,7 @@ export function convertCircuitJsonToPcbSvg(
     shouldDrawErrors: options?.shouldDrawErrors,
     drawPaddingOutsideBoard,
     colorMap,
+    renderSolderMask: options?.renderSolderMask,
   }
 
   function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {

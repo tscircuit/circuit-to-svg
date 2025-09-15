@@ -9,7 +9,7 @@ export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter, colorMap, renderSolderMask } = ctx
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
 
@@ -25,26 +25,29 @@ export function createSvgObjectsFromPcbTrace(
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
 
-    const layerColor =
+    const copperColor = layerNameToColor(layer, colorMap)
+    const maskColor =
       colorMap.soldermask[layer as keyof typeof colorMap.soldermask] ??
-      layerNameToColor(layer, colorMap)
+      copperColor
 
     const traceWidth =
       "width" in start ? start.width : "width" in end ? end.width : null
 
-    const svgObject: SvgObject = {
+    const width = traceWidth
+      ? (traceWidth * Math.abs(transform.a)).toString()
+      : "0.3"
+
+    const copperObject: SvgObject = {
       name: "path",
       type: "element",
       value: "",
       children: [],
       attributes: {
         class: "pcb-trace",
-        stroke: layerColor,
+        stroke: copperColor,
         fill: "none",
         d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-        "stroke-width": traceWidth
-          ? (traceWidth * Math.abs(transform.a)).toString()
-          : "0.3",
+        "stroke-width": width,
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
         "shape-rendering": "crispEdges",
@@ -52,7 +55,29 @@ export function createSvgObjectsFromPcbTrace(
       },
     }
 
-    svgObjects.push(svgObject)
+    svgObjects.push(copperObject)
+
+    if (renderSolderMask) {
+      const maskObject: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-soldermask",
+          stroke: maskColor,
+          fill: "none",
+          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+          "stroke-width": width,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "shape-rendering": "crispEdges",
+          "data-layer": layer,
+        },
+      }
+
+      svgObjects.push(maskObject)
+    }
   }
 
   svgObjects.sort((a, b) => {
