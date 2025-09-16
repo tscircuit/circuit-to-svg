@@ -11,14 +11,6 @@ test("solder mask covers smtpads marked as covered", () => {
       height: 4,
     },
     {
-      type: "pcb_trace",
-      pcb_trace_id: "trace0",
-      route: [
-        { route_type: "wire", x: -2.5, y: 0, width: 0.35, layer: "top" },
-        { route_type: "wire", x: 1.2, y: 0, width: 0.35, layer: "top" },
-      ],
-    },
-    {
       type: "pcb_plated_hole",
       pcb_plated_hole_id: "via0",
       shape: "circle",
@@ -33,8 +25,8 @@ test("solder mask covers smtpads marked as covered", () => {
       pcb_smtpad_id: "pad_masked",
       shape: "rect",
       layer: "top",
-      x: 0,
-      y: 0,
+      x: -1,
+      y: 1,
       width: 1.8,
       height: 1.2,
       is_covered_with_solder_mask: true,

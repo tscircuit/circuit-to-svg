@@ -16,13 +16,10 @@ export function createSvgObjectsFromSmtPad(
   )
 
   const solderMaskColor =
-    colorMap.soldermask[
-      pad.layer as keyof typeof colorMap.soldermask
-    ] ?? colorMap.soldermask.top
+    colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
+    colorMap.soldermask.top
 
-  const maybeCreateSolderMask = (
-    geometry: Record<string, string>,
-  ) => {
+  const maybeCreateSolderMask = (geometry: Record<string, string>) => {
     if (!isCoveredWithSolderMask) return null
     return {
       ...geometry,
