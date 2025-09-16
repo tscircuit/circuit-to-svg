@@ -1,62 +1,83 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-test("solder mask covers smtpads marked as covered", () => {
+test("solder mask renders for each SMT pad shape and stays below other copper", () => {
   const circuit: any = [
     {
       type: "pcb_board",
       pcb_board_id: "board0",
       center: { x: 0, y: 0 },
-      width: 6,
-      height: 4,
+      width: 12,
+      height: 8,
     },
-    {
-      type: "pcb_plated_hole",
-      pcb_plated_hole_id: "via0",
-      shape: "circle",
-      x: 1.2,
-      y: 0,
-      outer_diameter: 1.2,
-      hole_diameter: 0.6,
-      layers: ["top", "bottom"],
-    },
+
     {
       type: "pcb_smtpad",
-      pcb_smtpad_id: "pad_masked",
+      pcb_smtpad_id: "pad_rect",
       shape: "rect",
       layer: "top",
-      x: -1,
-      y: 1,
-      width: 1.8,
-      height: 1.2,
+      x: -3.5,
+      y: 1.8,
+      width: 1.6,
+      height: 1.1,
       is_covered_with_solder_mask: true,
     },
     {
       type: "pcb_smtpad",
-      pcb_smtpad_id: "pad_exposed",
-      shape: "circle",
+      pcb_smtpad_id: "pad_rotated_rect",
+      shape: "rotated_rect",
       layer: "top",
-      x: -1.8,
-      y: -0.9,
-      radius: 0.5,
+      x: 0,
+      y: 0,
+      width: 2,
+      height: 1.1,
+      rect_border_radius: 0.15,
+      ccw_rotation: 30,
+      is_covered_with_solder_mask: true,
     },
     {
       type: "pcb_smtpad",
-      pcb_smtpad_id: "pad_exposed",
+      pcb_smtpad_id: "pad_pill",
+      shape: "pill",
+      layer: "top",
+      x: 3.5,
+      y: 1.8,
+      width: 2.4,
+      height: 1,
+      radius: 0.5,
+      is_covered_with_solder_mask: true,
+    },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "pad_circle",
       shape: "circle",
       layer: "top",
-      x: 0,
-      y: -0.9,
-      radius: 0.5,
+      x: -2.2,
+      y: -1.8,
+      radius: 0.75,
+      is_covered_with_solder_mask: true,
+    },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "pad_polygon",
+      shape: "polygon",
+      layer: "top",
+      points: [
+        { x: 1.4, y: -2.7 },
+        { x: 2.6, y: -3 },
+        { x: 3.3, y: -2.3 },
+        { x: 2.7, y: -1.2 },
+        { x: 1.6, y: -1.4 },
+      ],
       is_covered_with_solder_mask: true,
     },
   ]
 
   const svg = convertCircuitJsonToPcbSvg(circuit, {
     colorOverrides: {
-      soldermask: { top: "rgb(20, 51, 36)" },
+      soldermask: { top: "rgb(18, 82, 50)" },
+      copper: { top: "rgb(210, 58, 58)" },
     },
   })
-
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
