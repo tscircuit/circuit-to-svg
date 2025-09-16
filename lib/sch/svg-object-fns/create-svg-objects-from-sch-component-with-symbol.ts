@@ -21,6 +21,10 @@ import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import {
+  renderSymbol,
+  type SchematicSymbol as InlineSchematicSymbol,
+} from "../renderSymbol"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -64,6 +68,52 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   colorMap: ColorMap
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
+
+  // ✅ If the component provides an *inline* symbol, render it with renderSymbol and return early.
+  const inlineSymbol: InlineSchematicSymbol | undefined = (schComponent as any)
+    ?.schematic_component?.symbol
+
+  if (
+    inlineSymbol &&
+    Array.isArray(inlineSymbol.primitives) &&
+    inlineSymbol.primitives.length > 0
+  ) {
+    // Render to an SVG <g> string
+    const gString = renderSymbol(inlineSymbol)
+
+    // Wrap in a root <svg> so svgson can parse it safely
+    const svgString = `<svg xmlns="http://www.w3.org/2000/svg">${gString}</svg>`
+    const parsed = parseSync(svgString)
+
+    // Find the <g> we rendered (first element child)
+    const groupNode = (parsed.children ?? []).find(
+      (c: any) => c.type === "element",
+    )
+
+    // Compute the same overall transform you normally apply (symbol-space → real → screen)
+    // If your port-matching logic matters for inline symbols too, you can slot it above and
+    // compose those matrices here. Otherwise we compose with identity from symbol space.
+    const finalMatrix = realToScreenTransform
+    const transformAttr = matrixToSvgTransform(finalMatrix)
+
+    // Ensure the group has the composed transform + color defaults consistent with your palette
+    const groupWithTransform = {
+      ...groupNode,
+      attributes: {
+        ...(groupNode?.attributes ?? {}),
+        transform: transformAttr,
+        // Keep color styling consistent with your existing logic if stroke/fill are absent
+        stroke:
+          groupNode?.attributes?.stroke ?? colorMap.schematic.component_outline,
+      },
+    }
+
+    // Convert to SvgObject[] and append
+    svgObjects.push(...svgsonNodeToSvgObjects(groupWithTransform))
+
+    // We handled inline symbol completely — keep logic identical and avoid mixing with library symbols
+    return svgObjects
+  }
 
   const symbol: SchSymbol = (symbols as any)[schComponent.symbol_name!]
 
@@ -315,4 +365,32 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     })
   }
   return svgObjects
+}
+// Turn a transformation-matrix Matrix into an SVG transform string
+const matrixToSvgTransform = (m: Matrix) =>
+  `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`
+
+// Convert a subset of svgson nodes into your SvgObject shape
+const svgsonNodeToSvgObjects = (node: any): SvgObject[] => {
+  // We only care about element-ish nodes you already emit: g, path, rect, circle, line, text
+  if (node.type !== "element") return []
+
+  // Your SvgObject examples look like: { type: "path", attributes: {...}, value: "", children: [] }
+  const thisObj: SvgObject = {
+    type: node.name, // "g" | "path" | "rect" | "circle" | "line" | "text" ...
+    attributes: node.attributes ?? {}, // carry over attrs; your pipeline already understands these
+    value: typeof node.value === "string" ? node.value : "",
+    children: [],
+    name: "",
+  }
+
+  const children: SvgObject[] = []
+  for (const child of node.children ?? []) {
+    children.push(...svgsonNodeToSvgObjects(child))
+  }
+
+  // If it’s a <g>, keep children nested; otherwise keep empty children (consistent with your code style)
+  if (thisObj.type === "g") thisObj.children = children
+
+  return [thisObj]
 }

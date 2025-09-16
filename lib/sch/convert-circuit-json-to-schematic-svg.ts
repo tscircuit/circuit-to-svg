@@ -26,6 +26,7 @@ import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
+import { createSvgObjectsFromSchematicComponentWithSymbol } from "./svg-object-fns/create-svg-objects-from-sch-component-with-symbol"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -163,14 +164,29 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_component") {
-      schComponentSvgs.push(
-        ...createSvgObjectsFromSchematicComponent({
-          component: elm,
-          transform,
-          circuitJson,
-          colorMap,
-        }),
-      )
+      // Prefer inline symbol if present
+      if ((elm as any).symbol) {
+        schComponentSvgs.push(
+          ...createSvgObjectsFromSchematicComponentWithSymbol({
+            component: elm,
+            transform,
+            circuitJson,
+            colorMap,
+          }),
+        )
+      } else {
+        // Fallback to the existing renderer
+        schComponentSvgs.push(
+          ...createSvgObjectsFromSchematicComponent({
+            component: elm,
+            transform,
+            circuitJson,
+            colorMap,
+          }),
+        )
+      }
+
+      // Port hover helpers still apply either way
       schPortHoverSvgs.push(
         ...createSvgObjectsForSchComponentPortHovers({
           component: elm,
