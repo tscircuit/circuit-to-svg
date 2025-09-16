@@ -1,0 +1,80 @@
+import { expect, test } from "bun:test"
+import { convertCircuitJsonToPcbSvg } from "lib"
+
+const circuitJson: any = [
+  {
+    type: "pcb_board",
+    pcb_board_id: "board_offsets",
+    center: { x: 0, y: 0 },
+    width: 24,
+    height: 12,
+  },
+  {
+    type: "pcb_plated_hole",
+    shape: "pill_hole_with_rect_pad",
+    hole_shape: "pill",
+    pad_shape: "rect",
+    x: -8,
+    y: 0,
+    hole_width: 1.4,
+    hole_height: 3.2,
+    rect_pad_width: 3,
+    rect_pad_height: 5,
+    layers: ["top", "bottom"],
+    pcb_plated_hole_id: "pill_rect_centered",
+  },
+  {
+    type: "pcb_plated_hole",
+    shape: "pill_hole_with_rect_pad",
+    hole_shape: "pill",
+    pad_shape: "rect",
+    x: -2.5,
+    y: 0,
+    hole_width: 1.2,
+    hole_height: 2.6,
+    rect_pad_width: 3,
+    rect_pad_height: 4.6,
+    hole_offset_x: 0.6,
+    layers: ["top", "bottom"],
+    pcb_plated_hole_id: "pill_rect_offset_x",
+  },
+  {
+    type: "pcb_plated_hole",
+    shape: "pill_hole_with_rect_pad",
+    hole_shape: "pill",
+    pad_shape: "rect",
+    x: 2.5,
+    y: 0,
+    hole_width: 1.2,
+    hole_height: 2.6,
+    rect_pad_width: 3,
+    rect_pad_height: 4.6,
+    hole_offset_y: 0.8,
+    layers: ["top", "bottom"],
+    pcb_plated_hole_id: "pill_rect_offset_y",
+  },
+  {
+    type: "pcb_plated_hole",
+    shape: "rotated_pill_hole_with_rect_pad",
+    hole_shape: "rotated_pill",
+    pad_shape: "rect",
+    x: 8,
+    y: 0,
+    hole_width: 1.6,
+    hole_height: 3.4,
+    hole_ccw_rotation: 35,
+    rect_pad_width: 3.4,
+    rect_pad_height: 5.6,
+    rect_ccw_rotation: -15,
+    hole_offset_x: -0.6,
+    hole_offset_y: 0.5,
+    layers: ["top", "bottom"],
+    pcb_plated_hole_id: "rotated_pill_rect_offset",
+  },
+]
+
+test("pill plated holes with rectangular pad offsets", () => {
+  expect(convertCircuitJsonToPcbSvg(circuitJson)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
+})
