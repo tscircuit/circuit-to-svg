@@ -40,6 +40,16 @@ test("solder mask covers smtpads marked as covered", () => {
       y: -0.9,
       radius: 0.5,
     },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "pad_exposed",
+      shape: "circle",
+      layer: "top",
+      x: 0,
+      y: -0.9,
+      radius: 0.5,
+      is_covered_with_solder_mask: true,
+    },
   ]
 
   const svg = convertCircuitJsonToPcbSvg(circuit, {
