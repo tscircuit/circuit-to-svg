@@ -11,9 +11,7 @@ export function createSvgObjectsFromSmtPad(
 
   if (layerFilter && pad.layer !== layerFilter) return []
 
-  const isCoveredWithSolderMask = Boolean(
-    (pad as any)?.is_covered_with_solder_mask,
-  )
+  const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
 
   const solderMaskColor =
     colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
@@ -58,7 +56,7 @@ export function createSvgObjectsFromSmtPad(
     const height = pad.height * Math.abs(transform.d)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
     const scaledBorderRadius =
-      ((pad as any).rect_border_radius ?? 0) * Math.abs(transform.a)
+      (pad.rect_border_radius ?? 0) * Math.abs(transform.a)
 
     if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
       return createPadElements("rect", {
