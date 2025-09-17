@@ -26,6 +26,10 @@ import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
+import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-objects-from-sch-line"
+import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
+import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
+import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -154,6 +158,10 @@ export function convertCircuitJsonToSchematicSvg(
   const schBoxSvgs: SvgObject[] = []
   const schTableSvgs: SvgObject[] = []
   const schPortHoverSvgs: SvgObject[] = []
+  const schLineSvgs: SvgObject[] = []
+  const schCircleSvgs: SvgObject[] = []
+  const schRectSvgs: SvgObject[] = []
+  const schArcSvgs: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -228,6 +236,38 @@ export function convertCircuitJsonToSchematicSvg(
           circuitJson,
         }),
       )
+    } else if (elm.type === "schematic_line") {
+      schLineSvgs.push(
+        ...createSvgObjectsFromSchematicLine({
+          schLine: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_circle") {
+      schCircleSvgs.push(
+        ...createSvgObjectsFromSchematicCircle({
+          schCircle: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_rect") {
+      schRectSvgs.push(
+        ...createSvgObjectsFromSchematicRect({
+          schRect: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_arc") {
+      schArcSvgs.push(
+        ...createSvgObjectsFromSchematicArc({
+          schArc: elm,
+          transform,
+          colorMap,
+        }),
+      )
     }
   }
 
@@ -244,6 +284,10 @@ export function convertCircuitJsonToSchematicSvg(
     ...schDebugObjectSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
+    ...schLineSvgs,
+    ...schCircleSvgs,
+    ...schRectSvgs,
+    ...schArcSvgs,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schNetLabel,

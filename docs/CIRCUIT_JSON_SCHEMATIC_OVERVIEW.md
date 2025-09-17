@@ -12,7 +12,8 @@ can also import.
 interface SchematicTrace {
   type: "schematic_trace"
   schematic_trace_id: string
-  source_trace_id: string
+  source_trace_id?: string
+  subcircuit_connectivity_map_key?: string // will be required in future
   edges: Array<{
     from: {
       x: number
@@ -29,7 +30,7 @@ interface SchematicTrace {
 
 interface SchematicBox {
   type: "schematic_box"
-  schematic_component_id: string
+  schematic_component_id?: string
   width: number
   height: number
   x: number
@@ -38,11 +39,16 @@ interface SchematicBox {
 
 interface SchematicLine {
   type: "schematic_line"
+  schematic_line_id: string
   schematic_component_id: string
   x1: number
   x2: number
   y1: number
   y2: number
+  stroke_width: number
+  color: string
+  is_dashed: boolean
+  subcircuit_id?: string
 }
 
 interface SchematicError {
@@ -124,8 +130,6 @@ interface SchematicPort {
   schematic_component_id?: string
   center: { x: number; y: number }
   facing_direction?: "up" | "down" | "left" | "right"
-  has_input_arrow?: boolean
-  has_output_arrow?: boolean
 }
 
 interface SchematicNetLabel {
@@ -134,6 +138,7 @@ interface SchematicNetLabel {
   center: { x: number; y: number }
   anchor_side: "top" | "bottom" | "left" | "right"
   text: string
+  is_movable?: boolean
 }
 
 interface SchematicPath {

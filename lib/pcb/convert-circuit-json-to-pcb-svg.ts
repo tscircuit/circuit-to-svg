@@ -199,13 +199,13 @@ export function convertCircuitJsonToPcbSvg(
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
   const boundsMinX =
-    drawPaddingOutsideBoard || !isFinite(boardMinX) ? minX : boardMinX
+    drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
   const boundsMinY =
-    drawPaddingOutsideBoard || !isFinite(boardMinY) ? minY : boardMinY
+    drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
   const boundsMaxX =
-    drawPaddingOutsideBoard || !isFinite(boardMaxX) ? maxX : boardMaxX
+    drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
   const boundsMaxY =
-    drawPaddingOutsideBoard || !isFinite(boardMaxY) ? maxY : boardMaxY
+    drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -308,7 +308,7 @@ export function convertCircuitJsonToPcbSvg(
 
   for (const element of circuitJson) {
     if ("stroke_width" in element) {
-      strokeWidth = String(scaleFactor * element.stroke_width)
+      strokeWidth = String(scaleFactor * element.stroke_width!)
       break
     }
   }
