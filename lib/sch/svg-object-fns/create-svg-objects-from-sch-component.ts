@@ -13,7 +13,7 @@ export function createSvgObjectsFromSchematicComponent(params: {
 }): SvgObject[] {
   const { component } = params
 
-  if (!component.is_box_with_pins) {
+  if (component.is_box_with_pins === false) {
     return []
   }
 
