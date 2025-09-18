@@ -13,6 +13,10 @@ export function createSvgObjectsFromSchematicComponent(params: {
 }): SvgObject[] {
   const { component } = params
 
+  if (!component.is_box_with_pins) {
+    return []
+  }
+
   const innerElements = component.symbol_name
     ? createSvgObjectsFromSchematicComponentWithSymbol(params)
     : createSvgObjectsFromSchematicComponentWithBox(params)
