@@ -112,6 +112,7 @@ test("schematic port arrows", () => {
       source_component_id: "source_component_1",
       center: { x: 0, y: 0 },
       size: { width: 8, height: 8 },
+      is_box_with_pins: true,
     },
     {
       type: "schematic_box",

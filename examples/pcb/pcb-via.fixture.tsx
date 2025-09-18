@@ -753,6 +753,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_0",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -767,6 +768,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_2",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -781,6 +783,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_4",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -795,6 +798,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_6",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -809,6 +813,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_8",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -823,6 +828,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_10",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -837,6 +843,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_12",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -851,6 +858,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_14",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -865,6 +873,7 @@ const pcbSoup: AnyCircuitElement[] = [
     },
     pin_spacing: 0.2,
     source_component_id: "source_component_16",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_component",
@@ -905,6 +914,7 @@ const pcbSoup: AnyCircuitElement[] = [
       pin24: "RAW",
     },
     source_component_id: "source_component_18",
+    is_box_with_pins: true,
   },
   {
     type: "schematic_port",

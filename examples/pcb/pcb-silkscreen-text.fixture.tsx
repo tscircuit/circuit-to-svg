@@ -16,6 +16,7 @@ const pcbSoup: AnyCircuitElement[] = [
     source_component_id: "generic_0",
     center: { x: 0, y: 0 },
     size: { width: 0, height: 0 },
+    is_box_with_pins: true,
   },
   {
     type: "pcb_component",
