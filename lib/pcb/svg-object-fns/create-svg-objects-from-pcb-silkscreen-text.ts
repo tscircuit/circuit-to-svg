@@ -9,6 +9,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
@@ -21,6 +22,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
+    is_knockout = false,
+    knockout_padding = {
+      left: 0.2,
+      right: 0.2,
+      top: 0.2,
+      bottom: 0.2,
+    },
   } = pcbSilkscreenText
 
   if (layerFilter && layer !== layerFilter) return []
@@ -34,18 +42,16 @@ export function createSvgObjectsFromPcbSilkscreenText(
     return []
   }
 
-  const [transformedX, transformedY] = applyToPoint(transform, [
+  // Position & size after board transform
+  const [tx, ty] = applyToPoint(transform, [
     anchor_position.x,
     anchor_position.y,
   ])
-
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Set text-anchor and dominant-baseline based on alignment
-  let textAnchor: string = "middle"
-  let dominantBaseline: string = "central"
-  let dx = 0
-  let dy = 0
+  // Alignment → SVG text attributes
+  let textAnchor = "middle"
+  let dominantBaseline = "central"
 
   switch (anchor_alignment) {
     case "top_left":
@@ -87,17 +93,18 @@ export function createSvgObjectsFromPcbSilkscreenText(
       break
   }
 
+  // Compose transform (mirror bottom layer horizontally)
   const textTransform = compose(
-    translate(transformedX, transformedY),
+    translate(tx, ty),
     rotate((ccw_rotation * Math.PI) / 180),
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 
-  const color =
+  const silkscreenColor =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
+  // Handle multi-line
   const lines = text.split("\n")
-
   const children: SvgObject[] =
     lines.length === 1
       ? [
@@ -128,20 +135,108 @@ export function createSvgObjectsFromPcbSilkscreenText(
           ],
         }))
 
-  const svgObject: SvgObject = {
+  const textAttributes = {
+    x: "0",
+    y: "0",
+    dx: "0",
+    dy: "0",
+    fill: silkscreenColor,
+    "font-family": "Arial, sans-serif",
+    "font-size": transformedFontSize.toString(),
+    "text-anchor": textAnchor,
+    "dominant-baseline": dominantBaseline,
+    transform: matrixToString(textTransform),
+    class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
+    "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+    stroke: "none",
+  }
+
+  const textObject: SvgObject = {
+    name: "text",
+    type: "element",
+    attributes: textAttributes,
+    children,
+    value: "",
+  }
+
+  if (!is_knockout) return [textObject]
+
+  const padL = knockout_padding.left * Math.abs(transform.a)
+  const padR = knockout_padding.right * Math.abs(transform.a)
+  const padT = knockout_padding.top * Math.abs(transform.a)
+  const padB = knockout_padding.bottom * Math.abs(transform.a)
+
+  const maxLineLen = Math.max(...lines.map((l) => l.length), 0)
+  const textWidth = (maxLineLen * transformedFontSize) / 2
+  const textHeight = lines.length * transformedFontSize
+
+  const rectWidth = textWidth + padL + padR
+  const rectHeight = textHeight + padT + padB
+
+  let rectX = -padL
+  let rectY = -padT
+
+  switch (anchor_alignment) {
+    case "top_center":
+      rectX = -textWidth / 2 - padL
+      break
+    case "top_right":
+      rectX = -textWidth - padL
+      break
+    case "center_left":
+      rectY = -textHeight / 2 - padT
+      break
+    case "center":
+      rectX = -textWidth / 2 - padL
+      rectY = -textHeight / 2 - padT
+      break
+    case "center_right":
+      rectX = -textWidth - padL
+      rectY = -textHeight / 2 - padT
+      break
+    case "bottom_left":
+      rectY = -textHeight - padT
+      break
+    case "bottom_center":
+      rectX = -textWidth / 2 - padL
+      rectY = -textHeight - padT
+      break
+    case "bottom_right":
+      rectX = -textWidth - padL
+      rectY = -textHeight - padT
+      break
+  }
+
+  const maskId = `pcb-silkscreen-text-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}`
+
+  const maskRect: SvgObject = {
+    name: "rect",
+    type: "element",
+    attributes: {
+      x: rectX.toString(),
+      y: rectY.toString(),
+      width: rectWidth.toString(),
+      height: rectHeight.toString(),
+      fill: "white",
+    },
+    children: [],
+    value: "",
+  }
+
+  const maskText: SvgObject = {
     name: "text",
     type: "element",
     attributes: {
       x: "0",
       y: "0",
-      dx: dx.toString(),
-      dy: dy.toString(),
-      fill: color,
+      dx: "0",
+      dy: "0",
       "font-family": "Arial, sans-serif",
       "font-size": transformedFontSize.toString(),
       "text-anchor": textAnchor,
       "dominant-baseline": dominantBaseline,
-      transform: matrixToString(textTransform),
+      fill: "black",
+      "fill-opacity": "1",
       class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
       stroke: "none",
@@ -150,5 +245,36 @@ export function createSvgObjectsFromPcbSilkscreenText(
     value: "",
   }
 
-  return [svgObject]
+  const maskObject: SvgObject = {
+    name: "mask",
+    type: "element",
+    attributes: {
+      id: maskId,
+      maskUnits: "userSpaceOnUse",
+      maskContentUnits: "userSpaceOnUse",
+      style: "mask-type:luminance",
+    },
+    children: [maskRect, maskText],
+    value: "",
+  }
+
+  const rectObject: SvgObject = {
+    name: "rect",
+    type: "element",
+    attributes: {
+      x: rectX.toString(),
+      y: rectY.toString(),
+      width: rectWidth.toString(),
+      height: rectHeight.toString(),
+      fill: silkscreenColor,
+      transform: matrixToString(textTransform),
+      mask: `url(#${maskId})`,
+      class: `pcb-silkscreen-text-knockout-area pcb-silkscreen-${layer}`,
+      "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_component_id,
+    },
+    children: [],
+    value: "",
+  }
+
+  return [maskObject, rectObject]
 }
