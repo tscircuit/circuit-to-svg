@@ -42,10 +42,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   // Set text-anchor and dominant-baseline based on alignment
-  let textAnchor: string = "middle"
-  let dominantBaseline: string = "central"
-  let dx = 0
-  let dy = 0
+  let textAnchor = "middle"
+  let dominantBaseline = "central"
+  const dx = 0
+  const dy = 0
 
   switch (anchor_alignment) {
     case "top_left":
@@ -89,7 +89,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((ccw_rotation * Math.PI) / 180),
+    rotate((-ccw_rotation * Math.PI) / 180), // Negate to make counter-clockwise
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 
