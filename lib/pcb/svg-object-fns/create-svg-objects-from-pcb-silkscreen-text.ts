@@ -9,10 +9,15 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { createSvgObjectsFromPcbSilkscreenTextKnockout } from "./create-svg-objects-from-pcb-silkscreen-text-knockout"
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
+  if ((pcbSilkscreenText as any).is_knockout) {
+    return createSvgObjectsFromPcbSilkscreenTextKnockout(pcbSilkscreenText, ctx)
+  }
+  
   const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,
@@ -39,9 +44,11 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.y,
   ])
 
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const parsedFontSize = typeof font_size === "string"
+    ? parseFloat(font_size.replace(/[^\d.]/g, "")) || 1
+    : font_size || 1
+  const transformedFontSize = parsedFontSize * Math.abs(transform.a)
 
-  // Set text-anchor and dominant-baseline based on alignment
   let textAnchor = "middle"
   let dominantBaseline = "central"
   const dx = 0
@@ -89,7 +96,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((-ccw_rotation * Math.PI) / 180), // Negate to make counter-clockwise
+    rotate((-ccw_rotation * Math.PI) / 180),
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 
