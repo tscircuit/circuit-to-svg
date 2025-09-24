@@ -1,0 +1,87 @@
+import { test, expect } from "bun:test"
+import { convertCircuitJsonToPcbSvg } from "lib"
+
+test("rect border radius elements", () => {
+  const circuit: any = [
+    {
+      type: "pcb_board",
+      pcb_board_id: "board_0",
+      center: { x: 0, y: 0 },
+      width: 20,
+      height: 20,
+    },
+    {
+      type: "pcb_plated_hole",
+      pcb_plated_hole_id: "hole_circular",
+      shape: "circular_hole_with_rect_pad",
+      hole_shape: "circle",
+      pad_shape: "rect",
+      x: 4,
+      y: 4,
+      hole_diameter: 1,
+      rect_pad_width: 2,
+      rect_pad_height: 2,
+      rect_border_radius: 0.2,
+      layers: ["top", "bottom"],
+    },
+    {
+      type: "pcb_plated_hole",
+      pcb_plated_hole_id: "hole_pill",
+      shape: "pill_hole_with_rect_pad",
+      hole_shape: "pill",
+      pad_shape: "rect",
+      x: 4,
+      y: 0,
+      hole_width: 1,
+      hole_height: 2,
+      rect_pad_width: 2,
+      rect_pad_height: 3,
+      rect_border_radius: 0.3,
+      layers: ["top"],
+    },
+    {
+      type: "pcb_plated_hole",
+      pcb_plated_hole_id: "hole_rotated_pill",
+      shape: "rotated_pill_hole_with_rect_pad",
+      hole_shape: "rotated_pill",
+      pad_shape: "rect",
+      x: 0,
+      y: 0,
+      hole_width: 1,
+      hole_height: 2,
+      hole_ccw_rotation: 45,
+      rect_pad_width: 3,
+      rect_pad_height: 2,
+      rect_ccw_rotation: 30,
+      rect_border_radius: 0.25,
+      layers: ["top"],
+    },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "smt_rect",
+      shape: "rect",
+      x: 0,
+      y: -4,
+      width: 2,
+      height: 1,
+      rect_border_radius: 0.2,
+      layer: "top",
+    },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "smt_rotated_rect",
+      shape: "rotated_rect",
+      x: 0,
+      y: 4,
+      width: 2,
+      height: 1,
+      ccw_rotation: 30,
+      rect_border_radius: 0.2,
+      layer: "top",
+    },
+  ]
+
+  expect(convertCircuitJsonToPcbSvg(circuit)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
+})

@@ -1,4 +1,9 @@
-import type { AnyCircuitElement, LayerRef, Point } from "circuit-json"
+import type {
+  PcbComponent,
+  LayerRef,
+  Point,
+  AnyCircuitElement,
+} from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"

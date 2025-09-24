@@ -16,6 +16,7 @@ const pcbSoup: AnyCircuitElement[] = [
     source_component_id: "generic_0",
     center: { x: 0, y: 0 },
     size: { width: 0, height: 0 },
+    is_box_with_pins: true,
   },
   {
     type: "pcb_component",
@@ -40,6 +41,7 @@ const pcbSoup: AnyCircuitElement[] = [
     port_hints: [],
     pcb_component_id: "pcb_generic_component_0",
     pcb_plated_hole_id: "pcb_plated_hole_0",
+    ccw_rotation: 0,
   },
   {
     type: "pcb_silkscreen_path",

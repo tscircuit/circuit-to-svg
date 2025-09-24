@@ -119,6 +119,27 @@ export function getSchematicBoundsFromCircuitJson(
         { width: totalWidth, height: totalHeight },
         0,
       )
+    } else if (item.type === "schematic_line") {
+      updateBounds({ x: item.x1, y: item.y1 }, { width: 0.02, height: 0.02 }, 0)
+      updateBounds({ x: item.x2, y: item.y2 }, { width: 0.02, height: 0.02 }, 0)
+    } else if (item.type === "schematic_circle") {
+      updateBounds(
+        item.center,
+        { width: item.radius * 2, height: item.radius * 2 },
+        0,
+      )
+    } else if (item.type === "schematic_rect") {
+      updateBounds(
+        item.center,
+        { width: item.width, height: item.height },
+        item.rotation,
+      )
+    } else if (item.type === "schematic_arc") {
+      updateBounds(
+        item.center,
+        { width: item.radius * 2, height: item.radius * 2 },
+        0,
+      )
     }
   }
 
