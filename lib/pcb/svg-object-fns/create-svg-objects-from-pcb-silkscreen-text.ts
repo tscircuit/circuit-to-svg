@@ -22,11 +22,12 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const {
     anchor_position,
     text,
-    font_size = 1,
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
   } = pcbSilkscreenText
+
+  const font_size = (pcbSilkscreenText as any).font_size || 1
 
   if (layerFilter && layer !== layerFilter) return []
 

@@ -23,7 +23,7 @@ function lengthToPixels(
   if (typeof length === "number") return length * scale
 
   const match = length.match(/^([\d.]+)(\w+)$/)
-  if (!match) return defaultValue
+  if (!match || !match[1]) return defaultValue
 
   const value = parseFloat(match[1])
   const unit = match[2]
