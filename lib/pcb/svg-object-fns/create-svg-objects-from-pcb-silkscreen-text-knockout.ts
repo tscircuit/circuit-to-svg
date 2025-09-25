@@ -14,20 +14,27 @@ let knockoutIdCounter = 0
 function getUniqueKnockoutId(): string {
   return `knockout-mask-${++knockoutIdCounter}`
 }
-function lengthToPixels(length: string | number | undefined, defaultValue: number, scale: number): number {
+function lengthToPixels(
+  length: string | number | undefined,
+  defaultValue: number,
+  scale: number,
+): number {
   if (length === undefined) return defaultValue
   if (typeof length === "number") return length * scale
-  
+
   const match = length.match(/^([\d.]+)(\w+)$/)
   if (!match) return defaultValue
-  
+
   const value = parseFloat(match[1])
   const unit = match[2]
-  
+
   switch (unit) {
-    case "mm": return value * scale
-    case "px": return value
-    default: return defaultValue
+    case "mm":
+      return value * scale
+    case "px":
+      return value
+    default:
+      return defaultValue
   }
 }
 
@@ -103,9 +110,10 @@ export function createSvgObjectsFromPcbSilkscreenTextKnockout(
     anchor_position.y,
   ])
 
-  const parsedFontSize = typeof font_size === "string" 
-    ? lengthToPixels(font_size, 1, 1) 
-    : font_size || 1
+  const parsedFontSize =
+    typeof font_size === "string"
+      ? lengthToPixels(font_size, 1, 1)
+      : font_size || 1
   const transformedFontSize = parsedFontSize * Math.abs(transform.a)
   const lines = (text ?? "").toString().split("\n")
 
@@ -154,13 +162,13 @@ export function createSvgObjectsFromPcbSilkscreenTextKnockout(
 
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((ccw_rotation * Math.PI) / 180),
+    rotate((-ccw_rotation * Math.PI) / 180),
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 
-  const color = knockout_color ?? (
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
-  )
+  const color =
+    knockout_color ??
+    (layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top)
 
   if (!is_knockout) {
     const svgObject: SvgObject = {
@@ -186,18 +194,34 @@ export function createSvgObjectsFromPcbSilkscreenTextKnockout(
   }
 
   const { width, height } = measureText(lines, transformedFontSize)
-  
+
   const defaultPadding = 0.25 * Math.abs(transform.a)
   let padLeft = defaultPadding
   let padRight = defaultPadding
   let padTop = defaultPadding
   let padBottom = defaultPadding
-  
+
   if (knockout_padding) {
-    padLeft = lengthToPixels(knockout_padding.left, defaultPadding, Math.abs(transform.a))
-    padRight = lengthToPixels(knockout_padding.right, defaultPadding, Math.abs(transform.a))
-    padTop = lengthToPixels(knockout_padding.top, defaultPadding, Math.abs(transform.a))
-    padBottom = lengthToPixels(knockout_padding.bottom, defaultPadding, Math.abs(transform.a))
+    padLeft = lengthToPixels(
+      knockout_padding.left,
+      defaultPadding,
+      Math.abs(transform.a),
+    )
+    padRight = lengthToPixels(
+      knockout_padding.right,
+      defaultPadding,
+      Math.abs(transform.a),
+    )
+    padTop = lengthToPixels(
+      knockout_padding.top,
+      defaultPadding,
+      Math.abs(transform.a),
+    )
+    padBottom = lengthToPixels(
+      knockout_padding.bottom,
+      defaultPadding,
+      Math.abs(transform.a),
+    )
   }
 
   let rx = 0
@@ -215,8 +239,16 @@ export function createSvgObjectsFromPcbSilkscreenTextKnockout(
   const rectW = (width + padLeft + padRight).toString()
   const rectH = (height + padTop + padBottom).toString()
 
-  const cornerRadius = lengthToPixels(knockout_corner_radius, 0, Math.abs(transform.a))
-  const borderWidth = lengthToPixels(knockout_border_width, 0, Math.abs(transform.a))
+  const cornerRadius = lengthToPixels(
+    knockout_corner_radius,
+    0,
+    Math.abs(transform.a),
+  )
+  const borderWidth = lengthToPixels(
+    knockout_border_width,
+    0,
+    Math.abs(transform.a),
+  )
 
   const maskId = getUniqueKnockoutId()
 
@@ -277,24 +309,28 @@ export function createSvgObjectsFromPcbSilkscreenTextKnockout(
           },
         ],
       },
-      ...(borderWidth > 0 ? [{
-        type: "element" as const,
-        name: "rect",
-        value: "",
-        attributes: {
-          x: rectX,
-          y: rectY,
-          width: rectW,
-          height: rectH,
-          rx: cornerRadius.toString(),
-          ry: cornerRadius.toString(),
-          fill: "none",
-          stroke: color,
-          "stroke-width": borderWidth.toString(),
-          transform: matrixToString(textTransform),
-        },
-        children: [],
-      }] : []),
+      ...(borderWidth > 0
+        ? [
+            {
+              type: "element" as const,
+              name: "rect",
+              value: "",
+              attributes: {
+                x: rectX,
+                y: rectY,
+                width: rectW,
+                height: rectH,
+                rx: cornerRadius.toString(),
+                ry: cornerRadius.toString(),
+                fill: "none",
+                stroke: color,
+                "stroke-width": borderWidth.toString(),
+                transform: matrixToString(textTransform),
+              },
+              children: [],
+            },
+          ]
+        : []),
       {
         type: "element",
         name: "rect",

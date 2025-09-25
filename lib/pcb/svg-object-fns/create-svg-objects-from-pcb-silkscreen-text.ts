@@ -17,7 +17,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   if ((pcbSilkscreenText as any).is_knockout) {
     return createSvgObjectsFromPcbSilkscreenTextKnockout(pcbSilkscreenText, ctx)
   }
-  
+
   const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,
@@ -44,9 +44,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.y,
   ])
 
-  const parsedFontSize = typeof font_size === "string"
-    ? parseFloat(font_size.replace(/[^\d.]/g, "")) || 1
-    : font_size || 1
+  const parsedFontSize =
+    typeof font_size === "string"
+      ? parseFloat(font_size.replace(/[^\d.]/g, "")) || 1
+      : font_size || 1
   const transformedFontSize = parsedFontSize * Math.abs(transform.a)
 
   let textAnchor = "middle"
