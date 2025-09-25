@@ -26,6 +26,7 @@ function lengthToPixels(
   if (!match || !match[1]) return defaultValue
 
   const value = parseFloat(match[1])
+  if (isNaN(value)) return defaultValue
   const unit = match[2]
 
   switch (unit) {
