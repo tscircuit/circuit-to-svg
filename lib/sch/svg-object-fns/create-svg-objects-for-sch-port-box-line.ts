@@ -89,23 +89,29 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const screenSchPortPos = applyToPoint(transform, schPort.center)
   const screenRealEdgePos = applyToPoint(transform, realEdgePos)
 
-  // Subtract the pin circle radius from the pin line length to get the end
+  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
+
+  // For connected pins, line goes to center. For unconnected pins, stop short by circle radius
   const realLineEnd = { ...schPort.center }
 
-  switch (schPort.side_of_component) {
-    case "left":
-      realLineEnd.x += PIN_CIRCLE_RADIUS_MM
-      break
-    case "right":
-      realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "top":
-      realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
-      break
-    case "bottom":
-      realLineEnd.y += PIN_CIRCLE_RADIUS_MM
-      break
+  if (!isConnected) {
+    // Subtract the pin circle radius from the pin line length for unconnected pins
+    switch (schPort.side_of_component) {
+      case "left":
+        realLineEnd.x += PIN_CIRCLE_RADIUS_MM
+        break
+      case "right":
+        realLineEnd.x -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "top":
+        realLineEnd.y -= PIN_CIRCLE_RADIUS_MM
+        break
+      case "bottom":
+        realLineEnd.y += PIN_CIRCLE_RADIUS_MM
+        break
+    }
   }
+
   const screenLineEnd = applyToPoint(transform, realLineEnd)
 
   // Add port line
@@ -114,17 +120,15 @@ export const createSvgObjectsForSchPortBoxLine = ({
     type: "element",
     attributes: {
       class: "component-pin",
-      x1: screenLineEnd.x.toString(),
-      y1: screenLineEnd.y.toString(),
-      x2: screenRealEdgePos.x.toString(),
-      y2: screenRealEdgePos.y.toString(),
+      x1: screenRealEdgePos.x.toString(),
+      y1: screenRealEdgePos.y.toString(),
+      x2: screenLineEnd.x.toString(),
+      y2: screenLineEnd.y.toString(),
       "stroke-width": `${getSchStrokeSize(transform)}px`,
     },
     value: "",
     children: [],
   })
-
-  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
   const pinRadiusPx = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM
 
   const pinChildren: SvgObject[] = []
