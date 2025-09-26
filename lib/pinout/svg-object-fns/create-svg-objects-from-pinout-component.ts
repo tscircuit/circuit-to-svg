@@ -24,11 +24,10 @@ export function createSvgObjectsFromPinoutComponent(
   ) {
     return []
   }
-
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
-  const transformStr = `translate(${x}, ${y}) rotate(${-rotation})`
+  const transformStr = `translate(${x}, ${y})`
 
   const children: SvgObject[] = [
     {
@@ -41,6 +40,7 @@ export function createSvgObjectsFromPinoutComponent(
         width: scaledWidth.toString(),
         height: scaledHeight.toString(),
         fill: COMPONENT_FILL_COLOR,
+        transform: `rotate(${rotation}deg)`,
       },
       value: "",
       children: [],
@@ -48,7 +48,6 @@ export function createSvgObjectsFromPinoutComponent(
   ]
 
   if (sourceComponent?.name) {
-    const isTall = scaledHeight > scaledWidth * 1.5
     const labelFontSize = Math.min(scaledWidth, scaledHeight) * 0.4
     children.push({
       name: "text",
@@ -61,7 +60,6 @@ export function createSvgObjectsFromPinoutComponent(
         "font-family": "sans-serif",
         "text-anchor": "middle",
         "dominant-baseline": "middle",
-        transform: isTall ? "rotate(90)" : "",
       },
       children: [
         {
