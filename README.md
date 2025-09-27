@@ -2,6 +2,8 @@
 
 A TypeScript library for converting Circuit JSON to Schematic, PCB and Assembly SVG representations.
 
+[Getting Started Contributor Video](https://share.cleanshot.com/6zXbLGF7)
+
 <div align="center">
   <img src="https://api.tscircuit.com/packages/images/seveibar/led-water-accelerometer/pcb.svg" alt="PCB" height="200" />
   <img src="https://api.tscircuit.com/packages/images/seveibar/led-water-accelerometer/schematic.svg" alt="Schematic" height="200" />
