@@ -1777,6 +1777,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_0",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1790,6 +1791,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_1",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1803,6 +1805,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_2",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1816,6 +1819,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_3",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1829,6 +1833,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_4",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1842,6 +1847,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_5",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1855,6 +1861,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_6",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1868,6 +1875,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_7",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1881,6 +1889,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_8",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1894,6 +1903,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_9",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1907,6 +1917,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_10",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1920,6 +1931,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_11",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1933,6 +1945,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_12",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1946,6 +1959,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_13",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1959,6 +1973,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_14",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1972,6 +1987,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_15",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1985,6 +2001,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_16",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -1998,6 +2015,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     rotation: -90,
     source_component_id: "source_component_17",
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_component",
@@ -2011,6 +2029,7 @@ const pcbSoup: AnyCircuitElement[] = [
     layer: "top",
     source_component_id: "source_component_18",
     rotation: 0,
+    obstructs_within_bounds: true,
   },
   {
     type: "pcb_board",
