@@ -90,8 +90,8 @@ export function convertCircuitJsonToPinoutSvg(
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
-  const svgWidth = options?.width ?? 800
-  const svgHeight = options?.height ?? 600
+  const svgWidth = options?.width ?? 1200
+  const svgHeight = options?.height ?? 768
 
   const scaleX = svgWidth / circuitWidth
   const scaleY = svgHeight / circuitHeight

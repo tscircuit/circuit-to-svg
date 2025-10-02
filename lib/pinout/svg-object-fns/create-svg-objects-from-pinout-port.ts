@@ -3,10 +3,13 @@ import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PinoutSvgContext } from "../convert-circuit-json-to-pinout-svg"
 import { calculateElbow } from "calculate-elbow"
+import { createPinoutLabelBox } from "./pinout-label-box"
 
 const LABEL_COLOR = "rgb(255, 255, 255)"
 const LABEL_BACKGROUND = "rgb(0, 0, 0)"
 const LINE_COLOR = "rgba(0, 0, 0, 0.6)"
+const PIN_NUMBER_BACKGROUND = "rgb(200, 200, 200)"
+const PIN_NUMBER_COLOR = "rgb(0, 0, 0)"
 
 export type FacingDirection = "x-" | "x+" | "y-" | "y+"
 
@@ -57,30 +60,41 @@ export function createSvgObjectsFromPinoutPort(
     .map((p) => `${p.x},${p.y}`)
     .join(" ")
 
-  const full_label = [label, ...aliases].join(" | ")
+  // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
+  const numberMatch = /^pin(\d+)$/i.exec(label)
+  const tokensWithStyle = [
+    {
+      text: numberMatch ? numberMatch[1] : label,
+      bg: numberMatch ? PIN_NUMBER_BACKGROUND : LABEL_BACKGROUND,
+      color: numberMatch ? PIN_NUMBER_COLOR : LABEL_COLOR,
+    },
+    ...aliases.map((t) => ({
+      text: t,
+      bg: LABEL_BACKGROUND,
+      color: LABEL_COLOR,
+    })),
+  ]
 
-  const fontSize = 11
-  const textWidth = full_label.length * fontSize * 0.6
-  const bgPadding = 5
-  const rectHeight = fontSize + 2 * bgPadding
-  const rectWidth = textWidth + 2 * bgPadding
+  const scale = Math.abs(ctx.transform.a)
+  const LABEL_RECT_HEIGHT_MM = 2.2
+  const rectHeight = LABEL_RECT_HEIGHT_MM * scale
+
+  // Derive font size and padding from rect height to keep text centered
+  // Based on original ratio of font-size 11 to rect-height 21
+  const fontSize = rectHeight * (11 / 21)
+  const bgPadding = (rectHeight - fontSize) / 2
+  const gap = bgPadding
+
+  const tokenRects = tokensWithStyle.map(({ text, bg, color }) => {
+    const safeText = text ?? ""
+    const textWidth = safeText.length * fontSize * 0.6
+    const rectWidth = textWidth + 2 * bgPadding
+    return { text: safeText, rectWidth, bg, color }
+  })
+
   const text_y = label_pos.y
 
-  let rectX: number
-  let text_x: number
-
-  if (edge === "left") {
-    rectX = label_pos.x - rectWidth
-    text_x = label_pos.x - rectWidth / 2
-  } else if (edge === "right") {
-    rectX = label_pos.x
-    text_x = label_pos.x + rectWidth / 2
-  } else {
-    rectX = label_pos.x - rectWidth / 2
-    text_x = label_pos.x
-  }
-
-  return [
+  const objects: SvgObject[] = [
     {
       name: "polyline",
       type: "element",
@@ -93,45 +107,85 @@ export function createSvgObjectsFromPinoutPort(
       children: [],
       value: "",
     },
-    {
-      name: "rect",
-      type: "element",
-      attributes: {
-        x: rectX.toString(),
-        y: (text_y - rectHeight / 2).toString(),
-        width: rectWidth.toString(),
-        height: rectHeight.toString(),
-        fill: LABEL_BACKGROUND,
-        rx: "8", // More rounded corners
-        ry: "8",
-        stroke: "none",
-      },
-      children: [],
-      value: "",
-    },
-    {
-      name: "text",
-      type: "element",
-      attributes: {
-        x: text_x.toString(),
-        y: text_y.toString(),
-        fill: LABEL_COLOR,
-        "font-size": `${fontSize}px`,
-        "font-family": "Arial, sans-serif",
-        "font-weight": "bold",
-        "text-anchor": "middle",
-        "dominant-baseline": "middle",
-      },
-      children: [
-        {
-          type: "text",
-          value: full_label,
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
-      value: "",
-    },
   ]
+
+  if (edge === "left") {
+    // Start near the board and place boxes outward to the left
+    let currentX = label_pos.x
+    for (const { text, rectWidth, bg, color } of tokenRects) {
+      const rectX = currentX - rectWidth
+      const text_x = rectX + rectWidth / 2
+
+      objects.push(
+        ...createPinoutLabelBox({
+          rectX,
+          rectY: text_y - rectHeight / 2,
+          rectWidth,
+          rectHeight,
+          textX: text_x,
+          textY: text_y,
+          text,
+          fontSize,
+          labelBackground: bg,
+          labelColor: color,
+        }),
+      )
+
+      currentX = rectX - gap
+    }
+  } else if (edge === "right") {
+    // Start near the board and place boxes outward to the right
+    let currentX = label_pos.x
+    for (const { text, rectWidth, bg, color } of tokenRects) {
+      const rectX = currentX
+      const text_x = rectX + rectWidth / 2
+
+      objects.push(
+        ...createPinoutLabelBox({
+          rectX,
+          rectY: text_y - rectHeight / 2,
+          rectWidth,
+          rectHeight,
+          textX: text_x,
+          textY: text_y,
+          text,
+          fontSize,
+          labelBackground: bg,
+          labelColor: color,
+        }),
+      )
+
+      currentX = rectX + rectWidth + gap
+    }
+  } else {
+    // Fallback: center all boxes around label_pos.x
+    const totalWidth =
+      tokenRects.reduce((acc, t) => acc + t.rectWidth, 0) +
+      gap * Math.max(0, tokenRects.length - 1)
+    let currentX = label_pos.x - totalWidth / 2
+
+    for (const { text, rectWidth, bg, color } of tokenRects) {
+      const rectX = currentX
+      const text_x = rectX + rectWidth / 2
+
+      objects.push(
+        ...createPinoutLabelBox({
+          rectX,
+          rectY: text_y - rectHeight / 2,
+          rectWidth,
+          rectHeight,
+          textX: text_x,
+          textY: text_y,
+          text,
+          fontSize,
+          labelBackground: bg,
+          labelColor: color,
+        }),
+      )
+
+      currentX = rectX + rectWidth + gap
+    }
+  }
+
+  return objects
 }
