@@ -1,6 +1,7 @@
 import type { AnyCircuitElement, PcbPort } from "circuit-json"
+import { su } from "@tscircuit/circuit-json-util"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-import { getPortLabelInfo } from "./pinout-utils"
+import type { PinoutLabel } from "./convert-circuit-json-to-pinout-svg"
 
 export type LabelPosition = {
   text: string
@@ -11,18 +12,17 @@ export type LabelPosition = {
 }
 
 const STAGGER_OFFSET_MIN = 20
-const STAGGER_OFFSET_PER_PIN = 2
-const STAGGER_OFFSET_STEP = 15
+const STAGGER_OFFSET_PER_PIN = 3
+const STAGGER_OFFSET_STEP = 18
 const ALIGNED_OFFSET_MARGIN = 10 // Margin beyond the last staggered point
 
-const FONT_SIZE = 11
-const BG_PADDING = 5
-const LABEL_RECT_HEIGHT = FONT_SIZE + 2 * BG_PADDING
-const LABEL_MARGIN = 5
+// These values are derived from a 2.54mm pitch (100mil), and 1.6mm pad width
+const LABEL_RECT_HEIGHT_MM = 1.6
+const LABEL_PITCH_MM = 2.54
 
 function calculateVerticalEdgeLabels(
   edge: "left" | "right",
-  ports: PcbPort[],
+  pinout_labels: PinoutLabel[],
   {
     transform,
     soup,
@@ -36,14 +36,71 @@ function calculateVerticalEdgeLabels(
   },
   label_positions: Map<string, LabelPosition>,
 ) {
-  const edge_ports = ports
-    .map((port) => ({
-      port,
-      y: applyToPoint(transform, [port.x, port.y])[1],
-      label_info: getPortLabelInfo(port, soup),
-    }))
-    .filter((p) => p.label_info)
-    .sort((a, b) => a.y - b.y)
+  const x_coords = pinout_labels.map((l) => l.pcb_port.x)
+  const counts: { [k: string]: number } = {}
+  for (const x of x_coords) {
+    const rounded = x.toFixed(1)
+    counts[rounded] = (counts[rounded] || 0) + 1
+  }
+
+  let edge_ports
+
+  if (Object.keys(counts).length > 1 && pinout_labels.length > 2) {
+    // More than one group of x-coords, group and sort
+    const sorted_x_groups = Object.entries(counts).sort((a, b) => b[1] - a[1])
+    const primary_x = parseFloat(sorted_x_groups[0]![0])
+
+    const primary_pins = pinout_labels.filter(
+      (l) => Math.abs(l.pcb_port.x - primary_x) < 0.2,
+    )
+    const other_pins = pinout_labels.filter(
+      (l) => Math.abs(l.pcb_port.x - primary_x) >= 0.2,
+    )
+
+    const mapToEdgePort = (pinout_label: PinoutLabel) => ({
+      pcb_port: pinout_label.pcb_port,
+      y: applyToPoint(transform, [
+        pinout_label.pcb_port.x,
+        pinout_label.pcb_port.y,
+      ])[1],
+      aliases: pinout_label.aliases,
+    })
+
+    // Sort by y-descending in real-world coordinates
+    primary_pins.sort((a, b) => b.pcb_port.y - a.pcb_port.y)
+    other_pins.sort((a, b) => b.pcb_port.y - a.pcb_port.y)
+
+    // Check if other pins should be at top or bottom
+    const max_y_primary =
+      primary_pins.length > 0
+        ? Math.max(...primary_pins.map((p) => p.pcb_port.y))
+        : -Infinity
+    const max_y_other =
+      other_pins.length > 0
+        ? Math.max(...other_pins.map((p) => p.pcb_port.y))
+        : -Infinity
+
+    // A larger y-coordinate in real-world coordinates means the pin should
+    // appear higher in the pinout diagram. We place the group with the
+    // highest pin first.
+    const combined_pins =
+      max_y_other > max_y_primary
+        ? [...other_pins, ...primary_pins]
+        : [...primary_pins, ...other_pins]
+
+    edge_ports = combined_pins.map(mapToEdgePort)
+  } else {
+    edge_ports = pinout_labels
+      .map((pinout_label) => ({
+        pcb_port: pinout_label.pcb_port,
+        y: applyToPoint(transform, [
+          pinout_label.pcb_port.x,
+          pinout_label.pcb_port.y,
+        ])[1],
+        aliases: pinout_label.aliases,
+      }))
+      .sort((a, b) => a.y - b.y)
+  }
 
   if (edge_ports.length === 0) return
 
@@ -53,139 +110,159 @@ function calculateVerticalEdgeLabels(
   ])[0]
 
   const num_labels = edge_ports.length
-  const middle_index = (num_labels - 1) / 2
+
+  const x_coords_counts: { [k: string]: number } = {}
+  for (const pl of pinout_labels) {
+    const rounded = pl.pcb_port.x.toFixed(1)
+    x_coords_counts[rounded] = (x_coords_counts[rounded] || 0) + 1
+  }
+
+  let main_group_pin_port_ids = new Set<string>()
+  if (Object.keys(x_coords_counts).length > 1 && pinout_labels.length > 2) {
+    const sorted_x_groups = Object.entries(x_coords_counts).sort(
+      (a, b) => b[1] - a[1],
+    )
+    const primary_x = parseFloat(sorted_x_groups[0]![0])
+
+    const primary_pins = pinout_labels.filter(
+      (l) => Math.abs(l.pcb_port.x - primary_x) < 0.2,
+    )
+    main_group_pin_port_ids = new Set(
+      primary_pins.map((p) => p.pcb_port.pcb_port_id),
+    )
+  }
+
+  const main_group_indices = edge_ports
+    .map((ep, i) => {
+      if (main_group_pin_port_ids.has(ep.pcb_port.pcb_port_id)) {
+        return i
+      }
+      return -1 // or some other flag
+    })
+    .filter((i) => i !== -1)
+
+  const geometric_middle_index = (num_labels - 1) / 2
+
+  const scale = Math.abs(transform.a)
+  const label_rect_height = LABEL_RECT_HEIGHT_MM * scale
+  const label_pitch = LABEL_PITCH_MM * scale
+  const label_margin = Math.max(0, label_pitch - label_rect_height)
 
   const stagger_offset_base =
     STAGGER_OFFSET_MIN + num_labels * STAGGER_OFFSET_PER_PIN
 
   const max_stagger_offset =
-    stagger_offset_base + middle_index * STAGGER_OFFSET_STEP
+    stagger_offset_base + geometric_middle_index * STAGGER_OFFSET_STEP
   const aligned_label_offset = max_stagger_offset + ALIGNED_OFFSET_MARGIN
 
-  const total_labels_height =
-    num_labels * LABEL_RECT_HEIGHT + Math.max(0, num_labels - 1) * LABEL_MARGIN
-  let current_y = (svgHeight - total_labels_height) / 2 + LABEL_RECT_HEIGHT / 2
+  const num_other_pins = num_labels - main_group_indices.length
+  // If there's no main group, all pins are "other" pins
+  const num_pins_to_stack =
+    main_group_indices.length === 0 ? num_labels : num_other_pins
 
-  edge_ports.forEach(({ port, label_info }, i) => {
-    const dist_from_middle = Math.abs(i - middle_index)
-    const stagger_rank = middle_index - dist_from_middle
+  const stack_total_height =
+    num_pins_to_stack * label_rect_height +
+    Math.max(0, num_pins_to_stack - 1) * label_margin
+
+  let current_y: number
+  if (main_group_indices.length > 0 && num_other_pins > 0) {
+    const main_group_y_coords = main_group_indices.map((i) => edge_ports[i]!.y)
+    const min_main_group_y = Math.min(...main_group_y_coords)
+    const max_main_group_y = Math.max(...main_group_y_coords)
+    const main_group_top_extent = min_main_group_y - label_rect_height / 2
+    const main_group_bottom_extent = max_main_group_y + label_rect_height / 2
+
+    const other_pin_indices = edge_ports
+      .map((_, index) => index)
+      .filter((index) => !main_group_indices.includes(index))
+
+    // Assumes edge_ports is sorted top-to-bottom on screen
+    const others_are_above = other_pin_indices[0]! < main_group_indices[0]!
+
+    if (others_are_above) {
+      // Place stack above main group
+      const stack_bottom_edge = main_group_top_extent - label_margin
+      current_y = stack_bottom_edge - stack_total_height + label_rect_height / 2
+    } else {
+      // Place stack below main group
+      const stack_top_edge = main_group_bottom_extent + label_margin
+      current_y = stack_top_edge + label_rect_height / 2
+    }
+  } else {
+    // Original behavior for centering one big stack
+    current_y = (svgHeight - stack_total_height) / 2 + label_rect_height / 2
+  }
+
+  const is_all_main_group = main_group_indices.length === num_labels
+
+  edge_ports.forEach(({ pcb_port, aliases }, i) => {
+    let stagger_rank: number
+    if (main_group_indices.length > 0) {
+      if (main_group_indices.includes(i)) {
+        stagger_rank = geometric_middle_index // max stagger for main group
+      } else {
+        const min_lg_idx = Math.min(...main_group_indices)
+        const max_lg_idx = Math.max(...main_group_indices)
+        let dist_from_main_group: number
+        if (i < min_lg_idx) {
+          dist_from_main_group = min_lg_idx - i
+        } else {
+          // i > max_lg_idx
+          dist_from_main_group = i - max_lg_idx
+        }
+        stagger_rank = geometric_middle_index - dist_from_main_group
+      }
+    } else {
+      // Standard V-shape for all pins
+      const dist_from_middle = Math.abs(i - geometric_middle_index)
+      stagger_rank = geometric_middle_index - dist_from_middle
+    }
     const stagger_offset =
       stagger_offset_base + stagger_rank * STAGGER_OFFSET_STEP
-
     const sign = edge === "left" ? -1 : 1
+
+    const is_main_group_pin = main_group_indices.includes(i)
+
+    const y_pos = is_all_main_group
+      ? edge_ports[i]!.y
+      : main_group_indices.length > 0 && is_main_group_pin
+        ? edge_ports[i]!.y
+        : current_y
 
     const elbow_end = {
       x: board_edge_x + sign * stagger_offset,
-      y: current_y,
+      y: y_pos,
     }
     const label_pos = {
       x: board_edge_x + sign * aligned_label_offset,
-      y: current_y,
+      y: y_pos,
     }
 
-    label_positions.set(port.pcb_port_id, {
-      text: label_info!.text,
-      aliases: label_info!.aliases,
+    label_positions.set(pcb_port.pcb_port_id, {
+      text: aliases[0]!,
+      aliases: aliases.slice(1),
       elbow_end,
       label_pos,
       edge,
     })
-    current_y += LABEL_RECT_HEIGHT + LABEL_MARGIN
-  })
-}
 
-function calculateHorizontalEdgeLabels(
-  edge: "top" | "bottom",
-  ports: PcbPort[],
-  {
-    transform,
-    soup,
-    board_bounds,
-    svgWidth,
-  }: {
-    transform: Matrix
-    soup: AnyCircuitElement[]
-    board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
-    svgWidth: number
-  },
-  label_positions: Map<string, LabelPosition>,
-) {
-  const edge_ports = ports
-    .map((port) => ({
-      port,
-      x: applyToPoint(transform, [port.x, port.y])[0],
-      label_info: getPortLabelInfo(port, soup),
-    }))
-    .filter((p) => p.label_info)
-    .sort((a, b) => a.x - b.x)
-
-  if (edge_ports.length === 0) return
-
-  const board_edge_y = applyToPoint(transform, [
-    0,
-    edge === "top" ? board_bounds.maxY : board_bounds.minY,
-  ])[1]
-
-  const labels_with_widths = edge_ports.map((p) => {
-    const label = [p.label_info!.text, ...p.label_info!.aliases].join(" | ")
-    const textWidth = label.length * FONT_SIZE * 0.6
-    const rectWidth = textWidth + 2 * BG_PADDING
-    return { ...p, rectWidth }
-  })
-
-  const num_labels = labels_with_widths.length
-  const middle_index = (num_labels - 1) / 2
-
-  const stagger_offset_base =
-    STAGGER_OFFSET_MIN + num_labels * STAGGER_OFFSET_PER_PIN
-
-  const max_stagger_offset =
-    stagger_offset_base + middle_index * STAGGER_OFFSET_STEP
-  const aligned_label_offset = max_stagger_offset + ALIGNED_OFFSET_MARGIN
-
-  const total_labels_width =
-    labels_with_widths.reduce((sum, l) => sum + l.rectWidth, 0) +
-    Math.max(0, num_labels - 1) * LABEL_MARGIN
-  let current_x = (svgWidth - total_labels_width) / 2
-
-  labels_with_widths.forEach(({ port, label_info, rectWidth }, i) => {
-    const dist_from_middle = Math.abs(i - middle_index)
-    const stagger_rank = middle_index - dist_from_middle
-    const stagger_offset =
-      stagger_offset_base + stagger_rank * STAGGER_OFFSET_STEP
-
-    const sign = edge === "top" ? -1 : 1
-
-    const label_center_x = current_x + rectWidth / 2
-    const elbow_end = {
-      x: label_center_x,
-      y: board_edge_y + sign * stagger_offset,
+    if (!(main_group_indices.length > 0 && is_main_group_pin)) {
+      current_y += label_rect_height + label_margin
     }
-    const label_pos = {
-      x: label_center_x,
-      y: board_edge_y + sign * aligned_label_offset,
-    }
-
-    label_positions.set(port.pcb_port_id, {
-      text: label_info!.text,
-      aliases: label_info!.aliases,
-      elbow_end,
-      label_pos,
-      edge,
-    })
-    current_x += rectWidth + LABEL_MARGIN
   })
 }
 
 export const calculateLabelPositions = ({
-  ports_by_edge,
+  left_labels,
+  right_labels,
   transform,
   soup,
   board_bounds,
   svgWidth,
   svgHeight,
 }: {
-  ports_by_edge: Record<"left" | "right" | "top" | "bottom", PcbPort[]>
+  left_labels: PinoutLabel[]
+  right_labels: PinoutLabel[]
   transform: Matrix
   soup: AnyCircuitElement[]
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
@@ -198,7 +275,7 @@ export const calculateLabelPositions = ({
 
   calculateVerticalEdgeLabels(
     "left",
-    ports_by_edge.left,
+    left_labels,
     {
       ...shared_params,
       svgHeight,
@@ -208,30 +285,10 @@ export const calculateLabelPositions = ({
 
   calculateVerticalEdgeLabels(
     "right",
-    ports_by_edge.right,
+    right_labels,
     {
       ...shared_params,
       svgHeight,
-    },
-    label_positions,
-  )
-
-  calculateHorizontalEdgeLabels(
-    "top",
-    ports_by_edge.top,
-    {
-      ...shared_params,
-      svgWidth,
-    },
-    label_positions,
-  )
-
-  calculateHorizontalEdgeLabels(
-    "bottom",
-    ports_by_edge.bottom,
-    {
-      ...shared_params,
-      svgWidth,
     },
     label_positions,
   )

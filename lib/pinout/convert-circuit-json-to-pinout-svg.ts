@@ -20,7 +20,7 @@ import {
   calculateLabelPositions,
   type LabelPosition,
 } from "./calculate-label-positions"
-import { getClosestEdge } from "./pinout-utils"
+import { getClosestEdge, getPortLabelInfo } from "./pinout-utils"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -35,6 +35,12 @@ interface Options {
   width?: number
   height?: number
   includeVersion?: boolean
+}
+
+export interface PinoutLabel {
+  pcb_port: PcbPort
+  aliases: string[]
+  edge: "left" | "right" | "top" | "bottom"
 }
 
 export interface PinoutSvgContext {
@@ -84,8 +90,8 @@ export function convertCircuitJsonToPinoutSvg(
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
-  const svgWidth = options?.width ?? 800
-  const svgHeight = options?.height ?? 600
+  const svgWidth = options?.width ?? 1200
+  const svgHeight = options?.height ?? 768
 
   const scaleX = svgWidth / circuitWidth
   const scaleY = svgHeight / circuitHeight
@@ -108,21 +114,52 @@ export function convertCircuitJsonToPinoutSvg(
       elm.type === "pcb_port" && (elm as any).is_board_pinout,
   )
 
-  const ports_by_edge: Record<"left" | "right" | "top" | "bottom", PcbPort[]> =
-    {
-      left: [],
-      right: [],
-      top: [],
-      bottom: [],
-    }
+  const pinout_labels: PinoutLabel[] = []
+  for (const pcb_port of pinout_ports) {
+    const label_info = getPortLabelInfo(pcb_port, soup)
+    if (!label_info) continue
 
-  for (const port of pinout_ports) {
-    const edge = getClosestEdge({ x: port.x, y: port.y }, board_bounds)
-    ports_by_edge[edge].push(port)
+    const edge = getClosestEdge({ x: pcb_port.x, y: pcb_port.y }, board_bounds)
+
+    pinout_labels.push({
+      pcb_port,
+      aliases: [label_info.text, ...label_info.aliases],
+      edge,
+    })
+  }
+
+  const left_labels = pinout_labels.filter((p) => p.edge === "left")
+  const right_labels = pinout_labels.filter((p) => p.edge === "right")
+  const top_labels = pinout_labels.filter((p) => p.edge === "top")
+  const bottom_labels = pinout_labels.filter((p) => p.edge === "bottom")
+
+  const boardCenterX = (minX + maxX) / 2
+
+  if (top_labels.length > 0) {
+    const top_left_count = top_labels.filter(
+      (p) => p.pcb_port.x < boardCenterX,
+    ).length
+    if (top_left_count > top_labels.length / 2) {
+      left_labels.push(...top_labels)
+    } else {
+      right_labels.push(...top_labels)
+    }
+  }
+
+  if (bottom_labels.length > 0) {
+    const bottom_left_count = bottom_labels.filter(
+      (p) => p.pcb_port.x < boardCenterX,
+    ).length
+    if (bottom_left_count > bottom_labels.length / 2) {
+      left_labels.push(...bottom_labels)
+    } else {
+      right_labels.push(...bottom_labels)
+    }
   }
 
   const label_positions = calculateLabelPositions({
-    ports_by_edge,
+    left_labels,
+    right_labels,
     transform,
     soup,
     board_bounds,
