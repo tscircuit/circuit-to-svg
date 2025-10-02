@@ -65,7 +65,7 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
 })
 ```
 
-See the [schematic grid snapshot](tests/sch/__snapshots__/grid-and-points.snap.svg).
+![Schematic grid snapshot](./tests/sch/__snapshots__/grid-and-points.snap.svg)
 
 #### Options
 
@@ -91,7 +91,7 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 })
 ```
 
-See the [PCB default snapshot](tests/pcb/__snapshots__/default.snap.svg).
+![PCB default snapshot](./tests/pcb/__snapshots__/default.snap.svg)
 
 #### Options
 
@@ -119,7 +119,7 @@ const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson, {
 })
 ```
 
-See the [assembly board snapshot](tests/assembly/__snapshots__/first-assembly-test.snap.svg).
+![Assembly board snapshot](./tests/assembly/__snapshots__/first-assembly-test.snap.svg)
 
 #### Options
 
@@ -139,7 +139,7 @@ import { convertCircuitJsonToPinoutSvg } from 'circuit-to-svg'
 const pinoutSvg = convertCircuitJsonToPinoutSvg(circuitJson)
 ```
 
-See the [pinout snapshot](tests/pinout/__snapshots__/pinout-basic.snap.svg).
+![Pinout snapshot](./tests/pinout/__snapshots__/pinout-basic.snap.svg)
 
 #### Options
 
@@ -173,7 +173,7 @@ const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
 })
 ```
 
-See the [schematic simulation snapshot](tests/sim/__snapshots__/schematic-simulation-combined.snap.svg).
+![Schematic simulation snapshot](./tests/sim/__snapshots__/schematic-simulation-combined.snap.svg)
 
 #### Options
 
@@ -206,7 +206,7 @@ const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
 })
 ```
 
-See the [simulation graph snapshot](tests/sim/__snapshots__/simulation-graph.snap.svg).
+![Simulation graph snapshot](./tests/sim/__snapshots__/simulation-graph.snap.svg)
 
 #### Options
 
@@ -228,7 +228,7 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 })
 ```
 
-See the [solder paste snapshot](tests/pcb/__snapshots__/solder-paste.test.tsx.top.snap.svg).
+![Solder paste snapshot](./tests/pcb/__snapshots__/solder-paste.test.tsx.top.snap.svg)
 
 #### Options
 
