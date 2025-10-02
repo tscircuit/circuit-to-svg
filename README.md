@@ -51,7 +51,7 @@ Explore the API sections below to render PCB, assembly, pinout, simulation, and 
 
 ## API
 
-### convertCircuitJsonToSchematicSvg
+## convertCircuitJsonToSchematicSvg
 
 `convertCircuitJsonToSchematicSvg(circuitJson: AnyCircuitElement[], options?): string`
 
@@ -65,9 +65,9 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
 })
 ```
 
-![Schematic grid snapshot](./tests/sch/__snapshots__/grid-and-points.snap.svg)
+![Schematic grid snapshot](./tests/sch/__snapshots__/rp2040.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `1200x600`.
 - `grid` – enable a schematic grid (`true`) or configure cell size and labels.
@@ -76,7 +76,7 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToPcbSvg
+## convertCircuitJsonToPcbSvg
 
 `convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[], options?): string`
 
@@ -93,7 +93,7 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 
 ![PCB default snapshot](./tests/pcb/__snapshots__/default.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `matchBoardAspectRatio` – if `true`, adjust the SVG dimensions so the
@@ -105,9 +105,7 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToAssemblySvg
-
-`convertCircuitJsonToAssemblySvg(circuitJson: AnyCircuitElement[], options?): string`
+## convertCircuitJsonToAssemblySvg
 
 Converts circuit JSON into an assembly view of the board and components.
 
@@ -121,15 +119,13 @@ const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson, {
 
 ![Assembly board snapshot](./tests/assembly/__snapshots__/first-assembly-test.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToPinoutSvg
-
-`convertCircuitJsonToPinoutSvg(circuitJson: AnyCircuitElement[], options?): string`
+## convertCircuitJsonToPinoutSvg
 
 Generates pinout diagrams that call out ports, pads, and holes for boards or modules.
 
@@ -139,26 +135,15 @@ import { convertCircuitJsonToPinoutSvg } from 'circuit-to-svg'
 const pinoutSvg = convertCircuitJsonToPinoutSvg(circuitJson)
 ```
 
-![Pinout snapshot](./tests/pinout/__snapshots__/pinout-basic.snap.svg)
+![Pinout snapshot](./tests/pinout/__snapshots__/pinout-pico.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToSchematicSimulationSvg
-
-`convertCircuitJsonToSchematicSimulationSvg({
-  circuitJson,
-  simulation_experiment_id,
-  simulation_transient_voltage_graph_ids?,
-  width?,
-  height?,
-  schematicHeightRatio?,
-  schematicOptions?,
-  includeVersion?,
-}): string`
+## convertCircuitJsonToSchematicSimulationSvg
 
 Overlays simulation results directly on the rendered schematic for easy debugging.
 
@@ -175,7 +160,7 @@ const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
 
 ![Schematic simulation snapshot](./tests/sim/__snapshots__/schematic-simulation-combined.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – overall SVG dimensions. Defaults to `1200x1200`.
 - `schematicHeightRatio` – ratio of the SVG dedicated to the schematic view. Defaults to `0.55`.
@@ -183,16 +168,7 @@ const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToSimulationGraphSvg
-
-`convertCircuitJsonToSimulationGraphSvg({
-  circuitJson,
-  simulation_experiment_id,
-  simulation_transient_voltage_graph_ids?,
-  width?,
-  height?,
-  includeVersion?,
-}): string`
+## convertCircuitJsonToSimulationGraphSvg
 
 Creates standalone graphs for circuit simulation experiments.
 
@@ -208,13 +184,13 @@ const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
 
 ![Simulation graph snapshot](./tests/sim/__snapshots__/simulation-graph.snap.svg)
 
-#### Options
+### Options
 
 - `width` and `height` – SVG dimensions for the graph. Defaults to `1200x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-### convertCircuitJsonToSolderPasteMask
+## convertCircuitJsonToSolderPasteMask
 
 `convertCircuitJsonToSolderPasteMask(circuitJson: AnyCircuitElement[], options: { layer: 'top' | 'bottom'; width?; height?; includeVersion? }): string`
 
@@ -230,7 +206,7 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 
 ![Solder paste snapshot](./tests/pcb/__snapshots__/solder-paste.test.tsx.top.snap.svg)
 
-#### Options
+### Options
 
 - `layer` – `'top' | 'bottom'`, chooses which solder paste layer to render. Defaults to `'top'`.
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
