@@ -91,7 +91,7 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 })
 ```
 
-![PCB default snapshot](./tests/pcb/__snapshots__/default.snap.svg)
+![PCB default snapshot](https://api.tscircuit.com/packages/images/seveibar/led-water-accelerometer/pcb.svg)
 
 ### Options
 
