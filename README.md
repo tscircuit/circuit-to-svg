@@ -19,20 +19,6 @@ bun add circuit-to-svg
 
 This library provides functionality to convert Circuit JSON into SVG (Scalable Vector Graphics) representations. It supports both schematic and PCB (Printed Circuit Board), and Assembly layouts.
 
-## Features
-
-- Convert schematic circuit descriptions to SVG
-- Convert PCB layouts to SVG
-- Support for various circuit elements:
-  - Components
-  - Traces
-  - Text labels
-  - Net labels
-  - PCB boards
-  - PCB components
-  - PCB traces
-  - PCB holes and pads
-
 ## Installation
 
 ```bash
@@ -43,28 +29,25 @@ npm install circuit-to-svg
 
 ```typescript
 import { readFileSync, writeFileSync } from 'fs'
-import {
-  convertCircuitJsonToSchematicSvg,
-  convertCircuitJsonToPcbSvg,
-} from 'circuit-to-svg'
+import { convertCircuitJsonToSchematicSvg } from 'circuit-to-svg'
 
 const circuitJson = JSON.parse(readFileSync('circuit.json', 'utf8'))
+const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson)
 
-// Generate a schematic with a grid
-const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
-  width: 1000,
-  height: 600,
-  grid: true,
-})
-
-// Generate a PCB image using the board's aspect ratio
-const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
-  matchBoardAspectRatio: true,
-  backgroundColor: '#1e1e1e',
-})
-
-writeFileSync('board.svg', pcbSvg)
+writeFileSync('schematic.svg', schematicSvg)
 ```
+
+Explore the API sections below to render PCB, assembly, pinout, simulation, and solder paste views.
+
+| Function | Description |
+| --- | --- |
+| [`convertCircuitJsonToSchematicSvg`](#convertcircuitjsontoschematicsvg) | Generate schematic SVG output from Circuit JSON. |
+| [`convertCircuitJsonToSchematicSimulationSvg`](#convertcircuitjsontoschematicsimulationsvg) | Overlay simulation data on schematic diagrams. |
+| [`convertCircuitJsonToPcbSvg`](#convertcircuitjsontopcbsvg) | Render PCB layouts as SVG graphics. |
+| [`convertCircuitJsonToSolderPasteMask`](#convertcircuitjsontosolderpastemask) | Create solder paste mask layers for fabrication. |
+| [`convertCircuitJsonToAssemblySvg`](#convertcircuitjsontoassemblysvg) | Produce assembly view SVGs for board visualization. |
+| [`convertCircuitJsonToPinoutSvg`](#convertcircuitjsontopinoutsvg) | Build annotated pinout diagrams for boards and modules. |
+| [`convertCircuitJsonToSimulationGraphSvg`](#convertcircuitjsontosimulationgraphsvg) | Plot simulation experiment results as SVG graphs. |
 
 ## API
 
@@ -74,8 +57,22 @@ writeFileSync('board.svg', pcbSvg)
 
 Converts a schematic circuit description to an SVG string.
 
+```typescript
+import { convertCircuitJsonToSchematicSvg } from 'circuit-to-svg'
+
+const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
+  includeVersion: true,
+})
+```
+
+See the [schematic grid snapshot](tests/sch/__snapshots__/grid-and-points.snap.svg).
+
 #### Options
 
+- `width` and `height` – dimensions of the output SVG. Defaults to `1200x600`.
+- `grid` – enable a schematic grid (`true`) or configure cell size and labels.
+- `labeledPoints` – annotate specific coordinates with helper labels.
+- `colorOverrides` – override portions of the schematic color palette.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
@@ -84,6 +81,17 @@ Converts a schematic circuit description to an SVG string.
 `convertCircuitJsonToPcbSvg(circuitJson: AnyCircuitElement[], options?): string`
 
 Converts a PCB layout description to an SVG string.
+
+```typescript
+import { convertCircuitJsonToPcbSvg } from 'circuit-to-svg'
+
+const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
+  matchBoardAspectRatio: true,
+  backgroundColor: '#1e1e1e',
+})
+```
+
+See the [PCB default snapshot](tests/pcb/__snapshots__/default.snap.svg).
 
 #### Options
 
@@ -103,16 +111,129 @@ Converts a PCB layout description to an SVG string.
 
 Converts circuit JSON into an assembly view of the board and components.
 
+```typescript
+import { convertCircuitJsonToAssemblySvg } from 'circuit-to-svg'
+
+const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson, {
+  includeVersion: false,
+})
+```
+
+See the [assembly board snapshot](tests/assembly/__snapshots__/first-assembly-test.snap.svg).
+
 #### Options
 
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
-## Contributing
+### convertCircuitJsonToPinoutSvg
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+`convertCircuitJsonToPinoutSvg(circuitJson: AnyCircuitElement[], options?): string`
 
-## License
+Generates pinout diagrams that call out ports, pads, and holes for boards or modules.
 
-This project is licensed under the MIT License.
+```typescript
+import { convertCircuitJsonToPinoutSvg } from 'circuit-to-svg'
+
+const pinoutSvg = convertCircuitJsonToPinoutSvg(circuitJson)
+```
+
+See the [pinout snapshot](tests/pinout/__snapshots__/pinout-basic.snap.svg).
+
+#### Options
+
+- `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
+
+### convertCircuitJsonToSchematicSimulationSvg
+
+`convertCircuitJsonToSchematicSimulationSvg({
+  circuitJson,
+  simulation_experiment_id,
+  simulation_transient_voltage_graph_ids?,
+  width?,
+  height?,
+  schematicHeightRatio?,
+  schematicOptions?,
+  includeVersion?,
+}): string`
+
+Overlays simulation results directly on the rendered schematic for easy debugging.
+
+```typescript
+import { convertCircuitJsonToSchematicSimulationSvg } from 'circuit-to-svg'
+
+const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
+  circuitJson,
+  simulation_experiment_id: 'simulation-experiment-id',
+  simulation_transient_voltage_graph_ids: ['transient-graph-id'],
+  schematicHeightRatio: 0.6,
+})
+```
+
+See the [schematic simulation snapshot](tests/sim/__snapshots__/schematic-simulation-combined.snap.svg).
+
+#### Options
+
+- `width` and `height` – overall SVG dimensions. Defaults to `1200x1200`.
+- `schematicHeightRatio` – ratio of the SVG dedicated to the schematic view. Defaults to `0.55`.
+- `schematicOptions` – forward additional schematic rendering options (except `width`, `height`, and `includeVersion`).
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
+
+### convertCircuitJsonToSimulationGraphSvg
+
+`convertCircuitJsonToSimulationGraphSvg({
+  circuitJson,
+  simulation_experiment_id,
+  simulation_transient_voltage_graph_ids?,
+  width?,
+  height?,
+  includeVersion?,
+}): string`
+
+Creates standalone graphs for circuit simulation experiments.
+
+```typescript
+import { convertCircuitJsonToSimulationGraphSvg } from 'circuit-to-svg'
+
+const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
+  circuitJson,
+  simulation_experiment_id: 'simulation-experiment-id',
+  simulation_transient_voltage_graph_ids: ['transient-graph-id'],
+})
+```
+
+See the [simulation graph snapshot](tests/sim/__snapshots__/simulation-graph.snap.svg).
+
+#### Options
+
+- `width` and `height` – SVG dimensions for the graph. Defaults to `1200x600`.
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
+
+### convertCircuitJsonToSolderPasteMask
+
+`convertCircuitJsonToSolderPasteMask(circuitJson: AnyCircuitElement[], options: { layer: 'top' | 'bottom'; width?; height?; includeVersion? }): string`
+
+Produces top and bottom solder paste mask renderings suitable for stencil generation.
+
+```typescript
+import { convertCircuitJsonToSolderPasteMask } from 'circuit-to-svg'
+
+const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
+  layer: 'top',
+})
+```
+
+See the [solder paste snapshot](tests/pcb/__snapshots__/solder-paste.test.tsx.top.snap.svg).
+
+#### Options
+
+- `layer` – `'top' | 'bottom'`, chooses which solder paste layer to render. Defaults to `'top'`.
+- `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
+- `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
+  the root `<svg>`.
+
