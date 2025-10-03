@@ -1,7 +1,14 @@
-import type { AnyCircuitElement, PcbPort } from "circuit-json"
-import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { PinoutLabel } from "./convert-circuit-json-to-pinout-svg"
+import {
+  STAGGER_OFFSET_MIN,
+  STAGGER_OFFSET_PER_PIN,
+  STAGGER_OFFSET_STEP,
+  ALIGNED_OFFSET_MARGIN,
+  GROUP_SEPARATION_MM,
+  LABEL_RECT_HEIGHT_BASE_MM,
+} from "./constants"
 
 export type LabelPosition = {
   text: string
@@ -11,15 +18,6 @@ export type LabelPosition = {
   edge: "left" | "right" | "top" | "bottom"
 }
 
-const STAGGER_OFFSET_MIN = 20
-const STAGGER_OFFSET_PER_PIN = 3
-const STAGGER_OFFSET_STEP = 18
-const ALIGNED_OFFSET_MARGIN = 10 // Margin beyond the last staggered point
-
-// These values are derived from a 2.54mm pitch (100mil), and 1.6mm pad width
-const LABEL_RECT_HEIGHT_MM = 1.6
-const LABEL_PITCH_MM = 2.54
-
 function calculateVerticalEdgeLabels(
   edge: "left" | "right",
   pinout_labels: PinoutLabel[],
@@ -28,11 +26,13 @@ function calculateVerticalEdgeLabels(
     soup,
     board_bounds,
     svgHeight,
+    styleScale,
   }: {
     transform: Matrix
     soup: AnyCircuitElement[]
     board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
     svgHeight: number
+    styleScale: number
   },
   label_positions: Map<string, LabelPosition>,
 ) {
@@ -143,17 +143,25 @@ function calculateVerticalEdgeLabels(
 
   const geometric_middle_index = (num_labels - 1) / 2
 
-  const scale = Math.abs(transform.a)
-  const label_rect_height = LABEL_RECT_HEIGHT_MM * scale
-  const label_pitch = LABEL_PITCH_MM * scale
-  const label_margin = Math.max(0, label_pitch - label_rect_height)
+  const pxPerMm = Math.abs(transform.a)
+  const label_rect_height = LABEL_RECT_HEIGHT_BASE_MM * styleScale * pxPerMm
+  const BASE_GAP_MM = 0.3
+  const label_margin = Math.max(
+    0.2 * pxPerMm,
+    BASE_GAP_MM * styleScale * pxPerMm,
+  )
+  const group_gap_px = GROUP_SEPARATION_MM * styleScale * pxPerMm
 
   const stagger_offset_base =
-    STAGGER_OFFSET_MIN + num_labels * STAGGER_OFFSET_PER_PIN
+    (STAGGER_OFFSET_MIN + num_labels * STAGGER_OFFSET_PER_PIN) *
+    styleScale *
+    pxPerMm
 
   const max_stagger_offset =
-    stagger_offset_base + geometric_middle_index * STAGGER_OFFSET_STEP
-  const aligned_label_offset = max_stagger_offset + ALIGNED_OFFSET_MARGIN
+    stagger_offset_base +
+    geometric_middle_index * (STAGGER_OFFSET_STEP * styleScale * pxPerMm)
+  const aligned_label_offset =
+    max_stagger_offset + ALIGNED_OFFSET_MARGIN * styleScale * pxPerMm
 
   const num_other_pins = num_labels - main_group_indices.length
   // If there's no main group, all pins are "other" pins
@@ -181,11 +189,13 @@ function calculateVerticalEdgeLabels(
 
     if (others_are_above) {
       // Place stack above main group
-      const stack_bottom_edge = main_group_top_extent - label_margin
+      const stack_bottom_edge =
+        main_group_top_extent - (label_margin * 2 + group_gap_px)
       current_y = stack_bottom_edge - stack_total_height + label_rect_height / 2
     } else {
       // Place stack below main group
-      const stack_top_edge = main_group_bottom_extent + label_margin
+      const stack_top_edge =
+        main_group_bottom_extent + (label_margin * 2 + group_gap_px)
       current_y = stack_top_edge + label_rect_height / 2
     }
   } else {
@@ -218,7 +228,8 @@ function calculateVerticalEdgeLabels(
       stagger_rank = geometric_middle_index - dist_from_middle
     }
     const stagger_offset =
-      stagger_offset_base + stagger_rank * STAGGER_OFFSET_STEP
+      stagger_offset_base +
+      stagger_rank * (STAGGER_OFFSET_STEP * styleScale * pxPerMm)
     const sign = edge === "left" ? -1 : 1
 
     const is_main_group_pin = main_group_indices.includes(i)
@@ -260,6 +271,7 @@ export const calculateLabelPositions = ({
   board_bounds,
   svgWidth,
   svgHeight,
+  styleScale,
 }: {
   left_labels: PinoutLabel[]
   right_labels: PinoutLabel[]
@@ -268,6 +280,7 @@ export const calculateLabelPositions = ({
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
   svgWidth: number
   svgHeight: number
+  styleScale: number
 }): Map<string, LabelPosition> => {
   const label_positions = new Map<string, LabelPosition>()
 
@@ -279,6 +292,7 @@ export const calculateLabelPositions = ({
     {
       ...shared_params,
       svgHeight,
+      styleScale,
     },
     label_positions,
   )
@@ -289,6 +303,7 @@ export const calculateLabelPositions = ({
     {
       ...shared_params,
       svgHeight,
+      styleScale,
     },
     label_positions,
   )

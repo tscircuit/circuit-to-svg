@@ -56,10 +56,6 @@ export function createSvgObjectsFromPinoutPort(
     {},
   )
 
-  const line_points = [...elbow_path, label_pos]
-    .map((p) => `${p.x},${p.y}`)
-    .join(" ")
-
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
   const numberMatch = /^pin(\d+)$/i.exec(label)
   const tokensWithStyle = [
@@ -75,9 +71,22 @@ export function createSvgObjectsFromPinoutPort(
     })),
   ]
 
-  const scale = Math.abs(ctx.transform.a)
-  const LABEL_RECT_HEIGHT_MM = 2.2
-  const rectHeight = LABEL_RECT_HEIGHT_MM * scale
+  const pxPerMm = Math.abs(ctx.transform.a) // px per mm from transform matrix
+  const labelScale = ctx.styleScale ?? 1
+  const LABEL_RECT_HEIGHT_MM = 1.6 * labelScale
+  const rectHeight = LABEL_RECT_HEIGHT_MM * pxPerMm
+  const STROKE_WIDTH_MM = Math.max(0.08, 0.25 * labelScale)
+  const CORNER_RADIUS_MM = 0.3 * labelScale
+  const cornerRadius = CORNER_RADIUS_MM * pxPerMm
+
+  const strokeWidthPx = STROKE_WIDTH_MM * pxPerMm
+  const end_point = {
+    x: label_pos.x + (edge === "left" ? -strokeWidthPx / 2 : strokeWidthPx / 2),
+    y: label_pos.y,
+  }
+  const line_points = [...elbow_path, end_point]
+    .map((p) => `${p.x},${p.y}`)
+    .join(" ")
 
   // Derive font size and padding from rect height to keep text centered
   // Based on original ratio of font-size 11 to rect-height 21
@@ -101,7 +110,7 @@ export function createSvgObjectsFromPinoutPort(
       attributes: {
         points: line_points,
         stroke: LINE_COLOR,
-        "stroke-width": "1.5",
+        "stroke-width": (STROKE_WIDTH_MM * pxPerMm).toString(),
         fill: "none",
       },
       children: [],
@@ -128,6 +137,8 @@ export function createSvgObjectsFromPinoutPort(
           fontSize,
           labelBackground: bg,
           labelColor: color,
+          rx: cornerRadius,
+          ry: cornerRadius,
         }),
       )
 
@@ -152,6 +163,8 @@ export function createSvgObjectsFromPinoutPort(
           fontSize,
           labelBackground: bg,
           labelColor: color,
+          rx: cornerRadius,
+          ry: cornerRadius,
         }),
       )
 
@@ -180,6 +193,8 @@ export function createSvgObjectsFromPinoutPort(
           fontSize,
           labelBackground: bg,
           labelColor: color,
+          rx: cornerRadius,
+          ry: cornerRadius,
         }),
       )
 
