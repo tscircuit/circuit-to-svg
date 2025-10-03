@@ -1,11 +1,9 @@
 import type { AnyCircuitElement, PcbPort } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
-import { su } from "@tscircuit/circuit-json-util"
 import {
   type Matrix,
-  applyToPoint,
   compose,
-  scale,
+  scale as matrixScale,
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPinoutBoard } from "./svg-object-fns/create-svg-objects-from-pinout-board"
@@ -21,6 +19,15 @@ import {
   type LabelPosition,
 } from "./calculate-label-positions"
 import { getClosestEdge, getPortLabelInfo } from "./pinout-utils"
+import {
+  LABEL_RECT_HEIGHT_BASE_MM,
+  CHAR_WIDTH_FACTOR,
+  FONT_HEIGHT_RATIO,
+  STAGGER_OFFSET_MIN,
+  STAGGER_OFFSET_PER_PIN,
+  STAGGER_OFFSET_STEP,
+  ALIGNED_OFFSET_MARGIN,
+} from "./constants"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -47,7 +54,7 @@ export interface PinoutSvgContext {
   transform: Matrix
   soup: AnyCircuitElement[]
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
-  uiScale: number
+  styleScale: number
   label_positions: Map<string, LabelPosition>
 }
 
@@ -87,56 +94,10 @@ export function convertCircuitJsonToPinoutSvg(
     }
   }
 
-  const padding = 20
-  const circuitWidth = maxX - minX + 2 * padding
-  const circuitHeight = maxY - minY + 2 * padding
-
-  const smtPads = soup.filter((e) => e.type === "pcb_smtpad") as any[]
-  const padHeights: number[] = smtPads
-    .map((p) => {
-      if (typeof (p as any).height === "number")
-        return (p as any).height as number
-      if (typeof (p as any).radius === "number")
-        return ((p as any).radius as number) * 2
-      return undefined
-    })
-    .filter((v): v is number => Number.isFinite(v))
-  const avgPadHeight =
-    padHeights.length > 0
-      ? padHeights.reduce((a, b) => a + b, 0) / padHeights.length
-      : null
-  let uiScale = 1
-  if (avgPadHeight !== null && avgPadHeight <= 0.8) {
-    const ratio = avgPadHeight / 0.8
-    uiScale = Math.max(0.1, ratio * ratio)
-  }
+  const paddingMm = 2
 
   let svgWidth = options?.width ?? 1200
-  let svgHeight = (options?.height ?? 768) * uiScale
-
-  const scaleX = svgWidth / circuitWidth
-  const scaleY = svgHeight / circuitHeight
-  let scaleFactor = Math.min(scaleX, scaleY)
-
-  if (uiScale < 1) {
-    svgWidth = circuitWidth * scaleFactor
-    svgHeight = circuitHeight * scaleFactor
-  } else if (scaleX <= scaleY) {
-    svgWidth = circuitWidth * scaleFactor
-  } else {
-    svgHeight = circuitHeight * scaleFactor
-  }
-
-  const offsetX = (svgWidth - circuitWidth * scaleFactor) / 2
-  const offsetY = (svgHeight - circuitHeight * scaleFactor) / 2
-
-  const transform = compose(
-    translate(
-      offsetX - minX * scaleFactor + padding * scaleFactor,
-      svgHeight - offsetY + minY * scaleFactor - padding * scaleFactor,
-    ),
-    scale(scaleFactor, -scaleFactor),
-  )
+  let svgHeight = options?.height ?? 768
 
   const board_bounds = { minX, minY, maxX, maxY }
   const pinout_ports = soup.filter(
@@ -187,6 +148,103 @@ export function convertCircuitJsonToPinoutSvg(
     }
   }
 
+  // Determine visual style scale (unitless) based on typical pad size in mm.
+  const smtPads = soup.filter((e) => e.type === "pcb_smtpad") as any[]
+  const padMinorDimensionsMm: number[] = smtPads
+    .map((p) => {
+      if (typeof (p as any).height === "number")
+        return (p as any).height as number
+      if (typeof (p as any).radius === "number")
+        return ((p as any).radius as number) * 2
+      return undefined
+    })
+    .filter((v): v is number => Number.isFinite(v))
+
+  const averagePadMinorMm = padMinorDimensionsMm.length
+    ? padMinorDimensionsMm.reduce((a, b) => a + b, 0) /
+      padMinorDimensionsMm.length
+    : undefined
+
+  const BASELINE_PAD_MINOR_MM = 1.0
+  const styleScale = averagePadMinorMm
+    ? Math.max(0.5, Math.min(1, averagePadMinorMm / BASELINE_PAD_MINOR_MM))
+    : 1
+
+  // Compute additional horizontal space (in mm) required for labels on each side
+  const LABEL_RECT_HEIGHT_MM = LABEL_RECT_HEIGHT_BASE_MM * styleScale
+
+  function tokenize(label: PinoutLabel): string[] {
+    const tokens = [...(label.aliases ?? [])]
+    if (tokens.length === 0) return tokens
+    const m = /^pin(\d+)$/i.exec(tokens[0]!)
+    if (m) tokens[0] = m[1]!
+    return tokens
+  }
+
+  function getTotalTokenWidthMm(tokens: string[]): number {
+    if (tokens.length === 0) return 0
+    const rectHeightMm = LABEL_RECT_HEIGHT_MM
+    const fontSizeMm = rectHeightMm * FONT_HEIGHT_RATIO
+    const bgPaddingMm = (rectHeightMm - fontSizeMm) / 2
+    const gapMm = bgPaddingMm
+
+    const tokenWidthsMm = tokens.map((t) => {
+      const safe = t ?? ""
+      const textWidthMm = safe.length * fontSizeMm * CHAR_WIDTH_FACTOR
+      return textWidthMm + 2 * bgPaddingMm
+    })
+
+    const totalWidthMm =
+      tokenWidthsMm.reduce((a, b) => a + b, 0) +
+      gapMm * Math.max(0, tokens.length - 1)
+
+    return totalWidthMm
+  }
+
+  function getAlignedOffsetMm(count: number): number {
+    if (count <= 0) return 0
+    const geometric_middle_index = (count - 1) / 2
+    const stagger_base =
+      (STAGGER_OFFSET_MIN + count * STAGGER_OFFSET_PER_PIN) * styleScale
+    const max_stagger =
+      stagger_base + geometric_middle_index * (STAGGER_OFFSET_STEP * styleScale)
+    return max_stagger + ALIGNED_OFFSET_MARGIN * styleScale
+  }
+
+  const leftMaxLabelWidthMm = Math.max(
+    0,
+    ...left_labels.map((l) => getTotalTokenWidthMm(tokenize(l))),
+  )
+  const rightMaxLabelWidthMm = Math.max(
+    0,
+    ...right_labels.map((l) => getTotalTokenWidthMm(tokenize(l))),
+  )
+
+  const extraLeftMm =
+    getAlignedOffsetMm(left_labels.length) + leftMaxLabelWidthMm
+  const extraRightMm =
+    getAlignedOffsetMm(right_labels.length) + rightMaxLabelWidthMm
+
+  const expandedMinX = minX - extraLeftMm
+  const expandedMaxX = maxX + extraRightMm
+
+  const circuitWidth = expandedMaxX - expandedMinX + 2 * paddingMm
+  const circuitHeight = maxY - minY + 2 * paddingMm
+
+  const pxPerMmX = svgWidth / circuitWidth
+  const pxPerMmY = svgHeight / circuitHeight
+  const pxPerMm = Math.min(pxPerMmX, pxPerMmY) // mm-to-px scale from transform
+  const offsetX = (svgWidth - circuitWidth * pxPerMm) / 2
+  const offsetY = (svgHeight - circuitHeight * pxPerMm) / 2
+
+  const transform = compose(
+    translate(
+      offsetX - expandedMinX * pxPerMm + paddingMm * pxPerMm,
+      svgHeight - offsetY + minY * pxPerMm - paddingMm * pxPerMm,
+    ),
+    matrixScale(pxPerMm, -pxPerMm),
+  )
+
   const label_positions = calculateLabelPositions({
     left_labels,
     right_labels,
@@ -195,14 +253,14 @@ export function convertCircuitJsonToPinoutSvg(
     board_bounds,
     svgWidth,
     svgHeight,
-    uiScale,
+    styleScale,
   })
 
   const ctx: PinoutSvgContext = {
     transform,
     soup,
     board_bounds,
-    uiScale,
+    styleScale,
     label_positions,
   }
 
