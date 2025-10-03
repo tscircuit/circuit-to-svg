@@ -102,6 +102,7 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   `"#000"`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
+- `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for any `pcb_trace_error` elements in the circuit JSON. Defaults to `false`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
