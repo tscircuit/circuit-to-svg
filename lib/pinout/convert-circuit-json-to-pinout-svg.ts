@@ -47,6 +47,7 @@ export interface PinoutSvgContext {
   transform: Matrix
   soup: AnyCircuitElement[]
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
+  uiScale: number
   label_positions: Map<string, LabelPosition>
 }
 
@@ -90,12 +91,41 @@ export function convertCircuitJsonToPinoutSvg(
   const circuitWidth = maxX - minX + 2 * padding
   const circuitHeight = maxY - minY + 2 * padding
 
-  const svgWidth = options?.width ?? 1200
-  const svgHeight = options?.height ?? 768
+  const smtPads = soup.filter((e) => e.type === "pcb_smtpad") as any[]
+  const padHeights: number[] = smtPads
+    .map((p) => {
+      if (typeof (p as any).height === "number")
+        return (p as any).height as number
+      if (typeof (p as any).radius === "number")
+        return ((p as any).radius as number) * 2
+      return undefined
+    })
+    .filter((v): v is number => Number.isFinite(v))
+  const avgPadHeight =
+    padHeights.length > 0
+      ? padHeights.reduce((a, b) => a + b, 0) / padHeights.length
+      : null
+  let uiScale = 1
+  if (avgPadHeight !== null && avgPadHeight <= 0.8) {
+    const ratio = avgPadHeight / 0.8
+    uiScale = Math.max(0.1, ratio * ratio)
+  }
+
+  let svgWidth = options?.width ?? 1200
+  let svgHeight = (options?.height ?? 768) * uiScale
 
   const scaleX = svgWidth / circuitWidth
   const scaleY = svgHeight / circuitHeight
-  const scaleFactor = Math.min(scaleX, scaleY)
+  let scaleFactor = Math.min(scaleX, scaleY)
+
+  if (uiScale < 1) {
+    svgWidth = circuitWidth * scaleFactor
+    svgHeight = circuitHeight * scaleFactor
+  } else if (scaleX <= scaleY) {
+    svgWidth = circuitWidth * scaleFactor
+  } else {
+    svgHeight = circuitHeight * scaleFactor
+  }
 
   const offsetX = (svgWidth - circuitWidth * scaleFactor) / 2
   const offsetY = (svgHeight - circuitHeight * scaleFactor) / 2
@@ -165,12 +195,14 @@ export function convertCircuitJsonToPinoutSvg(
     board_bounds,
     svgWidth,
     svgHeight,
+    uiScale,
   })
 
   const ctx: PinoutSvgContext = {
     transform,
     soup,
     board_bounds,
+    uiScale,
     label_positions,
   }
 

@@ -28,11 +28,13 @@ function calculateVerticalEdgeLabels(
     soup,
     board_bounds,
     svgHeight,
+    uiScale,
   }: {
     transform: Matrix
     soup: AnyCircuitElement[]
     board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
     svgHeight: number
+    uiScale: number
   },
   label_positions: Map<string, LabelPosition>,
 ) {
@@ -144,16 +146,19 @@ function calculateVerticalEdgeLabels(
   const geometric_middle_index = (num_labels - 1) / 2
 
   const scale = Math.abs(transform.a)
-  const label_rect_height = LABEL_RECT_HEIGHT_MM * scale
-  const label_pitch = LABEL_PITCH_MM * scale
+  const label_rect_height = LABEL_RECT_HEIGHT_MM * scale * uiScale
+  const label_pitch = LABEL_PITCH_MM * scale * uiScale
   const label_margin = Math.max(0, label_pitch - label_rect_height)
 
   const stagger_offset_base =
-    STAGGER_OFFSET_MIN + num_labels * STAGGER_OFFSET_PER_PIN
+    STAGGER_OFFSET_MIN * uiScale +
+    num_labels * (STAGGER_OFFSET_PER_PIN * uiScale)
 
   const max_stagger_offset =
-    stagger_offset_base + geometric_middle_index * STAGGER_OFFSET_STEP
-  const aligned_label_offset = max_stagger_offset + ALIGNED_OFFSET_MARGIN
+    stagger_offset_base +
+    geometric_middle_index * (STAGGER_OFFSET_STEP * uiScale)
+  const aligned_label_offset =
+    max_stagger_offset + ALIGNED_OFFSET_MARGIN * uiScale
 
   const num_other_pins = num_labels - main_group_indices.length
   // If there's no main group, all pins are "other" pins
@@ -181,11 +186,11 @@ function calculateVerticalEdgeLabels(
 
     if (others_are_above) {
       // Place stack above main group
-      const stack_bottom_edge = main_group_top_extent - label_margin
+      const stack_bottom_edge = main_group_top_extent - label_margin * 2
       current_y = stack_bottom_edge - stack_total_height + label_rect_height / 2
     } else {
       // Place stack below main group
-      const stack_top_edge = main_group_bottom_extent + label_margin
+      const stack_top_edge = main_group_bottom_extent + label_margin * 2
       current_y = stack_top_edge + label_rect_height / 2
     }
   } else {
@@ -218,7 +223,7 @@ function calculateVerticalEdgeLabels(
       stagger_rank = geometric_middle_index - dist_from_middle
     }
     const stagger_offset =
-      stagger_offset_base + stagger_rank * STAGGER_OFFSET_STEP
+      stagger_offset_base + stagger_rank * (STAGGER_OFFSET_STEP * uiScale)
     const sign = edge === "left" ? -1 : 1
 
     const is_main_group_pin = main_group_indices.includes(i)
@@ -260,6 +265,7 @@ export const calculateLabelPositions = ({
   board_bounds,
   svgWidth,
   svgHeight,
+  uiScale,
 }: {
   left_labels: PinoutLabel[]
   right_labels: PinoutLabel[]
@@ -268,6 +274,7 @@ export const calculateLabelPositions = ({
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
   svgWidth: number
   svgHeight: number
+  uiScale: number
 }): Map<string, LabelPosition> => {
   const label_positions = new Map<string, LabelPosition>()
 
@@ -279,6 +286,7 @@ export const calculateLabelPositions = ({
     {
       ...shared_params,
       svgHeight,
+      uiScale,
     },
     label_positions,
   )
@@ -289,6 +297,7 @@ export const calculateLabelPositions = ({
     {
       ...shared_params,
       svgHeight,
+      uiScale,
     },
     label_positions,
   )
