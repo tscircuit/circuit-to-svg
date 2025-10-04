@@ -38,7 +38,7 @@ type ScaleFn = (value: number) => number
 
 const DEFAULT_WIDTH = 1200
 const DEFAULT_HEIGHT = 600
-const MARGIN = { top: 64, right: 48, bottom: 80, left: 100 }
+const MARGIN = { top: 64, right: 100, bottom: 80, left: 100 }
 const FALLBACK_LINE_COLOR = "#1f77b4"
 
 export function convertCircuitJsonToSimulationGraphSvg({
@@ -131,7 +131,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotWidth,
       plotHeight,
     }),
-    createLegend(preparedGraphs),
+    createLegend(preparedGraphs, width),
     ...(titleNode ? [titleNode] : []),
   ]
 
@@ -549,14 +549,18 @@ function createAxes({
   return svgElement("g", { class: "axes" }, children)
 }
 
-function createLegend(graphs: PreparedSimulationGraph[]): SvgObject {
+function createLegend(
+  graphs: PreparedSimulationGraph[],
+  width: number,
+): SvgObject {
   const children = graphs.map((entry, index) => {
-    const y = MARGIN.top - 28 + index * 20
+    const y = MARGIN.top + index * 24
+    const x = width - MARGIN.right + 20
     return svgElement(
       "g",
       {
         class: "legend-item",
-        transform: `translate(${formatNumber(MARGIN.left)} ${formatNumber(y)})`,
+        transform: `translate(${formatNumber(x)} ${formatNumber(y)})`,
       },
       [
         svgElement("line", {
