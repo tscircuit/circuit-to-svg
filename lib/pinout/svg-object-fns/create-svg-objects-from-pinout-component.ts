@@ -4,7 +4,6 @@ import type { PinoutSvgContext } from "../convert-circuit-json-to-pinout-svg"
 import { su } from "@tscircuit/circuit-json-util"
 import { applyToPoint } from "transformation-matrix"
 
-
 export function createSvgObjectsFromPinoutComponent(
   elm: PcbComponent,
   ctx: PinoutSvgContext,
