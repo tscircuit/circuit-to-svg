@@ -4,8 +4,6 @@ import type { PinoutSvgContext } from "../convert-circuit-json-to-pinout-svg"
 import { su } from "@tscircuit/circuit-json-util"
 import { applyToPoint } from "transformation-matrix"
 
-const COMPONENT_FILL_COLOR = "rgba(120, 120, 120, 0.6)"
-const COMPONENT_LABEL_COLOR = "rgba(255, 255, 255, 0.9)"
 
 export function createSvgObjectsFromPinoutComponent(
   elm: PcbComponent,
@@ -39,7 +37,7 @@ export function createSvgObjectsFromPinoutComponent(
         y: (-scaledHeight / 2).toString(),
         width: scaledWidth.toString(),
         height: scaledHeight.toString(),
-        fill: COMPONENT_FILL_COLOR,
+        fill: "none",
         transform: `rotate(${rotation}deg)`,
       },
       value: "",
@@ -55,7 +53,7 @@ export function createSvgObjectsFromPinoutComponent(
       attributes: {
         x: "0",
         y: "0",
-        fill: COMPONENT_LABEL_COLOR,
+        fill: "none",
         "font-size": `${labelFontSize}px`,
         "font-family": "sans-serif",
         "text-anchor": "middle",
