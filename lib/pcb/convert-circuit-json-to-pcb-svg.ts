@@ -32,6 +32,7 @@ import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objec
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
   DEFAULT_PCB_COLOR_MAP,
+  type CopperColorMap,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
@@ -92,12 +93,20 @@ export function convertCircuitJsonToPcbSvg(
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
 
+  const copperColors: CopperColorMap = {
+    ...DEFAULT_PCB_COLOR_MAP.copper,
+  }
+
+  if (colorOverrides?.copper) {
+    for (const [layerName, color] of Object.entries(colorOverrides.copper)) {
+      if (color !== undefined) {
+        copperColors[layerName] = color
+      }
+    }
+  }
+
   const colorMap: PcbColorMap = {
-    copper: {
-      top: colorOverrides?.copper?.top ?? DEFAULT_PCB_COLOR_MAP.copper.top,
-      bottom:
-        colorOverrides?.copper?.bottom ?? DEFAULT_PCB_COLOR_MAP.copper.bottom,
-    },
+    copper: copperColors,
     drill: colorOverrides?.drill ?? DEFAULT_PCB_COLOR_MAP.drill,
     silkscreen: {
       top:
