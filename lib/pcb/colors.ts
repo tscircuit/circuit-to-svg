@@ -41,14 +41,14 @@ export interface PcbColorOverrides {
 
 export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   copper: {
-    top: "#ff0000", // red
-    bottom: "#0000ff", // blue
-    inner1: "#00ff00", // green
-    inner2: "#ffa500", // orange
-    inner3: "#800080", // purple
-    inner4: "#ff00ff", // pink/magenta
-    inner5: "#808080", // gray
-    inner6: "#00ffff", // cyan
+    top: "rgb(200, 52, 52)", // f - top (red)
+    bottom: "rgb(77, 127, 196)", // b - bottom (blue)
+    inner1: "rgb(127, 200, 127)", // in1 - light green
+    inner2: "rgb(206, 125, 44)", // in2 - orange
+    inner3: "rgb(79, 203, 203)", // in3 - cyan
+    inner4: "rgb(64, 224, 208)", // turquoise
+    inner5: "rgb(138, 43, 226)", // blue violet
+    inner6: "rgb(255, 105, 180)", // hot pink
   },
   soldermask: {
     top: "rgb(200, 52, 52)",
