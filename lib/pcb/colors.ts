@@ -54,7 +54,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
     top: "rgb(200, 52, 52)",
     bottom: "rgb(77, 127, 196)",
   },
-  drill: "#ff00ff", // magenta
+  drill: "#FF26E2", // magenta
   silkscreen: {
     top: "#f2eda1",
     bottom: "#5da9e9",
