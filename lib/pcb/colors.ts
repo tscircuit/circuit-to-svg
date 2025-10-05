@@ -41,15 +41,16 @@ export interface PcbColorOverrides {
 
 export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   copper: {
-    top: "rgb(200, 52, 52)",
-    inner1: "rgb(255, 140, 0)",
-    inner2: "rgb(255, 215, 0)",
-    inner3: "rgb(50, 205, 50)",
-    inner4: "rgb(64, 224, 208)",
-    inner5: "rgb(138, 43, 226)",
-    inner6: "rgb(255, 105, 180)",
-    bottom: "rgb(77, 127, 196)",
-  },
+  top: "rgb(200, 52, 52)",        // Red – Top signal
+  inner1: "rgb(110, 60, 20)",     // Brown – Ground plane
+  inner2: "rgb(50, 120, 50)",     // Dark green – Power plane
+  inner3: "rgb(100, 180, 180)",   // Teal – Inner signal 1
+  inner4: "rgb(90, 80, 180)",     // Indigo – Inner signal 2
+  inner5: "rgb(100, 100, 100)",   // Gray – Additional plane
+  inner6: "rgb(150, 75, 75)",     // Brick red – Inner signal
+  bottom: "rgb(77, 127, 196)",    // Blue – Bottom signal
+}
+,
   soldermask: {
     top: "rgb(200, 52, 52)",
     bottom: "rgb(77, 127, 196)",
