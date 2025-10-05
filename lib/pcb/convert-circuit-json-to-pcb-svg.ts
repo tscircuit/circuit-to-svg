@@ -266,8 +266,9 @@ export function convertCircuitJsonToPcbSvg(
   const discoveredLayers = new Set<string>()
 
   for (const elm of circuitJson) {
-    if (elm.type === "pcb_smtpad" && elm.layer) {
-      discoveredLayers.add(elm.layer)
+    if (elm.type === "pcb_smtpad") {
+      // Default to "top" if layer is not specified
+      discoveredLayers.add(elm.layer || "top")
     } else if (elm.type === "pcb_trace" && elm.route) {
       for (const seg of elm.route) {
         const segLayer =
@@ -310,6 +311,20 @@ export function convertCircuitJsonToPcbSvg(
   // End with top layer
   if (discoveredLayers.has("top")) layerOrder.push("top")
 
+  // If no layers were discovered, default to rendering "top" layer
+  if (layerOrder.length === 0) {
+    layerOrder.push("top")
+  }
+
+  // If user specified a specific layer to render, filter to only that layer
+  if (layer) {
+    const filteredLayers = layerOrder.filter((l) => l === layer)
+    if (filteredLayers.length > 0) {
+      layerOrder.length = 0
+      layerOrder.push(...filteredLayers)
+    }
+  }
+
   console.log("Discovered layers:", Array.from(discoveredLayers))
   console.log("Rendering order (reversed):", layerOrder)
   console.log("Rendering order:", layerOrder)
@@ -318,7 +333,7 @@ export function convertCircuitJsonToPcbSvg(
     if (elm.type === "pcb_smtpad") {
       return elm.layer === "top" || elm.layer === "bottom"
         ? elm.layer
-        : undefined
+        : "top" // Default to top layer if not specified
     }
     if (elm.type === "pcb_trace") {
       for (const seg of elm.route ?? []) {
@@ -351,12 +366,30 @@ export function convertCircuitJsonToPcbSvg(
     const currentLayer = layerOrder[i]
     const isFirstLayer = i === 0
 
+    // Override copper colors to white when drawPaddingOutsideBoard is false (for pads)
+    const layerColorMap = drawPaddingOutsideBoard === false 
+      ? { 
+          ...colorMap, 
+          copper: {
+            ...colorMap.copper,
+            top: "#ffffff",
+            bottom: "#ffffff",
+            inner1: "#ffffff",
+            inner2: "#ffffff",
+            inner3: "#ffffff",
+            inner4: "#ffffff",
+            inner5: "#ffffff",
+            inner6: "#ffffff",
+          }
+        }
+      : colorMap
+
     const layerCtx: PcbContext = {
       transform,
       layer: currentLayer as any,
       shouldDrawErrors: options?.shouldDrawErrors,
       drawPaddingOutsideBoard,
-      colorMap,
+      colorMap: layerColorMap,
       renderSolderMask: options?.renderSolderMask,
     }
 
@@ -447,6 +480,34 @@ export function convertCircuitJsonToPcbSvg(
     )
 
   svgObjects = svgObjects.concat(holeObjects)
+
+  // Then render cutouts on top of holes
+  const cutoutCtx: PcbContext = {
+    transform,
+    layer: undefined,
+    shouldDrawErrors: options?.shouldDrawErrors,
+    drawPaddingOutsideBoard,
+    colorMap,
+    renderSolderMask: options?.renderSolderMask,
+  }
+
+  const cutoutObjects = circuitJson
+    .filter((elm) => elm.type === "pcb_cutout")
+    .flatMap((elm) =>
+      createSvgObjects({
+        elm,
+        circuitJson,
+        ctx: cutoutCtx,
+        isFirstLayer: true,
+        renderedVias,
+        renderedHoles,
+        renderSilkscreen: false,
+        renderVias: false,
+        renderHoles: false,
+      }),
+    )
+
+  svgObjects = svgObjects.concat(cutoutObjects)
 
   // Finally, render vias on top of everything
   const viaCtx: PcbContext = {
@@ -719,7 +780,12 @@ function createSvgObjects({
     case "pcb_copper_pour":
       return createSvgObjectsFromPcbCopperPour(elm as any, ctx)
     case "pcb_smtpad":
-      return createSvgObjectsFromSmtPad(elm, ctx)
+      // Normalize pad layer to "top" if not specified
+      const normalizedPad = {
+        ...elm,
+        layer: elm.layer || "top"
+      }
+      return createSvgObjectsFromSmtPad(normalizedPad as any, ctx)
 
     // Render board outline only on first layer
     case "pcb_board":
@@ -743,10 +809,15 @@ function createSvgObjects({
     case "pcb_fabrication_note_text":
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
 
-    // Skip other elements
+    // Draw errors if enabled
     case "pcb_trace_error":
-    case "pcb_component":
+      return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx)
+
     case "pcb_cutout":
+      return createSvgObjectsFromPcbCutout(elm as any, ctx)
+
+    // Skip other elements
+    case "pcb_component":
     default:
       return []
   }

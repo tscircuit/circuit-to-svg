@@ -1,0 +1,18 @@
+﻿bun test v1.2.15 (df017990)
+bun : 
+At line:1 char:1
++ bun test .\tests\pcb\offboard-element.test.ts 2>&1 | Out-File -Encodi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+tests\pcb\offboard-element.test.ts:
+Discovered layers: []
+Rendering order (reversed): [ "top" ]
+Rendering order: [ "top" ]
+(pass) offboard element does not affect bounds
+
+ 1 pass
+ 0 fail
+ 1 expect() calls
+Ran 1 tests across 1 files. [278.00ms]
