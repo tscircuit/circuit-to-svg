@@ -100,5 +100,33 @@ export function createSvgObjectsFromPinoutBoard(
         "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
       },
     },
+    // Optional board title: render centered above the board if name/title exists
+    ...(pcbBoard.name || (pcbBoard as any).title
+      ? [
+          {
+            name: "text",
+            type: "element" as const,
+            attributes: {
+              x: String(applyToPoint(transform, [(pcbBoard.center || { x: 0 }).x, 0])[0]),
+              y: String(applyToPoint(transform, [0, (pcbBoard.center || { y: 0 }).y])[1] - Math.abs(transform.a) * ((pcbBoard.height || 0) / 2 + 6)),
+              fill: "white",
+              "font-size": `${Math.max(12, Math.abs(transform.a) * 6)}px`,
+              "font-family": "sans-serif",
+              "text-anchor": "middle",
+              "dominant-baseline": "alphabetic",
+            },
+            children: [
+              {
+                type: "text" as const,
+                value: pcbBoard.name || (pcbBoard as any).title,
+                name: "",
+                attributes: {},
+                children: [],
+              },
+            ],
+            value: "",
+          },
+        ]
+      : []),
   ]
 }

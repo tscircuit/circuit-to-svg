@@ -56,6 +56,8 @@ export interface PinoutSvgContext {
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
   styleScale: number
   label_positions: Map<string, LabelPosition>
+  // Map of pcb_port_id -> attributes (e.g. highlightColor)
+  pinAttributesMap?: Map<string, { highlightColor?: string }>
 }
 
 export function convertCircuitJsonToPinoutSvg(
@@ -123,6 +125,33 @@ export function convertCircuitJsonToPinoutSvg(
   const right_labels = pinout_labels.filter((p) => p.edge === "right")
   const top_labels = pinout_labels.filter((p) => p.edge === "top")
   const bottom_labels = pinout_labels.filter((p) => p.edge === "bottom")
+
+  // Build pinAttributes map: look for per-port pin attributes or a top-level pinout config
+  const pinAttributesMap = new Map<string, { highlightColor?: string }>()
+
+  // 1) Check for attributes on ports themselves (pcb_port.pin_attributes)
+  for (const p of pinout_ports) {
+    const attrs = (p as any).pin_attributes
+    if (attrs && typeof attrs === "object") {
+      pinAttributesMap.set(p.pcb_port_id, {
+        highlightColor: attrs.highlightColor || attrs.highlightColour || attrs.highlight || undefined,
+      })
+    }
+  }
+
+  // 2) Look for a top-level helper element e.g. { type: 'pinout_config', pinAttributes: { '<port>': { highlightColor: '#...' } } }
+  for (const e of soup) {
+    if ((e as any).type === "pinout_config" && (e as any).pinAttributes) {
+      const map = (e as any).pinAttributes
+      for (const k of Object.keys(map)) {
+        const entry = map[k]
+        if (entry && typeof entry === "object") {
+          // store by key as-is (could be port id or port number string)
+          pinAttributesMap.set(k, { highlightColor: entry.highlightColor || entry.highlight || undefined })
+        }
+      }
+    }
+  }
 
   const boardCenterX = (minX + maxX) / 2
 
@@ -262,6 +291,7 @@ export function convertCircuitJsonToPinoutSvg(
     board_bounds,
     styleScale,
     label_positions,
+    pinAttributesMap,
   }
 
   const svgObjects = soup

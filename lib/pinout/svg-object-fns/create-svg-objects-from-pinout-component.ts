@@ -29,22 +29,27 @@ export function createSvgObjectsFromPinoutComponent(
   const scaledHeight = height * Math.abs(transform.d)
   const transformStr = `translate(${x}, ${y})`
 
+  // Component box is optional in pinout rendering. Respect elm.pinout?.showComponentBox if provided.
   const children: SvgObject[] = [
-    {
-      name: "rect",
-      type: "element",
-      attributes: {
-        class: "pinout-component-box",
-        x: (-scaledWidth / 2).toString(),
-        y: (-scaledHeight / 2).toString(),
-        width: scaledWidth.toString(),
-        height: scaledHeight.toString(),
-        fill: COMPONENT_FILL_COLOR,
-        transform: `rotate(${rotation}deg)`,
-      },
-      value: "",
-      children: [],
-    },
+    ...((elm as any).pinout?.showComponentBox === false
+      ? []
+      : [
+          {
+            name: "rect",
+            type: "element" as const,
+            attributes: {
+              class: "pinout-component-box",
+              x: (-scaledWidth / 2).toString(),
+              y: (-scaledHeight / 2).toString(),
+              width: scaledWidth.toString(),
+              height: scaledHeight.toString(),
+              fill: COMPONENT_FILL_COLOR,
+              transform: `rotate(${rotation}deg)`,
+            },
+            value: "",
+            children: [],
+          },
+        ]),
   ]
 
   if (sourceComponent?.name) {

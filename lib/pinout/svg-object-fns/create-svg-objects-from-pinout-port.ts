@@ -42,6 +42,10 @@ export function createSvgObjectsFromPinoutPort(
           ? "y+"
           : "y-"
 
+  // Determine highlight color for this port (if provided in context)
+  const pinAttrs = ctx.pinAttributesMap?.get(pcb_port.pcb_port_id) ?? ctx.pinAttributesMap?.get(String((pcb_port as any).pin_number ?? (pcb_port as any).port_number))
+  const highlightColor = pinAttrs?.highlightColor
+
   const elbow_path = calculateElbow(
     {
       x: port_x,
@@ -66,7 +70,8 @@ export function createSvgObjectsFromPinoutPort(
     },
     ...aliases.map((t) => ({
       text: t,
-      bg: LABEL_BACKGROUND,
+      // If highlightColor is provided, use it as the background for the token boxes
+      bg: highlightColor || LABEL_BACKGROUND,
       color: LABEL_COLOR,
     })),
   ]
@@ -109,7 +114,8 @@ export function createSvgObjectsFromPinoutPort(
       type: "element",
       attributes: {
         points: line_points,
-        stroke: LINE_COLOR,
+        // Use highlight color for polyline stroke if provided
+        stroke: highlightColor ? highlightColor : LINE_COLOR,
         "stroke-width": (STROKE_WIDTH_MM * pxPerMm).toString(),
         fill: "none",
       },
