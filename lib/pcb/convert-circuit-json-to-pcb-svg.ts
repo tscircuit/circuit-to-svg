@@ -331,9 +331,7 @@ export function convertCircuitJsonToPcbSvg(
 
   function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
     if (elm.type === "pcb_smtpad") {
-      return elm.layer === "top" || elm.layer === "bottom"
-        ? elm.layer
-        : "top" // Default to top layer if not specified
+      return elm.layer === "top" || elm.layer === "bottom" ? elm.layer : "top" // Default to top layer if not specified
     }
     if (elm.type === "pcb_trace") {
       for (const seg of elm.route ?? []) {
@@ -367,22 +365,23 @@ export function convertCircuitJsonToPcbSvg(
     const isFirstLayer = i === 0
 
     // Override copper colors to white when drawPaddingOutsideBoard is false (for pads)
-    const layerColorMap = drawPaddingOutsideBoard === false 
-      ? { 
-          ...colorMap, 
-          copper: {
-            ...colorMap.copper,
-            top: "#ffffff",
-            bottom: "#ffffff",
-            inner1: "#ffffff",
-            inner2: "#ffffff",
-            inner3: "#ffffff",
-            inner4: "#ffffff",
-            inner5: "#ffffff",
-            inner6: "#ffffff",
+    const layerColorMap =
+      drawPaddingOutsideBoard === false
+        ? {
+            ...colorMap,
+            copper: {
+              ...colorMap.copper,
+              top: "#ffffff",
+              bottom: "#ffffff",
+              inner1: "#ffffff",
+              inner2: "#ffffff",
+              inner3: "#ffffff",
+              inner4: "#ffffff",
+              inner5: "#ffffff",
+              inner6: "#ffffff",
+            },
           }
-        }
-      : colorMap
+        : colorMap
 
     const layerCtx: PcbContext = {
       transform,
@@ -783,7 +782,7 @@ function createSvgObjects({
       // Normalize pad layer to "top" if not specified
       const normalizedPad = {
         ...elm,
-        layer: elm.layer || "top"
+        layer: elm.layer || "top",
       }
       return createSvgObjectsFromSmtPad(normalizedPad as any, ctx)
 
