@@ -9339,8 +9339,8 @@ const pcbSoup: any[] = [
   },
 ]
 
-test("Silkscreen with PCB Plated Hole", () => {
+test("Four layer supported test", () => {
   expect(convertCircuitJsonToPcbSvg(pcbSoup)).toMatchSvgSnapshot(
-    import.meta.path + "22",
+    import.meta.path,
   )
 })
