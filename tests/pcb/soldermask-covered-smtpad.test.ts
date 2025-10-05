@@ -73,11 +73,6 @@ test("solder mask renders for each SMT pad shape and stays below other copper", 
     },
   ]
 
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    colorOverrides: {
-      soldermask: { top: "rgb(18, 82, 50)" },
-      copper: { top: "rgb(210, 58, 58)" },
-    },
-  })
+  const svg = convertCircuitJsonToPcbSvg(circuit)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
