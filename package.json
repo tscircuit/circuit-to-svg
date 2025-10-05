@@ -10,7 +10,7 @@
   "scripts": {
     "start": "cosmos",
     "prepublish": "npm run build",
-    "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap",
+    "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap --external tscircuit",
     "format": "biome format . --write",
     "format:check": "biome format .",
     "cosmos": "cosmos",
@@ -34,9 +34,6 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1"
-  },
-  "peerDependencies": {
-    "tscircuit": "*"
   },
   "dependencies": {
     "@types/node": "^22.5.5",
