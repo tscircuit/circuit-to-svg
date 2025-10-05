@@ -262,14 +262,57 @@ export function convertCircuitJsonToPcbSvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
-  const ctx: PcbContext = {
-    transform,
-    layer,
-    shouldDrawErrors: options?.shouldDrawErrors,
-    drawPaddingOutsideBoard,
-    colorMap,
-    renderSolderMask: options?.renderSolderMask,
+  // First pass: Discover all unique layers in the circuit
+  const discoveredLayers = new Set<string>()
+  
+  for (const elm of circuitJson) {
+    if (elm.type === "pcb_smtpad" && elm.layer) {
+      discoveredLayers.add(elm.layer)
+    } else if (elm.type === "pcb_trace" && elm.route) {
+      for (const seg of elm.route) {
+        const segLayer =
+          ("layer" in seg && seg.layer) ||
+          ("from_layer" in seg && seg.from_layer) ||
+          ("to_layer" in seg && seg.to_layer) ||
+          undefined
+        if (segLayer) {
+          discoveredLayers.add(segLayer)
+        }
+      }
+    } else if (elm.type === "pcb_copper_pour") {
+      const pourLayer = (elm as any).layer
+      if (pourLayer) {
+        discoveredLayers.add(pourLayer)
+      }
+      const pourLayers = (elm as any).layers
+      if (Array.isArray(pourLayers)) {
+        pourLayers.forEach(l => discoveredLayers.add(l))
+      }
+    }
   }
+
+  // Define layer rendering order: REVERSED - bottom first, then inner layers, then top
+  const layerOrder: string[] = []
+  
+  // Start with bottom layer
+  if (discoveredLayers.has("bottom")) layerOrder.push("bottom")
+  
+  // Add inner layers in REVERSE order (inner3, inner2, inner1)
+  const innerLayers = Array.from(discoveredLayers)
+    .filter(l => l.startsWith("inner"))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace("inner", "")) || 0
+      const numB = parseInt(b.replace("inner", "")) || 0
+      return numB - numA // Reversed comparison
+    })
+  layerOrder.push(...innerLayers)
+  
+  // End with top layer
+  if (discoveredLayers.has("top")) layerOrder.push("top")
+
+  console.log("Discovered layers:", Array.from(discoveredLayers))
+  console.log("Rendering order (reversed):", layerOrder)
+  console.log("Rendering order:", layerOrder)
 
   function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
     if (elm.type === "pcb_smtpad") {
@@ -297,24 +340,134 @@ export function convertCircuitJsonToPcbSvg(
     return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
   }
 
-  let svgObjects = circuitJson
-    .sort((a, b) => {
-      const layerA = getLayer(a)
-      const layerB = getLayer(b)
+  // Render layers one by one in order
+  let svgObjects: SvgObject[] = []
+  
+  // Track which elements we've already rendered to avoid duplicates
+  const renderedVias = new Set<string>()
+  const renderedHoles = new Set<string>()
+  
+  for (let i = 0; i < layerOrder.length; i++) {
+    const currentLayer = layerOrder[i]
+    const isFirstLayer = i === 0
+    
+    const layerCtx: PcbContext = {
+      transform,
+      layer: currentLayer as any,
+      shouldDrawErrors: options?.shouldDrawErrors,
+      drawPaddingOutsideBoard,
+      colorMap,
+      renderSolderMask: options?.renderSolderMask,
+    }
 
-      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
-        if (layerA === "top") return 1
-        if (layerB === "top") return -1
-        if (layerA === "bottom") return -1
-        if (layerB === "bottom") return 1
-      }
+    const layerObjects = circuitJson
+      .sort((a, b) => {
+        const layerA = getLayer(a)
+        const layerB = getLayer(b)
 
-      return (
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999)
-      )
-    })
-    .flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+        if (isCopper(a) && isCopper(b) && layerA !== layerB) {
+          if (layerA === "top") return 1
+          if (layerB === "top") return -1
+          if (layerA === "bottom") return -1
+          if (layerB === "bottom") return 1
+        }
+
+        return (
+          (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
+          (OBJECT_ORDER.indexOf(a.type) ?? 9999)
+        )
+      })
+      .flatMap((elm) => createSvgObjects({ 
+        elm, 
+        circuitJson, 
+        ctx: layerCtx,
+        isFirstLayer,
+        renderedVias,
+        renderedHoles,
+        renderSilkscreen: false, // Don't render silkscreen during copper layer passes
+        renderVias: false, // Don't render vias during copper layer passes
+        renderHoles: false, // Don't render holes during copper layer passes
+      }))
+
+    svgObjects = svgObjects.concat(layerObjects)
+  }
+
+  // After all copper layers, render silkscreen elements
+  const silkscreenCtx: PcbContext = {
+    transform,
+    layer: undefined, // No layer filter for silkscreen
+    shouldDrawErrors: options?.shouldDrawErrors,
+    drawPaddingOutsideBoard,
+    colorMap,
+    renderSolderMask: options?.renderSolderMask,
+  }
+
+  const silkscreenObjects = circuitJson
+    .flatMap((elm) => createSvgObjects({ 
+      elm, 
+      circuitJson, 
+      ctx: silkscreenCtx,
+      isFirstLayer: false,
+      renderedVias,
+      renderedHoles,
+      renderSilkscreen: true, // Only render silkscreen elements
+      renderVias: false, // Don't render vias yet
+      renderHoles: false, // Don't render holes yet
+    }))
+
+  svgObjects = svgObjects.concat(silkscreenObjects)
+
+  // Then render holes on top
+  const holeCtx: PcbContext = {
+    transform,
+    layer: undefined,
+    shouldDrawErrors: options?.shouldDrawErrors,
+    drawPaddingOutsideBoard,
+    colorMap,
+    renderSolderMask: options?.renderSolderMask,
+  }
+
+  const holeObjects = circuitJson
+    .filter((elm) => elm.type === "pcb_hole" || elm.type === "pcb_plated_hole")
+    .flatMap((elm) => createSvgObjects({ 
+      elm, 
+      circuitJson, 
+      ctx: holeCtx,
+      isFirstLayer: true, // Allow hole rendering
+      renderedVias,
+      renderedHoles: new Set(), // Reset to force rendering
+      renderSilkscreen: false,
+      renderVias: false,
+      renderHoles: true, // Render holes now
+    }))
+
+  svgObjects = svgObjects.concat(holeObjects)
+
+  // Finally, render vias on top of everything
+  const viaCtx: PcbContext = {
+    transform,
+    layer: undefined,
+    shouldDrawErrors: options?.shouldDrawErrors,
+    drawPaddingOutsideBoard,
+    colorMap,
+    renderSolderMask: options?.renderSolderMask,
+  }
+
+  const viaObjects = circuitJson
+    .filter((elm) => elm.type === "pcb_via")
+    .flatMap((elm) => createSvgObjects({ 
+      elm, 
+      circuitJson, 
+      ctx: viaCtx,
+      isFirstLayer: true, // Allow via rendering
+      renderedVias: new Set(), // Reset to force rendering
+      renderedHoles,
+      renderSilkscreen: false,
+      renderVias: true, // Render vias now
+      renderHoles: false,
+    }))
+
+  svgObjects = svgObjects.concat(viaObjects)
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -326,7 +479,16 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   if (options?.shouldDrawRatsNest) {
-    const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
+    // Use a generic context for rats nest (no layer filter)
+    const ratsNestCtx: PcbContext = {
+      transform,
+      layer: undefined,
+      shouldDrawErrors: options?.shouldDrawErrors,
+      drawPaddingOutsideBoard,
+      colorMap,
+      renderSolderMask: options?.renderSolderMask,
+    }
+    const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ratsNestCtx)
     svgObjects = svgObjects.concat(ratsNestObjects)
   }
 
@@ -472,30 +634,88 @@ interface CreateSvgObjectsParams {
   elm: AnyCircuitElement
   circuitJson: AnyCircuitElement[]
   ctx: PcbContext
+  isFirstLayer?: boolean
+  renderedVias?: Set<string>
+  renderedHoles?: Set<string>
+  renderSilkscreen?: boolean
+  renderVias?: boolean
+  renderHoles?: boolean
 }
 
 function createSvgObjects({
   elm,
   circuitJson,
   ctx,
+  isFirstLayer = false,
+  renderedVias = new Set(),
+  renderedHoles = new Set(),
+  renderSilkscreen = false,
+  renderVias = false,
+  renderHoles = false,
 }: CreateSvgObjectsParams): SvgObject[] {
+  // Get unique identifier for vias and holes
+  const getElementId = (element: AnyCircuitElement): string => {
+    if ('pcb_via_id' in element) return element.pcb_via_id as string
+    if ('pcb_hole_id' in element) return element.pcb_hole_id as string
+    if ('pcb_plated_hole_id' in element) return element.pcb_plated_hole_id as string
+    if ('x' in element && 'y' in element) {
+      return `${element.type}_${element.x}_${element.y}`
+    }
+    return ''
+  }
+
+  // If we're in silkscreen rendering mode, only render silkscreen elements
+  const isSilkscreenElement = elm.type.startsWith('pcb_silkscreen') || 
+                              elm.type.startsWith('pcb_fabrication_note')
+
+  if (renderSilkscreen && !isSilkscreenElement) {
+    return []
+  }
+  
+  if (!renderSilkscreen && isSilkscreenElement) {
+    return []
+  }
+
   switch (elm.type) {
-    case "pcb_trace_error":
-      return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
-        Boolean,
-      )
-    case "pcb_component":
-      return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
+    // Only render vias when renderVias is true
+    case "pcb_via": {
+      if (!renderVias) return []
+      const viaId = getElementId(elm)
+      if (renderedVias.has(viaId)) return []
+      if (viaId) renderedVias.add(viaId)
+      return createSvgObjectsFromPcbVia(elm, ctx)
+    }
+    // Only render holes when renderHoles is true
+    case "pcb_plated_hole": {
+      if (!renderHoles) return []
+      const holeId = getElementId(elm)
+      if (renderedHoles.has(holeId)) return []
+      if (holeId) renderedHoles.add(holeId)
+      return createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean)
+    }
+    case "pcb_hole": {
+      if (!renderHoles) return []
+      const holeId = getElementId(elm)
+      if (renderedHoles.has(holeId)) return []
+      if (holeId) renderedHoles.add(holeId)
+      return createSvgObjectsFromPcbHole(elm, ctx)
+    }
+    
+    // Render copper elements (filtered by layer in their respective functions)
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, ctx)
     case "pcb_copper_pour":
       return createSvgObjectsFromPcbCopperPour(elm as any, ctx)
-    case "pcb_plated_hole":
-      return createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean)
-    case "pcb_hole":
-      return createSvgObjectsFromPcbHole(elm, ctx)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, ctx)
+    
+    // Render board outline only on first layer
+    case "pcb_board":
+      return isFirstLayer && ctx.drawPaddingOutsideBoard
+        ? createSvgObjectsFromPcbBoard(elm, ctx)
+        : []
+    
+    // Render silkscreen elements
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, ctx)
     case "pcb_silkscreen_rect":
@@ -504,21 +724,17 @@ function createSvgObjects({
       return createSvgObjectsFromPcbSilkscreenCircle(elm, ctx)
     case "pcb_silkscreen_line":
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
-
+    case "pcb_silkscreen_path":
+      return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
-    case "pcb_silkscreen_path":
-      return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
-    case "pcb_board":
-      return ctx.drawPaddingOutsideBoard
-        ? createSvgObjectsFromPcbBoard(elm, ctx)
-        : []
-    case "pcb_via":
-      return createSvgObjectsFromPcbVia(elm, ctx)
+    
+    // Skip other elements
+    case "pcb_trace_error":
+    case "pcb_component":
     case "pcb_cutout":
-      return createSvgObjectsFromPcbCutout(elm as any, ctx)
     default:
       return []
   }
