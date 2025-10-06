@@ -595,7 +595,7 @@ function createDataGroup(
   scaleY: ScaleFn,
 ): SvgObject {
   const LINE_REPEAT_COUNT = 3
-  const DASH_PATTERN = [6, 6]
+  const DASH_PATTERN = [4, 8]
   const dashArrayString = DASH_PATTERN.map((value) => formatNumber(value)).join(
     " ",
   )
