@@ -45,7 +45,7 @@ export function createSvgObjectsFromPcbTrace(
         children: [],
         attributes: {
           class: "pcb-trace",
-          stroke: maskColor,
+          stroke: copperColor,
           fill: "none",
           d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
           "stroke-width": width,
@@ -83,7 +83,7 @@ export function createSvgObjectsFromPcbTrace(
         children: [],
         attributes: {
           class: "pcb-trace",
-          stroke: copperColor,
+          stroke: maskColor,
           fill: "none",
           d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
           "stroke-width": width,
