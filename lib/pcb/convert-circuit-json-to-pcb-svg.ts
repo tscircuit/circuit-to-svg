@@ -3,7 +3,6 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
-  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -56,6 +55,68 @@ const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
   "pcb_board",
 ]
+
+const RATS_NEST_SOURCE_ELEMENT = { type: "rats_nest" } as const
+
+type LayerCategory =
+  | "component"
+  | "silkscreen"
+  | "soldermask"
+  | "copper"
+  | "drill"
+  | "cutout"
+  | "board"
+  | "fabrication"
+  | "error"
+  | "rats-nest"
+  | "metadata"
+  | "background"
+  | "unknown"
+
+interface LayerInfo {
+  category: LayerCategory
+  side?: string
+  tag: string
+}
+
+interface LayeredEntry {
+  object: SvgObject
+  layerInfo: LayerInfo
+  sourceType: AnyCircuitElement["type"] | typeof RATS_NEST_SOURCE_ELEMENT.type
+  elementIndex: number
+  objectIndex: number
+}
+
+const CATEGORY_PRIORITY: Record<LayerCategory, number> = {
+  component: 0,
+  silkscreen: 1,
+  soldermask: 2,
+  copper: 3,
+  drill: 4,
+  cutout: 5,
+  board: 6,
+  fabrication: 7,
+  error: 8,
+  "rats-nest": 9,
+  metadata: 10,
+  background: 11,
+  unknown: 12,
+}
+
+const SIDE_PRIORITY: Record<string, number> = {
+  top: 0,
+  inner1: 1,
+  inner2: 2,
+  inner3: 3,
+  inner4: 4,
+  inner5: 5,
+  inner6: 6,
+  through: 7,
+  board: 8,
+  bottom: 9,
+  overlay: 10,
+  unknown: 11,
+}
 
 interface PointObjectNotation {
   x: number
@@ -271,50 +332,16 @@ export function convertCircuitJsonToPcbSvg(
     renderSolderMask: options?.renderSolderMask,
   }
 
-  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
-    if (elm.type === "pcb_smtpad") {
-      return elm.layer === "top" || elm.layer === "bottom"
-        ? elm.layer
-        : undefined
-    }
-    if (elm.type === "pcb_trace") {
-      for (const seg of elm.route ?? []) {
-        const candidate =
-          ("layer" in seg && seg.layer) ||
-          ("from_layer" in seg && seg.from_layer) ||
-          ("to_layer" in seg && seg.to_layer) ||
-          undefined
-
-        if (candidate === "top" || candidate === "bottom") {
-          return candidate
-        }
-      }
-    }
-    return undefined
-  }
-
-  function isCopper(elm: AnyCircuitElement) {
-    return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
-  }
-
-  let svgObjects = circuitJson
-    .sort((a, b) => {
-      const layerA = getLayer(a)
-      const layerB = getLayer(b)
-
-      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
-        if (layerA === "top") return 1
-        if (layerB === "top") return -1
-        if (layerA === "bottom") return -1
-        if (layerB === "bottom") return 1
-      }
-
-      return (
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999)
-      )
-    })
-    .flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+  const layeredObjects = circuitJson.flatMap((elm, elementIndex) =>
+    createSvgObjects({ elm, circuitJson, ctx }).map((object, objectIndex) =>
+      createLayeredEntry({
+        object,
+        sourceElement: elm,
+        elementIndex,
+        objectIndex,
+      }),
+    ),
+  )
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -327,15 +354,28 @@ export function convertCircuitJsonToPcbSvg(
 
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
-    svgObjects = svgObjects.concat(ratsNestObjects)
+    layeredObjects.push(
+      ...ratsNestObjects.map((object, objectIndex) =>
+        createLayeredEntry({
+          object,
+          sourceElement: RATS_NEST_SOURCE_ELEMENT,
+          elementIndex: circuitJson.length,
+          objectIndex,
+        }),
+      ),
+    )
   }
+
+  layeredObjects.sort(compareLayeredEntries)
+
+  const svgObjects = layeredObjects.map(({ object }) => object)
 
   const children: SvgObject[] = [
     {
       name: "style",
       type: "element",
       value: "",
-      attributes: {},
+      attributes: { "data-pcb-layer": "metadata" },
       children: [
         {
           type: "text",
@@ -357,6 +397,7 @@ export function convertCircuitJsonToPcbSvg(
         fill: options?.backgroundColor ?? "#000",
         width: svgWidth.toString(),
         height: svgHeight.toString(),
+        "data-pcb-layer": "background",
       },
       children: [],
     },
@@ -380,6 +421,7 @@ export function convertCircuitJsonToPcbSvg(
       xmlns: "http://www.w3.org/2000/svg",
       width: svgWidth.toString(),
       height: svgHeight.toString(),
+      "data-pcb-layer": "root",
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
       }),
@@ -474,6 +516,299 @@ interface CreateSvgObjectsParams {
   ctx: PcbContext
 }
 
+function createLayeredEntry({
+  object,
+  sourceElement,
+  elementIndex,
+  objectIndex,
+}: {
+  object: SvgObject
+  sourceElement: AnyCircuitElement | typeof RATS_NEST_SOURCE_ELEMENT
+  elementIndex: number
+  objectIndex: number
+}): LayeredEntry {
+  const { object: annotatedObject, layerInfo } = annotateSvgObjectWithLayer({
+    object,
+    sourceElement,
+  })
+
+  return {
+    object: annotatedObject,
+    layerInfo,
+    sourceType: sourceElement.type,
+    elementIndex,
+    objectIndex,
+  }
+}
+
+function compareLayeredEntries(a: LayeredEntry, b: LayeredEntry): number {
+  const sortKeyA = getLayerSortKey(a.layerInfo)
+  const sortKeyB = getLayerSortKey(b.layerInfo)
+
+  if (sortKeyA !== sortKeyB) {
+    return sortKeyA - sortKeyB
+  }
+
+  const typeOrderA = getElementTypePriority(a.sourceType)
+  const typeOrderB = getElementTypePriority(b.sourceType)
+  if (typeOrderA !== typeOrderB) {
+    return typeOrderA - typeOrderB
+  }
+
+  if (a.elementIndex !== b.elementIndex) {
+    return a.elementIndex - b.elementIndex
+  }
+
+  return a.objectIndex - b.objectIndex
+}
+
+function getLayerSortKey(layerInfo: LayerInfo): number {
+  const sideName = layerInfo.side ?? "unknown"
+  const resolvedSideKey = (SIDE_PRIORITY[sideName] ??
+    SIDE_PRIORITY.unknown) as number
+  const categoryKey =
+    CATEGORY_PRIORITY[layerInfo.category] ?? CATEGORY_PRIORITY.unknown
+
+  return resolvedSideKey * 100 + categoryKey
+}
+
+function getElementTypePriority(
+  type: AnyCircuitElement["type"] | typeof RATS_NEST_SOURCE_ELEMENT.type,
+): number {
+  const index = OBJECT_ORDER.indexOf(type as AnyCircuitElement["type"])
+  return index === -1 ? OBJECT_ORDER.length : index
+}
+
+function annotateSvgObjectWithLayer({
+  object,
+  sourceElement,
+  parentLayer,
+}: {
+  object: SvgObject
+  sourceElement: AnyCircuitElement | typeof RATS_NEST_SOURCE_ELEMENT
+  parentLayer?: LayerInfo
+}): { object: SvgObject; layerInfo: LayerInfo } {
+  if (object.type !== "element") {
+    return {
+      object,
+      layerInfo: parentLayer ?? {
+        category: "unknown",
+        side: "unknown",
+        tag: "unknown:unknown",
+      },
+    }
+  }
+
+  object.attributes ??= {}
+
+  const layerInfo = determineLayerInfo({
+    sourceElement,
+    object,
+    parentLayer,
+  })
+
+  object.attributes["data-pcb-layer"] = layerInfo.tag
+
+  if (Array.isArray(object.children) && object.children.length > 0) {
+    object.children = object.children.map((child) => {
+      if (child.type === "element") {
+        return annotateSvgObjectWithLayer({
+          object: child,
+          sourceElement,
+          parentLayer: layerInfo,
+        }).object
+      }
+      return child
+    })
+  }
+
+  return { object, layerInfo }
+}
+
+function determineLayerInfo({
+  sourceElement,
+  object,
+  parentLayer,
+}: {
+  sourceElement: AnyCircuitElement | typeof RATS_NEST_SOURCE_ELEMENT
+  object: SvgObject
+  parentLayer?: LayerInfo
+}): LayerInfo {
+  const attributes = object.attributes ?? {}
+  const classAttr = (attributes.class ?? "").toLowerCase()
+  const classTokens = classAttr.split(/\s+/).filter(Boolean)
+  const hasClassFragment = (fragment: string) =>
+    classTokens.some((cls) => cls.includes(fragment))
+
+  const type = sourceElement.type
+  const dataLayerValue =
+    attributes["data-layer"] ?? attributes["data-layer-name"] ?? undefined
+  const explicitLayer = normalizeLayerName(dataLayerValue)
+  const layerFromClass = extractLayerFromClass(classTokens)
+  const layerFromElement =
+    sourceElement !== RATS_NEST_SOURCE_ELEMENT && "layer" in sourceElement
+      ? normalizeLayerName((sourceElement as any).layer)
+      : undefined
+
+  let side =
+    explicitLayer ??
+    layerFromClass ??
+    layerFromElement ??
+    parentLayer?.side ??
+    inferSideFromSourceType(sourceElement)
+
+  let category: LayerCategory | undefined
+
+  switch (type) {
+    case "pcb_component":
+      category = "component"
+      break
+    case "pcb_silkscreen_text":
+    case "pcb_silkscreen_path":
+    case "pcb_silkscreen_rect":
+    case "pcb_silkscreen_circle":
+    case "pcb_silkscreen_line":
+      category = "silkscreen"
+      break
+    case "pcb_trace":
+      category = hasClassFragment("soldermask") ? "soldermask" : "copper"
+      break
+    case "pcb_smtpad":
+      category = hasClassFragment("solder-mask")
+        ? "soldermask"
+        : hasClassFragment("soldermask")
+          ? "soldermask"
+          : "copper"
+      break
+    case "pcb_copper_pour":
+      category = "copper"
+      break
+    case "pcb_via":
+      category = hasClassFragment("pcb-hole-inner") ? "drill" : "copper"
+      if (!side) side = "through"
+      break
+    case "pcb_plated_hole":
+      category = hasClassFragment("pcb-hole-inner") ? "drill" : "copper"
+      if (!side) side = "through"
+      break
+    case "pcb_hole":
+      category = "drill"
+      if (!side) side = "through"
+      break
+    case "pcb_board":
+      category = "board"
+      side = side ?? "board"
+      break
+    case "pcb_cutout":
+      category = "cutout"
+      side = side ?? "board"
+      break
+    case "pcb_fabrication_note_text":
+    case "pcb_fabrication_note_path":
+      category = "fabrication"
+      break
+    case "pcb_trace_error":
+      category = "error"
+      side = side ?? "overlay"
+      break
+    default:
+      if (sourceElement === RATS_NEST_SOURCE_ELEMENT) {
+        category = "rats-nest"
+        side = side ?? "overlay"
+      }
+      break
+  }
+
+  if (!category) {
+    if (hasClassFragment("silkscreen")) {
+      category = "silkscreen"
+    } else if (
+      hasClassFragment("soldermask") ||
+      hasClassFragment("solder-mask")
+    ) {
+      category = "soldermask"
+    } else if (
+      hasClassFragment("pcb-trace") ||
+      hasClassFragment("pcb-pad") ||
+      hasClassFragment("copper")
+    ) {
+      category = "copper"
+    } else if (
+      hasClassFragment("pcb-hole-inner") ||
+      hasClassFragment("pcb-hole")
+    ) {
+      category = "drill"
+    } else if (hasClassFragment("pcb-cutout")) {
+      category = "cutout"
+    } else if (hasClassFragment("pcb-board")) {
+      category = "board"
+    }
+  }
+
+  const resolvedCategory = category ?? parentLayer?.category ?? "unknown"
+
+  if (!side) {
+    side = parentLayer?.side ?? "unknown"
+  }
+
+  const tag = side ? `${resolvedCategory}:${side}` : resolvedCategory
+
+  return {
+    category: resolvedCategory,
+    side,
+    tag,
+  }
+}
+
+function normalizeLayerName(layer: unknown): string | undefined {
+  if (typeof layer === "string" && layer.length > 0) {
+    return layer.toLowerCase()
+  }
+  if (layer && typeof layer === "object" && "name" in layer) {
+    const name = (layer as { name?: unknown }).name
+    if (typeof name === "string") {
+      return name.toLowerCase()
+    }
+  }
+  return undefined
+}
+
+function extractLayerFromClass(classTokens: string[]): string | undefined {
+  for (const token of classTokens) {
+    if (/(?:^|-)top(?:$|-)/.test(token)) return "top"
+    if (/(?:^|-)bottom(?:$|-)/.test(token)) return "bottom"
+    const innerMatch = token.match(/(?:^|-)inner(\d+)(?:$|-)/)
+    if (innerMatch) {
+      return `inner${innerMatch[1]}`
+    }
+  }
+  return undefined
+}
+
+function inferSideFromSourceType(
+  sourceElement: AnyCircuitElement | typeof RATS_NEST_SOURCE_ELEMENT,
+): string | undefined {
+  if (sourceElement === RATS_NEST_SOURCE_ELEMENT) {
+    return "overlay"
+  }
+
+  switch (sourceElement.type) {
+    case "pcb_via":
+    case "pcb_plated_hole":
+    case "pcb_hole":
+      return "through"
+    case "pcb_board":
+    case "pcb_cutout":
+      return "board"
+    case "pcb_trace_error":
+    case "pcb_fabrication_note_text":
+    case "pcb_fabrication_note_path":
+      return "overlay"
+    default:
+      return undefined
+  }
+}
+
 function createSvgObjects({
   elm,
   circuitJson,
@@ -516,7 +851,9 @@ function createSvgObjects({
         ? createSvgObjectsFromPcbBoard(elm, ctx)
         : []
     case "pcb_via":
-      return createSvgObjectsFromPcbVia(elm, ctx)
+      return [createSvgObjectsFromPcbVia(elm, ctx)].filter(
+        Boolean,
+      ) as SvgObject[]
     case "pcb_cutout":
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     default:
@@ -551,6 +888,7 @@ function createSvgObjectFromPcbBoundary(
       y: y.toString(),
       width: width.toString(),
       height: height.toString(),
+      "data-pcb-layer": "board:outline",
     },
   }
 }
