@@ -594,10 +594,25 @@ function createDataGroup(
   scaleX: ScaleFn,
   scaleY: ScaleFn,
 ): SvgObject {
-  const elements: SvgObject[] = []
+  const LINE_REPEAT_COUNT = 3
+  const DASH_PATTERN = [4, 8]
+  const dashArrayString = DASH_PATTERN.map((value) => formatNumber(value)).join(
+    " ",
+  )
+  const dashCycleLength = DASH_PATTERN.reduce((sum, value) => sum + value, 0)
+  const dashOffsetStep = dashCycleLength / LINE_REPEAT_COUNT
 
-  for (const entry of graphs) {
-    if (entry.points.length === 0) continue
+  interface GraphRenderingInfo {
+    entry: PreparedSimulationGraph
+    graphIndex: number
+    pathAttributes: Record<string, string>
+    pointElements: SvgObject[]
+  }
+
+  const processedGraphs: GraphRenderingInfo[] = []
+
+  graphs.forEach((entry, graphIndex) => {
+    if (entry.points.length === 0) return
 
     const commands: string[] = []
     entry.points.forEach((point, index) => {
@@ -606,7 +621,7 @@ function createDataGroup(
       commands.push(`${index === 0 ? "M" : "L"} ${x} ${y}`)
     })
 
-    const pathAttributes: Record<string, string> = {
+    const baseAttributes: Record<string, string> = {
       class: "simulation-line",
       d: commands.join(" "),
       stroke: entry.color,
@@ -616,35 +631,61 @@ function createDataGroup(
     }
 
     if (entry.graph.schematic_voltage_probe_id) {
-      pathAttributes["data-schematic-voltage-probe-id"] =
+      baseAttributes["data-schematic-voltage-probe-id"] =
         entry.graph.schematic_voltage_probe_id
     }
 
     if (entry.graph.subcircuit_connecivity_map_key) {
-      pathAttributes["data-subcircuit-connectivity-map-key"] =
+      baseAttributes["data-subcircuit-connectivity-map-key"] =
         entry.graph.subcircuit_connecivity_map_key
     }
 
-    elements.push(svgElement("path", pathAttributes))
-
-    entry.points.forEach((point) => {
+    const pointElements = entry.points.map((point) => {
       const cx = formatNumber(scaleX(point.timeMs))
       const cy = formatNumber(scaleY(point.voltage))
-      elements.push(
-        svgElement("circle", {
-          class: "simulation-point",
-          cx,
-          cy,
-          r: "3.5",
-          stroke: entry.color,
-          fill: "#ffffff",
-          "clip-path": `url(#${clipPathId})`,
+      return svgElement("circle", {
+        class: "simulation-point",
+        cx,
+        cy,
+        r: "3.5",
+        stroke: entry.color,
+        fill: "#ffffff",
+        "clip-path": `url(#${clipPathId})`,
+      })
+    })
+
+    processedGraphs.push({
+      entry,
+      graphIndex,
+      pathAttributes: baseAttributes,
+      pointElements,
+    })
+  })
+
+  const lineElements: SvgObject[] = []
+
+  for (let cycle = 0; cycle < LINE_REPEAT_COUNT; cycle++) {
+    processedGraphs.forEach((graphInfo) => {
+      const offsetIndex = (graphInfo.graphIndex + cycle) % LINE_REPEAT_COUNT
+      const dashOffset = formatNumber(offsetIndex * dashOffsetStep)
+      lineElements.push(
+        svgElement("path", {
+          ...graphInfo.pathAttributes,
+          "stroke-dasharray": dashArrayString,
+          "stroke-dashoffset": dashOffset,
         }),
       )
     })
   }
 
-  return svgElement("g", { class: "data-series" }, elements)
+  const pointElements = processedGraphs.flatMap(
+    (graphInfo) => graphInfo.pointElements,
+  )
+
+  return svgElement("g", { class: "data-series" }, [
+    ...lineElements,
+    ...pointElements,
+  ])
 }
 
 function createTitleNode(
