@@ -51,7 +51,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
     bottom: "rgb(77, 127, 196)",
   },
   soldermask: {
-    top: "rgb(18, 82, 50)",
+    top: "#006400",
     bottom: "rgb(77, 127, 196)",
   },
   drill: "#FF26E2",
