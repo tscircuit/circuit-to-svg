@@ -216,8 +216,10 @@ function copperLayerSort(a: AnyCircuitElement, b: AnyCircuitElement): number {
   }
 
   return (
-    (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-    (OBJECT_ORDER.indexOf(a.type) ?? 9999)
+    (OBJECT_ORDER.indexOf(b.type) === -1
+      ? 9999
+      : OBJECT_ORDER.indexOf(b.type)) -
+    (OBJECT_ORDER.indexOf(a.type) === -1 ? 9999 : OBJECT_ORDER.indexOf(a.type))
   )
 }
 
