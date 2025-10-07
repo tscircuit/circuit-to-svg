@@ -3,7 +3,30 @@ import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
+import { compareCopperLayers, getCopperLayerName } from "../layer-order"
+import type { CopperLayerName } from "../colors"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+
+type TraceRoutePoint = PCBTrace["route"][number]
+
+function getLayerFromRoutePoint(
+  point: TraceRoutePoint,
+): CopperLayerName | undefined {
+  if (point.route_type === "wire") {
+    return getCopperLayerName(point.layer)
+  }
+
+  return (
+    getCopperLayerName(point.from_layer) ?? getCopperLayerName(point.to_layer)
+  )
+}
+
+function getSegmentLayer(
+  start: TraceRoutePoint,
+  end: TraceRoutePoint,
+): CopperLayerName | undefined {
+  return getLayerFromRoutePoint(start) ?? getLayerFromRoutePoint(end)
+}
 
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
@@ -14,14 +37,13 @@ export function createSvgObjectsFromPcbTrace(
     return []
 
   const segments = pairs(trace.route)
-  const svgObjects: SvgObject[] = []
+  const segmentsByLayer = new Map<CopperLayerName, SvgObject[]>()
 
   for (const [start, end] of segments) {
     const startPoint = applyToPoint(transform, [start.x, start.y])
     const endPoint = applyToPoint(transform, [end.x, end.y])
 
-    const layer =
-      "layer" in start ? start.layer : "layer" in end ? end.layer : null
+    const layer = getSegmentLayer(start, end)
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
 
@@ -36,6 +58,8 @@ export function createSvgObjectsFromPcbTrace(
     const width = traceWidth
       ? (traceWidth * Math.abs(transform.a)).toString()
       : "0.3"
+
+    const layerObjects: SvgObject[] = []
 
     if (renderSolderMask) {
       const copperObject: SvgObject = {
@@ -74,7 +98,7 @@ export function createSvgObjectsFromPcbTrace(
         },
       }
 
-      svgObjects.push(maskObject, copperObject)
+      layerObjects.push(maskObject, copperObject)
     } else {
       const maskOnlyObject: SvgObject = {
         name: "path",
@@ -94,22 +118,28 @@ export function createSvgObjectsFromPcbTrace(
         },
       }
 
-      svgObjects.push(maskOnlyObject)
+      layerObjects.push(maskOnlyObject)
+    }
+
+    const bucket = segmentsByLayer.get(layer)
+    if (bucket) {
+      bucket.push(...layerObjects)
+    } else {
+      segmentsByLayer.set(layer, [...layerObjects])
     }
   }
 
-  svgObjects.sort((a, b) => {
-    const layerA = a.attributes["data-layer"]
-    const layerB = b.attributes["data-layer"]
+  const orderedLayers = Array.from(segmentsByLayer.keys()).sort(
+    compareCopperLayers,
+  )
 
-    if (layerA === "bottom" && layerB !== "bottom") {
-      return -1
+  const svgObjects: SvgObject[] = []
+  for (const layer of orderedLayers) {
+    const objects = segmentsByLayer.get(layer)
+    if (objects) {
+      svgObjects.push(...objects)
     }
-    if (layerA === "top" && layerB !== "top") {
-      return 1
-    }
-    return 0
-  })
+  }
 
   return svgObjects
 }

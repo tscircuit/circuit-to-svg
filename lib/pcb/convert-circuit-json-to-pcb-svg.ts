@@ -1,9 +1,9 @@
 import type {
   Point,
   AnyCircuitElement,
+  PCBTrace,
   pcb_cutout,
   PcbCutout,
-  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -33,12 +33,14 @@ import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-o
 import {
   DEFAULT_PCB_COLOR_MAP,
   type CopperColorMap,
+  type CopperLayerName,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { compareCopperLayers, getCopperLayerName } from "./layer-order"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_trace_error",
@@ -271,30 +273,49 @@ export function convertCircuitJsonToPcbSvg(
     renderSolderMask: options?.renderSolderMask,
   }
 
-  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
-    if (elm.type === "pcb_smtpad") {
-      return elm.layer === "top" || elm.layer === "bottom"
-        ? elm.layer
-        : undefined
-    }
-    if (elm.type === "pcb_trace") {
-      for (const seg of elm.route ?? []) {
-        const candidate =
-          ("layer" in seg && seg.layer) ||
-          ("from_layer" in seg && seg.from_layer) ||
-          ("to_layer" in seg && seg.to_layer) ||
-          undefined
+  type TraceRoutePoint = PCBTrace["route"][number]
 
-        if (candidate === "top" || candidate === "bottom") {
-          return candidate
-        }
+  function getTraceRoutePointLayer(
+    point: TraceRoutePoint,
+  ): CopperLayerName | undefined {
+    if (point.route_type === "wire") {
+      return getCopperLayerName(point.layer)
+    }
+
+    return (
+      getCopperLayerName(point.from_layer) ?? getCopperLayerName(point.to_layer)
+    )
+  }
+
+  function getTraceLayer(trace: PCBTrace): CopperLayerName | undefined {
+    for (const point of trace.route ?? []) {
+      const layer = getTraceRoutePointLayer(point)
+      if (layer) {
+        return layer
       }
     }
+
+    return undefined
+  }
+
+  function getLayer(elm: AnyCircuitElement): CopperLayerName | undefined {
+    if (elm.type === "pcb_smtpad" || elm.type === "pcb_copper_pour") {
+      return getCopperLayerName(elm.layer)
+    }
+
+    if (elm.type === "pcb_trace") {
+      return getTraceLayer(elm)
+    }
+
     return undefined
   }
 
   function isCopper(elm: AnyCircuitElement) {
-    return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
+    return (
+      elm.type === "pcb_trace" ||
+      elm.type === "pcb_smtpad" ||
+      elm.type === "pcb_copper_pour"
+    )
   }
 
   let svgObjects = circuitJson
@@ -302,11 +323,8 @@ export function convertCircuitJsonToPcbSvg(
       const layerA = getLayer(a)
       const layerB = getLayer(b)
 
-      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
-        if (layerA === "top") return 1
-        if (layerB === "top") return -1
-        if (layerA === "bottom") return -1
-        if (layerB === "bottom") return 1
+      if (isCopper(a) && isCopper(b) && layerA && layerB && layerA !== layerB) {
+        return compareCopperLayers(layerA, layerB)
       }
 
       return (
