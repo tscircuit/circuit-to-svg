@@ -122,9 +122,7 @@ function getLayerFromRouteSegment(seg: any): string | undefined {
  * Get the layer of an element (for copper elements only)
  * Returns "top" as default for pcb_smtpad, undefined otherwise
  */
-function getElementLayer(
-  elm: AnyCircuitElement,
-): "top" | "bottom" | undefined {
+function getElementLayer(elm: AnyCircuitElement): "top" | "bottom" | undefined {
   if (elm.type === "pcb_smtpad") {
     return elm.layer === "top" || elm.layer === "bottom" ? elm.layer : "top"
   }
@@ -417,7 +415,13 @@ export function convertCircuitJsonToPcbSvg(
     circuitJson
       .sort(copperLayerSort)
       .flatMap((elm) =>
-        createSvgObjects({ elm, circuitJson, ctx: baseCtx, filter, renderedCache }),
+        createSvgObjects({
+          elm,
+          circuitJson,
+          ctx: baseCtx,
+          filter,
+          renderedCache,
+        }),
       )
 
   let svgObjects = layerOrder.flatMap((currentLayer, i) =>
@@ -527,12 +531,7 @@ export function convertCircuitJsonToPcbSvg(
   /**
    * Update bounds from a center point with width and height
    */
-  function updateBounds(
-    center: any,
-    width: any,
-    height: any,
-    isBoard = false,
-  ) {
+  function updateBounds(center: any, width: any, height: any, isBoard = false) {
     const halfWidth = width / 2
     const halfHeight = height / 2
     const left = center.x - halfWidth
@@ -619,7 +618,7 @@ interface CreateSvgObjectsParams {
 
 /**
  * Create SVG objects from a circuit element based on the render filter
- * 
+ *
  * This function:
  * 1. Filters elements by type (copper/silkscreen/holes/cutouts/vias)
  * 2. Prevents duplicate rendering using renderedCache
