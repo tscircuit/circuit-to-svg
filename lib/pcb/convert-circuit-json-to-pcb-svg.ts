@@ -412,17 +412,15 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   const renderPass = (filter: RenderFilter) =>
-    circuitJson
-      .sort(copperLayerSort)
-      .flatMap((elm) =>
-        createSvgObjects({
-          elm,
-          circuitJson,
-          ctx: baseCtx,
-          filter,
-          renderedCache,
-        }),
-      )
+    circuitJson.sort(copperLayerSort).flatMap((elm) =>
+      createSvgObjects({
+        elm,
+        circuitJson,
+        ctx: baseCtx,
+        filter,
+        renderedCache,
+      }),
+    )
 
   let svgObjects = layerOrder.flatMap((currentLayer, i) =>
     renderPass({
