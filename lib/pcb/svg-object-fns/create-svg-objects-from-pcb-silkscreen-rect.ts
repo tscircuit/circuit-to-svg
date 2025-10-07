@@ -53,6 +53,8 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     height: transformedHeight.toString(),
     class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
     "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
+    "data-type": "pcb_silkscreen_rect",
+    "data-pcb-layer": layer,
   }
 
   attributes.fill = is_filled ? color : "none"

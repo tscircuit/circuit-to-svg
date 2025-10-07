@@ -24,7 +24,11 @@ export function createSvgObjectsFromPcbComponent(
     {
       name: "g",
       type: "element",
-      attributes: { transform: transformStr },
+      attributes: {
+        transform: transformStr,
+        "data-type": "pcb_component",
+        "data-pcb-layer": component.layer ?? "top",
+      },
       children: [
         {
           name: "rect",
@@ -37,6 +41,8 @@ export function createSvgObjectsFromPcbComponent(
             height: scaledHeight.toString(),
             fill: ctx.colorMap.debugComponent.fill ?? "transparent",
             stroke: ctx.colorMap.debugComponent.stroke ?? "transparent",
+            "data-type": "pcb_component",
+            "data-pcb-layer": component.layer ?? "top",
           },
         } as any,
       ],

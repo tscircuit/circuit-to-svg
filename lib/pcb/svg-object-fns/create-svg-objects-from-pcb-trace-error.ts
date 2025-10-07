@@ -40,7 +40,7 @@ export function createSvgObjectsFromPcbTraceError(
         x: pcbTraceError.center.x,
         y: pcbTraceError.center.y,
       })
-      return [
+      return annotateTraceErrorSvgObjects([
         {
           name: "rect",
           type: "element",
@@ -77,7 +77,7 @@ export function createSvgObjectsFromPcbTraceError(
           ],
           value: "",
         },
-      ]
+      ])
     } else return []
   }
 
@@ -175,7 +175,7 @@ export function createSvgObjectsFromPcbTraceError(
     },
   ]
 
-  return svgObjects
+  return annotateTraceErrorSvgObjects(svgObjects)
 }
 
 function createSvgObjectsForViaTraceError(
@@ -205,7 +205,7 @@ function createSvgObjectsForViaTraceError(
     const midX = (screenCenter.x + screenVia.x) / 2
     const midY = (screenCenter.y + screenVia.y) / 2
 
-    return [
+    return annotateTraceErrorSvgObjects([
       // Rotated bounding box
       {
         name: "rect",
@@ -262,8 +262,32 @@ function createSvgObjectsForViaTraceError(
         ],
         value: "",
       },
-    ]
+    ])
   }
 
   return []
+}
+
+function annotateTraceErrorSvgObjects(objects: SvgObject[]): SvgObject[] {
+  return objects.map((object) => ({
+    ...object,
+    attributes: {
+      ...(object.attributes ?? {}),
+      "data-type": object.attributes?.["data-type"] ?? "pcb_trace_error",
+      "data-pcb-layer": object.attributes?.["data-pcb-layer"] ?? "overlay",
+    },
+    children: (object.children ?? []).map((child: any) => {
+      if (child?.type === "element") {
+        return {
+          ...child,
+          attributes: {
+            ...(child.attributes ?? {}),
+            "data-type": child.attributes?.["data-type"] ?? "pcb_trace_error",
+            "data-pcb-layer": child.attributes?.["data-pcb-layer"] ?? "overlay",
+          },
+        }
+      }
+      return child
+    }),
+  }))
 }

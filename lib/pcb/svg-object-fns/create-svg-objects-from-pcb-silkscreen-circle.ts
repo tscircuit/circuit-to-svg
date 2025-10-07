@@ -51,6 +51,8 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       stroke: color,
       "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
+      "data-type": "pcb_silkscreen_circle",
+      "data-pcb-layer": layer,
     },
     value: "",
     children: [],
