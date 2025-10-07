@@ -1,8 +1,9 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
+import circuitJson from "../assets/four-layer-routing-circuit.json"
 import { convertCircuitJsonToPcbSvg } from "lib"
-import fourLayerRoutingCircuit from "../assets/four-layer-routing-circuit.json"
 
-test("four-layer-routing-circuit from JSON file", () => {
-  const svg = convertCircuitJsonToPcbSvg(fourLayerRoutingCircuit as any)
+test("renders four layer routing circuit", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitJson as any)
+
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
