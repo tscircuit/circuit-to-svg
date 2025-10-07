@@ -15,6 +15,10 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
   return {
     name: "g",
     type: "element",
+    attributes: {
+      "data-type": "pcb_via",
+      "data-pcb-layer": "through",
+    },
     children: [
       {
         name: "circle",
@@ -25,6 +29,8 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
           cx: x.toString(),
           cy: y.toString(),
           r: outerRadius.toString(),
+          "data-type": "pcb_via",
+          "data-pcb-layer": "top",
         },
       },
       {
@@ -37,6 +43,8 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
           cx: x.toString(),
           cy: y.toString(),
           r: innerRadius.toString(),
+          "data-type": "pcb_via",
+          "data-pcb-layer": "drill",
         },
       },
     ],

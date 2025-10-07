@@ -19,6 +19,10 @@ export function createSvgObjectsFromPcbPlatedHole(
 ): SvgObject[] {
   const { transform, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
+  const copperLayer =
+    (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
+    (hole as any).layer ||
+    "top"
 
   if (hole.shape === "pill") {
     const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
@@ -44,6 +48,10 @@ export function createSvgObjectsFromPcbPlatedHole(
       {
         name: "g",
         type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
         children: [
           // Outer pill shape
           {
@@ -59,6 +67,8 @@ export function createSvgObjectsFromPcbPlatedHole(
                 `v-${straightLength} ` +
                 `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
               transform: outerTransform,
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
             },
             value: "",
             children: [],
@@ -77,13 +87,14 @@ export function createSvgObjectsFromPcbPlatedHole(
                 `v-${scaledHoleHeight - scaledHoleWidth} ` +
                 `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
               transform: innerTransform,
+              "data-type": "pcb_plated_hole_drill",
+              "data-pcb-layer": "drill",
             },
             value: "",
             children: [],
           },
         ],
         value: "",
-        attributes: {},
       },
     ]
   }
@@ -101,6 +112,10 @@ export function createSvgObjectsFromPcbPlatedHole(
       {
         name: "g",
         type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
         children: [
           {
             name: "circle",
@@ -111,6 +126,8 @@ export function createSvgObjectsFromPcbPlatedHole(
               cx: x.toString(),
               cy: y.toString(),
               r: outerRadius.toString(),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
             },
             value: "",
             children: [],
@@ -125,13 +142,14 @@ export function createSvgObjectsFromPcbPlatedHole(
               cx: x.toString(),
               cy: y.toString(),
               r: innerRadius.toString(),
+              "data-type": "pcb_plated_hole_drill",
+              "data-pcb-layer": "drill",
             },
             value: "",
             children: [],
           },
         ],
         value: "",
-        attributes: {},
       },
     ]
   }
@@ -155,6 +173,10 @@ export function createSvgObjectsFromPcbPlatedHole(
       {
         name: "g",
         type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
         children: [
           // Rectangular pad (outer shape)
           {
@@ -173,6 +195,8 @@ export function createSvgObjectsFromPcbPlatedHole(
                     ry: scaledRectBorderRadius.toString(),
                   }
                 : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
             },
             value: "",
             children: [],
@@ -187,13 +211,14 @@ export function createSvgObjectsFromPcbPlatedHole(
               cx: holeCx.toString(),
               cy: holeCy.toString(),
               r: holeRadius.toString(),
+              "data-type": "pcb_plated_hole_drill",
+              "data-pcb-layer": "drill",
             },
             value: "",
             children: [],
           },
         ],
         value: "",
-        attributes: {},
       },
     ]
   }
@@ -223,6 +248,10 @@ export function createSvgObjectsFromPcbPlatedHole(
       {
         name: "g",
         type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
         children: [
           // Rectangular pad (outer shape)
           {
@@ -241,6 +270,8 @@ export function createSvgObjectsFromPcbPlatedHole(
                     ry: scaledRectBorderRadius.toString(),
                   }
                 : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
             },
             value: "",
             children: [],
@@ -258,13 +289,14 @@ export function createSvgObjectsFromPcbPlatedHole(
               height: scaledHoleHeight.toString(),
               rx: holeRadius.toString(),
               ry: holeRadius.toString(),
+              "data-type": "pcb_plated_hole_drill",
+              "data-pcb-layer": "drill",
             },
             value: "",
             children: [],
           },
         ],
         value: "",
-        attributes: {},
       },
     ]
   }
@@ -296,6 +328,10 @@ export function createSvgObjectsFromPcbPlatedHole(
       {
         name: "g",
         type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
         children: [
           {
             name: "rect",
@@ -314,6 +350,8 @@ export function createSvgObjectsFromPcbPlatedHole(
                     ry: scaledRectBorderRadius.toString(),
                   }
                 : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
             },
             value: "",
             children: [],
@@ -331,13 +369,14 @@ export function createSvgObjectsFromPcbPlatedHole(
               rx: holeRadius.toString(),
               ry: holeRadius.toString(),
               transform: `translate(${holeCenterX} ${holeCenterY}) rotate(${-rotatedHole.hole_ccw_rotation})`,
+              "data-type": "pcb_plated_hole_drill",
+              "data-pcb-layer": "drill",
             },
             value: "",
             children: [],
           },
         ],
         value: "",
-        attributes: {},
       },
     ]
   }

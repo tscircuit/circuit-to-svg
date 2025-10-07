@@ -3,7 +3,6 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
-  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -39,23 +38,7 @@ import {
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-
-const OBJECT_ORDER: AnyCircuitElement["type"][] = [
-  "pcb_trace_error",
-  "pcb_plated_hole",
-  "pcb_fabrication_note_text",
-  "pcb_fabrication_note_path",
-  "pcb_silkscreen_text",
-  "pcb_silkscreen_path",
-  "pcb_via",
-  "pcb_cutout",
-  "pcb_copper_pour",
-  // Draw traces before SMT pads so pads appear on top
-  "pcb_smtpad",
-  "pcb_trace",
-  "pcb_component",
-  "pcb_board",
-]
+import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 
 interface PointObjectNotation {
   x: number
@@ -271,50 +254,11 @@ export function convertCircuitJsonToPcbSvg(
     renderSolderMask: options?.renderSolderMask,
   }
 
-  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
-    if (elm.type === "pcb_smtpad") {
-      return elm.layer === "top" || elm.layer === "bottom"
-        ? elm.layer
-        : undefined
-    }
-    if (elm.type === "pcb_trace") {
-      for (const seg of elm.route ?? []) {
-        const candidate =
-          ("layer" in seg && seg.layer) ||
-          ("from_layer" in seg && seg.from_layer) ||
-          ("to_layer" in seg && seg.to_layer) ||
-          undefined
+  const unsortedSvgObjects = circuitJson.flatMap((elm) =>
+    createSvgObjects({ elm, circuitJson, ctx }),
+  )
 
-        if (candidate === "top" || candidate === "bottom") {
-          return candidate
-        }
-      }
-    }
-    return undefined
-  }
-
-  function isCopper(elm: AnyCircuitElement) {
-    return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
-  }
-
-  let svgObjects = circuitJson
-    .sort((a, b) => {
-      const layerA = getLayer(a)
-      const layerB = getLayer(b)
-
-      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
-        if (layerA === "top") return 1
-        if (layerB === "top") return -1
-        if (layerA === "bottom") return -1
-        if (layerB === "bottom") return 1
-      }
-
-      return (
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999)
-      )
-    })
-    .flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+  let svgObjects = sortSvgObjectsByPcbLayer(unsortedSvgObjects)
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -327,7 +271,7 @@ export function convertCircuitJsonToPcbSvg(
 
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
-    svgObjects = svgObjects.concat(ratsNestObjects)
+    svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
   }
 
   const children: SvgObject[] = [
@@ -357,6 +301,8 @@ export function convertCircuitJsonToPcbSvg(
         fill: options?.backgroundColor ?? "#000",
         width: svgWidth.toString(),
         height: svgHeight.toString(),
+        "data-type": "pcb_background",
+        "data-pcb-layer": "global",
       },
       children: [],
     },
@@ -551,6 +497,8 @@ function createSvgObjectFromPcbBoundary(
       y: y.toString(),
       width: width.toString(),
       height: height.toString(),
+      "data-type": "pcb_boundary",
+      "data-pcb-layer": "global",
     },
   }
 }

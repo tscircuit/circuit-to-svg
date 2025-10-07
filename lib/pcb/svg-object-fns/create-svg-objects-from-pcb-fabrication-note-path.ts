@@ -40,6 +40,8 @@ export function createSvgObjectsFromPcbFabricationNotePath(
         "data-pcb-component-id": fabNotePath.pcb_component_id,
         "data-pcb-fabrication-note-path-id":
           fabNotePath.pcb_fabrication_note_path_id,
+        "data-type": "pcb_fabrication_note_path",
+        "data-pcb-layer": "overlay",
       },
       value: "",
       children: [],

@@ -56,6 +56,8 @@ export function createSvgObjectsFromPcbFabricationNoteText(
       transform: matrixToString(textTransform),
       class: "pcb-fabrication-note-text",
       fill: color || "rgba(255,255,255,0.5)",
+      "data-type": "pcb_fabrication_note_text",
+      "data-pcb-layer": "overlay",
     },
     children: [
       {

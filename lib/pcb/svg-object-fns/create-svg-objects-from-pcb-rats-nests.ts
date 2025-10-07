@@ -97,6 +97,8 @@ export function createSvgObjectsForRatsNest(
       stroke: "white",
       "stroke-width": "1",
       "stroke-dasharray": "6,6",
+      "data-type": "pcb_rats_nest",
+      "data-pcb-layer": "overlay",
     }
 
     svgObjects.push({

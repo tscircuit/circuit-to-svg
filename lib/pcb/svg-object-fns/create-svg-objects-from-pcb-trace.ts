@@ -52,7 +52,8 @@ export function createSvgObjectsFromPcbTrace(
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
-          "data-layer": layer,
+          "data-type": "pcb_trace",
+          "data-pcb-layer": layer,
         },
       }
 
@@ -70,7 +71,8 @@ export function createSvgObjectsFromPcbTrace(
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
-          "data-layer": layer,
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": layer,
         },
       }
 
@@ -90,26 +92,14 @@ export function createSvgObjectsFromPcbTrace(
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
-          "data-layer": layer,
+          "data-type": renderSolderMask ? "pcb_soldermask" : "pcb_trace",
+          "data-pcb-layer": layer,
         },
       }
 
       svgObjects.push(maskOnlyObject)
     }
   }
-
-  svgObjects.sort((a, b) => {
-    const layerA = a.attributes["data-layer"]
-    const layerB = b.attributes["data-layer"]
-
-    if (layerA === "bottom" && layerB !== "bottom") {
-      return -1
-    }
-    if (layerA === "top" && layerB !== "top") {
-      return 1
-    }
-    return 0
-  })
 
   return svgObjects
 }

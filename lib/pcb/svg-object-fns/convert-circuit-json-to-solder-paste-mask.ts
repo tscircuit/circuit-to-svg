@@ -28,6 +28,8 @@ export function createSvgObjectsFromSolderPaste(
             width: width.toString(),
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-solderPaste.ccw_rotation})`,
+            "data-type": "pcb_solder_paste",
+            "data-pcb-layer": solderPaste.layer,
           },
         },
       ]
@@ -44,6 +46,8 @@ export function createSvgObjectsFromSolderPaste(
           y: (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
         },
       },
     ]
@@ -66,6 +70,8 @@ export function createSvgObjectsFromSolderPaste(
           width: width.toString(),
           height: height.toString(),
           rx: radius.toString(),
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
         },
       },
     ]
@@ -84,6 +90,8 @@ export function createSvgObjectsFromSolderPaste(
           cx: x.toString(),
           cy: y.toString(),
           r: radius.toString(),
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
         },
       },
     ]
