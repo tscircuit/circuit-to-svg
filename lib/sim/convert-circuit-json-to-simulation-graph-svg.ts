@@ -8,6 +8,7 @@ import {
   type CircuitJsonWithSimulation,
   isSimulationExperiment,
   isSimulationTransientVoltageGraph,
+  isSimulationVoltageProbe,
   type SimulationExperimentElement,
   type SimulationTransientVoltageGraphElement,
 } from "./types"
@@ -73,7 +74,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
     )
   }
 
-  const preparedGraphs = prepareSimulationGraphs(graphs)
+  const preparedGraphs = prepareSimulationGraphs(graphs, circuitJson)
   const allPoints = preparedGraphs.flatMap((entry) => entry.points)
 
   if (allPoints.length === 0) {
@@ -161,8 +162,15 @@ export function convertCircuitJsonToSimulationGraphSvg({
 
 function prepareSimulationGraphs(
   graphs: SimulationTransientVoltageGraphElement[],
+  circuitJson: CircuitJsonWithSimulation[],
 ): PreparedSimulationGraph[] {
   const palette = Array.isArray(colorMap.palette) ? colorMap.palette : []
+
+  const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
+  const probeIdToName = new Map<string, string>()
+  for (const probe of voltageProbes) {
+    probeIdToName.set(probe.simulation_voltage_probe_id, probe.name)
+  }
 
   return graphs
     .map((graph, index) => {
@@ -172,8 +180,14 @@ function prepareSimulationGraphs(
           ? palette[index % palette.length]
           : FALLBACK_LINE_COLOR
       const color = paletteColor ?? FALLBACK_LINE_COLOR
+
+      const probeName = graph.schematic_voltage_probe_id
+        ? probeIdToName.get(graph.schematic_voltage_probe_id)
+        : undefined
+
       const label =
         graph.name ||
+        probeName ||
         (graph.schematic_voltage_probe_id
           ? `Probe ${graph.schematic_voltage_probe_id}`
           : graph.simulation_transient_voltage_graph_id)

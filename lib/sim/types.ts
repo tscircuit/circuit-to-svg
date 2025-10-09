@@ -23,10 +23,19 @@ export interface SimulationTransientVoltageGraphElement {
   name?: string
 }
 
+export interface SimulationVoltageProbeElement {
+  type: "simulation_voltage_probe"
+  simulation_voltage_probe_id: string
+  name: string
+  source_port_id?: string
+  source_net_id?: string
+}
+
 export type CircuitJsonWithSimulation =
   | AnyCircuitElement
   | SimulationExperimentElement
   | SimulationTransientVoltageGraphElement
+  | SimulationVoltageProbeElement
 
 export function isSimulationTransientVoltageGraph(
   value: CircuitJsonWithSimulation,
@@ -38,4 +47,10 @@ export function isSimulationExperiment(
   value: CircuitJsonWithSimulation,
 ): value is SimulationExperimentElement {
   return value?.type === "simulation_experiment"
+}
+
+export function isSimulationVoltageProbe(
+  value: CircuitJsonWithSimulation,
+): value is SimulationVoltageProbeElement {
+  return value?.type === "simulation_voltage_probe"
 }
