@@ -73,7 +73,7 @@ export function createSvgObjectsFromPinoutPort(
 
   const pxPerMm = Math.abs(ctx.transform.a) // px per mm from transform matrix
   const labelScale = ctx.styleScale ?? 1
-  const LABEL_RECT_HEIGHT_MM = 1.6 * labelScale
+  const LABEL_RECT_HEIGHT_MM = 2 * labelScale
   const rectHeight = LABEL_RECT_HEIGHT_MM * pxPerMm
   const STROKE_WIDTH_MM = Math.max(0.08, 0.25 * labelScale)
   const CORNER_RADIUS_MM = 0.3 * labelScale
