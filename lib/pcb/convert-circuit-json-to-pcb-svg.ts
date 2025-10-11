@@ -60,7 +60,60 @@ interface Options {
   grid?: {
     cellSize: number
     lineColor?: string
+    majorCellSize?: number
+    majorLineColor?: string
   }
+}
+
+function createMajorGridPatternChildren(
+  cellSize: number,
+  majorCellSize: number,
+  lineColor: string,
+  majorLineColor: string,
+): SvgObject[] {
+  const children: SvgObject[] = []
+  const steps = Math.round(majorCellSize / cellSize)
+
+  for (let step = 0; step < steps; step += 1) {
+    const offset = Number((step * cellSize).toFixed(6))
+    const offsetString = offset.toString()
+    const color = step === 0 ? majorLineColor : lineColor
+    const majorSizeString = majorCellSize.toString()
+
+    children.push({
+      name: "line",
+      type: "element",
+      value: "",
+      attributes: {
+        x1: offsetString,
+        y1: "0",
+        x2: offsetString,
+        y2: majorSizeString,
+        stroke: color,
+        "stroke-width": "1",
+        "shape-rendering": "crispEdges",
+      },
+      children: [],
+    })
+
+    children.push({
+      name: "line",
+      type: "element",
+      value: "",
+      attributes: {
+        x1: "0",
+        y1: offsetString,
+        x2: majorSizeString,
+        y2: offsetString,
+        stroke: color,
+        "stroke-width": "1",
+        "shape-rendering": "crispEdges",
+      },
+      children: [],
+    })
+  }
+
+  return children
 }
 
 export interface PcbContext {
@@ -281,6 +334,29 @@ export function convertCircuitJsonToPcbSvg(
   const gridPatternId = "pcb-grid-pattern"
   const gridLineColor = options?.grid?.lineColor ?? "rgba(255, 255, 255, 0.5)"
   const gridCellSize = options?.grid?.cellSize
+  const majorCellSize = options?.grid?.majorCellSize
+  const majorLineColor = options?.grid?.majorLineColor ?? gridLineColor
+
+  if (majorCellSize !== undefined) {
+    if (!gridCellSize || gridCellSize <= 0) {
+      throw new Error("grid.majorCellSize requires a positive grid.cellSize")
+    }
+
+    if (majorCellSize <= 0) {
+      throw new Error(
+        "grid.majorCellSize must be a positive multiple of grid.cellSize",
+      )
+    }
+
+    const ratio = majorCellSize / gridCellSize
+    const nearestInteger = Math.round(ratio)
+
+    if (!Number.isFinite(ratio) || Math.abs(ratio - nearestInteger) > 1e-6) {
+      throw new Error(
+        "grid.majorCellSize must be a positive multiple of grid.cellSize",
+      )
+    }
+  }
 
   const children: SvgObject[] = [
     {
@@ -301,6 +377,8 @@ export function convertCircuitJsonToPcbSvg(
   ]
 
   if (gridCellSize && gridCellSize > 0) {
+    const hasMajorGrid = majorCellSize !== undefined
+
     children.push({
       name: "defs",
       type: "element",
@@ -313,25 +391,36 @@ export function convertCircuitJsonToPcbSvg(
           value: "",
           attributes: {
             id: gridPatternId,
-            width: gridCellSize.toString(),
-            height: gridCellSize.toString(),
+            width: hasMajorGrid
+              ? majorCellSize!.toString()
+              : gridCellSize.toString(),
+            height: hasMajorGrid
+              ? majorCellSize!.toString()
+              : gridCellSize.toString(),
             patternUnits: "userSpaceOnUse",
           },
-          children: [
-            {
-              name: "path",
-              type: "element",
-              value: "",
-              attributes: {
-                d: `M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`,
-                fill: "none",
-                stroke: gridLineColor,
-                "stroke-width": "1",
-                "shape-rendering": "crispEdges",
-              },
-              children: [],
-            },
-          ],
+          children: hasMajorGrid
+            ? createMajorGridPatternChildren(
+                gridCellSize,
+                majorCellSize!,
+                gridLineColor,
+                majorLineColor,
+              )
+            : [
+                {
+                  name: "path",
+                  type: "element",
+                  value: "",
+                  attributes: {
+                    d: `M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`,
+                    fill: "none",
+                    stroke: gridLineColor,
+                    "stroke-width": "1",
+                    "shape-rendering": "crispEdges",
+                  },
+                  children: [],
+                },
+              ],
         },
       ],
     })

@@ -62,3 +62,27 @@ test("grid overlay custom line color", () => {
 
   expect(svg).toMatchSvgSnapshot(import.meta.path, "custom-color")
 })
+
+test("grid overlay with major lines", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuit, {
+    grid: {
+      cellSize: 5,
+      lineColor: "rgba(255, 255, 255, 0.3)",
+      majorCellSize: 20,
+      majorLineColor: "rgba(0, 255, 0, 0.5)",
+    },
+  })
+
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "major-lines")
+})
+
+test("grid overlay errors when major cell size is not a multiple", () => {
+  expect(() =>
+    convertCircuitJsonToPcbSvg(circuit, {
+      grid: {
+        cellSize: 5,
+        majorCellSize: 12,
+      },
+    }),
+  ).toThrow("grid.majorCellSize must be a positive multiple of grid.cellSize")
+})
