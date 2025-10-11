@@ -30,6 +30,10 @@ import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
+  createSvgObjectsForPcbGrid,
+  type PcbGridOptions,
+} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
+import {
   DEFAULT_PCB_COLOR_MAP,
   type CopperColorMap,
   type PcbColorMap,
@@ -57,63 +61,7 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   renderSolderMask?: boolean
-  grid?: {
-    cellSize: number
-    lineColor?: string
-    majorCellSize?: number
-    majorLineColor?: string
-  }
-}
-
-function createMajorGridPatternChildren(
-  cellSize: number,
-  majorCellSize: number,
-  lineColor: string,
-  majorLineColor: string,
-): SvgObject[] {
-  const children: SvgObject[] = []
-  const steps = Math.round(majorCellSize / cellSize)
-
-  for (let step = 0; step < steps; step += 1) {
-    const offset = Number((step * cellSize).toFixed(6))
-    const offsetString = offset.toString()
-    const color = step === 0 ? majorLineColor : lineColor
-    const majorSizeString = majorCellSize.toString()
-
-    children.push({
-      name: "line",
-      type: "element",
-      value: "",
-      attributes: {
-        x1: offsetString,
-        y1: "0",
-        x2: offsetString,
-        y2: majorSizeString,
-        stroke: color,
-        "stroke-width": "1",
-        "shape-rendering": "crispEdges",
-      },
-      children: [],
-    })
-
-    children.push({
-      name: "line",
-      type: "element",
-      value: "",
-      attributes: {
-        x1: "0",
-        y1: offsetString,
-        x2: majorSizeString,
-        y2: offsetString,
-        stroke: color,
-        "stroke-width": "1",
-        "shape-rendering": "crispEdges",
-      },
-      children: [],
-    })
-  }
-
-  return children
+  grid?: PcbGridOptions
 }
 
 export interface PcbContext {
@@ -331,33 +279,6 @@ export function convertCircuitJsonToPcbSvg(
     svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
   }
 
-  const gridPatternId = "pcb-grid-pattern"
-  const gridLineColor = options?.grid?.lineColor ?? "rgba(255, 255, 255, 0.5)"
-  const gridCellSize = options?.grid?.cellSize
-  const majorCellSize = options?.grid?.majorCellSize
-  const majorLineColor = options?.grid?.majorLineColor ?? gridLineColor
-
-  if (majorCellSize !== undefined) {
-    if (!gridCellSize || gridCellSize <= 0) {
-      throw new Error("grid.majorCellSize requires a positive grid.cellSize")
-    }
-
-    if (majorCellSize <= 0) {
-      throw new Error(
-        "grid.majorCellSize must be a positive multiple of grid.cellSize",
-      )
-    }
-
-    const ratio = majorCellSize / gridCellSize
-    const nearestInteger = Math.round(ratio)
-
-    if (!Number.isFinite(ratio) || Math.abs(ratio - nearestInteger) > 1e-6) {
-      throw new Error(
-        "grid.majorCellSize must be a positive multiple of grid.cellSize",
-      )
-    }
-  }
-
   const children: SvgObject[] = [
     {
       name: "style",
@@ -376,75 +297,15 @@ export function convertCircuitJsonToPcbSvg(
     },
   ]
 
-  if (gridCellSize && gridCellSize > 0) {
-    const hasMajorGrid = majorCellSize !== undefined
+  const gridObjects = createSvgObjectsForPcbGrid({
+    grid: options?.grid,
+    svgWidth,
+    svgHeight,
+  })
 
-    children.push({
-      name: "defs",
-      type: "element",
-      value: "",
-      attributes: {},
-      children: [
-        {
-          name: "pattern",
-          type: "element",
-          value: "",
-          attributes: {
-            id: gridPatternId,
-            width: hasMajorGrid
-              ? majorCellSize!.toString()
-              : gridCellSize.toString(),
-            height: hasMajorGrid
-              ? majorCellSize!.toString()
-              : gridCellSize.toString(),
-            patternUnits: "userSpaceOnUse",
-          },
-          children: hasMajorGrid
-            ? createMajorGridPatternChildren(
-                gridCellSize,
-                majorCellSize!,
-                gridLineColor,
-                majorLineColor,
-              )
-            : [
-                {
-                  name: "path",
-                  type: "element",
-                  value: "",
-                  attributes: {
-                    d: `M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`,
-                    fill: "none",
-                    stroke: gridLineColor,
-                    "stroke-width": "1",
-                    "shape-rendering": "crispEdges",
-                  },
-                  children: [],
-                },
-              ],
-        },
-      ],
-    })
+  if (gridObjects.defs) {
+    children.push(gridObjects.defs)
   }
-
-  const gridRect: SvgObject | null =
-    gridCellSize && gridCellSize > 0
-      ? {
-          name: "rect",
-          type: "element",
-          value: "",
-          attributes: {
-            x: "0",
-            y: "0",
-            width: svgWidth.toString(),
-            height: svgHeight.toString(),
-            fill: `url(#${gridPatternId})`,
-            "pointer-events": "none",
-            "data-type": "pcb_grid",
-            "data-pcb-layer": "global",
-          },
-          children: [],
-        }
-      : null
 
   children.push({
     name: "rect",
@@ -471,8 +332,8 @@ export function convertCircuitJsonToPcbSvg(
 
   children.push(...svgObjects)
 
-  if (gridRect) {
-    children.push(gridRect)
+  if (gridObjects.rect) {
+    children.push(gridObjects.rect)
   }
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
