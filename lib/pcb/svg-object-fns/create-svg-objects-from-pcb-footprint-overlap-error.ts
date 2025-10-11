@@ -3,16 +3,29 @@ import type { SvgObject } from "../../../lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
-function annotateFootprintErrorSvgObjects(
-  svgObjects: SvgObject[],
-): SvgObject[] {
-  return svgObjects.map((obj) => ({
-    ...obj,
+function annotateFootprintErrorSvgObjects(objects: SvgObject[]): SvgObject[] {
+  return objects.map((object) => ({
+    ...object,
     attributes: {
-      ...obj.attributes,
-      "data-type": "pcb_footprint_overlap_error",
-      "data-pcb-layer": "overlay",
+      ...(object.attributes ?? {}),
+      "data-type":
+        object.attributes?.["data-type"] ?? "pcb_footprint_overlap_error",
+      "data-pcb-layer": object.attributes?.["data-pcb-layer"] ?? "overlay",
     },
+    children: (object.children ?? []).map((child: any) => {
+      if (child?.type === "element") {
+        return {
+          ...child,
+          attributes: {
+            ...(child.attributes ?? {}),
+            "data-type":
+              child.attributes?.["data-type"] ?? "pcb_footprint_overlap_error",
+            "data-pcb-layer": child.attributes?.["data-pcb-layer"] ?? "overlay",
+          },
+        }
+      }
+      return child
+    }),
   }))
 }
 
@@ -184,7 +197,7 @@ export function createSvgObjectsFromPcbFootprintOverlapError(
       })
 
       // Draw a dashed line from center to this element
-      if (referencedElements.length > 1) {
+      if (filteredReferencedElements.length > 1) {
         svgObjects.push({
           name: "line",
           type: "element",
