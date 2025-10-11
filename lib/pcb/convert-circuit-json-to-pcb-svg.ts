@@ -30,6 +30,10 @@ import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
+  createSvgObjectsForPcbGrid,
+  type PcbGridOptions,
+} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
+import {
   DEFAULT_PCB_COLOR_MAP,
   type CopperColorMap,
   type PcbColorMap,
@@ -57,6 +61,7 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   renderSolderMask?: boolean
+  grid?: PcbGridOptions
 }
 
 export interface PcbContext {
@@ -290,23 +295,34 @@ export function convertCircuitJsonToPcbSvg(
         },
       ],
     },
-    {
-      name: "rect",
-      type: "element",
-      value: "",
-      attributes: {
-        class: "boundary",
-        x: "0",
-        y: "0",
-        fill: options?.backgroundColor ?? "#000",
-        width: svgWidth.toString(),
-        height: svgHeight.toString(),
-        "data-type": "pcb_background",
-        "data-pcb-layer": "global",
-      },
-      children: [],
-    },
   ]
+
+  const gridObjects = createSvgObjectsForPcbGrid({
+    grid: options?.grid,
+    svgWidth,
+    svgHeight,
+  })
+
+  if (gridObjects.defs) {
+    children.push(gridObjects.defs)
+  }
+
+  children.push({
+    name: "rect",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "boundary",
+      x: "0",
+      y: "0",
+      fill: options?.backgroundColor ?? "#000",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
+      "data-type": "pcb_background",
+      "data-pcb-layer": "global",
+    },
+    children: [],
+  })
 
   if (drawPaddingOutsideBoard) {
     children.push(
@@ -315,6 +331,10 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   children.push(...svgObjects)
+
+  if (gridObjects.rect) {
+    children.push(gridObjects.rect)
+  }
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
   const version = CIRCUIT_TO_SVG_VERSION
