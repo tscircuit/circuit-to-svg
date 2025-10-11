@@ -57,6 +57,10 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   renderSolderMask?: boolean
+  grid?: {
+    cellSize: number
+    lineColor?: string
+  }
 }
 
 export interface PcbContext {
@@ -274,6 +278,10 @@ export function convertCircuitJsonToPcbSvg(
     svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
   }
 
+  const gridPatternId = "pcb-grid-pattern"
+  const gridLineColor = options?.grid?.lineColor ?? "rgba(255, 255, 255, 0.5)"
+  const gridCellSize = options?.grid?.cellSize
+
   const children: SvgObject[] = [
     {
       name: "style",
@@ -290,23 +298,81 @@ export function convertCircuitJsonToPcbSvg(
         },
       ],
     },
-    {
-      name: "rect",
+  ]
+
+  if (gridCellSize && gridCellSize > 0) {
+    children.push({
+      name: "defs",
       type: "element",
       value: "",
-      attributes: {
-        class: "boundary",
-        x: "0",
-        y: "0",
-        fill: options?.backgroundColor ?? "#000",
-        width: svgWidth.toString(),
-        height: svgHeight.toString(),
-        "data-type": "pcb_background",
-        "data-pcb-layer": "global",
-      },
-      children: [],
+      attributes: {},
+      children: [
+        {
+          name: "pattern",
+          type: "element",
+          value: "",
+          attributes: {
+            id: gridPatternId,
+            width: gridCellSize.toString(),
+            height: gridCellSize.toString(),
+            patternUnits: "userSpaceOnUse",
+          },
+          children: [
+            {
+              name: "path",
+              type: "element",
+              value: "",
+              attributes: {
+                d: `M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`,
+                fill: "none",
+                stroke: gridLineColor,
+                "stroke-width": "1",
+                "shape-rendering": "crispEdges",
+              },
+              children: [],
+            },
+          ],
+        },
+      ],
+    })
+  }
+
+  const gridRect: SvgObject | null =
+    gridCellSize && gridCellSize > 0
+      ? {
+          name: "rect",
+          type: "element",
+          value: "",
+          attributes: {
+            x: "0",
+            y: "0",
+            width: svgWidth.toString(),
+            height: svgHeight.toString(),
+            fill: `url(#${gridPatternId})`,
+            "pointer-events": "none",
+            "data-type": "pcb_grid",
+            "data-pcb-layer": "global",
+          },
+          children: [],
+        }
+      : null
+
+  children.push({
+    name: "rect",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "boundary",
+      x: "0",
+      y: "0",
+      fill: options?.backgroundColor ?? "#000",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
+      "data-type": "pcb_background",
+      "data-pcb-layer": "global",
     },
-  ]
+    children: [],
+  })
 
   if (drawPaddingOutsideBoard) {
     children.push(
@@ -315,6 +381,10 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   children.push(...svgObjects)
+
+  if (gridRect) {
+    children.push(gridRect)
+  }
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
   const version = CIRCUIT_TO_SVG_VERSION
