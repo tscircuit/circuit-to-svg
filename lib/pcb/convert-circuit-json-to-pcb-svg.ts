@@ -13,6 +13,7 @@ import {
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
+import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
@@ -450,6 +451,12 @@ function createSvgObjects({
       return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
         Boolean,
       )
+    case "pcb_footprint_overlap_error":
+      return createSvgObjectsFromPcbFootprintOverlapError(
+        elm as any,
+        circuitJson,
+        ctx,
+      ).filter(Boolean)
     case "pcb_component":
       return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
