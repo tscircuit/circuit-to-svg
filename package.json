@@ -25,7 +25,7 @@
     "bun-match-svg": "^0.0.12",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
-    "circuit-json": "^0.0.277",
+    "circuit-json": "^0.0.278",
     "react": "19.1.0",
     "react-cosmos": "7.0.0",
     "react-cosmos-plugin-vite": "7.0.0",
