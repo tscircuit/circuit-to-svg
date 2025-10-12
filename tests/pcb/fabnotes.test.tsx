@@ -25,7 +25,20 @@ test("fabrication note path and fabrication note text", () => {
     </board>,
   )
 
-  const circuitJson = circuit.getCircuitJson()
+  const circuitJson = circuit.getCircuitJson() as any[]
+
+  circuitJson.push({
+    type: "pcb_fabrication_note_rect",
+    pcb_fabrication_note_rect_id: "pcb_fabrication_note_rect_0",
+    pcb_component_id: "pcb_generic_component_0",
+    center: { x: 5, y: 5 },
+    width: 8,
+    height: 6,
+    stroke_width: 0.2,
+    layer: "top",
+    is_filled: true,
+    is_stroke_dashed: true,
+  })
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson as any)
 

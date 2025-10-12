@@ -20,6 +20,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_silkscreen_circle: 50,
   pcb_silkscreen_line: 50,
   pcb_component: 60,
+  pcb_fabrication_note_rect: 70,
   pcb_fabrication_note_text: 70,
   pcb_fabrication_note_path: 70,
   pcb_note_dimension: 70,

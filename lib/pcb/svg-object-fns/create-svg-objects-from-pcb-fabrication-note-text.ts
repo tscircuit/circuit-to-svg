@@ -3,6 +3,7 @@ import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
 import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getLayerName } from "../utils/get-layer-name"
 
 export function createSvgObjectsFromPcbFabricationNoteText(
   pcbFabNoteText: PcbFabricationNoteText,
@@ -18,7 +19,9 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     color,
   } = pcbFabNoteText
 
-  if (layerFilter && layer !== layerFilter) return []
+  const layerName = getLayerName(layer)
+
+  if (layerFilter && layerName !== layerFilter) return []
 
   if (
     !anchor_position ||
@@ -57,7 +60,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
       class: "pcb-fabrication-note-text",
       fill: color || "rgba(255,255,255,0.5)",
       "data-type": "pcb_fabrication_note_text",
-      "data-pcb-layer": "overlay",
+      "data-pcb-layer": layerName,
     },
     children: [
       {

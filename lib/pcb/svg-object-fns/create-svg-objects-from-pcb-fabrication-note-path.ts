@@ -2,6 +2,7 @@ import type { PcbSilkscreenPath, PcbFabricationNotePath } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getLayerName } from "../utils/get-layer-name"
 
 export function createSvgObjectsFromPcbFabricationNotePath(
   fabNotePath: PcbFabricationNotePath,
@@ -9,6 +10,9 @@ export function createSvgObjectsFromPcbFabricationNotePath(
 ): SvgObject[] {
   const { transform, layer: layerFilter } = ctx
   if (!fabNotePath.route || !Array.isArray(fabNotePath.route)) return []
+
+  const layerName = getLayerName(fabNotePath.layer)
+  if (layerFilter && layerName !== layerFilter) return []
 
   // Close the path if the first and last points are the same
   const firstPoint = fabNotePath.route[0]
@@ -41,7 +45,7 @@ export function createSvgObjectsFromPcbFabricationNotePath(
         "data-pcb-fabrication-note-path-id":
           fabNotePath.pcb_fabrication_note_path_id,
         "data-type": "pcb_fabrication_note_path",
-        "data-pcb-layer": "overlay",
+        "data-pcb-layer": layerName,
       },
       value: "",
       children: [],
