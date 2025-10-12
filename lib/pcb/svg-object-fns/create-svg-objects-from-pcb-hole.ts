@@ -79,5 +79,65 @@ export function createSvgObjectsFromPcbHole(
     ]
   }
 
+  if (hole.hole_shape === "pill") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    const radiusX = scaledWidth / 2
+    const straightLength = scaledHeight - scaledWidth
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole",
+          fill: colorMap.drill,
+          d:
+            `M${x - radiusX},${y - straightLength / 2} ` +
+            `v${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
+            `v-${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
+  if (hole.hole_shape === "rotated_pill") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    const radiusX = scaledWidth / 2
+    const straightLength = scaledHeight - scaledWidth
+    const rotation = (hole as any).hole_ccw_rotation || 0
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole",
+          fill: colorMap.drill,
+          d:
+            `M${-radiusX},${-straightLength / 2} ` +
+            `v${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
+            `v-${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          transform: `translate(${x} ${y}) rotate(${-rotation})`,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
   return []
 }
