@@ -51,6 +51,8 @@ export function createSvgObjectsFromPcbSilkscreenLine(
         "stroke-width": transformedStrokeWidth.toString(),
         class: `pcb-silkscreen-line pcb-silkscreen-${layer}`,
         "data-pcb-silkscreen-line-id": pcb_silkscreen_line_id,
+        "data-type": "pcb_silkscreen_line",
+        "data-pcb-layer": layer,
       },
       value: "",
       children: [],

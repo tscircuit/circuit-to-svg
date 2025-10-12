@@ -25,6 +25,8 @@ export function createSvgObjectsFromPcbHole(
             cy: y.toString(),
             r: radius.toString(),
             fill: colorMap.drill,
+            "data-type": "pcb_hole",
+            "data-pcb-layer": "drill",
           },
           children: [],
           value: "",
@@ -43,6 +45,8 @@ export function createSvgObjectsFromPcbHole(
           width: scaledDiameter.toString(),
           height: scaledDiameter.toString(),
           fill: colorMap.drill,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
         },
         children: [],
         value: "",
@@ -66,6 +70,69 @@ export function createSvgObjectsFromPcbHole(
           rx: rx.toString(),
           ry: ry.toString(),
           fill: colorMap.drill,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
+  if (hole.hole_shape === "pill") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    const radiusX = scaledWidth / 2
+    const straightLength = scaledHeight - scaledWidth
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole",
+          fill: colorMap.drill,
+          d:
+            `M${x - radiusX},${y - straightLength / 2} ` +
+            `v${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
+            `v-${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
+  if (hole.hole_shape === "rotated_pill") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    const radiusX = scaledWidth / 2
+    const straightLength = scaledHeight - scaledWidth
+    // PcbHoleRotatedPill uses ccw_rotation (not hole_ccw_rotation like plated holes)
+    const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole",
+          fill: colorMap.drill,
+          d:
+            `M${-radiusX},${-straightLength / 2} ` +
+            `v${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
+            `v-${straightLength} ` +
+            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          transform: `translate(${x} ${y}) rotate(${-rotation})`,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
         },
         children: [],
         value: "",

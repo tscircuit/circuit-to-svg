@@ -32,6 +32,19 @@ test("fabrication note path and fabrication note text", () => {
 
   const circuitJson = circuit.getCircuitJson()
 
+  circuitJson.push({
+    type: "pcb_fabrication_note_rect",
+    pcb_fabrication_note_rect_id: "pcb_fabrication_note_rect_0",
+    pcb_component_id: null,
+    center: { x: 6, y: 6 },
+    width: 5,
+    height: 3,
+    stroke_width: 0.3,
+    is_filled: true,
+    color: "#0000ff",
+    layer: "top",
+  } as any)
+
   const svg = convertCircuitJsonToPcbSvg(circuitJson as any)
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)

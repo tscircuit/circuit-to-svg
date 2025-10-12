@@ -60,6 +60,8 @@ export function createSvgObjectsFromPcbBoard(
         fill: "none",
         stroke: colorMap.boardOutline,
         "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
+        "data-type": "pcb_board",
+        "data-pcb-layer": "board",
       },
     },
   ]

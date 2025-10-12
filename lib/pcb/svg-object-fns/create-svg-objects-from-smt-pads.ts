@@ -8,11 +8,11 @@ export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
-
+  const { transform, layer: layerFilter, colorMap, renderSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
+  const shouldRenderSolderMask = renderSolderMask && isCoveredWithSolderMask
 
   const solderMaskColor =
     colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
@@ -39,7 +39,8 @@ export function createSvgObjectsFromSmtPad(
           width: width.toString(),
           height: height.toString(),
           transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-          "data-layer": pad.layer,
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
           ...(scaledBorderRadius
             ? {
                 rx: scaledBorderRadius.toString(),
@@ -49,7 +50,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      if (!isCoveredWithSolderMask) {
+      if (!shouldRenderSolderMask) {
         return [padElement]
       }
 
@@ -62,6 +63,7 @@ export function createSvgObjectsFromSmtPad(
           ...padElement.attributes,
           class: "pcb-solder-mask",
           fill: solderMaskColor,
+          "data-type": "pcb_soldermask",
         },
       }
 
@@ -80,7 +82,8 @@ export function createSvgObjectsFromSmtPad(
         y: (y - height / 2).toString(),
         width: width.toString(),
         height: height.toString(),
-        "data-layer": pad.layer,
+        "data-type": "pcb_smtpad",
+        "data-pcb-layer": pad.layer,
         ...(scaledBorderRadius
           ? {
               rx: scaledBorderRadius.toString(),
@@ -90,7 +93,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!isCoveredWithSolderMask) {
+    if (!shouldRenderSolderMask) {
       return [padElement]
     }
 
@@ -103,6 +106,7 @@ export function createSvgObjectsFromSmtPad(
         ...padElement.attributes,
         class: "pcb-solder-mask",
         fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
       },
     }
 
@@ -129,11 +133,12 @@ export function createSvgObjectsFromSmtPad(
         height: height.toString(),
         rx: radius.toString(),
         ry: radius.toString(),
-        "data-layer": pad.layer,
+        "data-type": "pcb_smtpad",
+        "data-pcb-layer": pad.layer,
       },
     }
 
-    if (!isCoveredWithSolderMask) {
+    if (!shouldRenderSolderMask) {
       return [padElement]
     }
 
@@ -146,6 +151,7 @@ export function createSvgObjectsFromSmtPad(
         ...padElement.attributes,
         class: "pcb-solder-mask",
         fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
       },
     }
 
@@ -166,11 +172,12 @@ export function createSvgObjectsFromSmtPad(
         cx: x.toString(),
         cy: y.toString(),
         r: radius.toString(),
-        "data-layer": pad.layer,
+        "data-type": "pcb_smtpad",
+        "data-pcb-layer": pad.layer,
       },
     }
 
-    if (!isCoveredWithSolderMask) {
+    if (!shouldRenderSolderMask) {
       return [padElement]
     }
 
@@ -183,6 +190,7 @@ export function createSvgObjectsFromSmtPad(
         ...padElement.attributes,
         class: "pcb-solder-mask",
         fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
       },
     }
 
@@ -203,11 +211,12 @@ export function createSvgObjectsFromSmtPad(
         class: "pcb-pad",
         fill: layerNameToColor(pad.layer, colorMap),
         points: points.map((p) => p.join(",")).join(" "),
-        "data-layer": pad.layer,
+        "data-type": "pcb_smtpad",
+        "data-pcb-layer": pad.layer,
       },
     }
 
-    if (!isCoveredWithSolderMask) {
+    if (!shouldRenderSolderMask) {
       return [padElement]
     }
 
@@ -220,6 +229,7 @@ export function createSvgObjectsFromSmtPad(
         ...padElement.attributes,
         class: "pcb-solder-mask",
         fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
       },
     }
 

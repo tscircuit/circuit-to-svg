@@ -28,9 +28,6 @@
         "typescript": "^5.4.5",
         "vite-tsconfig-paths": "^5.0.1",
       },
-      "peerDependencies": {
-        "tscircuit": "*",
-      },
     },
   },
   "packages": {

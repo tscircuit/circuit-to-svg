@@ -51,6 +51,8 @@ export function createSvgObjectsFromPcbSilkscreenPath(
         "stroke-linejoin": "round",
         "data-pcb-component-id": silkscreenPath.pcb_component_id,
         "data-pcb-silkscreen-path-id": silkscreenPath.pcb_silkscreen_path_id,
+        "data-type": "pcb_silkscreen_path",
+        "data-pcb-layer": layer,
       },
       value: "",
       children: [],

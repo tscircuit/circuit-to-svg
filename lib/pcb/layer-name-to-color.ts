@@ -4,9 +4,8 @@
 import type { PcbColorMap } from "./colors"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 
-export const LAYER_NAME_TO_COLOR = {
-  top: DEFAULT_PCB_COLOR_MAP.copper.top,
-  bottom: DEFAULT_PCB_COLOR_MAP.copper.bottom,
+export const LAYER_NAME_TO_COLOR: Record<string, string> = {
+  ...DEFAULT_PCB_COLOR_MAP.copper,
 }
 
 export function layerNameToColor(

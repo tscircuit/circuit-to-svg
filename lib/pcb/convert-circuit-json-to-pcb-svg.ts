@@ -3,7 +3,6 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
-  VisibleLayer,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -14,8 +13,15 @@ import {
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
+import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
+import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
+import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
+import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
+import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
+import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
@@ -31,30 +37,19 @@ import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
+  createSvgObjectsForPcbGrid,
+  type PcbGridOptions,
+} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
+import {
   DEFAULT_PCB_COLOR_MAP,
+  type CopperColorMap,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-
-const OBJECT_ORDER: AnyCircuitElement["type"][] = [
-  "pcb_trace_error",
-  "pcb_plated_hole",
-  "pcb_fabrication_note_text",
-  "pcb_fabrication_note_path",
-  "pcb_silkscreen_text",
-  "pcb_silkscreen_path",
-  "pcb_via",
-  "pcb_cutout",
-  "pcb_copper_pour",
-  // Draw traces before SMT pads so pads appear on top
-  "pcb_smtpad",
-  "pcb_trace",
-  "pcb_component",
-  "pcb_board",
-]
+import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 
 interface PointObjectNotation {
   x: number
@@ -73,6 +68,7 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   renderSolderMask?: boolean
+  grid?: PcbGridOptions
 }
 
 export interface PcbContext {
@@ -92,12 +88,20 @@ export function convertCircuitJsonToPcbSvg(
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
 
+  const copperColors: CopperColorMap = {
+    ...DEFAULT_PCB_COLOR_MAP.copper,
+  }
+
+  if (colorOverrides?.copper) {
+    for (const [layerName, color] of Object.entries(colorOverrides.copper)) {
+      if (color !== undefined) {
+        copperColors[layerName] = color
+      }
+    }
+  }
+
   const colorMap: PcbColorMap = {
-    copper: {
-      top: colorOverrides?.copper?.top ?? DEFAULT_PCB_COLOR_MAP.copper.top,
-      bottom:
-        colorOverrides?.copper?.bottom ?? DEFAULT_PCB_COLOR_MAP.copper.bottom,
-    },
+    copper: copperColors,
     drill: colorOverrides?.drill ?? DEFAULT_PCB_COLOR_MAP.drill,
     silkscreen: {
       top:
@@ -179,6 +183,15 @@ export function convertCircuitJsonToPcbSvg(
       }
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
+    } else if (
+      circuitJsonElm.type === "pcb_note_rect" ||
+      circuitJsonElm.type === "pcb_fabrication_note_rect"
+    ) {
+      updateBounds(
+        (circuitJsonElm as any).center,
+        (circuitJsonElm as any).width,
+        (circuitJsonElm as any).height,
+      )
     } else if (
       circuitJsonElm.type === "pcb_silkscreen_text" ||
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
@@ -262,50 +275,11 @@ export function convertCircuitJsonToPcbSvg(
     renderSolderMask: options?.renderSolderMask,
   }
 
-  function getLayer(elm: AnyCircuitElement): VisibleLayer | undefined {
-    if (elm.type === "pcb_smtpad") {
-      return elm.layer === "top" || elm.layer === "bottom"
-        ? elm.layer
-        : undefined
-    }
-    if (elm.type === "pcb_trace") {
-      for (const seg of elm.route ?? []) {
-        const candidate =
-          ("layer" in seg && seg.layer) ||
-          ("from_layer" in seg && seg.from_layer) ||
-          ("to_layer" in seg && seg.to_layer) ||
-          undefined
+  const unsortedSvgObjects = circuitJson.flatMap((elm) =>
+    createSvgObjects({ elm, circuitJson, ctx }),
+  )
 
-        if (candidate === "top" || candidate === "bottom") {
-          return candidate
-        }
-      }
-    }
-    return undefined
-  }
-
-  function isCopper(elm: AnyCircuitElement) {
-    return elm.type === "pcb_trace" || elm.type === "pcb_smtpad"
-  }
-
-  let svgObjects = circuitJson
-    .sort((a, b) => {
-      const layerA = getLayer(a)
-      const layerB = getLayer(b)
-
-      if (isCopper(a) && isCopper(b) && layerA !== layerB) {
-        if (layerA === "top") return 1
-        if (layerB === "top") return -1
-        if (layerA === "bottom") return -1
-        if (layerB === "bottom") return 1
-      }
-
-      return (
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999)
-      )
-    })
-    .flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+  let svgObjects = sortSvgObjectsByPcbLayer(unsortedSvgObjects)
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -318,7 +292,7 @@ export function convertCircuitJsonToPcbSvg(
 
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
-    svgObjects = svgObjects.concat(ratsNestObjects)
+    svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
   }
 
   const children: SvgObject[] = [
@@ -337,21 +311,34 @@ export function convertCircuitJsonToPcbSvg(
         },
       ],
     },
-    {
-      name: "rect",
-      type: "element",
-      value: "",
-      attributes: {
-        class: "boundary",
-        x: "0",
-        y: "0",
-        fill: options?.backgroundColor ?? "#000",
-        width: svgWidth.toString(),
-        height: svgHeight.toString(),
-      },
-      children: [],
-    },
   ]
+
+  const gridObjects = createSvgObjectsForPcbGrid({
+    grid: options?.grid,
+    svgWidth,
+    svgHeight,
+  })
+
+  if (gridObjects.defs) {
+    children.push(gridObjects.defs)
+  }
+
+  children.push({
+    name: "rect",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "boundary",
+      x: "0",
+      y: "0",
+      fill: options?.backgroundColor ?? "#000",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
+      "data-type": "pcb_background",
+      "data-pcb-layer": "global",
+    },
+    children: [],
+  })
 
   if (drawPaddingOutsideBoard) {
     children.push(
@@ -360,6 +347,10 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   children.push(...svgObjects)
+
+  if (gridObjects.rect) {
+    children.push(gridObjects.rect)
+  }
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
   const version = CIRCUIT_TO_SVG_VERSION
@@ -475,6 +466,12 @@ function createSvgObjects({
       return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
         Boolean,
       )
+    case "pcb_footprint_overlap_error":
+      return createSvgObjectsFromPcbFootprintOverlapError(
+        elm as any,
+        circuitJson,
+        ctx,
+      ).filter(Boolean)
     case "pcb_component":
       return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
@@ -500,6 +497,18 @@ function createSvgObjects({
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
+    case "pcb_fabrication_note_rect":
+      return createSvgObjectsFromPcbFabricationNoteRect(elm, ctx)
+    case "pcb_note_dimension":
+      return createSvgObjectsFromPcbNoteDimension(elm, ctx)
+    case "pcb_note_text":
+      return createSvgObjectsFromPcbNoteText(elm, ctx)
+    case "pcb_note_rect":
+      return createSvgObjectsFromPcbNoteRect(elm, ctx)
+    case "pcb_note_path":
+      return createSvgObjectsFromPcbNotePath(elm, ctx)
+    case "pcb_note_line":
+      return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_board":
@@ -542,6 +551,8 @@ function createSvgObjectFromPcbBoundary(
       y: y.toString(),
       width: width.toString(),
       height: height.toString(),
+      "data-type": "pcb_boundary",
+      "data-pcb-layer": "global",
     },
   }
 }
