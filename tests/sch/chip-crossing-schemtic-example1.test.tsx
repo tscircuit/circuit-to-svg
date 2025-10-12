@@ -11,6 +11,7 @@ it("example 1: chip crossing schemtic", async () => {
       height="40mm"
       schTraceAutoLabelEnabled
       schMaxTraceDistance={5}
+      routingDisabled
     >
       {/* Central chip with 16 pins */}
       <chip
