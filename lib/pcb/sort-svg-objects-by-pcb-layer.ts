@@ -23,6 +23,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_fabrication_note_text: 70,
   pcb_fabrication_note_path: 70,
   pcb_fabrication_note_rect: 70,
+  pcb_fabrication_note_dimension: 70,
   pcb_note_dimension: 70,
   pcb_note_text: 70,
   pcb_note_rect: 70,
