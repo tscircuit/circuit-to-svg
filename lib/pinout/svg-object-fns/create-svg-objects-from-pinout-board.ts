@@ -1,4 +1,4 @@
-import type { AnyCircuitElement, PCBBoard, Point } from "circuit-json"
+import type { AnyCircuitElement, PCBBoard, Point, SourceBoard } from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { su } from "@tscircuit/circuit-json-util"
@@ -21,12 +21,10 @@ export function createSvgObjectsFromPinoutBoard(
   const { transform, soup } = ctx
   const { width, height, center, outline } = pcbBoard
 
-  // Find the corresponding source_board to get the title
-  // For pinout diagrams, there's typically only one board, so find any source_board with a title
   const sourceBoard = soup.find(
     (elm) => elm.type === "source_board" && (elm as any).title
-  ) as any
-  const title = sourceBoard?.title
+  ) as SourceBoard
+  const title = sourceBoard.title
 
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
@@ -91,7 +89,21 @@ export function createSvgObjectsFromPinoutBoard(
     }
   }
 
-  const svgObjects: SvgObject[] = []
+  const svgObjects: SvgObject[] = [{
+    name: "path",
+    type: "element",
+    value: "",
+    children: [],
+    attributes: {
+      class: "pinout-board",
+      d: path,
+      fill: BOARD_FILL_COLOR,
+      stroke: BOARD_STROKE_COLOR,
+      "fill-rule": "evenodd",
+      "stroke-opacity": "0.8",
+      "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
+    },
+  }]
 
   if (title) {
     // Position title at the top center of the SVG
@@ -114,22 +126,6 @@ export function createSvgObjectsFromPinoutBoard(
       },
     })
   }
-
-  svgObjects.push({
-    name: "path",
-    type: "element",
-    value: "",
-    children: [],
-    attributes: {
-      class: "pinout-board",
-      d: path,
-      fill: BOARD_FILL_COLOR,
-      stroke: BOARD_STROKE_COLOR,
-      "fill-rule": "evenodd",
-      "stroke-opacity": "0.8",
-      "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
-    },
-  })
 
   return svgObjects
 }
