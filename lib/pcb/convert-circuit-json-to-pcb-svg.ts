@@ -17,6 +17,7 @@ import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/c
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
+import { createSvgObjectsFromPcbFabricationNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-dimension"
 import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
 import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
 import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
@@ -499,6 +500,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
     case "pcb_fabrication_note_rect":
       return createSvgObjectsFromPcbFabricationNoteRect(elm, ctx)
+    case "pcb_fabrication_note_dimension":
+      return createSvgObjectsFromPcbFabricationNoteDimension(elm, ctx)
     case "pcb_note_dimension":
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
     case "pcb_note_text":
