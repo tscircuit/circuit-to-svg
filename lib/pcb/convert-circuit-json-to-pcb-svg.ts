@@ -17,6 +17,10 @@ import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/c
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
+import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
+import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
+import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
+import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
@@ -485,6 +489,14 @@ function createSvgObjects({
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
     case "pcb_note_dimension":
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
+    case "pcb_note_text":
+      return createSvgObjectsFromPcbNoteText(elm, ctx)
+    case "pcb_note_rect":
+      return createSvgObjectsFromPcbNoteRect(elm, ctx)
+    case "pcb_note_path":
+      return createSvgObjectsFromPcbNotePath(elm, ctx)
+    case "pcb_note_line":
+      return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_board":
