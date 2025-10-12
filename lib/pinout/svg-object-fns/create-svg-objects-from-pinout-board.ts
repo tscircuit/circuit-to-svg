@@ -1,4 +1,9 @@
-import type { AnyCircuitElement, PCBBoard, Point, SourceBoard } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PCBBoard,
+  Point,
+  SourceBoard,
+} from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { su } from "@tscircuit/circuit-json-util"
@@ -22,9 +27,9 @@ export function createSvgObjectsFromPinoutBoard(
   const { width, height, center, outline } = pcbBoard
 
   const sourceBoard = soup.find(
-    (elm) => elm.type === "source_board" && (elm as any).title
+    (elm) => elm.type === "source_board" && (elm as any).title,
   ) as SourceBoard
-  const title = sourceBoard.title
+  const title = sourceBoard?.title
 
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
@@ -89,21 +94,23 @@ export function createSvgObjectsFromPinoutBoard(
     }
   }
 
-  const svgObjects: SvgObject[] = [{
-    name: "path",
-    type: "element",
-    value: "",
-    children: [],
-    attributes: {
-      class: "pinout-board",
-      d: path,
-      fill: BOARD_FILL_COLOR,
-      stroke: BOARD_STROKE_COLOR,
-      "fill-rule": "evenodd",
-      "stroke-opacity": "0.8",
-      "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
+  const svgObjects: SvgObject[] = [
+    {
+      name: "path",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: "pinout-board",
+        d: path,
+        fill: BOARD_FILL_COLOR,
+        stroke: BOARD_STROKE_COLOR,
+        "fill-rule": "evenodd",
+        "stroke-opacity": "0.8",
+        "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
+      },
     },
-  }]
+  ]
 
   if (title) {
     // Position title at the top center of the SVG
@@ -114,7 +121,9 @@ export function createSvgObjectsFromPinoutBoard(
       name: "text",
       type: "element",
       value: "",
-      children: [{ name: "", type: "text", value: title, attributes: {}, children: [] }],
+      children: [
+        { name: "", type: "text", value: title, attributes: {}, children: [] },
+      ],
       attributes: {
         x: titleX.toString(),
         y: titleY.toString(),

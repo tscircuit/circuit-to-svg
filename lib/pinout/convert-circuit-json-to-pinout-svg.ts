@@ -1,4 +1,4 @@
-import type { AnyCircuitElement, PcbPort } from "circuit-json"
+import type { AnyCircuitElement, PcbPort, SourceBoard } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -54,10 +54,10 @@ export interface PinoutSvgContext {
   transform: Matrix
   soup: AnyCircuitElement[]
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
-  svgWidth: number
-  svgHeight: number
   styleScale: number
   label_positions: Map<string, LabelPosition>
+  svgWidth: number
+  svgHeight: number
 }
 
 export function convertCircuitJsonToPinoutSvg(
@@ -101,13 +101,9 @@ export function convertCircuitJsonToPinoutSvg(
   let svgWidth = options?.width ?? 1200
   let svgHeight = options?.height ?? 768
 
-  // Check if any board has a title and add extra height
-  const hasBoardTitle = soup.some(
-    (item) => item.type === "source_board" && (item as any).title
-  )
-  if (hasBoardTitle) {
-    svgHeight += 60 // Add 60px extra height for title
-  }
+  const boardTitle = soup.find(
+    (e): e is SourceBoard => e.type === "source_board" && !!e.title,
+  )?.title
 
   const board_bounds = { minX, minY, maxX, maxY }
   const pinout_ports = soup.filter(
@@ -242,19 +238,15 @@ export function convertCircuitJsonToPinoutSvg(
   const circuitHeight = maxY - minY + 2 * paddingMm
 
   const pxPerMmX = svgWidth / circuitWidth
-  let effectiveSvgHeight = svgHeight
-  if (hasBoardTitle) {
-    effectiveSvgHeight = 768 // keep original height for scaling to maintain positions
-  }
-  const pxPerMmY = effectiveSvgHeight / circuitHeight
+  const pxPerMmY = svgHeight / circuitHeight
   const pxPerMm = Math.min(pxPerMmX, pxPerMmY) // mm-to-px scale from transform
   const offsetX = (svgWidth - circuitWidth * pxPerMm) / 2
-  const offsetY = (effectiveSvgHeight - circuitHeight * pxPerMm) / 2
+  const offsetY = (svgHeight - circuitHeight * pxPerMm) / 2
 
   const transform = compose(
     translate(
       offsetX - expandedMinX * pxPerMm + paddingMm * pxPerMm,
-      effectiveSvgHeight - offsetY + minY * pxPerMm - paddingMm * pxPerMm,
+      svgHeight - offsetY + minY * pxPerMm - paddingMm * pxPerMm,
     ),
     matrixScale(pxPerMm, -pxPerMm),
   )
@@ -274,10 +266,10 @@ export function convertCircuitJsonToPinoutSvg(
     transform,
     soup,
     board_bounds,
-    svgWidth,
-    svgHeight,
     styleScale,
     label_positions,
+    svgWidth,
+    svgHeight,
   }
 
   const svgObjects = soup
