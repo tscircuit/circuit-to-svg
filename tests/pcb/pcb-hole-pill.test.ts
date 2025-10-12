@@ -35,7 +35,7 @@ const circuitJson: any = [
     y: 0,
     hole_width: 1.2,
     hole_height: 3.0,
-    hole_ccw_rotation: 45,
+    ccw_rotation: 45,
   },
   {
     type: "pcb_hole",
@@ -45,7 +45,7 @@ const circuitJson: any = [
     y: 0,
     hole_width: 1.8,
     hole_height: 3.8,
-    hole_ccw_rotation: -30,
+    ccw_rotation: -30,
   },
 ]
 

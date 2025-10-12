@@ -114,7 +114,8 @@ export function createSvgObjectsFromPcbHole(
 
     const radiusX = scaledWidth / 2
     const straightLength = scaledHeight - scaledWidth
-    const rotation = (hole as any).hole_ccw_rotation || 0
+    // PcbHoleRotatedPill uses ccw_rotation (not hole_ccw_rotation like plated holes)
+    const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
 
     return [
       {
