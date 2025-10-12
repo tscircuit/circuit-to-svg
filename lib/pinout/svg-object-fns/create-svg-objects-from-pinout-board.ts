@@ -21,6 +21,13 @@ export function createSvgObjectsFromPinoutBoard(
   const { transform, soup } = ctx
   const { width, height, center, outline } = pcbBoard
 
+  // Find the corresponding source_board to get the title
+  // For pinout diagrams, there's typically only one board, so find any source_board with a title
+  const sourceBoard = soup.find(
+    (elm) => elm.type === "source_board" && (elm as any).title
+  ) as any
+  const title = sourceBoard?.title
+
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
     path = outline
@@ -84,21 +91,45 @@ export function createSvgObjectsFromPinoutBoard(
     }
   }
 
-  return [
-    {
-      name: "path",
+  const svgObjects: SvgObject[] = []
+
+  if (title) {
+    // Position title at the top center of the SVG
+    const titleX = ctx.svgWidth / 2
+    const titleY = 30 // 30px from the top
+
+    svgObjects.push({
+      name: "text",
       type: "element",
       value: "",
-      children: [],
+      children: [{ name: "", type: "text", value: title, attributes: {}, children: [] }],
       attributes: {
-        class: "pinout-board",
-        d: path,
-        fill: BOARD_FILL_COLOR,
-        stroke: BOARD_STROKE_COLOR,
-        "fill-rule": "evenodd",
-        "stroke-opacity": "0.8",
-        "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
+        x: titleX.toString(),
+        y: titleY.toString(),
+        "text-anchor": "middle",
+        "font-size": "18px",
+        "font-weight": "bold",
+        fill: "black",
+        class: "pinout-board-title",
       },
+    })
+  }
+
+  svgObjects.push({
+    name: "path",
+    type: "element",
+    value: "",
+    children: [],
+    attributes: {
+      class: "pinout-board",
+      d: path,
+      fill: BOARD_FILL_COLOR,
+      stroke: BOARD_STROKE_COLOR,
+      "fill-rule": "evenodd",
+      "stroke-opacity": "0.8",
+      "stroke-width": (0.2 * Math.abs(transform.a)).toString(),
     },
-  ]
+  })
+
+  return svgObjects
 }
