@@ -16,6 +16,7 @@ import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
 import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
 import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
 import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
@@ -182,6 +183,15 @@ export function convertCircuitJsonToPcbSvg(
       }
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
+    } else if (
+      circuitJsonElm.type === "pcb_note_rect" ||
+      circuitJsonElm.type === "pcb_fabrication_note_rect"
+    ) {
+      updateBounds(
+        (circuitJsonElm as any).center,
+        (circuitJsonElm as any).width,
+        (circuitJsonElm as any).height,
+      )
     } else if (
       circuitJsonElm.type === "pcb_silkscreen_text" ||
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
@@ -487,6 +497,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
+    case "pcb_fabrication_note_rect":
+      return createSvgObjectsFromPcbFabricationNoteRect(elm, ctx)
     case "pcb_note_dimension":
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
     case "pcb_note_text":
