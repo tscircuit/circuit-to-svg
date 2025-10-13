@@ -130,6 +130,7 @@ export function createSvgObjectsFromPinoutBoard(
         "text-anchor": "middle",
         "font-size": "18px",
         "font-weight": "bold",
+        "font-family": "Arial, sans-serif",
         fill: "black",
         class: "pinout-board-title",
       },
