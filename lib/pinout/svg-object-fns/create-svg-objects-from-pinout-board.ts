@@ -1,4 +1,9 @@
-import type { AnyCircuitElement, PCBBoard, Point } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PCBBoard,
+  Point,
+  SourceBoard,
+} from "circuit-json"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { su } from "@tscircuit/circuit-json-util"
@@ -20,6 +25,11 @@ export function createSvgObjectsFromPinoutBoard(
 ): SvgObject[] {
   const { transform, soup } = ctx
   const { width, height, center, outline } = pcbBoard
+
+  const sourceBoard = soup.find(
+    (elm) => elm.type === "source_board" && (elm as any).title,
+  ) as SourceBoard
+  const title = sourceBoard?.title
 
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
@@ -84,7 +94,7 @@ export function createSvgObjectsFromPinoutBoard(
     }
   }
 
-  return [
+  const svgObjects: SvgObject[] = [
     {
       name: "path",
       type: "element",
@@ -101,4 +111,31 @@ export function createSvgObjectsFromPinoutBoard(
       },
     },
   ]
+
+  if (title) {
+    // Position title at the top center of the SVG
+    const titleX = ctx.svgWidth / 2
+    const titleY = 30 // 30px from the top
+
+    svgObjects.push({
+      name: "text",
+      type: "element",
+      value: "",
+      children: [
+        { name: "", type: "text", value: title, attributes: {}, children: [] },
+      ],
+      attributes: {
+        x: titleX.toString(),
+        y: titleY.toString(),
+        "text-anchor": "middle",
+        "font-size": "18px",
+        "font-weight": "bold",
+        "font-family": "Arial, sans-serif",
+        fill: "black",
+        class: "pinout-board-title",
+      },
+    })
+  }
+
+  return svgObjects
 }

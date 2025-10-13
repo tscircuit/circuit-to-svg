@@ -745,7 +745,7 @@ test("pinout basic", async () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board>
+    <board title="PICO W Test">
       <PICO_W name="U1" pcbRotation="-90deg" pinAttributes={pinAttributes} />
     </board>,
   )

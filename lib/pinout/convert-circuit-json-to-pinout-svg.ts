@@ -1,4 +1,4 @@
-import type { AnyCircuitElement, PcbPort } from "circuit-json"
+import type { AnyCircuitElement, PcbPort, SourceBoard } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -56,6 +56,8 @@ export interface PinoutSvgContext {
   board_bounds: { minX: number; minY: number; maxX: number; maxY: number }
   styleScale: number
   label_positions: Map<string, LabelPosition>
+  svgWidth: number
+  svgHeight: number
 }
 
 export function convertCircuitJsonToPinoutSvg(
@@ -98,6 +100,10 @@ export function convertCircuitJsonToPinoutSvg(
 
   let svgWidth = options?.width ?? 1200
   let svgHeight = options?.height ?? 768
+
+  const boardTitle = soup.find(
+    (e): e is SourceBoard => e.type === "source_board" && !!e.title,
+  )?.title
 
   const board_bounds = { minX, minY, maxX, maxY }
   const pinout_ports = soup.filter(
@@ -262,6 +268,8 @@ export function convertCircuitJsonToPinoutSvg(
     board_bounds,
     styleScale,
     label_positions,
+    svgWidth,
+    svgHeight,
   }
 
   const svgObjects = soup
