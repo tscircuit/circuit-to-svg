@@ -39,11 +39,12 @@ const circuitJson: any = [
   {
     type: "pcb_hole",
     pcb_hole_id: "horizontal_pill_hole_2",
-    hole_shape: "pill",
+    hole_shape: "rotated_pill",
     x: 6,
     y: 2,
     hole_width: 3.5,
     hole_height: 1.5,
+    ccw_rotation: -30,
   },
   {
     type: "pcb_hole",
