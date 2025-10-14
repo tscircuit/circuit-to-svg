@@ -83,8 +83,27 @@ export function createSvgObjectsFromPcbHole(
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHeight = hole.hole_height * Math.abs(transform.a)
 
-    const radiusX = scaledWidth / 2
-    const straightLength = scaledHeight - scaledWidth
+    // Pill shape: two semicircles connected by straight lines
+    // If width > height, it's a horizontal pill; if height > width, it's vertical
+    const isHorizontal = scaledWidth > scaledHeight
+    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const straightLength = Math.abs(
+      isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
+    )
+
+    const pathD = isHorizontal
+      ? // Horizontal pill (wider than tall)
+        `M${x - straightLength / 2},${y - radius} ` +
+        `h${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,${scaledHeight} ` +
+        `h-${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,-${scaledHeight} z`
+      : // Vertical pill (taller than wide)
+        `M${x - radius},${y - straightLength / 2} ` +
+        `v${straightLength} ` +
+        `a${radius},${radius} 0 0 0 ${scaledWidth},0 ` +
+        `v-${straightLength} ` +
+        `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
     return [
       {
@@ -93,12 +112,7 @@ export function createSvgObjectsFromPcbHole(
         attributes: {
           class: "pcb-hole",
           fill: colorMap.drill,
-          d:
-            `M${x - radiusX},${y - straightLength / 2} ` +
-            `v${straightLength} ` +
-            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
-            `v-${straightLength} ` +
-            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          d: pathD,
           "data-type": "pcb_hole",
           "data-pcb-layer": "drill",
         },
@@ -112,10 +126,29 @@ export function createSvgObjectsFromPcbHole(
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHeight = hole.hole_height * Math.abs(transform.a)
 
-    const radiusX = scaledWidth / 2
-    const straightLength = scaledHeight - scaledWidth
     // PcbHoleRotatedPill uses ccw_rotation (not hole_ccw_rotation like plated holes)
     const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
+
+    // Same logic as regular pill: handle horizontal and vertical orientations
+    const isHorizontal = scaledWidth > scaledHeight
+    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const straightLength = Math.abs(
+      isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
+    )
+
+    const pathD = isHorizontal
+      ? // Horizontal pill (wider than tall)
+        `M${-straightLength / 2},${-radius} ` +
+        `h${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,${scaledHeight} ` +
+        `h-${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,-${scaledHeight} z`
+      : // Vertical pill (taller than wide)
+        `M${-radius},${-straightLength / 2} ` +
+        `v${straightLength} ` +
+        `a${radius},${radius} 0 0 0 ${scaledWidth},0 ` +
+        `v-${straightLength} ` +
+        `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
     return [
       {
@@ -124,12 +157,7 @@ export function createSvgObjectsFromPcbHole(
         attributes: {
           class: "pcb-hole",
           fill: colorMap.drill,
-          d:
-            `M${-radiusX},${-straightLength / 2} ` +
-            `v${straightLength} ` +
-            `a${radiusX},${radiusX} 0 0 0 ${scaledWidth},0 ` +
-            `v-${straightLength} ` +
-            `a${radiusX},${radiusX} 0 0 0 -${scaledWidth},0 z`,
+          d: pathD,
           transform: `translate(${x} ${y}) rotate(${-rotation})`,
           "data-type": "pcb_hole",
           "data-pcb-layer": "drill",
