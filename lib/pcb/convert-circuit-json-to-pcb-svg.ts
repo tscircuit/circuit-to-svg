@@ -193,6 +193,15 @@ export function convertCircuitJsonToPcbSvg(
         (circuitJsonElm as any).width,
         (circuitJsonElm as any).height,
       )
+    } else if (circuitJsonElm.type === "pcb_cutout") {
+      const cutout = circuitJsonElm as PcbCutout
+      if (cutout.shape === "rect") {
+        updateBounds(cutout.center, cutout.width, cutout.height)
+      } else if (cutout.shape === "circle") {
+        updateBounds(cutout.center, cutout.radius * 2, cutout.radius * 2)
+      } else if (cutout.shape === "polygon") {
+        updateTraceBounds(cutout.points)
+      }
     } else if (
       circuitJsonElm.type === "pcb_silkscreen_text" ||
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
