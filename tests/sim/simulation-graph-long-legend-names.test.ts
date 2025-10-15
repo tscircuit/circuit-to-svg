@@ -56,7 +56,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
   },
 ]
 
-test("renders simulation graph with long legend names correctly", () => {
+test("renders simulation graph with very long legend names correctly", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id: simulationExperimentId,
