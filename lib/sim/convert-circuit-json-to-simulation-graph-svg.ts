@@ -86,8 +86,31 @@ export function convertCircuitJsonToSimulationGraphSvg({
   const timeAxis = buildAxisInfo(allPoints.map((point) => point.timeMs))
   const voltageAxis = buildAxisInfo(allPoints.map((point) => point.voltage))
 
+  const LEGEND_FONT_SIZE = 13
+  const LEGEND_CHAR_WIDTH_FACTOR = 0.5
+  const LEGEND_ITEM_LEFT_OFFSET = 20
+  const LEGEND_LINE_AND_GAP = 32
+  const LEGEND_PADDING_RIGHT = 20
+
+  const maxLabelLength = Math.max(
+    0,
+    ...preparedGraphs.map((g) => g.label.length),
+  )
+
+  const estimatedMaxLabelWidth =
+    maxLabelLength * LEGEND_FONT_SIZE * LEGEND_CHAR_WIDTH_FACTOR
+
+  const requiredLegendAreaWidth =
+    LEGEND_ITEM_LEFT_OFFSET +
+    LEGEND_LINE_AND_GAP +
+    estimatedMaxLabelWidth +
+    LEGEND_PADDING_RIGHT
+
+  const marginRight = Math.max(MARGIN.right, requiredLegendAreaWidth)
+
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
+  const finalWidth = MARGIN.left + plotWidth + marginRight
 
   const scaleX = createLinearScale(
     timeAxis.domainMin,
@@ -108,11 +131,11 @@ export function convertCircuitJsonToSimulationGraphSvg({
   )
   const version = CIRCUIT_TO_SVG_VERSION
 
-  const titleNode = createTitleNode(experiment, width)
+  const titleNode = createTitleNode(experiment, finalWidth)
 
   const svgChildren: SvgObject[] = [
     createStyleNode(),
-    createBackgroundRect(width, height),
+    createBackgroundRect(finalWidth, height),
     createDefsNode(clipPathId, plotWidth, plotHeight),
     createPlotBackground(plotWidth, plotHeight),
     createGridLines({
@@ -132,7 +155,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotWidth,
       plotHeight,
     }),
-    createLegend(preparedGraphs, width),
+    createLegend(preparedGraphs, finalWidth, marginRight),
     ...(titleNode ? [titleNode] : []),
   ]
 
@@ -140,9 +163,9 @@ export function convertCircuitJsonToSimulationGraphSvg({
     "svg",
     {
       xmlns: "http://www.w3.org/2000/svg",
-      width: width.toString(),
+      width: finalWidth.toString(),
       height: height.toString(),
-      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(height)}`,
+      viewBox: `0 0 ${formatNumber(finalWidth)} ${formatNumber(height)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(experiment?.name && {
         "data-simulation-experiment-name": experiment.name,
@@ -181,17 +204,16 @@ function prepareSimulationGraphs(
           : FALLBACK_LINE_COLOR
       const color = paletteColor ?? FALLBACK_LINE_COLOR
 
-      const probeName = graph.schematic_voltage_probe_id
-        ? probeIdToName.get(graph.schematic_voltage_probe_id)
+      const probeName = graph.simulation_voltage_probe_id
+        ? probeIdToName.get(graph.simulation_voltage_probe_id)
         : undefined
 
-      const label =
-        graph.name ||
-        probeName ||
-        (graph.schematic_voltage_probe_id
-          ? `Probe ${graph.schematic_voltage_probe_id}`
-          : graph.simulation_transient_voltage_graph_id)
-
+      const label = probeName
+        ? `V(${probeName})`
+        : graph.name ||
+          (graph.simulation_voltage_probe_id
+            ? `Probe ${graph.simulation_voltage_probe_id}`
+            : graph.simulation_transient_voltage_graph_id)
       return { graph, points, color, label }
     })
     .filter((entry) => entry.points.length > 0)
@@ -566,10 +588,11 @@ function createAxes({
 function createLegend(
   graphs: PreparedSimulationGraph[],
   width: number,
+  marginRight: number,
 ): SvgObject {
   const children = graphs.map((entry, index) => {
     const y = MARGIN.top + index * 24
-    const x = width - MARGIN.right + 20
+    const x = width - marginRight + 20
     return svgElement(
       "g",
       {
@@ -644,9 +667,9 @@ function createDataGroup(
         entry.graph.simulation_transient_voltage_graph_id,
     }
 
-    if (entry.graph.schematic_voltage_probe_id) {
-      baseAttributes["data-schematic-voltage-probe-id"] =
-        entry.graph.schematic_voltage_probe_id
+    if (entry.graph.simulation_voltage_probe_id) {
+      baseAttributes["data-simulation-voltage-probe-id"] =
+        entry.graph.simulation_voltage_probe_id
     }
 
     if (entry.graph.subcircuit_connecivity_map_key) {

@@ -15,7 +15,7 @@ export interface SimulationTransientVoltageGraphElement {
   simulation_experiment_id: string
   timestamps_ms?: number[]
   voltage_levels: number[]
-  schematic_voltage_probe_id?: string
+  simulation_voltage_probe_id?: string
   subcircuit_connecivity_map_key?: string
   time_per_step: number
   start_time_ms: number

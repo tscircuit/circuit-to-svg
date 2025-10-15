@@ -53,13 +53,6 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const schematicHeight = rawSchematicHeight * scale
   const simulationHeight = rawSimulationHeight * scale
 
-  const schematicSvg = convertCircuitJsonToSchematicSvg(schematicElements, {
-    ...schematicOptions,
-    width,
-    height: schematicHeight,
-    includeVersion: false,
-  })
-
   const simulationSvg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id,
@@ -69,19 +62,27 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     includeVersion: false,
   })
 
-  const schematicNode = ensureElementNode(parseSync(schematicSvg))
   const simulationNode = ensureElementNode(parseSync(simulationSvg))
+  const finalWidth = Number(simulationNode.attributes.width ?? width)
+
+  const schematicSvg = convertCircuitJsonToSchematicSvg(schematicElements, {
+    ...schematicOptions,
+    width: finalWidth,
+    height: schematicHeight,
+    includeVersion: false,
+  })
+  const schematicNode = ensureElementNode(parseSync(schematicSvg))
 
   const combinedChildren: SvgObject[] = []
   combinedChildren.push(
-    translateNestedSvg(schematicNode, 0, 0, width, schematicHeight),
+    translateNestedSvg(schematicNode, 0, 0, finalWidth, schematicHeight),
   )
   combinedChildren.push(
     translateNestedSvg(
       simulationNode,
       0,
       schematicHeight,
-      width,
+      finalWidth,
       simulationHeight,
     ),
   )
@@ -94,9 +95,9 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     value: "",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
-      width: formatNumber(width),
+      width: formatNumber(finalWidth),
       height: formatNumber(height),
-      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(height)}`,
+      viewBox: `0 0 ${formatNumber(finalWidth)} ${formatNumber(height)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
