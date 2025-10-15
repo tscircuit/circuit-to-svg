@@ -2,6 +2,7 @@ import type { PcbNoteDimension } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { colorMap } from "lib/utils/colors"
 
 interface Point2D {
   x: number
@@ -89,7 +90,7 @@ export function createSvgObjectsFromPcbNoteDimension(
   const [lineEndX, lineEndY] = applyToPoint(transform, [toBase.x, toBase.y])
 
   const strokeWidth = (arrow_size / 5) * Math.abs(transform.a)
-  const lineColor = color || "rgba(255,255,255,0.5)"
+  const lineColor = color || colorMap.board.user_2
 
   const midPoint = {
     x: (from.x + to.x) / 2,

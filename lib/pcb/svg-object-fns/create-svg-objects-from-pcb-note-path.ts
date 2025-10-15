@@ -2,8 +2,9 @@ import type { PcbNotePath } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { colorMap } from "lib/utils/colors"
 
-const DEFAULT_OVERLAY_COLOR = "rgba(255,255,255,0.5)"
+const DEFAULT_OVERLAY_COLOR = colorMap.board.user_2
 
 export function createSvgObjectsFromPcbNotePath(
   notePath: PcbNotePath,
