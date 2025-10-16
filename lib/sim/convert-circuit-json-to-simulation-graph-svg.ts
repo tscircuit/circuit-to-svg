@@ -185,15 +185,15 @@ function prepareSimulationGraphs(
           : FALLBACK_LINE_COLOR
       const color = paletteColor ?? FALLBACK_LINE_COLOR
 
-      const probeName = graph.schematic_voltage_probe_id
-        ? probeIdToName.get(graph.schematic_voltage_probe_id)
-        : undefined
+      const probeId =
+        graph.simulation_voltage_probe_id ?? graph.schematic_voltage_probe_id
+      const probeName = probeId ? probeIdToName.get(probeId) : undefined
 
       const label = probeName
         ? `V(${probeName})`
         : graph.name ||
-          (graph.schematic_voltage_probe_id
-            ? `Probe ${graph.schematic_voltage_probe_id}`
+          (probeId
+            ? `Probe ${probeId}`
             : graph.simulation_transient_voltage_graph_id)
       return { graph, points, color, label }
     })
