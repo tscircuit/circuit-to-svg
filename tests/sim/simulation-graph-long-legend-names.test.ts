@@ -9,7 +9,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
     type: "simulation_experiment",
     simulation_experiment_id: simulationExperimentId,
     name: "Test Very Long Legend Names Layout",
-    experiment_type: "transient",
+    experiment_type: "spice_transient_analysis",
   },
   {
     type: "simulation_transient_voltage_graph",
