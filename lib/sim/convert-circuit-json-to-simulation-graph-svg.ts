@@ -646,7 +646,7 @@ function createDataGroup(
     }
 
     if (entry.graph.schematic_voltage_probe_id) {
-      baseAttributes["data-simulation-voltage-probe-id"] =
+      baseAttributes["data-schematic-voltage-probe-id"] =
         entry.graph.schematic_voltage_probe_id
     }
 
