@@ -29,7 +29,7 @@ test("renders schematic above simulation graph", async () => {
       type: "simulation_experiment",
       simulation_experiment_id: simulationExperimentId,
       name: "Transient Voltage Sweep",
-      experiment_type: "transient",
+      experiment_type: "spice_transient_analysis",
     },
     {
       type: "simulation_transient_voltage_graph",
@@ -77,7 +77,7 @@ test("applies custom schematic height ratio", async () => {
       type: "simulation_experiment",
       simulation_experiment_id: simulationExperimentId,
       name: "Transient Voltage Sweep",
-      experiment_type: "transient",
+      experiment_type: "spice_transient_analysis",
     },
     {
       type: "simulation_transient_voltage_graph",

@@ -1,4 +1,8 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SimulationExperiment,
+  SimulationTransientVoltageGraph,
+} from "circuit-json"
 import { stringify } from "svgson"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
@@ -9,8 +13,6 @@ import {
   isSimulationExperiment,
   isSimulationTransientVoltageGraph,
   isSimulationVoltageProbe,
-  type SimulationExperimentElement,
-  type SimulationTransientVoltageGraphElement,
 } from "./types"
 
 interface ConvertSimulationGraphParams {
@@ -23,7 +25,7 @@ interface ConvertSimulationGraphParams {
 }
 
 interface PreparedSimulationGraph {
-  graph: SimulationTransientVoltageGraphElement
+  graph: SimulationTransientVoltageGraph
   points: Array<{ timeMs: number; voltage: number }>
   color: string
   label: string
@@ -55,13 +57,13 @@ export function convertCircuitJsonToSimulationGraphSvg({
     : null
 
   const experiment = circuitJson.find(
-    (element): element is SimulationExperimentElement =>
+    (element): element is SimulationExperiment =>
       isSimulationExperiment(element) &&
       element.simulation_experiment_id === simulation_experiment_id,
   )
 
   const graphs = circuitJson.filter(
-    (element): element is SimulationTransientVoltageGraphElement =>
+    (element): element is SimulationTransientVoltageGraph =>
       isSimulationTransientVoltageGraph(element) &&
       element.simulation_experiment_id === simulation_experiment_id &&
       (!selectedIds ||
@@ -161,7 +163,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
 }
 
 function prepareSimulationGraphs(
-  graphs: SimulationTransientVoltageGraphElement[],
+  graphs: SimulationTransientVoltageGraph[],
   circuitJson: CircuitJsonWithSimulation[],
 ): PreparedSimulationGraph[] {
   const palette = Array.isArray(colorMap.palette) ? colorMap.palette : []
@@ -169,7 +171,9 @@ function prepareSimulationGraphs(
   const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
   const probeIdToName = new Map<string, string>()
   for (const probe of voltageProbes) {
-    probeIdToName.set(probe.simulation_voltage_probe_id, probe.name)
+    if (probe.name && probe.simulation_voltage_probe_id) {
+      probeIdToName.set(probe.simulation_voltage_probe_id, probe.name)
+    }
   }
 
   return graphs
@@ -181,15 +185,15 @@ function prepareSimulationGraphs(
           : FALLBACK_LINE_COLOR
       const color = paletteColor ?? FALLBACK_LINE_COLOR
 
-      const probeName = graph.simulation_voltage_probe_id
-        ? probeIdToName.get(graph.simulation_voltage_probe_id)
+      const probeName = graph.schematic_voltage_probe_id
+        ? probeIdToName.get(graph.schematic_voltage_probe_id)
         : undefined
 
       const label = probeName
         ? `V(${probeName})`
         : graph.name ||
-          (graph.simulation_voltage_probe_id
-            ? `Probe ${graph.simulation_voltage_probe_id}`
+          (graph.schematic_voltage_probe_id
+            ? `Probe ${graph.schematic_voltage_probe_id}`
             : graph.simulation_transient_voltage_graph_id)
       return { graph, points, color, label }
     })
@@ -197,7 +201,7 @@ function prepareSimulationGraphs(
 }
 
 function createGraphPoints(
-  graph: SimulationTransientVoltageGraphElement,
+  graph: SimulationTransientVoltageGraph,
 ): Array<{ timeMs: number; voltage: number }> {
   const timestamps = getTimestamps(graph)
   const length = Math.min(timestamps.length, graph.voltage_levels.length)
@@ -215,14 +219,12 @@ function createGraphPoints(
   return points
 }
 
-function getTimestamps(
-  graph: SimulationTransientVoltageGraphElement,
-): number[] {
+function getTimestamps(graph: SimulationTransientVoltageGraph): number[] {
   if (
     Array.isArray(graph.timestamps_ms) &&
     graph.timestamps_ms.length === graph.voltage_levels.length
   ) {
-    return graph.timestamps_ms.map((value) => Number(value))
+    return graph.timestamps_ms.map((value: number) => Number(value))
   }
 
   const count = graph.voltage_levels.length
@@ -643,14 +645,14 @@ function createDataGroup(
         entry.graph.simulation_transient_voltage_graph_id,
     }
 
-    if (entry.graph.simulation_voltage_probe_id) {
+    if (entry.graph.schematic_voltage_probe_id) {
       baseAttributes["data-simulation-voltage-probe-id"] =
-        entry.graph.simulation_voltage_probe_id
+        entry.graph.schematic_voltage_probe_id
     }
 
-    if (entry.graph.subcircuit_connecivity_map_key) {
+    if (entry.graph.subcircuit_connectivity_map_key) {
       baseAttributes["data-subcircuit-connectivity-map-key"] =
-        entry.graph.subcircuit_connecivity_map_key
+        entry.graph.subcircuit_connectivity_map_key
     }
 
     const pointElements = entry.points.map((point) => {
@@ -702,7 +704,7 @@ function createDataGroup(
 }
 
 function createTitleNode(
-  experiment: SimulationExperimentElement | undefined,
+  experiment: SimulationExperiment | undefined,
   width: number,
 ): SvgObject | null {
   if (!experiment?.name) return null
