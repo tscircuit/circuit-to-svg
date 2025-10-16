@@ -22,8 +22,11 @@ export function createSvgObjectsFromSmtPad(
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
-    const scaledBorderRadius =
-      (pad.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const cornerRadiusValue =
+      (pad as { corner_radius?: number }).corner_radius ??
+      pad.rect_border_radius ??
+      0
+    const scaledBorderRadius = cornerRadiusValue * Math.abs(transform.a)
 
     if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
       const padElement: SvgObject = {
