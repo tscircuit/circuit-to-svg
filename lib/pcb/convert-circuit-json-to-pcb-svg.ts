@@ -48,6 +48,7 @@ import {
   type PcbColorOverrides,
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
+import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
@@ -63,6 +64,7 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  showPcbGroups?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
@@ -76,6 +78,7 @@ export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
+  showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   renderSolderMask?: boolean
@@ -280,6 +283,7 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
+    showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
     colorMap,
     renderSolderMask: options?.renderSolderMask,
@@ -531,6 +535,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
+    case "pcb_group":
+      return ctx.showPcbGroups
+        ? createSvgObjectsFromPcbGroup(elm as any, ctx)
+        : []
     default:
       return []
   }
