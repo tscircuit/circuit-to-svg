@@ -3,6 +3,7 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
+  PcbPanel,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -32,6 +33,7 @@ import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
+import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
@@ -146,7 +148,14 @@ export function convertCircuitJsonToPcbSvg(
 
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
-    if (circuitJsonElm.type === "pcb_board") {
+    if (circuitJsonElm.type === "pcb_panel") {
+      const panel = circuitJsonElm as PcbPanel
+      const width = Number(panel.width)
+      const height = Number(panel.height)
+      const center = { x: width / 2, y: height / 2 }
+      updateBounds(center, width, height)
+      updateBoardBounds(center, width, height)
+    } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
         Array.isArray(circuitJsonElm.outline) &&
@@ -527,6 +536,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
+    case "pcb_panel":
+      return ctx.drawPaddingOutsideBoard
+        ? createSvgObjectsFromPcbPanel(elm as PcbPanel, ctx)
+        : []
     case "pcb_board":
       return ctx.drawPaddingOutsideBoard
         ? createSvgObjectsFromPcbBoard(elm, ctx)
