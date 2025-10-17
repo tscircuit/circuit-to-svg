@@ -45,7 +45,7 @@ export function createSvgObjectsFromPcbCourtyardRect(
   const transformedWidth = width * Math.abs(transform.a)
   const transformedHeight = height * Math.abs(transform.d)
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const transformedStrokeWidth = (stroke_width ?? 0.05) * Math.abs(transform.a)
 
   // Courtyards are typically shown in yellow/light color with dashed lines
   const color = "#FFFF00" // Yellow for courtyard
