@@ -29,7 +29,11 @@ export function createSvgObjectsFromPcbCourtyardRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error("Invalid courtyard rectangle data:", { center, width, height })
+    console.error("Invalid courtyard rectangle data:", {
+      center,
+      width,
+      height,
+    })
     return []
   }
 
