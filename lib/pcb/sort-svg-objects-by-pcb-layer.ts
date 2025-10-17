@@ -3,6 +3,7 @@ import type { SvgObject } from "../svg-object"
 const TYPE_PRIORITY: Record<string, number> = {
   pcb_background: 0,
   pcb_boundary: 1,
+  pcb_panel: 5,
   pcb_board: 10,
   pcb_cutout: 15,
   pcb_hole: 18,
