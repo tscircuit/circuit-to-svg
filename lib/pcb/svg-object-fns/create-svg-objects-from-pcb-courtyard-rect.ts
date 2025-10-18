@@ -60,7 +60,6 @@ export function createSvgObjectsFromPcbCourtyardRect(
     "data-pcb-layer": layer,
   }
 
-  // Courtyards are typically not filled
   attributes.fill = is_filled ? color : "none"
 
   let actualHasStroke: boolean
@@ -73,10 +72,9 @@ export function createSvgObjectsFromPcbCourtyardRect(
   if (actualHasStroke) {
     attributes.stroke = color
     attributes["stroke-width"] = transformedStrokeWidth.toString()
-    // Courtyards are solid lines in KiCad (not dashed)
     if (is_stroke_dashed) {
-      const dashLength = 0.2 * Math.abs(transform.a) // 0.2mm dash
-      const gapLength = 0.1 * Math.abs(transform.a) // 0.1mm gap
+      const dashLength = 0.2 * Math.abs(transform.a)
+      const gapLength = 0.1 * Math.abs(transform.a)
       attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
     }
   } else {
