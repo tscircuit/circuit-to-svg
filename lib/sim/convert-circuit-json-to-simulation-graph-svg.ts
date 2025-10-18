@@ -343,7 +343,7 @@ svg { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
 .axis-tick { stroke: rgba(0, 0, 0, 0.6); stroke-width: 1; }
 .axis-label { fill: rgba(0, 0, 0, 0.75); font-size: 12px; }
 .axis-title { fill: rgba(0, 0, 0, 0.9); font-size: 14px; font-weight: 600; }
-.legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 13px; }
+.legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 11px; }
 .legend-line { stroke-width: 3; }
 .simulation-line { fill: none; stroke-width: 2.5; }
 .simulation-point { stroke-width: 1.5; fill: #ffffff; }
@@ -564,7 +564,7 @@ function createAxes({
   return svgElement("g", { class: "axes" }, children)
 }
 
-const MAX_LEGEND_LINE_LENGTH = 5
+const MAX_LEGEND_LINE_LENGTH = 15
 const LEGEND_LINE_HEIGHT = 16
 const LEGEND_MIN_SPACING = 24
 
@@ -575,7 +575,7 @@ function createLegend(
   let currentY = MARGIN.top
 
   const children = graphs.map((entry) => {
-    const x = width - MARGIN.right + 20
+    const x = width - MARGIN.right + 10
     const lines = wrapLegendText(entry.label)
     const legendItem = createLegendItem(entry, x, currentY, lines)
 
@@ -634,7 +634,7 @@ function createLegendItem(
     return svgElement(
       "tspan",
       {
-        x: "32",
+        x: "20",
         dy: index === 0 ? "0" : String(LEGEND_LINE_HEIGHT),
       },
       [textNode(line)],
@@ -652,7 +652,7 @@ function createLegendItem(
         class: "legend-line",
         x1: "0",
         y1: "0",
-        x2: "24",
+        x2: "16",
         y2: "0",
         stroke: entry.color,
       }),
@@ -660,7 +660,7 @@ function createLegendItem(
         "text",
         {
           class: "legend-label",
-          x: "32",
+          x: "20",
           y: "0",
           "dominant-baseline": "middle",
         },
