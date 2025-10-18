@@ -47,8 +47,8 @@ export function createSvgObjectsFromPcbCourtyardRect(
 
   const transformedStrokeWidth = (stroke_width ?? 0.05) * Math.abs(transform.a)
 
-  // Courtyards are typically shown in yellow/light color with dashed lines
-  const color = "#FFFF00" // Yellow for courtyard
+  // Courtyards are typically shown in lime/yellow-green color with solid lines in KiCad
+  const color = "#D4FF00" // Lime/yellow-green for courtyard (matches KiCad)
 
   const attributes: { [key: string]: string } = {
     x: (transformedX - transformedWidth / 2).toString(),
@@ -74,8 +74,8 @@ export function createSvgObjectsFromPcbCourtyardRect(
   if (actualHasStroke) {
     attributes.stroke = color
     attributes["stroke-width"] = transformedStrokeWidth.toString()
-    // Courtyards are typically dashed by default
-    if (is_stroke_dashed === undefined || is_stroke_dashed) {
+    // Courtyards are solid lines in KiCad (not dashed)
+    if (is_stroke_dashed) {
       const dashLength = 0.2 * Math.abs(transform.a) // 0.2mm dash
       const gapLength = 0.1 * Math.abs(transform.a) // 0.1mm gap
       attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
