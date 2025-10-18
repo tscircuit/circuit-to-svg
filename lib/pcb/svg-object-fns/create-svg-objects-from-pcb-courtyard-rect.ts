@@ -47,8 +47,8 @@ export function createSvgObjectsFromPcbCourtyardRect(
 
   const transformedStrokeWidth = (stroke_width ?? 0.05) * Math.abs(transform.a)
 
-  // Courtyards are typically shown in lime/yellow-green color with solid lines in KiCad
-  const color = "#D4FF00" // Lime/yellow-green for courtyard (matches KiCad)
+  // Courtyards are shown as magenta/pink in KiCad (as per KiCad Library Convention)
+  const color = "#FF00FF" // Magenta for courtyard (matches KiCad default theme)
 
   const attributes: { [key: string]: string } = {
     x: (transformedX - transformedWidth / 2).toString(),
