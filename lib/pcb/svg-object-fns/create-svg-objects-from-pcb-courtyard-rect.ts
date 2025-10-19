@@ -14,10 +14,6 @@ export function createSvgObjectsFromPcbCourtyardRect(
     height,
     layer = "top",
     pcb_courtyard_rect_id,
-    stroke_width,
-    is_filled,
-    has_stroke,
-    is_stroke_dashed,
   } = pcbCourtyardRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -44,10 +40,9 @@ export function createSvgObjectsFromPcbCourtyardRect(
 
   const transformedWidth = width * Math.abs(transform.a)
   const transformedHeight = height * Math.abs(transform.d)
+  const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
 
-  const transformedStrokeWidth = (stroke_width ?? 0.05) * Math.abs(transform.a)
-
-  const color = colorMap.drill
+  const color = colorMap.courtyard
 
   const attributes: { [key: string]: string } = {
     x: (transformedX - transformedWidth / 2).toString(),
@@ -60,26 +55,9 @@ export function createSvgObjectsFromPcbCourtyardRect(
     "data-pcb-layer": layer,
   }
 
-  attributes.fill = is_filled ? color : "none"
-
-  let actualHasStroke: boolean
-  if (has_stroke === undefined) {
-    actualHasStroke = transformedStrokeWidth > 0
-  } else {
-    actualHasStroke = has_stroke
-  }
-
-  if (actualHasStroke) {
-    attributes.stroke = color
-    attributes["stroke-width"] = transformedStrokeWidth.toString()
-    if (is_stroke_dashed) {
-      const dashLength = 0.2 * Math.abs(transform.a)
-      const gapLength = 0.1 * Math.abs(transform.a)
-      attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
-    }
-  } else {
-    attributes.stroke = "none"
-  }
+  attributes.fill = "none"
+  attributes.stroke = color
+  attributes["stroke-width"] = transformedStrokeWidth.toString()
 
   const svgObject: SvgObject = {
     name: "rect",

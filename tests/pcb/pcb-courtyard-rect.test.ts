@@ -30,6 +30,6 @@ const circuit: any = [
 ]
 
 test("pcb courtyard rect", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit)
+  const svg = convertCircuitJsonToPcbSvg(circuit, { showCourtyards: true })
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

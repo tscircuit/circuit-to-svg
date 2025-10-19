@@ -64,6 +64,7 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  showCourtyards?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
@@ -77,6 +78,7 @@ export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
+  showCourtyards?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   renderSolderMask?: boolean
@@ -121,6 +123,7 @@ export function convertCircuitJsonToPcbSvg(
         colorOverrides?.soldermask?.bottom ??
         DEFAULT_PCB_COLOR_MAP.soldermask.bottom,
     },
+    courtyard: colorOverrides?.courtyard ?? DEFAULT_PCB_COLOR_MAP.courtyard,
     debugComponent: {
       fill:
         colorOverrides?.debugComponent?.fill ??
@@ -281,6 +284,7 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
+    showCourtyards: options?.showCourtyards,
     drawPaddingOutsideBoard,
     colorMap,
     renderSolderMask: options?.renderSolderMask,
@@ -504,6 +508,7 @@ function createSvgObjects({
     case "pcb_silkscreen_line":
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
     case "pcb_courtyard_rect":
+      if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardRect(elm, ctx)
 
     case "pcb_fabrication_note_path":
