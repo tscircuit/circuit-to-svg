@@ -3,6 +3,7 @@ import type {
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
+  PcbPanel,
 } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
@@ -33,6 +34,7 @@ import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-sv
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
+import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
@@ -49,6 +51,7 @@ import {
   type PcbColorOverrides,
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
+import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
@@ -65,6 +68,7 @@ interface Options {
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
   showCourtyards?: boolean
+  showPcbGroups?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
@@ -79,6 +83,7 @@ export interface PcbContext {
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
   showCourtyards?: boolean
+  showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   renderSolderMask?: boolean
@@ -147,7 +152,14 @@ export function convertCircuitJsonToPcbSvg(
 
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
-    if (circuitJsonElm.type === "pcb_board") {
+    if (circuitJsonElm.type === "pcb_panel") {
+      const panel = circuitJsonElm as PcbPanel
+      const width = Number(panel.width)
+      const height = Number(panel.height)
+      const center = { x: width / 2, y: height / 2 }
+      updateBounds(center, width, height)
+      updateBoardBounds(center, width, height)
+    } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
         Array.isArray(circuitJsonElm.outline) &&
@@ -285,6 +297,7 @@ export function convertCircuitJsonToPcbSvg(
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
     showCourtyards: options?.showCourtyards,
+    showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
     colorMap,
     renderSolderMask: options?.renderSolderMask,
@@ -531,6 +544,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
+    case "pcb_panel":
+      return ctx.drawPaddingOutsideBoard
+        ? createSvgObjectsFromPcbPanel(elm as PcbPanel, ctx)
+        : []
     case "pcb_board":
       return ctx.drawPaddingOutsideBoard
         ? createSvgObjectsFromPcbBoard(elm, ctx)
@@ -539,6 +556,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
+    case "pcb_group":
+      return ctx.showPcbGroups
+        ? createSvgObjectsFromPcbGroup(elm as any, ctx)
+        : []
     default:
       return []
   }

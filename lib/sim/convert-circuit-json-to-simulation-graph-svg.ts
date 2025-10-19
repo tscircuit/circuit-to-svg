@@ -343,7 +343,7 @@ svg { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
 .axis-tick { stroke: rgba(0, 0, 0, 0.6); stroke-width: 1; }
 .axis-label { fill: rgba(0, 0, 0, 0.75); font-size: 12px; }
 .axis-title { fill: rgba(0, 0, 0, 0.9); font-size: 14px; font-weight: 600; }
-.legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 13px; }
+.legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 11px; }
 .legend-line { stroke-width: 3; }
 .simulation-line { fill: none; stroke-width: 2.5; }
 .simulation-point { stroke-width: 1.5; fill: #ffffff; }
@@ -564,43 +564,110 @@ function createAxes({
   return svgElement("g", { class: "axes" }, children)
 }
 
+const MAX_LEGEND_LINE_LENGTH = 15
+const LEGEND_LINE_HEIGHT = 16
+const LEGEND_MIN_SPACING = 24
+
 function createLegend(
   graphs: PreparedSimulationGraph[],
   width: number,
 ): SvgObject {
-  const children = graphs.map((entry, index) => {
-    const y = MARGIN.top + index * 24
-    const x = width - MARGIN.right + 20
-    return svgElement(
-      "g",
-      {
-        class: "legend-item",
-        transform: `translate(${formatNumber(x)} ${formatNumber(y)})`,
-      },
-      [
-        svgElement("line", {
-          class: "legend-line",
-          x1: "0",
-          y1: "0",
-          x2: "24",
-          y2: "0",
-          stroke: entry.color,
-        }),
-        svgElement(
-          "text",
-          {
-            class: "legend-label",
-            x: "32",
-            y: "0",
-            "dominant-baseline": "middle",
-          },
-          [textNode(entry.label)],
-        ),
-      ],
-    )
+  let currentY = MARGIN.top
+
+  const children = graphs.map((entry) => {
+    const x = width - MARGIN.right + 10
+    const lines = wrapLegendText(entry.label)
+    const legendItem = createLegendItem(entry, x, currentY, lines)
+
+    // Calculate height of this legend item (line count * line height)
+    const itemHeight = lines.length * LEGEND_LINE_HEIGHT
+    currentY += Math.max(itemHeight, LEGEND_MIN_SPACING)
+
+    return legendItem
   })
 
   return svgElement("g", { class: "legend" }, children)
+}
+
+function wrapLegendText(label: string): string[] {
+  // Split on underscores for wrapping
+  const parts = label.split("_")
+
+  if (parts.length <= 1) {
+    return [label]
+  }
+
+  const lines: string[] = []
+  let currentLine = parts[0] ?? ""
+
+  for (let i = 1; i < parts.length; i++) {
+    const part = parts[i] ?? ""
+    const testLine = currentLine + "_" + part
+
+    // If line would be too long, start new line
+    // Note: Individual parts longer than MAX_LEGEND_LINE_LENGTH won't wrap
+    if (testLine.length > MAX_LEGEND_LINE_LENGTH) {
+      lines.push(currentLine)
+      currentLine = part
+    } else {
+      currentLine = testLine
+    }
+  }
+
+  if (currentLine) {
+    lines.push(currentLine)
+  }
+
+  return lines
+}
+
+function createLegendItem(
+  entry: PreparedSimulationGraph,
+  x: number,
+  y: number,
+  lines: string[],
+): SvgObject {
+  // Lines are pre-calculated to avoid duplicate work
+
+  // Create tspan elements for each line
+  const textChildren = lines.map((line, index) => {
+    return svgElement(
+      "tspan",
+      {
+        x: "20",
+        dy: index === 0 ? "0" : String(LEGEND_LINE_HEIGHT),
+      },
+      [textNode(line)],
+    )
+  })
+
+  return svgElement(
+    "g",
+    {
+      class: "legend-item",
+      transform: `translate(${formatNumber(x)} ${formatNumber(y)})`,
+    },
+    [
+      svgElement("line", {
+        class: "legend-line",
+        x1: "0",
+        y1: "0",
+        x2: "16",
+        y2: "0",
+        stroke: entry.color,
+      }),
+      svgElement(
+        "text",
+        {
+          class: "legend-label",
+          x: "20",
+          y: "0",
+          "dominant-baseline": "middle",
+        },
+        textChildren,
+      ),
+    ],
+  )
 }
 
 function createDataGroup(
