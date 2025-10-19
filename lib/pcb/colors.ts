@@ -24,6 +24,7 @@ export interface PcbColorMap {
     top: string
     bottom: string
   }
+  courtyard: string
   debugComponent: {
     fill: string | null
     stroke: string | null
@@ -36,6 +37,7 @@ export interface PcbColorOverrides {
   silkscreen?: Partial<PcbColorMap["silkscreen"]>
   boardOutline?: string
   soldermask?: Partial<PcbColorMap["soldermask"]>
+  courtyard?: string
   debugComponent?: Partial<PcbColorMap["debugComponent"]>
 }
 
@@ -60,6 +62,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
     bottom: "#5da9e9",
   },
   boardOutline: "rgba(255, 255, 255, 0.5)",
+  courtyard: "#FF00FF",
   debugComponent: {
     fill: null,
     stroke: null,

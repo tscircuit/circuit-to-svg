@@ -30,6 +30,7 @@ import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
 import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
 import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
+import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
@@ -66,6 +67,7 @@ interface Options {
   height?: number
   shouldDrawErrors?: boolean
   shouldDrawRatsNest?: boolean
+  showCourtyards?: boolean
   showPcbGroups?: boolean
   layer?: "top" | "bottom"
   matchBoardAspectRatio?: boolean
@@ -80,6 +82,7 @@ export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
+  showCourtyards?: boolean
   showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
@@ -125,6 +128,7 @@ export function convertCircuitJsonToPcbSvg(
         colorOverrides?.soldermask?.bottom ??
         DEFAULT_PCB_COLOR_MAP.soldermask.bottom,
     },
+    courtyard: colorOverrides?.courtyard ?? DEFAULT_PCB_COLOR_MAP.courtyard,
     debugComponent: {
       fill:
         colorOverrides?.debugComponent?.fill ??
@@ -292,6 +296,7 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
+    showCourtyards: options?.showCourtyards,
     showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
     colorMap,
@@ -515,6 +520,9 @@ function createSvgObjects({
       return createSvgObjectsFromPcbSilkscreenCircle(elm, ctx)
     case "pcb_silkscreen_line":
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
+    case "pcb_courtyard_rect":
+      if (!ctx.showCourtyards) return []
+      return createSvgObjectsFromPcbCourtyardRect(elm, ctx)
 
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
