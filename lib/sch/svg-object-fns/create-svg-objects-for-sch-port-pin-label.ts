@@ -25,19 +25,16 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     y: schPort.center.y,
   }
 
-  if (!schPort.side_of_component) return []
-  const vecToEdge = getUnitVectorFromOutsideToEdge(schPort.side_of_component)
+	if (!schPort.side_of_component) return []
+	const vecToEdge = getUnitVectorFromOutsideToEdge(schPort.side_of_component)
+	const realPinEdgeDistance = schPort.distance_from_component_edge ?? 0.4
 
-  const realPinEdgeDistance = schPort.distance_from_component_edge ?? 0.4
-
-  // Move the pin number halfway to the edge of the box component so it sits
-  // between the edge and the port, exactly in the middle
-  realPinNumberPos.x +=
-    vecToEdge.x * (realPinEdgeDistance + LABEL_DIST_FROM_EDGE_MM)
-  realPinNumberPos.y +=
-    vecToEdge.y * (realPinEdgeDistance + LABEL_DIST_FROM_EDGE_MM)
-
-  // Transform the pin position from local to global coordinates
+	// Move the pin number halfway to the edge of the box component so it sits
+	// between the edge and the port, exactly in the middle
+	realPinNumberPos.x +=
+		vecToEdge.x * (realPinEdgeDistance - LABEL_DIST_FROM_EDGE_MM)
+	realPinNumberPos.y +=
+		vecToEdge.y * (realPinEdgeDistance - LABEL_DIST_FROM_EDGE_MM)  // Transform the pin position from local to global coordinates
   const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
 
   const label =
