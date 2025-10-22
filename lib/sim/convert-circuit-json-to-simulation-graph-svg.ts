@@ -346,7 +346,7 @@ svg { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
 .legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 11px; }
 .legend-line { stroke-width: 3; }
 .simulation-line { fill: none; stroke-width: 2.5; }
-.simulation-point { stroke-width: 1.5; fill: #ffffff; }
+.simulation-point { stroke-width: 0; }
 .chart-title { fill: rgba(0, 0, 0, 0.85); font-size: 18px; font-weight: 600; }
 `
 
@@ -729,9 +729,8 @@ function createDataGroup(
         class: "simulation-point",
         cx,
         cy,
-        r: "3.5",
-        stroke: entry.color,
-        fill: "#ffffff",
+        r: "2.5",
+        fill: entry.color,
         "clip-path": `url(#${clipPathId})`,
       })
     })
