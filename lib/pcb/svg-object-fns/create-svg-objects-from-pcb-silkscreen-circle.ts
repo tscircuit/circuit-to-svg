@@ -1,7 +1,8 @@
 import type { PcbSilkscreenCircle } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toNumeric } from "../utils/to-numeric"
 
 export function createSvgObjectsFromPcbSilkscreenCircle(
   pcbSilkscreenCircle: PcbSilkscreenCircle,
@@ -18,24 +19,28 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
 
   if (layerFilter && layer !== layerFilter) return []
 
+  const centerX = toNumeric(center?.x)
+  const centerY = toNumeric(center?.y)
+  const radiusValue = toNumeric(radius)
+  const strokeWidthValue = toNumeric(stroke_width) ?? 1
+
   if (
-    !center ||
-    typeof center.x !== "number" ||
-    typeof center.y !== "number" ||
-    typeof radius !== "number"
+    centerX === undefined ||
+    centerY === undefined ||
+    radiusValue === undefined
   ) {
     console.error("Invalid PCB Silkscreen Circle data:", { center, radius })
     return []
   }
 
   const [transformedX, transformedY] = applyToPoint(transform, [
-    center.x,
-    center.y,
+    centerX,
+    centerY,
   ])
 
-  const transformedRadius = radius * Math.abs(transform.a)
+  const transformedRadius = radiusValue * Math.abs(transform.a)
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const transformedStrokeWidth = strokeWidthValue * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top

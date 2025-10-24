@@ -2,17 +2,7 @@ import type { PCBBoard, Point } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-
-const toNumeric = (value: number | string | null | undefined) => {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : undefined
-  }
-  if (typeof value === "string") {
-    const parsed = Number.parseFloat(value)
-    return Number.isFinite(parsed) ? parsed : undefined
-  }
-  return undefined
-}
+import { toNumeric } from "../utils/to-numeric"
 
 export function createSvgObjectsFromPcbBoard(
   pcbBoard: PCBBoard,

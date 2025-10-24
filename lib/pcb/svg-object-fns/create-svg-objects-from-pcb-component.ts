@@ -1,6 +1,7 @@
 import { applyToPoint } from "transformation-matrix"
-import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import type { SvgObject } from "lib/svg-object"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toNumeric } from "../utils/to-numeric"
 
 export function createSvgObjectsFromPcbComponent(
   component: any,
@@ -8,10 +9,21 @@ export function createSvgObjectsFromPcbComponent(
 ): SvgObject[] {
   const { transform } = ctx
   const { center, width, height, rotation = 0 } = component
-  const [x, y] = applyToPoint(transform, [center.x, center.y])
-  const scaledWidth = width * Math.abs(transform.a)
-  const scaledHeight = height * Math.abs(transform.d)
-  const transformStr = `translate(${x}, ${y}) rotate(${-rotation}) scale(1, -1)`
+
+  const centerX = toNumeric(center?.x)
+  const centerY = toNumeric(center?.y)
+  if (centerX === undefined || centerY === undefined) {
+    return []
+  }
+
+  const widthValue = toNumeric(width) ?? 0
+  const heightValue = toNumeric(height) ?? 0
+  const rotationValue = toNumeric(rotation) ?? 0
+
+  const [x, y] = applyToPoint(transform, [centerX, centerY])
+  const scaledWidth = widthValue * Math.abs(transform.a)
+  const scaledHeight = heightValue * Math.abs(transform.d)
+  const transformStr = `translate(${x}, ${y}) rotate(${-rotationValue}) scale(1, -1)`
 
   if (
     !ctx.colorMap.debugComponent?.fill &&

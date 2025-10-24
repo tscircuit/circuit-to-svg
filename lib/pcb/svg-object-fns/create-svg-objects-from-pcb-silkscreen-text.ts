@@ -9,6 +9,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toNumeric } from "../utils/to-numeric"
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
@@ -25,21 +26,22 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   if (layerFilter && layer !== layerFilter) return []
 
-  if (
-    !anchor_position ||
-    typeof anchor_position.x !== "number" ||
-    typeof anchor_position.y !== "number"
-  ) {
+  const anchorX = toNumeric(anchor_position?.x)
+  const anchorY = toNumeric(anchor_position?.y)
+  const fontSizeValue = toNumeric(font_size) ?? 1
+  const rotationValue = toNumeric(ccw_rotation) ?? 0
+
+  if (anchorX === undefined || anchorY === undefined) {
     console.error("Invalid anchor_position:", anchor_position)
     return []
   }
 
   const [transformedX, transformedY] = applyToPoint(transform, [
-    anchor_position.x,
-    anchor_position.y,
+    anchorX,
+    anchorY,
   ])
 
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const transformedFontSize = fontSizeValue * Math.abs(transform.a)
 
   // Set text-anchor and dominant-baseline based on alignment
   let textAnchor = "middle"
@@ -89,7 +91,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((-ccw_rotation * Math.PI) / 180), // Negate to make counter-clockwise
+    rotate((-rotationValue * Math.PI) / 180), // Negate to make counter-clockwise
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
 

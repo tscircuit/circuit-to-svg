@@ -1,7 +1,8 @@
 import type { PcbSilkscreenLine } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toNumeric } from "../utils/to-numeric"
 
 export function createSvgObjectsFromPcbSilkscreenLine(
   pcbSilkscreenLine: PcbSilkscreenLine,
@@ -20,20 +21,32 @@ export function createSvgObjectsFromPcbSilkscreenLine(
 
   if (layerFilter && layer !== layerFilter) return []
 
+  const x1Value = toNumeric(x1)
+  const y1Value = toNumeric(y1)
+  const x2Value = toNumeric(x2)
+  const y2Value = toNumeric(y2)
+  const strokeWidthValue = toNumeric(stroke_width) ?? 0
+
   if (
-    typeof x1 !== "number" ||
-    typeof y1 !== "number" ||
-    typeof x2 !== "number" ||
-    typeof y2 !== "number"
+    x1Value === undefined ||
+    y1Value === undefined ||
+    x2Value === undefined ||
+    y2Value === undefined
   ) {
     console.error("Invalid coordinates:", { x1, y1, x2, y2 })
     return []
   }
 
-  const [transformedX1, transformedY1] = applyToPoint(transform, [x1, y1])
-  const [transformedX2, transformedY2] = applyToPoint(transform, [x2, y2])
+  const [transformedX1, transformedY1] = applyToPoint(transform, [
+    x1Value,
+    y1Value,
+  ])
+  const [transformedX2, transformedY2] = applyToPoint(transform, [
+    x2Value,
+    y2Value,
+  ])
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const transformedStrokeWidth = strokeWidthValue * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top

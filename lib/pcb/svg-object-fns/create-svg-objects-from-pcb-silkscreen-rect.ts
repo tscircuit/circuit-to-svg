@@ -1,7 +1,8 @@
 import type { PcbSilkscreenRect } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toNumeric } from "../utils/to-numeric"
 
 export function createSvgObjectsFromPcbSilkscreenRect(
   pcbSilkscreenRect: PcbSilkscreenRect,
@@ -22,26 +23,31 @@ export function createSvgObjectsFromPcbSilkscreenRect(
 
   if (layerFilter && layer !== layerFilter) return []
 
+  const centerX = toNumeric(center?.x)
+  const centerY = toNumeric(center?.y)
+  const widthValue = toNumeric(width)
+  const heightValue = toNumeric(height)
+  const strokeWidthValue = toNumeric(stroke_width) ?? 0
+
   if (
-    !center ||
-    typeof center.x !== "number" ||
-    typeof center.y !== "number" ||
-    typeof width !== "number" ||
-    typeof height !== "number"
+    centerX === undefined ||
+    centerY === undefined ||
+    widthValue === undefined ||
+    heightValue === undefined
   ) {
     console.error("Invalid rectangle data:", { center, width, height })
     return []
   }
 
   const [transformedX, transformedY] = applyToPoint(transform, [
-    center.x,
-    center.y,
+    centerX,
+    centerY,
   ])
 
-  const transformedWidth = width * Math.abs(transform.a)
-  const transformedHeight = height * Math.abs(transform.d)
+  const transformedWidth = widthValue * Math.abs(transform.a)
+  const transformedHeight = heightValue * Math.abs(transform.d)
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const transformedStrokeWidth = strokeWidthValue * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
