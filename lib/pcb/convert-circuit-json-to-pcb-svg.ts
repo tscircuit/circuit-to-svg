@@ -143,19 +143,24 @@ export function convertCircuitJsonToPcbSvg(
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
+  let hasBounds = false
 
   // Track bounds for pcb_board specifically
   let boardMinX = Number.POSITIVE_INFINITY
   let boardMinY = Number.POSITIVE_INFINITY
   let boardMaxX = Number.NEGATIVE_INFINITY
   let boardMaxY = Number.NEGATIVE_INFINITY
+  let hasBoardBounds = false
 
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
       const panel = circuitJsonElm as PcbPanel
-      const width = Number(panel.width)
-      const height = Number(panel.height)
+      const width = toNumeric(panel.width)
+      const height = toNumeric(panel.height)
+      if (width === undefined || height === undefined) {
+        continue
+      }
       const center = { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
       updateBoardBounds(center, width, height)
@@ -194,7 +199,10 @@ export function convertCircuitJsonToPcbSvg(
       ) {
         updateBounds({ x: pad.x, y: pad.y }, pad.width, pad.height)
       } else if (pad.shape === "circle") {
-        updateBounds({ x: pad.x, y: pad.y }, pad.radius * 2, pad.radius * 2)
+        const radius = toNumeric(pad.radius)
+        if (radius !== undefined) {
+          updateBounds({ x: pad.x, y: pad.y }, radius * 2, radius * 2)
+        }
       } else if (pad.shape === "polygon") {
         updateTraceBounds(pad.points)
       }
@@ -214,7 +222,10 @@ export function convertCircuitJsonToPcbSvg(
       if (cutout.shape === "rect") {
         updateBounds(cutout.center, cutout.width, cutout.height)
       } else if (cutout.shape === "circle") {
-        updateBounds(cutout.center, cutout.radius * 2, cutout.radius * 2)
+        const radius = toNumeric(cutout.radius)
+        if (radius !== undefined) {
+          updateBounds(cutout.center, radius * 2, radius * 2)
+        }
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       }
@@ -236,6 +247,20 @@ export function convertCircuitJsonToPcbSvg(
         updateTraceBounds(circuitJsonElm.points)
       }
     }
+  }
+
+  if (!hasBounds) {
+    minX = -0.5
+    minY = -0.5
+    maxX = 0.5
+    maxY = 0.5
+  }
+
+  if (!hasBoardBounds) {
+    boardMinX = minX
+    boardMinY = minY
+    boardMaxX = maxX
+    boardMaxY = maxY
   }
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
@@ -408,48 +433,99 @@ export function convertCircuitJsonToPcbSvg(
     throw error
   }
 
+  function toNumeric(value: unknown): number | undefined {
+    if (typeof value === "number") {
+      return Number.isFinite(value) ? value : undefined
+    }
+    if (typeof value === "string") {
+      const parsed = Number.parseFloat(value)
+      return Number.isFinite(parsed) ? parsed : undefined
+    }
+    return undefined
+  }
+
   function updateBounds(center: any, width: any, height: any) {
-    const halfWidth = width / 2
-    const halfHeight = height / 2
-    minX = Math.min(minX, center.x - halfWidth)
-    minY = Math.min(minY, center.y - halfHeight)
-    maxX = Math.max(maxX, center.x + halfWidth)
-    maxY = Math.max(maxY, center.y + halfHeight)
+    if (!center) return
+    const centerX = toNumeric(center.x)
+    const centerY = toNumeric(center.y)
+    if (centerX === undefined || centerY === undefined) return
+    const numericWidth = toNumeric(width) ?? 0
+    const numericHeight = toNumeric(height) ?? 0
+    const halfWidth = numericWidth / 2
+    const halfHeight = numericHeight / 2
+    minX = Math.min(minX, centerX - halfWidth)
+    minY = Math.min(minY, centerY - halfHeight)
+    maxX = Math.max(maxX, centerX + halfWidth)
+    maxY = Math.max(maxY, centerY + halfHeight)
+    hasBounds = true
   }
 
   function updateBoardBounds(center: any, width: any, height: any) {
-    const halfWidth = width / 2
-    const halfHeight = height / 2
-    boardMinX = Math.min(boardMinX, center.x - halfWidth)
-    boardMinY = Math.min(boardMinY, center.y - halfHeight)
-    boardMaxX = Math.max(boardMaxX, center.x + halfWidth)
-    boardMaxY = Math.max(boardMaxY, center.y + halfHeight)
+    if (!center) return
+    const centerX = toNumeric(center.x)
+    const centerY = toNumeric(center.y)
+    if (centerX === undefined || centerY === undefined) return
+    const numericWidth = toNumeric(width) ?? 0
+    const numericHeight = toNumeric(height) ?? 0
+    const halfWidth = numericWidth / 2
+    const halfHeight = numericHeight / 2
+    boardMinX = Math.min(boardMinX, centerX - halfWidth)
+    boardMinY = Math.min(boardMinY, centerY - halfHeight)
+    boardMaxX = Math.max(boardMaxX, centerX + halfWidth)
+    boardMaxY = Math.max(boardMaxY, centerY + halfHeight)
+    hasBounds = true
+    hasBoardBounds = true
   }
 
   function updateBoundsToIncludeOutline(outline: Point[]) {
+    let updated = false
     for (const point of outline) {
-      minX = Math.min(minX, point.x)
-      minY = Math.min(minY, point.y)
-      maxX = Math.max(maxX, point.x)
-      maxY = Math.max(maxY, point.y)
+      const x = toNumeric(point.x)
+      const y = toNumeric(point.y)
+      if (x === undefined || y === undefined) continue
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x)
+      maxY = Math.max(maxY, y)
+      updated = true
+    }
+    if (updated) {
+      hasBounds = true
     }
   }
 
   function updateBoardBoundsToIncludeOutline(outline: Point[]) {
+    let updated = false
     for (const point of outline) {
-      boardMinX = Math.min(boardMinX, point.x)
-      boardMinY = Math.min(boardMinY, point.y)
-      boardMaxX = Math.max(boardMaxX, point.x)
-      boardMaxY = Math.max(boardMaxY, point.y)
+      const x = toNumeric(point.x)
+      const y = toNumeric(point.y)
+      if (x === undefined || y === undefined) continue
+      boardMinX = Math.min(boardMinX, x)
+      boardMinY = Math.min(boardMinY, y)
+      boardMaxX = Math.max(boardMaxX, x)
+      boardMaxY = Math.max(boardMaxY, y)
+      updated = true
+    }
+    if (updated) {
+      hasBounds = true
+      hasBoardBounds = true
     }
   }
 
   function updateTraceBounds(route: any[]) {
+    let updated = false
     for (const point of route) {
-      minX = Math.min(minX, point.x)
-      minY = Math.min(minY, point.y)
-      maxX = Math.max(maxX, point.x)
-      maxY = Math.max(maxY, point.y)
+      const x = toNumeric(point?.x)
+      const y = toNumeric(point?.y)
+      if (x === undefined || y === undefined) continue
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x)
+      maxY = Math.max(maxY, y)
+      updated = true
+    }
+    if (updated) {
+      hasBounds = true
     }
   }
 
@@ -461,7 +537,10 @@ export function convertCircuitJsonToPcbSvg(
     } else if (item.type === "pcb_silkscreen_rect") {
       updateBounds(item.center, item.width, item.height)
     } else if (item.type === "pcb_silkscreen_circle") {
-      updateBounds(item.center, item.radius * 2, item.radius * 2)
+      const radius = toNumeric(item.radius)
+      if (radius !== undefined) {
+        updateBounds(item.center, radius * 2, radius * 2)
+      }
     } else if (item.type === "pcb_silkscreen_line") {
       updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
       updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
@@ -470,7 +549,10 @@ export function convertCircuitJsonToPcbSvg(
       if (cutout.shape === "rect") {
         updateBounds(cutout.center, cutout.width, cutout.height)
       } else if (cutout.shape === "circle") {
-        updateBounds(cutout.center, cutout.radius * 2, cutout.radius * 2)
+        const radius = toNumeric(cutout.radius)
+        if (radius !== undefined) {
+          updateBounds(cutout.center, radius * 2, radius * 2)
+        }
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       }

@@ -4,6 +4,17 @@ import type { SvgObject } from "lib/svg-object"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
+const toNumeric = (value: number | string | null | undefined) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : undefined
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : undefined
+  }
+  return undefined
+}
+
 export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
@@ -19,12 +30,16 @@ export function createSvgObjectsFromSmtPad(
     colorMap.soldermask.top
 
   if (pad.shape === "rect" || pad.shape === "rotated_rect") {
-    const width = pad.width * Math.abs(transform.a)
-    const height = pad.height * Math.abs(transform.d)
-    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const padX = toNumeric(pad.x) ?? 0
+    const padY = toNumeric(pad.y) ?? 0
+    const widthValue = toNumeric(pad.width) ?? 0
+    const heightValue = toNumeric(pad.height) ?? 0
+    const width = widthValue * Math.abs(transform.a)
+    const height = heightValue * Math.abs(transform.d)
+    const [x, y] = applyToPoint(transform, [padX, padY])
     const cornerRadiusValue =
-      (pad as { corner_radius?: number }).corner_radius ??
-      pad.rect_border_radius ??
+      toNumeric((pad as { corner_radius?: number | string }).corner_radius) ??
+      toNumeric(pad.rect_border_radius) ??
       0
     const scaledBorderRadius = cornerRadiusValue * Math.abs(transform.a)
 
@@ -117,10 +132,15 @@ export function createSvgObjectsFromSmtPad(
   }
 
   if (pad.shape === "pill") {
-    const width = pad.width * Math.abs(transform.a)
-    const height = pad.height * Math.abs(transform.d)
-    const radius = pad.radius * Math.abs(transform.a)
-    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const padX = toNumeric(pad.x) ?? 0
+    const padY = toNumeric(pad.y) ?? 0
+    const widthValue = toNumeric(pad.width) ?? 0
+    const heightValue = toNumeric(pad.height) ?? 0
+    const radiusValue = toNumeric(pad.radius) ?? 0
+    const width = widthValue * Math.abs(transform.a)
+    const height = heightValue * Math.abs(transform.d)
+    const radius = radiusValue * Math.abs(transform.a)
+    const [x, y] = applyToPoint(transform, [padX, padY])
 
     const padElement: SvgObject = {
       name: "rect",
@@ -161,8 +181,11 @@ export function createSvgObjectsFromSmtPad(
     return [padElement, maskElement]
   }
   if (pad.shape === "circle") {
-    const radius = pad.radius * Math.abs(transform.a)
-    const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const padX = toNumeric(pad.x) ?? 0
+    const padY = toNumeric(pad.y) ?? 0
+    const radiusValue = toNumeric(pad.radius) ?? 0
+    const radius = radiusValue * Math.abs(transform.a)
+    const [x, y] = applyToPoint(transform, [padX, padY])
 
     const padElement: SvgObject = {
       name: "circle",
@@ -201,9 +224,11 @@ export function createSvgObjectsFromSmtPad(
   }
 
   if (pad.shape === "polygon") {
-    const points = (pad.points ?? []).map((point) =>
-      applyToPoint(transform, [point.x, point.y]),
-    )
+    const points = (pad.points ?? []).map((point) => {
+      const pointX = toNumeric(point.x) ?? 0
+      const pointY = toNumeric(point.y) ?? 0
+      return applyToPoint(transform, [pointX, pointY])
+    })
 
     const padElement: SvgObject = {
       name: "polygon",

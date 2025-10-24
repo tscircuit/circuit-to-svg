@@ -3,6 +3,17 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
+const toNumeric = (value: number | string | null | undefined) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : undefined
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : undefined
+  }
+  return undefined
+}
+
 export function createSvgObjectsFromPcbBoard(
   pcbBoard: PCBBoard,
   ctx: PcbContext,
@@ -10,33 +21,40 @@ export function createSvgObjectsFromPcbBoard(
   const { transform, colorMap } = ctx
   const { width, height, center, outline } = pcbBoard
 
+  const widthValue = toNumeric(width) ?? 0
+  const heightValue = toNumeric(height) ?? 0
+  const centerX = toNumeric(center?.x) ?? 0
+  const centerY = toNumeric(center?.y) ?? 0
+
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
     path = outline
       .map((point: Point, index: number) => {
-        const [x, y] = applyToPoint(transform, [point.x, point.y])
+        const pointX = toNumeric(point.x) ?? 0
+        const pointY = toNumeric(point.y) ?? 0
+        const [x, y] = applyToPoint(transform, [pointX, pointY])
         return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
       })
       .join(" ")
   } else {
-    const halfWidth = width / 2
-    const halfHeight = height / 2
+    const halfWidth = widthValue / 2
+    const halfHeight = heightValue / 2
 
     const topLeft = applyToPoint(transform, [
-      center.x - halfWidth,
-      center.y - halfHeight,
+      centerX - halfWidth,
+      centerY - halfHeight,
     ])
     const topRight = applyToPoint(transform, [
-      center.x + halfWidth,
-      center.y - halfHeight,
+      centerX + halfWidth,
+      centerY - halfHeight,
     ])
     const bottomRight = applyToPoint(transform, [
-      center.x + halfWidth,
-      center.y + halfHeight,
+      centerX + halfWidth,
+      centerY + halfHeight,
     ])
     const bottomLeft = applyToPoint(transform, [
-      center.x - halfWidth,
-      center.y + halfHeight,
+      centerX - halfWidth,
+      centerY + halfHeight,
     ])
 
     path =
