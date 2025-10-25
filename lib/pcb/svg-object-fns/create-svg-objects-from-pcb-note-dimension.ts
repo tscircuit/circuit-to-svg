@@ -27,7 +27,16 @@ export function createSvgObjectsFromPcbNoteDimension(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform } = ctx
-  const { from, to, text, font_size = 1, color, arrow_size } = dimension
+  const {
+    from,
+    to,
+    text,
+    font_size = 1,
+    color,
+    arrow_size,
+    offset_distance,
+    offset_direction,
+  } = dimension
 
   if (!from || !to) {
     console.error("Invalid pcb_note_dimension endpoints", { from, to })
@@ -49,6 +58,25 @@ export function createSvgObjectsFromPcbNoteDimension(
 
   const arrowHalfWidth = arrow_size / 2
 
+  let offsetVector = { x: 0, y: 0 }
+  const numericOffsetDistance =
+    typeof offset_distance === "number" && Number.isFinite(offset_distance)
+      ? offset_distance
+      : 0
+
+  if (
+    offset_direction &&
+    typeof offset_direction.x === "number" &&
+    typeof offset_direction.y === "number" &&
+    numericOffsetDistance !== 0
+  ) {
+    const normalizedOffsetDirection = normalize(offset_direction)
+    offsetVector = {
+      x: normalizedOffsetDirection.x * numericOffsetDistance,
+      y: normalizedOffsetDirection.y * numericOffsetDistance,
+    }
+  }
+
   const fromBase = {
     x: from.x + direction.x * arrow_size,
     y: from.y + direction.y * arrow_size,
@@ -62,32 +90,35 @@ export function createSvgObjectsFromPcbNoteDimension(
   const fromTriangle = [
     toScreen(from),
     toScreen({
-      x: fromBase.x + perpendicular.x * arrowHalfWidth,
-      y: fromBase.y + perpendicular.y * arrowHalfWidth,
+      x: fromBase.x + offsetVector.x + perpendicular.x * arrowHalfWidth,
+      y: fromBase.y + offsetVector.y + perpendicular.y * arrowHalfWidth,
     }),
     toScreen({
-      x: fromBase.x - perpendicular.x * arrowHalfWidth,
-      y: fromBase.y - perpendicular.y * arrowHalfWidth,
+      x: fromBase.x + offsetVector.x - perpendicular.x * arrowHalfWidth,
+      y: fromBase.y + offsetVector.y - perpendicular.y * arrowHalfWidth,
     }),
   ]
 
   const toTriangle = [
     toScreen(to),
     toScreen({
-      x: toBase.x + perpendicular.x * arrowHalfWidth,
-      y: toBase.y + perpendicular.y * arrowHalfWidth,
+      x: toBase.x + offsetVector.x + perpendicular.x * arrowHalfWidth,
+      y: toBase.y + offsetVector.y + perpendicular.y * arrowHalfWidth,
     }),
     toScreen({
-      x: toBase.x - perpendicular.x * arrowHalfWidth,
-      y: toBase.y - perpendicular.y * arrowHalfWidth,
+      x: toBase.x + offsetVector.x - perpendicular.x * arrowHalfWidth,
+      y: toBase.y + offsetVector.y - perpendicular.y * arrowHalfWidth,
     }),
   ]
 
   const [lineStartX, lineStartY] = applyToPoint(transform, [
-    fromBase.x,
-    fromBase.y,
+    fromBase.x + offsetVector.x,
+    fromBase.y + offsetVector.y,
   ])
-  const [lineEndX, lineEndY] = applyToPoint(transform, [toBase.x, toBase.y])
+  const [lineEndX, lineEndY] = applyToPoint(transform, [
+    toBase.x + offsetVector.x,
+    toBase.y + offsetVector.y,
+  ])
 
   const strokeWidth = (arrow_size / 5) * Math.abs(transform.a)
   const lineColor = color || colorMap.board.user_2
@@ -99,8 +130,8 @@ export function createSvgObjectsFromPcbNoteDimension(
 
   const textOffset = arrow_size * 1.5
   const textPoint = {
-    x: midPoint.x + perpendicular.x * textOffset,
-    y: midPoint.y + perpendicular.y * textOffset,
+    x: midPoint.x + offsetVector.x + perpendicular.x * textOffset,
+    y: midPoint.y + offsetVector.y + perpendicular.y * textOffset,
   }
 
   const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])

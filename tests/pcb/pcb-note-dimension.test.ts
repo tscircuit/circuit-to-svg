@@ -10,6 +10,8 @@ const dimension = {
   font: "tscircuit2024" as const,
   font_size: 1.2,
   arrow_size: 0.8,
+  offset_distance: 1,
+  offset_direction: { x: 0, y: 1 },
 }
 
 const angledDimension = {
@@ -22,6 +24,8 @@ const angledDimension = {
   font_size: 1,
   arrow_size: 0.6,
   color: "rgba(0, 255, 255, 0.9)",
+  offset_distance: 0.8,
+  offset_direction: { x: -Math.SQRT1_2, y: Math.SQRT1_2 },
 }
 
 test("pcb note dimension renders", () => {
