@@ -36,6 +36,8 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     layer,
     pcb_component_id,
     pcb_fabrication_note_dimension_id,
+    offset_distance = 0,
+    offset_direction,
   } = dimension
 
   if (layerFilter && layer && layer !== layerFilter) return []
@@ -86,6 +88,20 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
 
   const perpendicular = { x: -direction.y, y: direction.x }
 
+  const normalizedOffsetDirection =
+    offset_direction &&
+    typeof offset_direction.x === "number" &&
+    typeof offset_direction.y === "number"
+      ? normalize(offset_direction)
+      : undefined
+
+  const offsetVector = normalizedOffsetDirection
+    ? {
+        x: normalizedOffsetDirection.x * offset_distance,
+        y: normalizedOffsetDirection.y * offset_distance,
+      }
+    : { x: 0, y: 0 }
+
   const arrowHalfWidth = arrowSize / 2
 
   const fromBase = {
@@ -99,34 +115,45 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   }
 
   const fromTriangle = [
-    toScreen(from),
-    toScreen({
-      x: fromBase.x + perpendicular.x * arrowHalfWidth,
-      y: fromBase.y + perpendicular.y * arrowHalfWidth,
-    }),
-    toScreen({
-      x: fromBase.x - perpendicular.x * arrowHalfWidth,
-      y: fromBase.y - perpendicular.y * arrowHalfWidth,
-    }),
+    toScreen(offsetPoint(from)),
+    toScreen(
+      offsetPoint({
+        x: fromBase.x + perpendicular.x * arrowHalfWidth,
+        y: fromBase.y + perpendicular.y * arrowHalfWidth,
+      }),
+    ),
+    toScreen(
+      offsetPoint({
+        x: fromBase.x - perpendicular.x * arrowHalfWidth,
+        y: fromBase.y - perpendicular.y * arrowHalfWidth,
+      }),
+    ),
   ]
 
   const toTriangle = [
-    toScreen(to),
-    toScreen({
-      x: toBase.x + perpendicular.x * arrowHalfWidth,
-      y: toBase.y + perpendicular.y * arrowHalfWidth,
-    }),
-    toScreen({
-      x: toBase.x - perpendicular.x * arrowHalfWidth,
-      y: toBase.y - perpendicular.y * arrowHalfWidth,
-    }),
+    toScreen(offsetPoint(to)),
+    toScreen(
+      offsetPoint({
+        x: toBase.x + perpendicular.x * arrowHalfWidth,
+        y: toBase.y + perpendicular.y * arrowHalfWidth,
+      }),
+    ),
+    toScreen(
+      offsetPoint({
+        x: toBase.x - perpendicular.x * arrowHalfWidth,
+        y: toBase.y - perpendicular.y * arrowHalfWidth,
+      }),
+    ),
   ]
 
   const [lineStartX, lineStartY] = applyToPoint(transform, [
-    fromBase.x,
-    fromBase.y,
+    fromBase.x + offsetVector.x,
+    fromBase.y + offsetVector.y,
   ])
-  const [lineEndX, lineEndY] = applyToPoint(transform, [toBase.x, toBase.y])
+  const [lineEndX, lineEndY] = applyToPoint(transform, [
+    toBase.x + offsetVector.x,
+    toBase.y + offsetVector.y,
+  ])
 
   const strokeWidth = (arrowSize / 5) * Math.abs(transform.a)
   const lineColor = color || "rgba(255,255,255,0.5)"
@@ -138,8 +165,8 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
 
   const textOffset = arrowSize * 1.5
   const textPoint = {
-    x: midPoint.x + perpendicular.x * textOffset,
-    y: midPoint.y + perpendicular.y * textOffset,
+    x: midPoint.x + perpendicular.x * textOffset + offsetVector.x,
+    y: midPoint.y + perpendicular.y * textOffset + offsetVector.y,
   }
 
   const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
@@ -231,6 +258,13 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
       children,
     },
   ]
+
+  function offsetPoint(point: Point2D): Point2D {
+    return {
+      x: point.x + offsetVector.x,
+      y: point.y + offsetVector.y,
+    }
+  }
 
   function toScreen(point: Point2D): Point2D {
     const [x, y] = applyToPoint(transform, [point.x, point.y])
