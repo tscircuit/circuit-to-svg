@@ -158,6 +158,42 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   const strokeWidth = (arrowSize / 5) * Math.abs(transform.a)
   const lineColor = color || "rgba(255,255,255,0.5)"
 
+  const extensionDirection =
+    hasOffsetDirection &&
+    (Math.abs(normalizedOffsetDirection.x) > Number.EPSILON ||
+      Math.abs(normalizedOffsetDirection.y) > Number.EPSILON)
+      ? normalizedOffsetDirection
+      : perpendicular
+
+  const extensionLength = offsetMagnitude + arrowSize
+
+  const createExtensionLine = (anchor: Point2D): SvgObject => {
+    const endPoint = {
+      x: anchor.x + extensionDirection.x * extensionLength,
+      y: anchor.y + extensionDirection.y * extensionLength,
+    }
+
+    const [startX, startY] = applyToPoint(transform, [anchor.x, anchor.y])
+    const [endX, endY] = applyToPoint(transform, [endPoint.x, endPoint.y])
+
+    return {
+      name: "path",
+      type: "element",
+      value: "",
+      attributes: {
+        d: `M ${startX} ${startY} L ${endX} ${endY}`,
+        stroke: lineColor,
+        fill: "none",
+        "stroke-width": strokeWidth.toString(),
+        "stroke-linecap": "round",
+        class: "pcb-fabrication-note-dimension-extension",
+      },
+      children: [],
+    }
+  }
+
+  const extensionSegments = [createExtensionLine(from), createExtensionLine(to)]
+
   const midPoint = {
     x: (from.x + to.x) / 2 + offsetVector.x,
     y: (from.y + to.y) / 2 + offsetVector.y,
@@ -194,6 +230,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   const children: SvgObject[] = [
+    ...extensionSegments,
     {
       name: "path",
       type: "element",
