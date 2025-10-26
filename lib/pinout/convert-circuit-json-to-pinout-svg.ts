@@ -7,7 +7,6 @@ import {
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPinoutBoard } from "./svg-object-fns/create-svg-objects-from-pinout-board"
-import { createSvgObjectsFromPinoutComponent } from "./svg-object-fns/create-svg-objects-from-pinout-component"
 import { createSvgObjectsFromPinoutHole } from "./svg-object-fns/create-svg-objects-from-pinout-hole"
 import { createSvgObjectsFromPinoutPlatedHole } from "./svg-object-fns/create-svg-objects-from-pinout-plated-hole"
 import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-objects-from-pinout-smt-pad"
@@ -328,8 +327,6 @@ function createSvgObjects(
     case "pcb_board":
       return createSvgObjectsFromPinoutBoard(elm, ctx)
 
-    case "pcb_component":
-      return createSvgObjectsFromPinoutComponent(elm, ctx)
     case "pcb_smtpad":
       return createSvgObjectsFromPinoutSmtPad(elm, ctx)
     case "pcb_hole":
