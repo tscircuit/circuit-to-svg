@@ -2,7 +2,6 @@ import type { PcbPort } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PinoutSvgContext } from "../convert-circuit-json-to-pinout-svg"
-import { calculateElbow } from "calculate-elbow"
 import { createPinoutLabelBox } from "./pinout-label-box"
 
 const LABEL_COLOR = "rgb(255, 255, 255)"
@@ -11,8 +10,6 @@ const LINE_COLOR = "rgba(0, 0, 0, 0.6)"
 const PIN_NUMBER_BACKGROUND = "rgb(200, 200, 200)"
 const PIN_NUMBER_COLOR = "rgb(0, 0, 0)"
 
-export type FacingDirection = "x-" | "x+" | "y-" | "y+"
-
 export function createSvgObjectsFromPinoutPort(
   pcb_port: PcbPort,
   ctx: PinoutSvgContext,
@@ -20,41 +17,26 @@ export function createSvgObjectsFromPinoutPort(
   const label_info = ctx.label_positions.get(pcb_port.pcb_port_id)
   if (!label_info) return []
 
-  const { text: label, aliases, elbow_end, label_pos, edge } = label_info
+  const { text: label, aliases, label_pos, edge } = label_info
 
   const [port_x, port_y] = applyToPoint(ctx.transform, [pcb_port.x, pcb_port.y])
 
-  const start_facing_direction: FacingDirection =
-    edge === "left"
-      ? "x-"
-      : edge === "right"
-        ? "x+"
-        : edge === "top"
-          ? "y-"
-          : "y+"
+  // Calculate two-line path: port -> near_label -> label
+  const fixedOffsetPx = 20
+  let near_label_x = label_pos.x
+  let near_label_y = label_pos.y
+  
+  if (edge === "left") {
+    near_label_x = label_pos.x + fixedOffsetPx
+  } else if (edge === "right") {
+    near_label_x = label_pos.x - fixedOffsetPx
+  } else if (edge === "top") {
+    near_label_y = label_pos.y + fixedOffsetPx
+  } else if (edge === "bottom") {
+    near_label_y = label_pos.y - fixedOffsetPx
+  }
 
-  const end_facing_direction: FacingDirection =
-    edge === "left"
-      ? "x+"
-      : edge === "right"
-        ? "x-"
-        : edge === "top"
-          ? "y+"
-          : "y-"
-
-  const elbow_path = calculateElbow(
-    {
-      x: port_x,
-      y: port_y,
-      facingDirection: start_facing_direction,
-    },
-    {
-      x: elbow_end.x,
-      y: elbow_end.y,
-      facingDirection: end_facing_direction,
-    },
-    {},
-  )
+  const line_points = `${port_x},${port_y} ${near_label_x},${near_label_y} ${label_pos.x},${label_pos.y}`
 
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
   const numberMatch = /^pin(\d+)$/i.exec(label)
@@ -80,13 +62,6 @@ export function createSvgObjectsFromPinoutPort(
   const cornerRadius = CORNER_RADIUS_MM * pxPerMm
 
   const strokeWidthPx = STROKE_WIDTH_MM * pxPerMm
-  const end_point = {
-    x: label_pos.x + (edge === "left" ? -strokeWidthPx / 2 : strokeWidthPx / 2),
-    y: label_pos.y,
-  }
-  const line_points = [...elbow_path, end_point]
-    .map((p) => `${p.x},${p.y}`)
-    .join(" ")
 
   // Derive font size and padding from rect height to keep text centered
   // Based on original ratio of font-size 11 to rect-height 21

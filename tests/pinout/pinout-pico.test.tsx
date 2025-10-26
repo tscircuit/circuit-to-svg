@@ -5,7 +5,7 @@ import { createUseComponent } from "@tscircuit/core"
 import type { CommonLayoutProps, ChipProps } from "@tscircuit/props"
 
 const pinLabels = {
-  pin1: ["pin1", "GP0_SPI0RX_I2C0SDA_UART0TX"],
+  pin1: ["pin1", "GP0_SPI0RX_I2C0SDA_UART0TX","abcdefghij"],
   pin2: ["pin2", "GP1_SPI0CSn_I2C0SCL_UART0RX"],
   pin3: ["pin3", "GND1"],
   pin4: ["pin4", "GP2_SPI0SCK_I2C1SDA"],
