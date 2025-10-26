@@ -27,7 +27,16 @@ export function createSvgObjectsFromPcbNoteDimension(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform } = ctx
-  const { from, to, text, font_size = 1, color, arrow_size } = dimension
+  const {
+    from,
+    to,
+    text,
+    font_size = 1,
+    color,
+    arrow_size,
+    offset_distance,
+    offset_direction,
+  } = dimension
 
   if (!from || !to) {
     console.error("Invalid pcb_note_dimension endpoints", { from, to })
@@ -47,20 +56,45 @@ export function createSvgObjectsFromPcbNoteDimension(
 
   const perpendicular = { x: -direction.y, y: direction.x }
 
+  const hasOffsetDirection =
+    offset_direction &&
+    typeof offset_direction.x === "number" &&
+    typeof offset_direction.y === "number"
+
+  const normalizedOffsetDirection = hasOffsetDirection
+    ? normalize({ x: offset_direction.x, y: offset_direction.y })
+    : { x: 0, y: 0 }
+
+  const offsetMagnitude =
+    typeof offset_distance === "number" ? offset_distance : 0
+
+  const offsetVector = {
+    x: normalizedOffsetDirection.x * offsetMagnitude,
+    y: normalizedOffsetDirection.y * offsetMagnitude,
+  }
+
+  const applyOffset = (point: Point2D): Point2D => ({
+    x: point.x + offsetVector.x,
+    y: point.y + offsetVector.y,
+  })
+
+  const fromOffset = applyOffset(from)
+  const toOffset = applyOffset(to)
+
   const arrowHalfWidth = arrow_size / 2
 
   const fromBase = {
-    x: from.x + direction.x * arrow_size,
-    y: from.y + direction.y * arrow_size,
+    x: fromOffset.x + direction.x * arrow_size,
+    y: fromOffset.y + direction.y * arrow_size,
   }
 
   const toBase = {
-    x: to.x - direction.x * arrow_size,
-    y: to.y - direction.y * arrow_size,
+    x: toOffset.x - direction.x * arrow_size,
+    y: toOffset.y - direction.y * arrow_size,
   }
 
   const fromTriangle = [
-    toScreen(from),
+    toScreen(fromOffset),
     toScreen({
       x: fromBase.x + perpendicular.x * arrowHalfWidth,
       y: fromBase.y + perpendicular.y * arrowHalfWidth,
@@ -72,7 +106,7 @@ export function createSvgObjectsFromPcbNoteDimension(
   ]
 
   const toTriangle = [
-    toScreen(to),
+    toScreen(toOffset),
     toScreen({
       x: toBase.x + perpendicular.x * arrowHalfWidth,
       y: toBase.y + perpendicular.y * arrowHalfWidth,
@@ -92,9 +126,45 @@ export function createSvgObjectsFromPcbNoteDimension(
   const strokeWidth = (arrow_size / 5) * Math.abs(transform.a)
   const lineColor = color || colorMap.board.user_2
 
+  const extensionDirection =
+    hasOffsetDirection &&
+    (Math.abs(normalizedOffsetDirection.x) > Number.EPSILON ||
+      Math.abs(normalizedOffsetDirection.y) > Number.EPSILON)
+      ? normalizedOffsetDirection
+      : perpendicular
+
+  const extensionLength = offsetMagnitude + arrow_size
+
+  const createExtensionLine = (anchor: Point2D): SvgObject => {
+    const endPoint = {
+      x: anchor.x + extensionDirection.x * extensionLength,
+      y: anchor.y + extensionDirection.y * extensionLength,
+    }
+
+    const [startX, startY] = applyToPoint(transform, [anchor.x, anchor.y])
+    const [endX, endY] = applyToPoint(transform, [endPoint.x, endPoint.y])
+
+    return {
+      name: "path",
+      type: "element",
+      value: "",
+      attributes: {
+        d: `M ${startX} ${startY} L ${endX} ${endY}`,
+        stroke: lineColor,
+        fill: "none",
+        "stroke-width": strokeWidth.toString(),
+        "stroke-linecap": "round",
+        class: "pcb-note-dimension-extension",
+      },
+      children: [],
+    }
+  }
+
+  const extensionSegments = [createExtensionLine(from), createExtensionLine(to)]
+
   const midPoint = {
-    x: (from.x + to.x) / 2,
-    y: (from.y + to.y) / 2,
+    x: (from.x + to.x) / 2 + offsetVector.x,
+    y: (from.y + to.y) / 2 + offsetVector.y,
   }
 
   const textOffset = arrow_size * 1.5
@@ -104,9 +174,31 @@ export function createSvgObjectsFromPcbNoteDimension(
   }
 
   const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
+  const [screenFromX, screenFromY] = applyToPoint(transform, [
+    fromOffset.x,
+    fromOffset.y,
+  ])
+  const [screenToX, screenToY] = applyToPoint(transform, [
+    toOffset.x,
+    toOffset.y,
+  ])
+
+  const screenDirection = normalize({
+    x: screenToX - screenFromX,
+    y: screenToY - screenFromY,
+  })
+
+  let textAngle =
+    (Math.atan2(screenDirection.y, screenDirection.x) * 180) / Math.PI
+
+  if (textAngle > 90 || textAngle < -90) {
+    textAngle += 180
+  }
+
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   const children: SvgObject[] = [
+    ...extensionSegments,
     {
       name: "path",
       type: "element",
@@ -159,6 +251,7 @@ export function createSvgObjectsFromPcbNoteDimension(
         "text-anchor": "middle",
         "dominant-baseline": "central",
         class: "pcb-note-dimension-text",
+        transform: `rotate(${textAngle} ${textX} ${textY})`,
       },
       children: [
         {
