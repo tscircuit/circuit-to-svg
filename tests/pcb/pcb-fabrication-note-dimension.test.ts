@@ -24,6 +24,8 @@ test("pcb fabrication note dimension renders", () => {
       font_size: 1.2,
       arrow_size: 0.8,
       layer: "top" as const,
+      offset_distance: 0.8,
+      offset_direction: { x: 0, y: 1 },
     },
     {
       type: "pcb_fabrication_note_dimension" as const,
@@ -37,6 +39,8 @@ test("pcb fabrication note dimension renders", () => {
       color: "rgba(0, 255, 255, 0.9)",
       layer: "top" as const,
       pcb_component_id: "pcb_component_1",
+      offset_distance: 1.2,
+      offset_direction: { x: -Math.SQRT1_2, y: Math.SQRT1_2 },
     },
   ])
   expect(svg).toMatchSvgSnapshot(import.meta.path)

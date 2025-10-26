@@ -36,6 +36,8 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     layer,
     pcb_component_id,
     pcb_fabrication_note_dimension_id,
+    offset_distance,
+    offset_direction,
   } = dimension
 
   if (layerFilter && layer && layer !== layerFilter) return []
@@ -86,20 +88,45 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
 
   const perpendicular = { x: -direction.y, y: direction.x }
 
+  const hasOffsetDirection =
+    offset_direction &&
+    typeof offset_direction.x === "number" &&
+    typeof offset_direction.y === "number"
+
+  const normalizedOffsetDirection = hasOffsetDirection
+    ? normalize({ x: offset_direction.x, y: offset_direction.y })
+    : { x: 0, y: 0 }
+
+  const offsetMagnitude =
+    typeof offset_distance === "number" ? offset_distance : 0
+
+  const offsetVector = {
+    x: normalizedOffsetDirection.x * offsetMagnitude,
+    y: normalizedOffsetDirection.y * offsetMagnitude,
+  }
+
+  const applyOffset = (point: Point2D): Point2D => ({
+    x: point.x + offsetVector.x,
+    y: point.y + offsetVector.y,
+  })
+
+  const fromOffset = applyOffset(from)
+  const toOffset = applyOffset(to)
+
   const arrowHalfWidth = arrowSize / 2
 
   const fromBase = {
-    x: from.x + direction.x * arrowSize,
-    y: from.y + direction.y * arrowSize,
+    x: fromOffset.x + direction.x * arrowSize,
+    y: fromOffset.y + direction.y * arrowSize,
   }
 
   const toBase = {
-    x: to.x - direction.x * arrowSize,
-    y: to.y - direction.y * arrowSize,
+    x: toOffset.x - direction.x * arrowSize,
+    y: toOffset.y - direction.y * arrowSize,
   }
 
   const fromTriangle = [
-    toScreen(from),
+    toScreen(fromOffset),
     toScreen({
       x: fromBase.x + perpendicular.x * arrowHalfWidth,
       y: fromBase.y + perpendicular.y * arrowHalfWidth,
@@ -111,7 +138,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   ]
 
   const toTriangle = [
-    toScreen(to),
+    toScreen(toOffset),
     toScreen({
       x: toBase.x + perpendicular.x * arrowHalfWidth,
       y: toBase.y + perpendicular.y * arrowHalfWidth,
@@ -132,8 +159,8 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   const lineColor = color || "rgba(255,255,255,0.5)"
 
   const midPoint = {
-    x: (from.x + to.x) / 2,
-    y: (from.y + to.y) / 2,
+    x: (from.x + to.x) / 2 + offsetVector.x,
+    y: (from.y + to.y) / 2 + offsetVector.y,
   }
 
   const textOffset = arrowSize * 1.5
@@ -143,6 +170,27 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   }
 
   const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
+  const [screenFromX, screenFromY] = applyToPoint(transform, [
+    fromOffset.x,
+    fromOffset.y,
+  ])
+  const [screenToX, screenToY] = applyToPoint(transform, [
+    toOffset.x,
+    toOffset.y,
+  ])
+
+  const screenDirection = normalize({
+    x: screenToX - screenFromX,
+    y: screenToY - screenFromY,
+  })
+
+  let textAngle =
+    (Math.atan2(screenDirection.y, screenDirection.x) * 180) / Math.PI
+
+  if (textAngle > 90 || textAngle < -90) {
+    textAngle += 180
+  }
+
   const transformedFontSize = font_size * Math.abs(transform.a)
 
   const children: SvgObject[] = [
@@ -198,6 +246,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
         "text-anchor": "middle",
         "dominant-baseline": "central",
         class: "pcb-fabrication-note-dimension-text",
+        transform: `rotate(${textAngle} ${textX} ${textY})`,
       },
       children: [
         {
