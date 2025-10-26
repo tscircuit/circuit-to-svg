@@ -25,7 +25,7 @@ export function createSvgObjectsFromPinoutPort(
   const fixedOffsetPx = 20
   let near_label_x = label_pos.x
   let near_label_y = label_pos.y
-  
+
   if (edge === "left") {
     near_label_x = label_pos.x + fixedOffsetPx
   } else if (edge === "right") {
