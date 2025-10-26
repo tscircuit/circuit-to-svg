@@ -5,11 +5,6 @@ import type {
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-type PcbFabricationNoteDimensionWithOffset = PcbFabricationNoteDimension & {
-  offset_distance: number
-  offset_direction: { x: number; y: number }
-}
-
 test("pcb fabrication note dimension renders", () => {
   const board: AnyCircuitElement = {
     type: "pcb_board",
@@ -22,7 +17,7 @@ test("pcb fabrication note dimension renders", () => {
     thickness: 1.6,
   }
 
-  const fabricationDimension: PcbFabricationNoteDimensionWithOffset = {
+  const fabricationDimension: PcbFabricationNoteDimension = {
     type: "pcb_fabrication_note_dimension" as const,
     pcb_fabrication_note_dimension_id: "fab_dimension_1",
     pcb_component_id: "pcb_component_id_1",
@@ -37,7 +32,7 @@ test("pcb fabrication note dimension renders", () => {
     offset_direction: { x: 0, y: 1 },
   }
 
-  const angledFabricationDimension: PcbFabricationNoteDimensionWithOffset = {
+  const angledFabricationDimension: PcbFabricationNoteDimension = {
     type: "pcb_fabrication_note_dimension" as const,
     pcb_fabrication_note_dimension_id: "fab_dimension_2",
     from: { x: 2, y: 2 },
