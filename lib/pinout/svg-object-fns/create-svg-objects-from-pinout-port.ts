@@ -61,8 +61,6 @@ export function createSvgObjectsFromPinoutPort(
   const CORNER_RADIUS_MM = 0.3 * labelScale
   const cornerRadius = CORNER_RADIUS_MM * pxPerMm
 
-  const strokeWidthPx = STROKE_WIDTH_MM * pxPerMm
-
   // Derive font size and padding from rect height to keep text centered
   // Based on original ratio of font-size 11 to rect-height 21
   const fontSize = rectHeight * (11 / 21)
