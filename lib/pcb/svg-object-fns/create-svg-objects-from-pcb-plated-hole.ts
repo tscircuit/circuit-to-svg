@@ -30,11 +30,6 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
 
-    const outerRadiusX = scaledOuterWidth / 2
-    const outerRadiusY = scaledOuterHeight / 2
-    const innerRadiusX = scaledHoleWidth / 2
-    const innerRadiusY = scaledHoleHeight / 2
-    const straightLength = scaledOuterHeight - scaledOuterWidth
     const rotation = hole.ccw_rotation || 0
 
     const outerTransform = rotation
@@ -43,6 +38,44 @@ export function createSvgObjectsFromPcbPlatedHole(
     const innerTransform = rotation
       ? `translate(${x} ${y}) rotate(${-rotation})`
       : `translate(${x} ${y})`
+
+    // Helper function to create pill path
+    const createPillPath = (width: number, height: number) => {
+      if (width > height) {
+        // Horizontal pill (width > height)
+        const radius = height / 2
+        const straightLength = width - 2 * radius
+        return (
+          `M${-width / 2 + radius},${-radius} ` + // Start at top-left of straight section
+          `h${straightLength} ` + // Line right along top
+          `a${radius},${radius} 0 0 1 0,${height} ` + // Arc 180° around right end
+          `h${-straightLength} ` + // Line left along bottom
+          `a${radius},${radius} 0 0 1 0,${-height} ` + // Arc 180° around left end
+          `z`
+        )
+      } else if (height > width) {
+        // Vertical pill (height > width)
+        const radius = width / 2
+        const straightLength = height - 2 * radius
+        return (
+          `M${radius},${-height / 2 + radius} ` + // Start at top-right of straight section
+          `v${straightLength} ` + // Line down along right side
+          `a${radius},${radius} 0 0 1 ${-width},0 ` + // Arc 180° around bottom end
+          `v${-straightLength} ` + // Line up along left side
+          `a${radius},${radius} 0 0 1 ${width},0 ` + // Arc 180° around top end
+          `z`
+        )
+      } else {
+        // Circle (width === height)
+        const radius = width / 2
+        return (
+          `M${-radius},0 ` +
+          `a${radius},${radius} 0 0 1 ${width},0 ` + // Arc from left to right (top half)
+          `a${radius},${radius} 0 0 1 ${-width},0 ` + // Arc from right to left (bottom half)
+          `z`
+        )
+      }
+    }
 
     return [
       {
@@ -60,12 +93,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             attributes: {
               class: "pcb-hole-outer",
               fill: colorMap.copper.top,
-              d:
-                `M${-outerRadiusX},${-straightLength / 2} ` +
-                `v${straightLength} ` +
-                `a${outerRadiusX},${outerRadiusX} 0 0 0 ${scaledOuterWidth},0 ` +
-                `v-${straightLength} ` +
-                `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
+              d: createPillPath(scaledOuterWidth, scaledOuterHeight),
               transform: outerTransform,
               "data-type": "pcb_plated_hole",
               "data-pcb-layer": copperLayer,
@@ -80,12 +108,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             attributes: {
               class: "pcb-hole-inner",
               fill: colorMap.drill,
-              d:
-                `M${-innerRadiusX},${-(scaledHoleHeight - scaledHoleWidth) / 2} ` +
-                `v${scaledHoleHeight - scaledHoleWidth} ` +
-                `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
-                `v-${scaledHoleHeight - scaledHoleWidth} ` +
-                `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+              d: createPillPath(scaledHoleWidth, scaledHoleHeight),
               transform: innerTransform,
               "data-type": "pcb_plated_hole_drill",
               "data-pcb-layer": "drill",
