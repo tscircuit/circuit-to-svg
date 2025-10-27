@@ -9,7 +9,7 @@ export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap, renderSolderMask } = ctx
+  const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
 
@@ -37,7 +37,7 @@ export function createSvgObjectsFromPcbTrace(
       ? (traceWidth * Math.abs(transform.a)).toString()
       : "0.3"
 
-    if (renderSolderMask) {
+    if (showSolderMask) {
       const copperObject: SvgObject = {
         name: "path",
         type: "element",
@@ -92,7 +92,7 @@ export function createSvgObjectsFromPcbTrace(
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
-          "data-type": renderSolderMask ? "pcb_soldermask" : "pcb_trace",
+          "data-type": showSolderMask ? "pcb_soldermask" : "pcb_trace",
           "data-pcb-layer": layer,
         },
       }
