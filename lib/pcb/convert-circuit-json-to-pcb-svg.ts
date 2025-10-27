@@ -74,7 +74,7 @@ interface Options {
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
-  renderSolderMask?: boolean
+  showSolderMask?: boolean
   grid?: PcbGridOptions
 }
 
@@ -86,7 +86,7 @@ export interface PcbContext {
   showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
-  renderSolderMask?: boolean
+  showSolderMask?: boolean
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -311,7 +311,7 @@ export function convertCircuitJsonToPcbSvg(
     showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
     colorMap,
-    renderSolderMask: options?.renderSolderMask,
+    showSolderMask: options?.showSolderMask,
   }
 
   const unsortedSvgObjects = circuitJson.flatMap((elm) =>

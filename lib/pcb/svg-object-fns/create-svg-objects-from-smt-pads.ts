@@ -8,11 +8,11 @@ export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap, renderSolderMask } = ctx
+  const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
-  const shouldRenderSolderMask = renderSolderMask && isCoveredWithSolderMask
+  const shouldshowSolderMask = showSolderMask && isCoveredWithSolderMask
 
   const solderMaskColor =
     colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
@@ -53,7 +53,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      if (!shouldRenderSolderMask) {
+      if (!shouldshowSolderMask) {
         return [padElement]
       }
 
@@ -96,7 +96,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldRenderSolderMask) {
+    if (!shouldshowSolderMask) {
       return [padElement]
     }
 
@@ -141,7 +141,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldRenderSolderMask) {
+    if (!shouldshowSolderMask) {
       return [padElement]
     }
 
@@ -180,7 +180,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldRenderSolderMask) {
+    if (!shouldshowSolderMask) {
       return [padElement]
     }
 
@@ -219,7 +219,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldRenderSolderMask) {
+    if (!shouldshowSolderMask) {
       return [padElement]
     }
 

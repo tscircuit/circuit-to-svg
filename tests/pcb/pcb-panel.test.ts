@@ -32,7 +32,7 @@ test("pcb panel renders panel outline", () => {
         height: 3,
       },
     ],
-    { renderSolderMask: true },
+    { showSolderMask: true },
   )
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
