@@ -38,25 +38,6 @@ export function createSvgObjectsFromPcbTrace(
       : "0.3"
 
     if (showSolderMask) {
-      const copperObject: SvgObject = {
-        name: "path",
-        type: "element",
-        value: "",
-        children: [],
-        attributes: {
-          class: "pcb-trace",
-          stroke: copperColor,
-          fill: "none",
-          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-          "stroke-width": width,
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
-          "shape-rendering": "crispEdges",
-          "data-type": "pcb_trace",
-          "data-pcb-layer": layer,
-        },
-      }
-
       const maskObject: SvgObject = {
         name: "path",
         type: "element",
@@ -76,28 +57,28 @@ export function createSvgObjectsFromPcbTrace(
         },
       }
 
-      svgObjects.push(maskObject, copperObject)
+      svgObjects.push(maskObject)
     } else {
-      const maskOnlyObject: SvgObject = {
+      const copperObject: SvgObject = {
         name: "path",
         type: "element",
         value: "",
         children: [],
         attributes: {
           class: "pcb-trace",
-          stroke: maskColor,
+          stroke: copperColor,
           fill: "none",
           d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
           "stroke-width": width,
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
-          "data-type": showSolderMask ? "pcb_soldermask" : "pcb_trace",
+          "data-type": "pcb_trace",
           "data-pcb-layer": layer,
         },
       }
 
-      svgObjects.push(maskOnlyObject)
+      svgObjects.push(copperObject)
     }
   }
 
