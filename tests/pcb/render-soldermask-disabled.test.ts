@@ -20,12 +20,7 @@ const circuit: any = [
 ]
 
 test("soldermask is not rendered by default", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    colorOverrides: {
-      copper: { top: "#ff0000" },
-      soldermask: { top: "#00ff00" },
-    },
-  })
+  const svg = convertCircuitJsonToPcbSvg(circuit)
 
   expect(svg).toMatchSvgSnapshot(import.meta.path, "soldermask-disabled")
 })

@@ -25,6 +25,7 @@ test("traces use soldermask color when specified", () => {
       copper: { top: "#ff0000" },
       soldermask: { top: "#00ff00" },
     },
+    showSolderMask: true,
   })
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
