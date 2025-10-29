@@ -1,4 +1,4 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
+import type { Point, AnyCircuitElement, PcbPanel } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   applyToPoint,
@@ -12,6 +12,7 @@ import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circui
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { toNumeric } from "../utils/to-numeric"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
@@ -39,6 +40,7 @@ export function convertCircuitJsonToSolderPasteMask(
   const filteredCircuitJson = circuitJson.filter(
     (elm) =>
       elm.type === "pcb_board" ||
+      elm.type === "pcb_panel" ||
       (elm.type === "pcb_solder_paste" && elm.layer === options.layer),
   )
 
@@ -53,6 +55,13 @@ export function convertCircuitJsonToSolderPasteMask(
         updateBoundsToIncludeOutline(item.outline)
       } else if ("center" in item && "width" in item && "height" in item) {
         updateBounds(item.center, item.width, item.height)
+      }
+    } else if (item.type === "pcb_panel") {
+      const panel = item as PcbPanel
+      const width = toNumeric(panel.width)
+      const height = toNumeric(panel.height)
+      if (width !== undefined && height !== undefined) {
+        updateBounds({ x: width / 2, y: height / 2 }, width, height)
       }
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)

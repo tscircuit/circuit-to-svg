@@ -53,6 +53,7 @@ import {
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { toNumeric } from "../utils/to-numeric"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 
@@ -163,7 +164,6 @@ export function convertCircuitJsonToPcbSvg(
       }
       const center = { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
-      updateBoardBounds(center, width, height)
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
@@ -417,17 +417,6 @@ export function convertCircuitJsonToPcbSvg(
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
     throw error
-  }
-
-  function toNumeric(value: unknown): number | undefined {
-    if (typeof value === "number") {
-      return Number.isFinite(value) ? value : undefined
-    }
-    if (typeof value === "string") {
-      const parsed = Number.parseFloat(value)
-      return Number.isFinite(parsed) ? parsed : undefined
-    }
-    return undefined
   }
 
   function updateBounds(center: any, width: any, height: any) {
