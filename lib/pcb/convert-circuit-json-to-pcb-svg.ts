@@ -5,6 +5,7 @@ import type {
   PcbCutout,
   PcbPanel,
 } from "circuit-json"
+import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
@@ -156,14 +157,13 @@ export function convertCircuitJsonToPcbSvg(
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
       const panel = circuitJsonElm as PcbPanel
-      const width = toNumeric(panel.width)
-      const height = toNumeric(panel.height)
+      const width = distance.parse(panel.width)
+      const height = distance.parse(panel.height)
       if (width === undefined || height === undefined) {
         continue
       }
       const center = { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
-      updateBoardBounds(center, width, height)
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
@@ -188,8 +188,6 @@ export function convertCircuitJsonToPcbSvg(
           circuitJsonElm.height,
         )
       }
-    } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
-      updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       const pad = circuitJsonElm as any
       if (
@@ -199,13 +197,15 @@ export function convertCircuitJsonToPcbSvg(
       ) {
         updateBounds({ x: pad.x, y: pad.y }, pad.width, pad.height)
       } else if (pad.shape === "circle") {
-        const radius = toNumeric(pad.radius)
+        const radius = distance.parse(pad.radius)
         if (radius !== undefined) {
           updateBounds({ x: pad.x, y: pad.y }, radius * 2, radius * 2)
         }
       } else if (pad.shape === "polygon") {
         updateTraceBounds(pad.points)
       }
+    } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
+      updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
     } else if (
@@ -222,7 +222,7 @@ export function convertCircuitJsonToPcbSvg(
       if (cutout.shape === "rect") {
         updateBounds(cutout.center, cutout.width, cutout.height)
       } else if (cutout.shape === "circle") {
-        const radius = toNumeric(cutout.radius)
+        const radius = distance.parse(cutout.radius)
         if (radius !== undefined) {
           updateBounds(cutout.center, radius * 2, radius * 2)
         }
@@ -419,24 +419,13 @@ export function convertCircuitJsonToPcbSvg(
     throw error
   }
 
-  function toNumeric(value: unknown): number | undefined {
-    if (typeof value === "number") {
-      return Number.isFinite(value) ? value : undefined
-    }
-    if (typeof value === "string") {
-      const parsed = Number.parseFloat(value)
-      return Number.isFinite(parsed) ? parsed : undefined
-    }
-    return undefined
-  }
-
   function updateBounds(center: any, width: any, height: any) {
     if (!center) return
-    const centerX = toNumeric(center.x)
-    const centerY = toNumeric(center.y)
+    const centerX = distance.parse(center.x)
+    const centerY = distance.parse(center.y)
     if (centerX === undefined || centerY === undefined) return
-    const numericWidth = toNumeric(width) ?? 0
-    const numericHeight = toNumeric(height) ?? 0
+    const numericWidth = distance.parse(width) ?? 0
+    const numericHeight = distance.parse(height) ?? 0
     const halfWidth = numericWidth / 2
     const halfHeight = numericHeight / 2
     minX = Math.min(minX, centerX - halfWidth)
@@ -448,11 +437,11 @@ export function convertCircuitJsonToPcbSvg(
 
   function updateBoardBounds(center: any, width: any, height: any) {
     if (!center) return
-    const centerX = toNumeric(center.x)
-    const centerY = toNumeric(center.y)
+    const centerX = distance.parse(center.x)
+    const centerY = distance.parse(center.y)
     if (centerX === undefined || centerY === undefined) return
-    const numericWidth = toNumeric(width) ?? 0
-    const numericHeight = toNumeric(height) ?? 0
+    const numericWidth = distance.parse(width) ?? 0
+    const numericHeight = distance.parse(height) ?? 0
     const halfWidth = numericWidth / 2
     const halfHeight = numericHeight / 2
     boardMinX = Math.min(boardMinX, centerX - halfWidth)
@@ -466,8 +455,8 @@ export function convertCircuitJsonToPcbSvg(
   function updateBoundsToIncludeOutline(outline: Point[]) {
     let updated = false
     for (const point of outline) {
-      const x = toNumeric(point.x)
-      const y = toNumeric(point.y)
+      const x = distance.parse(point.x)
+      const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
       minX = Math.min(minX, x)
       minY = Math.min(minY, y)
@@ -483,8 +472,8 @@ export function convertCircuitJsonToPcbSvg(
   function updateBoardBoundsToIncludeOutline(outline: Point[]) {
     let updated = false
     for (const point of outline) {
-      const x = toNumeric(point.x)
-      const y = toNumeric(point.y)
+      const x = distance.parse(point.x)
+      const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
       boardMinX = Math.min(boardMinX, x)
       boardMinY = Math.min(boardMinY, y)
@@ -501,8 +490,8 @@ export function convertCircuitJsonToPcbSvg(
   function updateTraceBounds(route: any[]) {
     let updated = false
     for (const point of route) {
-      const x = toNumeric(point?.x)
-      const y = toNumeric(point?.y)
+      const x = distance.parse(point?.x)
+      const y = distance.parse(point?.y)
       if (x === undefined || y === undefined) continue
       minX = Math.min(minX, x)
       minY = Math.min(minY, y)
@@ -523,7 +512,7 @@ export function convertCircuitJsonToPcbSvg(
     } else if (item.type === "pcb_silkscreen_rect") {
       updateBounds(item.center, item.width, item.height)
     } else if (item.type === "pcb_silkscreen_circle") {
-      const radius = toNumeric(item.radius)
+      const radius = distance.parse(item.radius)
       if (radius !== undefined) {
         updateBounds(item.center, radius * 2, radius * 2)
       }
@@ -535,7 +524,7 @@ export function convertCircuitJsonToPcbSvg(
       if (cutout.shape === "rect") {
         updateBounds(cutout.center, cutout.width, cutout.height)
       } else if (cutout.shape === "circle") {
-        const radius = toNumeric(cutout.radius)
+        const radius = distance.parse(cutout.radius)
         if (radius !== undefined) {
           updateBounds(cutout.center, radius * 2, radius * 2)
         }

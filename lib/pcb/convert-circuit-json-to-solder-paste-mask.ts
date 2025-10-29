@@ -1,4 +1,5 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
+import type { Point, AnyCircuitElement, PcbPanel } from "circuit-json"
+import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   applyToPoint,
@@ -39,6 +40,7 @@ export function convertCircuitJsonToSolderPasteMask(
   const filteredCircuitJson = circuitJson.filter(
     (elm) =>
       elm.type === "pcb_board" ||
+      elm.type === "pcb_panel" ||
       (elm.type === "pcb_solder_paste" && elm.layer === options.layer),
   )
 
@@ -53,6 +55,13 @@ export function convertCircuitJsonToSolderPasteMask(
         updateBoundsToIncludeOutline(item.outline)
       } else if ("center" in item && "width" in item && "height" in item) {
         updateBounds(item.center, item.width, item.height)
+      }
+    } else if (item.type === "pcb_panel") {
+      const panel = item as PcbPanel
+      const width = distance.parse(panel.width)
+      const height = distance.parse(panel.height)
+      if (width !== undefined && height !== undefined) {
+        updateBounds({ x: width / 2, y: height / 2 }, width, height)
       }
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)
