@@ -1,4 +1,5 @@
 import type { Point, AnyCircuitElement, PcbPanel } from "circuit-json"
+import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
 import {
   applyToPoint,
@@ -12,7 +13,6 @@ import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circui
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { toNumeric } from "../utils/to-numeric"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
@@ -58,8 +58,8 @@ export function convertCircuitJsonToSolderPasteMask(
       }
     } else if (item.type === "pcb_panel") {
       const panel = item as PcbPanel
-      const width = toNumeric(panel.width)
-      const height = toNumeric(panel.height)
+      const width = distance.parse(panel.width)
+      const height = distance.parse(panel.height)
       if (width !== undefined && height !== undefined) {
         updateBounds({ x: width / 2, y: height / 2 }, width, height)
       }
