@@ -25,7 +25,7 @@ test("soldermask is rendered when enabled", () => {
       copper: { top: "#ff0000" },
       soldermask: { top: "#00ff00" },
     },
-    renderSolderMask: true,
+    showSolderMask: true,
   })
 
   expect(svg).toMatchSvgSnapshot(import.meta.path, "soldermask-enabled")

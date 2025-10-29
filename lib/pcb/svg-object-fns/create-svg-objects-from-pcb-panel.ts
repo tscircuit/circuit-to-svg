@@ -7,7 +7,7 @@ export function createSvgObjectsFromPcbPanel(
   pcbPanel: PcbPanel,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap, renderSolderMask } = ctx
+  const { transform, colorMap, showSolderMask } = ctx
   const width = Number(pcbPanel.width)
   const height = Number(pcbPanel.height)
 
@@ -23,8 +23,8 @@ export function createSvgObjectsFromPcbPanel(
     `L ${bottomLeft[0]} ${bottomLeft[1]} Z`
 
   const isCoveredWithSolderMask = pcbPanel.covered_with_solder_mask !== false
-  const shouldRenderSolderMask = Boolean(
-    renderSolderMask && isCoveredWithSolderMask,
+  const shouldshowSolderMask = Boolean(
+    showSolderMask && isCoveredWithSolderMask,
   )
 
   return [
