@@ -21,6 +21,7 @@ export function createSvgObjectsFromPcbNoteRect(
     has_stroke,
     is_stroke_dashed,
     color,
+    corner_radius,
   } = noteRect
 
   if (
@@ -53,6 +54,10 @@ export function createSvgObjectsFromPcbNoteRect(
 
   const baseStrokeWidth = typeof stroke_width === "number" ? stroke_width : 0
   const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
+  const baseCornerRadius =
+    typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+  const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
+  const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
   const overlayColor = color ?? DEFAULT_OVERLAY_COLOR
   const attributes: Record<string, string> = {
@@ -65,7 +70,13 @@ export function createSvgObjectsFromPcbNoteRect(
     "data-pcb-note-rect-id": noteRect.pcb_note_rect_id,
     "data-pcb-layer": "overlay",
   }
+  if (transformedCornerRadiusX > 0) {
+    attributes.rx = transformedCornerRadiusX.toString()
+  }
 
+  if (transformedCornerRadiusY > 0) {
+    attributes.ry = transformedCornerRadiusY.toString()
+  }
   if (is_filled) {
     attributes.fill = color ?? DEFAULT_FILL_COLOR
   } else {
