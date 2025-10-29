@@ -23,6 +23,7 @@ export function createSvgObjectsFromPcbFabricationNoteRect(
     layer = "top",
     pcb_component_id,
     pcb_fabrication_note_rect_id,
+    corner_radius,
   } = fabricationNoteRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -63,6 +64,10 @@ export function createSvgObjectsFromPcbFabricationNoteRect(
   const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
 
   const overlayStrokeColor = color ?? DEFAULT_OVERLAY_STROKE_COLOR
+  const baseCornerRadius =
+    typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+  const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
+  const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
   const attributes: Record<string, string> = {
     x: rectX.toString(),
@@ -77,6 +82,13 @@ export function createSvgObjectsFromPcbFabricationNoteRect(
 
   if (pcb_component_id !== undefined) {
     attributes["data-pcb-component-id"] = pcb_component_id
+  }
+  if (transformedCornerRadiusX > 0) {
+    attributes.rx = transformedCornerRadiusX.toString()
+  }
+
+  if (transformedCornerRadiusY > 0) {
+    attributes.ry = transformedCornerRadiusY.toString()
   }
 
   if (is_filled) {

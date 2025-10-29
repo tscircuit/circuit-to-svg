@@ -18,6 +18,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     is_filled,
     has_stroke,
     is_stroke_dashed,
+    corner_radius,
   } = pcbSilkscreenRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -37,6 +38,10 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     center.x,
     center.y,
   ])
+  const baseCornerRadius =
+    typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+  const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
+  const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
   const transformedWidth = width * Math.abs(transform.a)
   const transformedHeight = height * Math.abs(transform.d)
@@ -55,6 +60,13 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
     "data-type": "pcb_silkscreen_rect",
     "data-pcb-layer": layer,
+  }
+  if (transformedCornerRadiusX > 0) {
+    attributes.rx = transformedCornerRadiusX.toString()
+  }
+
+  if (transformedCornerRadiusY > 0) {
+    attributes.ry = transformedCornerRadiusY.toString()
   }
 
   attributes.fill = is_filled ? color : "none"
