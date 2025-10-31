@@ -30,6 +30,7 @@ import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
 import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
 import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
+import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -42,6 +43,7 @@ interface Options {
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
   includeVersion?: boolean
+  showErrorsInTextOverlay?: boolean
 }
 
 // Build CSS rules to highlight all traces sharing a connectivity key
@@ -309,6 +311,13 @@ export function convertCircuitJsonToSchematicSvg(
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)
   const version = CIRCUIT_TO_SVG_VERSION
+
+  if (options?.showErrorsInTextOverlay) {
+    const errorOverlay = createErrorTextOverlay(circuitJson)
+    if (errorOverlay) {
+      svgChildren.push(errorOverlay)
+    }
+  }
 
   const svgObject: SvgObject = {
     name: "svg",

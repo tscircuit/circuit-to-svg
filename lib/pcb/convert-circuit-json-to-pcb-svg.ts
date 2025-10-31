@@ -56,6 +56,7 @@ import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-object
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 interface PointObjectNotation {
   x: number
@@ -67,6 +68,7 @@ interface Options {
   width?: number
   height?: number
   shouldDrawErrors?: boolean
+  showErrorsInTextOverlay?: boolean
   shouldDrawRatsNest?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
@@ -389,6 +391,16 @@ export function convertCircuitJsonToPcbSvg(
 
   if (gridObjects.rect) {
     children.push(gridObjects.rect)
+  }
+
+  if (options?.showErrorsInTextOverlay) {
+    const errorOverlay = createErrorTextOverlay(
+      circuitJson,
+      "pcb_error_text_overlay",
+    )
+    if (errorOverlay) {
+      children.push(errorOverlay)
+    }
   }
 
   const softwareUsedString = getSoftwareUsedString(circuitJson)

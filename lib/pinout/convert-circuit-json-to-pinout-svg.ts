@@ -14,6 +14,7 @@ import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-ob
 import { createSvgObjectsFromPinoutPort } from "./svg-object-fns/create-svg-objects-from-pinout-port"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import {
   calculateLabelPositions,
   type LabelPosition,
@@ -42,6 +43,7 @@ interface Options {
   width?: number
   height?: number
   includeVersion?: boolean
+  showErrorsInTextOverlay?: boolean
 }
 
 export interface PinoutLabel {
@@ -283,6 +285,30 @@ export function convertCircuitJsonToPinoutSvg(
   const softwareUsedString = getSoftwareUsedString(soup)
   const version = CIRCUIT_TO_SVG_VERSION
 
+  const children: SvgObject[] = [
+    {
+      name: "rect",
+      type: "element",
+      attributes: {
+        fill: "rgb(255, 255, 255)",
+        x: "0",
+        y: "0",
+        width: svgWidth.toString(),
+        height: svgHeight.toString(),
+      },
+      value: "",
+      children: [],
+    },
+    ...svgObjects,
+  ].filter((child): child is SvgObject => child !== null)
+
+  if (options?.showErrorsInTextOverlay) {
+    const errorOverlay = createErrorTextOverlay(soup)
+    if (errorOverlay) {
+      children.push(errorOverlay)
+    }
+  }
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -298,22 +324,7 @@ export function convertCircuitJsonToPinoutSvg(
       }),
     },
     value: "",
-    children: [
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          fill: "rgb(255, 255, 255)",
-          x: "0",
-          y: "0",
-          width: svgWidth.toString(),
-          height: svgHeight.toString(),
-        },
-        value: "",
-        children: [],
-      },
-      ...svgObjects,
-    ].filter((child): child is SvgObject => child !== null),
+    children,
   }
 
   return stringify(svgObject)
