@@ -76,8 +76,8 @@ function getLayerPriority(layer?: string): number {
     return 5 + layerIndex
   }
   if (normalized === "through") return 18
-  if (normalized === "top") return 16
-  if (normalized === "drill") return 17
+  if (normalized === "top") return 17
+  if (normalized === "drill") return 30
   if (normalized === "overlay") return 40
 
   return 10
