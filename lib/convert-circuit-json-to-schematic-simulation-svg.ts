@@ -23,6 +23,7 @@ interface ConvertSchematicSimulationParams {
     "width" | "height" | "includeVersion"
   >
   includeVersion?: boolean
+  showErrorsInTextOverlay?: boolean
 }
 
 const DEFAULT_WIDTH = 1200
@@ -38,6 +39,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   schematicHeightRatio = DEFAULT_SCHEMATIC_RATIO,
   schematicOptions,
   includeVersion,
+  showErrorsInTextOverlay,
 }: ConvertSchematicSimulationParams): string {
   const schematicElements = circuitJson.filter(
     (element): element is AnyCircuitElement =>
@@ -58,6 +60,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     width,
     height: schematicHeight,
     includeVersion: false,
+    showErrorsInTextOverlay,
   })
 
   const simulationSvg = convertCircuitJsonToSimulationGraphSvg({

@@ -14,6 +14,7 @@ import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -25,6 +26,7 @@ interface Options {
   width?: number
   height?: number
   includeVersion?: boolean
+  showErrorsInTextOverlay?: boolean
 }
 
 export function convertCircuitJsonToSolderPasteMask(
@@ -110,6 +112,40 @@ export function convertCircuitJsonToSolderPasteMask(
   const softwareUsedString = getSoftwareUsedString(circuitJson)
   const version = CIRCUIT_TO_SVG_VERSION
 
+  const children: SvgObject[] = [
+    {
+      name: "style",
+      type: "element",
+      children: [
+        {
+          type: "text",
+          value: "",
+        },
+      ],
+    },
+    {
+      name: "rect",
+      type: "element",
+      attributes: {
+        class: "boundary",
+        x: "0",
+        y: "0",
+        fill: "#000",
+        width: svgWidth.toString(),
+        height: svgHeight.toString(),
+      },
+    },
+    createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
+    ...svgObjects,
+  ].filter((child): child is SvgObject => child !== null)
+
+  if (options?.showErrorsInTextOverlay) {
+    const errorOverlay = createErrorTextOverlay(circuitJson)
+    if (errorOverlay) {
+      children.push(errorOverlay)
+    }
+  }
+
   const svgObject: SvgObject = {
     name: "svg",
     type: "element",
@@ -125,32 +161,7 @@ export function convertCircuitJsonToSolderPasteMask(
       }),
     },
     value: "",
-    children: [
-      {
-        name: "style",
-        type: "element",
-        children: [
-          {
-            type: "text",
-            value: "",
-          },
-        ],
-      },
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "boundary",
-          x: "0",
-          y: "0",
-          fill: "#000",
-          width: svgWidth.toString(),
-          height: svgHeight.toString(),
-        },
-      },
-      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
-      ...svgObjects,
-    ].filter((child): child is SvgObject => child !== null),
+    children,
   }
 
   try {

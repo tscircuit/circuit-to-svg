@@ -15,6 +15,7 @@ import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -28,6 +29,7 @@ interface Options {
   width?: number
   height?: number
   includeVersion?: boolean
+  showErrorsInTextOverlay?: boolean
 }
 
 export interface AssemblySvgContext {
@@ -91,29 +93,14 @@ export function convertCircuitJsonToAssemblySvg(
   const softwareUsedString = getSoftwareUsedString(soup)
   const version = CIRCUIT_TO_SVG_VERSION
 
-  const svgObject: SvgObject = {
-    name: "svg",
-    type: "element",
-    attributes: {
-      xmlns: "http://www.w3.org/2000/svg",
-      width: svgWidth.toString(),
-      height: svgHeight.toString(),
-      ...(softwareUsedString && {
-        "data-software-used-string": softwareUsedString,
-      }),
-      ...(options?.includeVersion && {
-        "data-circuit-to-svg-version": version,
-      }),
-    },
-    value: "",
-    children: [
-      {
-        name: "style",
-        type: "element",
-        children: [
-          {
-            type: "text",
-            value: `
+  const children: SvgObject[] = [
+    {
+      name: "style",
+      type: "element",
+      children: [
+        {
+          type: "text",
+          value: `
               .assembly-component { 
                 fill: none; 
                 stroke: #000; 
@@ -136,30 +123,54 @@ export function convertCircuitJsonToAssemblySvg(
                 stroke-width: 0.2; 
               }
             `,
-            name: "",
-            attributes: {},
-            children: [],
-          },
-        ],
-        value: "",
-        attributes: {},
-      },
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          fill: "#fff",
-          x: "0",
-          y: "0",
-          width: svgWidth.toString(),
-          height: svgHeight.toString(),
+          name: "",
+          attributes: {},
+          children: [],
         },
-        value: "",
-        children: [],
+      ],
+      value: "",
+      attributes: {},
+    },
+    {
+      name: "rect",
+      type: "element",
+      attributes: {
+        fill: "#fff",
+        x: "0",
+        y: "0",
+        width: svgWidth.toString(),
+        height: svgHeight.toString(),
       },
-      createSvgObjectFromAssemblyBoundary(transform, minX, minY, maxX, maxY),
-      ...svgObjects,
-    ].filter((child): child is SvgObject => child !== null),
+      value: "",
+      children: [],
+    },
+    createSvgObjectFromAssemblyBoundary(transform, minX, minY, maxX, maxY),
+    ...svgObjects,
+  ].filter((child): child is SvgObject => child !== null)
+
+  if (options?.showErrorsInTextOverlay) {
+    const errorOverlay = createErrorTextOverlay(soup)
+    if (errorOverlay) {
+      children.push(errorOverlay)
+    }
+  }
+
+  const svgObject: SvgObject = {
+    name: "svg",
+    type: "element",
+    attributes: {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: svgWidth.toString(),
+      height: svgHeight.toString(),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
+    },
+    value: "",
+    children,
   }
 
   return stringify(svgObject)

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
+              .assembly-component { 
+                fill: none; 
+                stroke: #000; 
+              }
+              .assembly-board { 
+                fill: #f2f2f2; 
+                stroke: rgb(0,0,0); 
+                stroke-opacity: 0.8;
+              }
+              .assembly-component-label { 
+                fill: #000; 
+                font-family: Arial, serif;
+                font-weight: bold;
+                dominant-baseline: middle;
+                text-anchor: middle;
+              }
+              .assembly-boundary { 
+                fill: none; 
+                stroke: #fff;
+                stroke-width: 0.2; 
+              }
+            </style><rect fill="#fff" x="0" y="0" width="800" height="600"/><rect class="assembly-boundary" x="150" y="50" width="500" height="500"/><path class="pcb-board" d="M 150 550 L 650 550 L 650 50 L 150 50 Z" fill="none" stroke="rgb(0,0,0)" stroke-opacity="0.8" stroke-width="10"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="362.5" y="287.5" width="25" height="25" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="412.5" y="287.5" width="25" height="25" data-layer="top"/><g transform="translate(400, 300) scale(1, -1)"><path class="assembly-component" d="M-30,-15 L30,-15 L30,15 L-30,15 Z" stroke-width="0.80" transform="rotate(0)" stroke-dasharray=""/><text x="0" y="0" class="assembly-component-label" text-anchor="middle" dy=".10em" style="pointer-events: none" font-size="24.0px" transform="scale(1, -1)">R1</text><polygon class="assembly-pin1-indicator" points="-30,15 -22.5,15 -30,7.5" fill="#333" stroke="none" transform="rotate(0)"/></g><g transform="translate(450, 250) scale(1, -1)"><path class="assembly-component" d="M-25,-25 L25,-25 L25,25 L-25,25 Z" stroke-width="0.80" transform="rotate(0)" stroke-dasharray=""/><text x="0" y="0" class="assembly-component-label" text-anchor="middle" dy=".10em" style="pointer-events: none" font-size="40.0px" transform="scale(1, -1)">U1</text><polygon class="assembly-pin1-indicator" points="-25,-25 -12.5,-25 -25,-12.5" fill="#333" stroke="none" transform="rotate(0)"/></g><text x="10" y="20" fill="red" font-family="monospace" font-size="12px" data-type="error_text_overlay" data-layer="global"><tspan x="10" dy="0"><![CDATA[No footprint found for component: <resistor#0 name=".R1" />]]></tspan><tspan x="10" dy="1.2em">SMT pads and plated hole overlap detected</tspan></text></svg>
