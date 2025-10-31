@@ -6,10 +6,11 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_panel: 5,
   pcb_board: 10,
   pcb_cutout: 15,
+  pcb_trace: 17,
+
   pcb_hole: 18,
   pcb_plated_hole_drill: 19,
   pcb_plated_hole: 20,
-  pcb_trace: 30,
   pcb_smtpad: 30,
   pcb_copper_pour: 35,
   pcb_via: 36,
@@ -75,8 +76,8 @@ function getLayerPriority(layer?: string): number {
     return 5 + layerIndex
   }
   if (normalized === "through") return 18
-  if (normalized === "top") return 20
-  if (normalized === "drill") return 30
+  if (normalized === "top") return 16
+  if (normalized === "drill") return 17
   if (normalized === "overlay") return 40
 
   return 10
