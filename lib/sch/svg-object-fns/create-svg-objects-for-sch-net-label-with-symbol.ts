@@ -23,6 +23,7 @@ import {
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
   getTextOffsets,
+  getPathRotation,
 } from "../../utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import type { ColorMap } from "lib/utils/colors"
@@ -89,9 +90,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       (realTextGrowthVec.y * fullWidthFsr * fontSizeMm) / 2,
   }
 
-  // Symbols referenced by name already encode their orientation, so
-  // no additional rotation should be applied based on `anchor_side`.
-  const pathRotation = 0
+  const pathRotation = getPathRotation(schNetLabel.anchor_side)
 
   // Create transformation matrix that matches net label positioning
   // Calculate the rotation matrix based on the path rotation
@@ -221,8 +220,6 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     const scale = Math.abs(realToScreenTransform.a)
     const baseOffset = scale * 0.1 // Base offset unit in screen coordinates
 
-    // Symbols define their own text placement, so no additional
-    // offsets should be applied based on path rotation.
     const offsetScreenPos = {
       x: screenTextPos.x,
       y: screenTextPos.y,
