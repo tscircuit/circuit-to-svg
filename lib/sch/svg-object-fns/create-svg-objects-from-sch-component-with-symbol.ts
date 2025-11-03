@@ -6,14 +6,8 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
-import { parseSync } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  translate,
-  type Matrix,
-} from "transformation-matrix"
+import { symbols, type SchSymbol } from "schematic-symbols"
+import { applyToPoint, compose, type Matrix } from "transformation-matrix"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
@@ -35,21 +29,6 @@ const ninePointAnchorToTextAnchor: Record<
   center: "middle",
   middle_top: "middle",
   middle_bottom: "middle",
-}
-
-const ninePointAnchorToDominantBaseline: Record<
-  TextPrimitive["anchor"],
-  "hanging" | "ideographic" | "middle"
-> = {
-  top_left: "hanging",
-  top_right: "hanging",
-  bottom_left: "ideographic",
-  bottom_right: "ideographic",
-  center: "middle",
-  middle_left: "middle",
-  middle_right: "middle",
-  middle_top: "hanging",
-  middle_bottom: "ideographic",
 }
 
 export const createSvgObjectsFromSchematicComponentWithSymbol = ({

@@ -1,7 +1,6 @@
 import type {
   Point,
   AnyCircuitElement,
-  pcb_cutout,
   PcbCutout,
   PcbPanel,
 } from "circuit-json"

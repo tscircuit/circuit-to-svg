@@ -2,16 +2,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  scale,
-  translate,
-  fromTriangles,
-  type Matrix,
-  fromTwoMovingPoints,
-  toSVG,
-} from "transformation-matrix"
+import { fromTriangles, toSVG } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
