@@ -100,11 +100,7 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
   return objects
 }
 
-function createAnchorMarker(
-  x: number,
-  y: number,
-  scale: number,
-): SvgObject {
+function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
   const size = 5
   const strokeWidth = 1.5
 
@@ -251,9 +247,7 @@ interface VerticalDimensionParams {
   scale: number
 }
 
-function createVerticalDimension(
-  params: VerticalDimensionParams,
-): SvgObject[] {
+function createVerticalDimension(params: VerticalDimensionParams): SvgObject[] {
   const { x, startY, endY, offsetMm, scale } = params
   const objects: SvgObject[] = []
   const strokeWidth = 1
