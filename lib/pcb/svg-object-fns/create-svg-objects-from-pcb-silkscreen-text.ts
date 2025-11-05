@@ -9,6 +9,9 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { createPcbSilkscreenAnchorOffsetIndicators } from "../../utils/create-pcb-silkscreen-anchor-offset-indicators"
+import { estimateTextWidth } from "../../sch/estimate-text-width"
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
@@ -152,5 +155,55 @@ export function createSvgObjectsFromPcbSilkscreenText(
     value: "",
   }
 
-  return [svgObject]
+  const svgObjects: SvgObject[] = [svgObject]
+
+  // Add anchor offset indicators if enabled
+  if (ctx.showAnchorOffsets && anchor_position) {
+    const renderedPosition = calculateRenderedTextPosition(
+      anchor_position,
+      anchor_alignment,
+      text,
+      font_size,
+    )
+
+    svgObjects.push(
+      ...createPcbSilkscreenAnchorOffsetIndicators({
+        anchorPosition: anchor_position,
+        renderedPosition,
+        transform,
+      }),
+    )
+  }
+
+  return svgObjects
+}
+
+function calculateRenderedTextPosition(
+  anchorPos: { x: number; y: number },
+  alignment: string,
+  text: string,
+  fontSize: number,
+): { x: number; y: number } {
+  const textWidthFSR = estimateTextWidth(text)
+  const textWidth = textWidthFSR * fontSize
+  const textHeight = fontSize
+
+  let x = anchorPos.x
+  let y = anchorPos.y
+
+  // Adjust X based on alignment
+  if (alignment.includes("left")) {
+    x += textWidth / 2
+  } else if (alignment.includes("right")) {
+    x -= textWidth / 2
+  }
+
+  // Adjust Y based on alignment
+  if (alignment.includes("top")) {
+    y += textHeight / 2
+  } else if (alignment.includes("bottom")) {
+    y -= textHeight / 2
+  }
+
+  return { x, y }
 }
