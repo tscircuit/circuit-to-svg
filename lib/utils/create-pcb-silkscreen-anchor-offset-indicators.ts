@@ -32,66 +32,45 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
   objects.push(createAnchorMarker(screenAnchorX, screenAnchorY, scale))
 
   const dimensionOffset = 20
-  const offsetCornerY = screenRenderedY - Math.sign(offsetY) * dimensionOffset
-  const cornerX = screenAnchorX
+  const connectorGap = 10
+  const verticalDirection =
+    Math.abs(offsetY) < OFFSET_THRESHOLD ? -1 : Math.sign(offsetY)
+  const extraOffset = Math.abs(offsetY) < OFFSET_THRESHOLD ? 20 : 0
+  const offsetCornerY =
+    screenRenderedY - verticalDirection * (dimensionOffset + extraOffset)
+  const horizontalDirection =
+    Math.abs(offsetX) > OFFSET_THRESHOLD ? -Math.sign(offsetX) : 1
+  const cornerX = screenAnchorX + horizontalDirection * 12
   const cornerY = offsetCornerY
 
   if (Math.abs(offsetX) > OFFSET_THRESHOLD) {
-    objects.push({
-      name: "line",
-      type: "element",
-      attributes: {
-        x1: screenAnchorX.toString(),
-        y1: screenAnchorY.toString(),
-        x2: screenAnchorX.toString(),
-        y2: cornerY.toString(),
-        stroke: "#ffffff",
-        "stroke-width": "0.5",
-        "stroke-dasharray": "2,2",
-        class: "anchor-offset-connector",
-      },
-      children: [],
-      value: "",
-    })
-
     objects.push(
       ...createHorizontalDimension({
         startX: screenAnchorX,
         endX: screenRenderedX,
         y: cornerY,
         offsetMm: offsetX,
+        offsetY: offsetY,
         scale,
       }),
     )
   }
 
-  // Vertical dimension line: at anchor X position, offset in Y
   if (Math.abs(offsetY) > OFFSET_THRESHOLD) {
-    const offsetAnchorY = screenAnchorY - Math.sign(offsetY) * dimensionOffset
-
-    objects.push({
-      name: "line",
-      type: "element",
-      attributes: {
-        x1: screenRenderedX.toString(),
-        y1: screenRenderedY.toString(),
-        x2: screenRenderedX.toString(),
-        y2: cornerY.toString(),
-        stroke: "#ffffff",
-        "stroke-width": "0.5",
-        "stroke-dasharray": "2,2",
-        class: "anchor-offset-connector",
-      },
-      children: [],
-      value: "",
-    })
+    const anchorMarkerSize = 5
+    const dimensionDirection = -Math.sign(offsetY)
+    const dimensionStartY =
+      screenAnchorY - dimensionDirection * (anchorMarkerSize + 0.8)
+    const dimensionEndY = cornerY - dimensionDirection * connectorGap
 
     objects.push(
       ...createVerticalDimension({
         x: cornerX,
-        startY: offsetAnchorY,
-        endY: cornerY,
+        startY: dimensionStartY,
+        endY: dimensionEndY,
         offsetMm: offsetY,
+        offsetX: offsetX,
+        offsetY: offsetY,
         scale,
       }),
     )
@@ -152,13 +131,14 @@ interface HorizontalDimensionParams {
   endX: number
   y: number
   offsetMm: number
+  offsetY: number
   scale: number
 }
 
 function createHorizontalDimension(
   params: HorizontalDimensionParams,
 ): SvgObject[] {
-  const { startX, endX, y, offsetMm, scale } = params
+  const { startX, endX, y, offsetMm, offsetY, scale } = params
   const objects: SvgObject[] = []
   const strokeWidth = 1
   const tickSize = 4
@@ -211,17 +191,18 @@ function createHorizontalDimension(
   })
 
   const midX = (startX + endX) / 2
+  const labelY = offsetY < 0 ? y + tickSize + 4 : y - tickSize - 4
   objects.push({
     name: "text",
     type: "element",
     attributes: {
       x: midX.toString(),
-      y: (y - tickSize - 8).toString(),
+      y: labelY.toString(),
       fill: "#ffffff",
       "font-size": fontSize.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": "middle",
-      "dominant-baseline": "baseline",
+      "dominant-baseline": offsetY < 0 ? "hanging" : "baseline",
       class: "anchor-offset-label",
     },
     children: [
@@ -244,11 +225,13 @@ interface VerticalDimensionParams {
   startY: number
   endY: number
   offsetMm: number
+  offsetX: number
+  offsetY: number
   scale: number
 }
 
 function createVerticalDimension(params: VerticalDimensionParams): SvgObject[] {
-  const { x, startY, endY, offsetMm, scale } = params
+  const { x, startY, endY, offsetMm, offsetX, offsetY, scale } = params
   const objects: SvgObject[] = []
   const strokeWidth = 1
   const tickSize = 4
@@ -301,16 +284,17 @@ function createVerticalDimension(params: VerticalDimensionParams): SvgObject[] {
   })
 
   const midY = (startY + endY) / 2
+  const labelX = offsetX < 0 ? x + tickSize + 4 : x - tickSize - 4
   objects.push({
     name: "text",
     type: "element",
     attributes: {
-      x: (x - tickSize - 8).toString(),
+      x: labelX.toString(),
       y: midY.toString(),
       fill: "#ffffff",
       "font-size": fontSize.toString(),
       "font-family": "Arial, sans-serif",
-      "text-anchor": "end",
+      "text-anchor": offsetX < 0 ? "start" : "end",
       "dominant-baseline": "middle",
       class: "anchor-offset-label",
     },
