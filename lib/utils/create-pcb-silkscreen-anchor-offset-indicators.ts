@@ -15,7 +15,6 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
   const { anchorPosition, renderedPosition, transform } = params
   const objects: SvgObject[] = []
 
-  // Transform positions to screen coordinates
   const [screenAnchorX, screenAnchorY] = applyToPoint(transform, [
     anchorPosition.x,
     anchorPosition.y,
@@ -30,22 +29,14 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
 
   const scale = Math.abs(transform.a)
 
-  // Always show the anchor marker
   objects.push(createAnchorMarker(screenAnchorX, screenAnchorY, scale))
 
-  // Offset for dimension lines from text to avoid overlap
-  const dimensionOffset = 20 // pixels to offset dimension lines
-
-  // Create L-shaped dimension lines
-  // Offset the entire L-shape away from the text
-  // SUBTRACT to move up in screen coordinates (Y increases downward)
+  const dimensionOffset = 20
   const offsetCornerY = screenRenderedY - Math.sign(offsetY) * dimensionOffset
   const cornerX = screenAnchorX
   const cornerY = offsetCornerY
 
-  // Horizontal dimension line: offset in Y direction
   if (Math.abs(offsetX) > OFFSET_THRESHOLD) {
-    // Connector from anchor to where horizontal dimension line is
     objects.push({
       name: "line",
       type: "element",
@@ -76,10 +67,8 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
 
   // Vertical dimension line: at anchor X position, offset in Y
   if (Math.abs(offsetY) > OFFSET_THRESHOLD) {
-    // Calculate offset anchor Y position
     const offsetAnchorY = screenAnchorY - Math.sign(offsetY) * dimensionOffset
-    
-    // Connector from rendered position to the horizontal dimension line
+
     objects.push({
       name: "line",
       type: "element",
@@ -179,7 +168,6 @@ function createHorizontalDimension(
   const tickSize = 4
   const fontSize = 11
 
-  // Main horizontal line
   objects.push({
     name: "line",
     type: "element",
@@ -196,7 +184,6 @@ function createHorizontalDimension(
     value: "",
   })
 
-  // Start tick
   objects.push({
     name: "line",
     type: "element",
@@ -212,7 +199,6 @@ function createHorizontalDimension(
     value: "",
   })
 
-  // End tick
   objects.push({
     name: "line",
     type: "element",
@@ -228,7 +214,6 @@ function createHorizontalDimension(
     value: "",
   })
 
-  // Text label - positioned further above the line
   const midX = (startX + endX) / 2
   objects.push({
     name: "text",
@@ -275,7 +260,6 @@ function createVerticalDimension(
   const tickSize = 4
   const fontSize = 11
 
-  // Main vertical line
   objects.push({
     name: "line",
     type: "element",
@@ -292,7 +276,6 @@ function createVerticalDimension(
     value: "",
   })
 
-  // Start tick
   objects.push({
     name: "line",
     type: "element",
@@ -308,7 +291,6 @@ function createVerticalDimension(
     value: "",
   })
 
-  // End tick
   objects.push({
     name: "line",
     type: "element",
@@ -324,7 +306,6 @@ function createVerticalDimension(
     value: "",
   })
 
-  // Text label - positioned further to the left of the line
   const midY = (startY + endY) / 2
   objects.push({
     name: "text",
