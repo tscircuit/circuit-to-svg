@@ -8,6 +8,25 @@ export interface PcbSilkscreenAnchorOffsetParams {
   fontSize: number
 }
 
+interface HorizontalDimensionParams {
+  startX: number
+  endX: number
+  y: number
+  offsetMm: number
+  offsetY: number
+  scale: number
+}
+
+interface VerticalDimensionParams {
+  x: number
+  startY: number
+  endY: number
+  offsetMm: number
+  offsetX: number
+  offsetY: number
+  scale: number
+}
+
 const OFFSET_THRESHOLD = 0.01
 
 export function createPcbSilkscreenAnchorOffsetIndicators(
@@ -129,19 +148,14 @@ function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
   }
 }
 
-interface HorizontalDimensionParams {
-  startX: number
-  endX: number
-  y: number
-  offsetMm: number
-  offsetY: number
-  scale: number
-}
-
-function createHorizontalDimension(
-  params: HorizontalDimensionParams,
-): SvgObject[] {
-  const { startX, endX, y, offsetMm, offsetY, scale } = params
+function createHorizontalDimension({
+  startX,
+  endX,
+  y,
+  offsetMm,
+  offsetY,
+  scale,
+}: HorizontalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
   const strokeWidth = 1
   const tickSize = 4
@@ -224,18 +238,15 @@ function createHorizontalDimension(
   return objects
 }
 
-interface VerticalDimensionParams {
-  x: number
-  startY: number
-  endY: number
-  offsetMm: number
-  offsetX: number
-  offsetY: number
-  scale: number
-}
-
-function createVerticalDimension(params: VerticalDimensionParams): SvgObject[] {
-  const { x, startY, endY, offsetMm, offsetX, offsetY, scale } = params
+function createVerticalDimension({
+  x,
+  startY,
+  endY,
+  offsetMm,
+  offsetX,
+  offsetY,
+  scale,
+}: VerticalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
   const strokeWidth = 1
   const tickSize = 4
