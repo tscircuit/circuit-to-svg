@@ -71,7 +71,7 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
         x: cornerX,
         startY: screenAnchorY,
         endY: lineEndY,
-        offsetMm: offsetY,
+        offsetMm: -offsetY,
         offsetX: offsetX,
         offsetY: offsetY,
         scale,
