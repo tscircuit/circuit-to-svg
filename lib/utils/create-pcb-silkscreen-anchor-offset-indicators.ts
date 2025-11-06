@@ -5,14 +5,15 @@ export interface PcbSilkscreenAnchorOffsetParams {
   anchorPosition: { x: number; y: number }
   renderedPosition: { x: number; y: number }
   transform: Matrix
+  fontSize: number
 }
 
-const OFFSET_THRESHOLD = 0.01 // mm
+const OFFSET_THRESHOLD = 0.01
 
 export function createPcbSilkscreenAnchorOffsetIndicators(
   params: PcbSilkscreenAnchorOffsetParams,
 ): SvgObject[] {
-  const { anchorPosition, renderedPosition, transform } = params
+  const { anchorPosition, renderedPosition, transform, fontSize } = params
   const objects: SvgObject[] = []
 
   const [screenAnchorX, screenAnchorY] = applyToPoint(transform, [
@@ -31,13 +32,17 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
 
   objects.push(createAnchorMarker(screenAnchorX, screenAnchorY, scale))
 
-  const dimensionOffset = 20
+  const baseDimensionOffset = 20
+  const fontSizeMultiplier = 20
+  const dimensionOffset = baseDimensionOffset + fontSize * fontSizeMultiplier
   const connectorGap = 10
   const verticalDirection =
-    Math.abs(offsetY) < OFFSET_THRESHOLD ? -1 : Math.sign(offsetY)
-  const extraOffset = Math.abs(offsetY) < OFFSET_THRESHOLD ? 20 : 0
+    Math.abs(offsetY) < OFFSET_THRESHOLD ? -1 : -Math.sign(offsetY)
+  const extraOffset = Math.abs(offsetY) < OFFSET_THRESHOLD ? 10 : 0
+  const actualDimensionOffset =
+    Math.abs(offsetY) < OFFSET_THRESHOLD ? 15 : dimensionOffset
   const offsetCornerY =
-    screenRenderedY - verticalDirection * (dimensionOffset + extraOffset)
+    screenRenderedY - verticalDirection * (actualDimensionOffset + extraOffset)
   const horizontalDirection =
     Math.abs(offsetX) > OFFSET_THRESHOLD ? -Math.sign(offsetX) : 1
   const cornerX = screenAnchorX + horizontalDirection * 12
@@ -57,17 +62,15 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
   }
 
   if (Math.abs(offsetY) > OFFSET_THRESHOLD) {
-    const anchorMarkerSize = 5
-    const dimensionDirection = -Math.sign(offsetY)
-    const dimensionStartY =
-      screenAnchorY - dimensionDirection * (anchorMarkerSize + 0.8)
-    const dimensionEndY = cornerY - dimensionDirection * connectorGap
+    const distanceToTextCenter = Math.abs(screenRenderedY - screenAnchorY)
+    const directionMultiplier = Math.sign(offsetY)
+    const lineEndY = screenAnchorY + directionMultiplier * distanceToTextCenter
 
     objects.push(
       ...createVerticalDimension({
         x: cornerX,
-        startY: dimensionStartY,
-        endY: dimensionEndY,
+        startY: screenAnchorY,
+        endY: lineEndY,
         offsetMm: offsetY,
         offsetX: offsetX,
         offsetY: offsetY,
@@ -191,7 +194,8 @@ function createHorizontalDimension(
   })
 
   const midX = (startX + endX) / 2
-  const labelY = offsetY < 0 ? y + tickSize + 4 : y - tickSize - 4
+  const labelGap = 8
+  const labelY = offsetY < 0 ? y - tickSize - labelGap : y + tickSize + labelGap
   objects.push({
     name: "text",
     type: "element",
@@ -202,7 +206,7 @@ function createHorizontalDimension(
       "font-size": fontSize.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": "middle",
-      "dominant-baseline": offsetY < 0 ? "hanging" : "baseline",
+      "dominant-baseline": offsetY < 0 ? "baseline" : "hanging",
       class: "anchor-offset-label",
     },
     children: [

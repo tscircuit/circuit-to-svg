@@ -171,6 +171,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         anchorPosition: anchor_position,
         renderedPosition,
         transform,
+        fontSize: font_size,
       }),
     )
   }
