@@ -159,12 +159,12 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Add anchor offset indicators if enabled
   if (ctx.showAnchorOffsets && anchor_position) {
-    const renderedPosition = calculateRenderedTextPosition(
-      anchor_position,
-      anchor_alignment,
+    const renderedPosition = calculateRenderedTextPosition({
+      anchorPos: anchor_position,
+      alignment: anchor_alignment,
       text,
-      font_size,
-    )
+      fontSize: font_size,
+    })
 
     svgObjects.push(
       ...createPcbSilkscreenAnchorOffsetIndicators({
@@ -179,12 +179,17 @@ export function createSvgObjectsFromPcbSilkscreenText(
   return svgObjects
 }
 
-function calculateRenderedTextPosition(
-  anchorPos: { x: number; y: number },
-  alignment: string,
-  text: string,
-  fontSize: number,
-): { x: number; y: number } {
+function calculateRenderedTextPosition({
+  anchorPos,
+  alignment,
+  text,
+  fontSize,
+}: {
+  anchorPos: { x: number; y: number }
+  alignment: string
+  text: string
+  fontSize: number
+}): { x: number; y: number } {
   const textWidthFSR = estimateTextWidth(text)
   const textWidth = textWidthFSR * fontSize
   const textHeight = fontSize

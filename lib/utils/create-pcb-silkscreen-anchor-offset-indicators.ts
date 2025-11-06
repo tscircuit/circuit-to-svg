@@ -27,7 +27,18 @@ interface VerticalDimensionParams {
   scale: number
 }
 
-const OFFSET_THRESHOLD = 0.01
+const OFFSET_THRESHOLD_MM = 0.01
+const BASE_DIMENSION_OFFSET_PX = 20
+const FONT_SIZE_MULTIPLIER = 20
+const EXTRA_OFFSET_PX = 10
+const MIN_DIMENSION_OFFSET_PX = 15
+const CORNER_OFFSET_PX = 12
+const TICK_SIZE_PX = 4
+const LABEL_GAP_PX = 8
+const LABEL_FONT_SIZE_PX = 11
+const STROKE_WIDTH_PX = 1
+const ANCHOR_MARKER_SIZE_PX = 5
+const ANCHOR_MARKER_STROKE_WIDTH_PX = 1.5
 
 export function createPcbSilkscreenAnchorOffsetIndicators(
   params: PcbSilkscreenAnchorOffsetParams,
@@ -51,23 +62,24 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
 
   objects.push(createAnchorMarker(screenAnchorX, screenAnchorY, scale))
 
-  const baseDimensionOffset = 20
-  const fontSizeMultiplier = 20
-  const dimensionOffset = baseDimensionOffset + fontSize * fontSizeMultiplier
-  const connectorGap = 10
+  const dimensionOffset =
+    BASE_DIMENSION_OFFSET_PX + fontSize * FONT_SIZE_MULTIPLIER
   const verticalDirection =
-    Math.abs(offsetY) < OFFSET_THRESHOLD ? -1 : -Math.sign(offsetY)
-  const extraOffset = Math.abs(offsetY) < OFFSET_THRESHOLD ? 10 : 0
+    Math.abs(offsetY) < OFFSET_THRESHOLD_MM ? -1 : -Math.sign(offsetY)
+  const extraOffset =
+    Math.abs(offsetY) < OFFSET_THRESHOLD_MM ? EXTRA_OFFSET_PX : 0
   const actualDimensionOffset =
-    Math.abs(offsetY) < OFFSET_THRESHOLD ? 15 : dimensionOffset
+    Math.abs(offsetY) < OFFSET_THRESHOLD_MM
+      ? MIN_DIMENSION_OFFSET_PX
+      : dimensionOffset
   const offsetCornerY =
     screenRenderedY - verticalDirection * (actualDimensionOffset + extraOffset)
   const horizontalDirection =
-    Math.abs(offsetX) > OFFSET_THRESHOLD ? -Math.sign(offsetX) : 1
-  const cornerX = screenAnchorX + horizontalDirection * 12
+    Math.abs(offsetX) > OFFSET_THRESHOLD_MM ? -Math.sign(offsetX) : 1
+  const cornerX = screenAnchorX + horizontalDirection * CORNER_OFFSET_PX
   const cornerY = offsetCornerY
 
-  if (Math.abs(offsetX) > OFFSET_THRESHOLD) {
+  if (Math.abs(offsetX) > OFFSET_THRESHOLD_MM) {
     objects.push(
       ...createHorizontalDimension({
         startX: screenAnchorX,
@@ -80,7 +92,7 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
     )
   }
 
-  if (Math.abs(offsetY) > OFFSET_THRESHOLD) {
+  if (Math.abs(offsetY) > OFFSET_THRESHOLD_MM) {
     const distanceToTextCenter = Math.abs(screenRenderedY - screenAnchorY)
     const directionMultiplier = Math.sign(offsetY)
     const lineEndY = screenAnchorY + directionMultiplier * distanceToTextCenter
@@ -102,9 +114,6 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
 }
 
 function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
-  const size = 5
-  const strokeWidth = 1.5
-
   return {
     name: "g",
     type: "element",
@@ -118,11 +127,11 @@ function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
         type: "element",
         attributes: {
           x1: x.toString(),
-          y1: (y - size).toString(),
+          y1: (y - ANCHOR_MARKER_SIZE_PX).toString(),
           x2: x.toString(),
-          y2: (y + size).toString(),
+          y2: (y + ANCHOR_MARKER_SIZE_PX).toString(),
           stroke: "#ffffff",
-          "stroke-width": strokeWidth.toString(),
+          "stroke-width": ANCHOR_MARKER_STROKE_WIDTH_PX.toString(),
           "stroke-linecap": "round",
         },
         children: [],
@@ -132,12 +141,12 @@ function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
         name: "line",
         type: "element",
         attributes: {
-          x1: (x - size).toString(),
+          x1: (x - ANCHOR_MARKER_SIZE_PX).toString(),
           y1: y.toString(),
-          x2: (x + size).toString(),
+          x2: (x + ANCHOR_MARKER_SIZE_PX).toString(),
           y2: y.toString(),
           stroke: "#ffffff",
-          "stroke-width": strokeWidth.toString(),
+          "stroke-width": ANCHOR_MARKER_STROKE_WIDTH_PX.toString(),
           "stroke-linecap": "round",
         },
         children: [],
@@ -157,9 +166,6 @@ function createHorizontalDimension({
   scale,
 }: HorizontalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
-  const strokeWidth = 1
-  const tickSize = 4
-  const fontSize = 11
 
   objects.push({
     name: "line",
@@ -170,7 +176,7 @@ function createHorizontalDimension({
       x2: endX.toString(),
       y2: y.toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
       class: "anchor-offset-dimension-x",
     },
     children: [],
@@ -182,11 +188,11 @@ function createHorizontalDimension({
     type: "element",
     attributes: {
       x1: startX.toString(),
-      y1: (y - tickSize).toString(),
+      y1: (y - TICK_SIZE_PX).toString(),
       x2: startX.toString(),
-      y2: (y + tickSize).toString(),
+      y2: (y + TICK_SIZE_PX).toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
     },
     children: [],
     value: "",
@@ -197,19 +203,21 @@ function createHorizontalDimension({
     type: "element",
     attributes: {
       x1: endX.toString(),
-      y1: (y - tickSize).toString(),
+      y1: (y - TICK_SIZE_PX).toString(),
       x2: endX.toString(),
-      y2: (y + tickSize).toString(),
+      y2: (y + TICK_SIZE_PX).toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
     },
     children: [],
     value: "",
   })
 
   const midX = (startX + endX) / 2
-  const labelGap = 8
-  const labelY = offsetY < 0 ? y - tickSize - labelGap : y + tickSize + labelGap
+  const labelY =
+    offsetY < 0
+      ? y - TICK_SIZE_PX - LABEL_GAP_PX
+      : y + TICK_SIZE_PX + LABEL_GAP_PX
   objects.push({
     name: "text",
     type: "element",
@@ -217,7 +225,7 @@ function createHorizontalDimension({
       x: midX.toString(),
       y: labelY.toString(),
       fill: "#ffffff",
-      "font-size": fontSize.toString(),
+      "font-size": LABEL_FONT_SIZE_PX.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": "middle",
       "dominant-baseline": offsetY < 0 ? "baseline" : "hanging",
@@ -248,9 +256,6 @@ function createVerticalDimension({
   scale,
 }: VerticalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
-  const strokeWidth = 1
-  const tickSize = 4
-  const fontSize = 11
 
   objects.push({
     name: "line",
@@ -261,7 +266,7 @@ function createVerticalDimension({
       x2: x.toString(),
       y2: endY.toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
       class: "anchor-offset-dimension-y",
     },
     children: [],
@@ -272,12 +277,12 @@ function createVerticalDimension({
     name: "line",
     type: "element",
     attributes: {
-      x1: (x - tickSize).toString(),
+      x1: (x - TICK_SIZE_PX).toString(),
       y1: startY.toString(),
-      x2: (x + tickSize).toString(),
+      x2: (x + TICK_SIZE_PX).toString(),
       y2: startY.toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
     },
     children: [],
     value: "",
@@ -287,19 +292,19 @@ function createVerticalDimension({
     name: "line",
     type: "element",
     attributes: {
-      x1: (x - tickSize).toString(),
+      x1: (x - TICK_SIZE_PX).toString(),
       y1: endY.toString(),
-      x2: (x + tickSize).toString(),
+      x2: (x + TICK_SIZE_PX).toString(),
       y2: endY.toString(),
       stroke: "#ffffff",
-      "stroke-width": strokeWidth.toString(),
+      "stroke-width": STROKE_WIDTH_PX.toString(),
     },
     children: [],
     value: "",
   })
 
   const midY = (startY + endY) / 2
-  const labelX = offsetX < 0 ? x + tickSize + 4 : x - tickSize - 4
+  const labelX = offsetX < 0 ? x + TICK_SIZE_PX + 4 : x - TICK_SIZE_PX - 4
   objects.push({
     name: "text",
     type: "element",
@@ -307,7 +312,7 @@ function createVerticalDimension({
       x: labelX.toString(),
       y: midY.toString(),
       fill: "#ffffff",
-      "font-size": fontSize.toString(),
+      "font-size": LABEL_FONT_SIZE_PX.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": offsetX < 0 ? "start" : "end",
       "dominant-baseline": "middle",
