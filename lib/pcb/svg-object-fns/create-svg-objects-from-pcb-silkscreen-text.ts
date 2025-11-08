@@ -9,11 +9,12 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter, colorMap, circuitJson } = ctx
   const {
     anchor_position,
     text,
