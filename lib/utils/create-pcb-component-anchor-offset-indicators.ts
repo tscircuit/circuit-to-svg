@@ -1,7 +1,6 @@
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-
 export interface PcbComponentAnchorOffsetParams {
   groupAnchorPosition: { x: number; y: number }
   componentPosition: { x: number; y: number }
