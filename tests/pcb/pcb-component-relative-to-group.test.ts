@@ -29,7 +29,7 @@ test("pcb_component with positioned_relative_to_pcb_group_id", () => {
       type: "pcb_component",
       pcb_component_id: "comp_1",
       source_component_id: "source_1",
-      center: { x: -5, y: 3 }, // Relative offset from group center (top-left)
+      center: { x: -5, y: 3 }, // Absolute position (top-left of center)
       width: 5,
       height: 4,
       layer: "top",
@@ -42,7 +42,7 @@ test("pcb_component with positioned_relative_to_pcb_group_id", () => {
       type: "pcb_component",
       pcb_component_id: "comp_2",
       source_component_id: "source_2",
-      center: { x: 3, y: -2 }, // Different relative offset (bottom-right)
+      center: { x: 3, y: -2 }, // Absolute position (bottom-right of center)
       width: 4,
       height: 3,
       layer: "top",

@@ -37,7 +37,7 @@ const COMPONENT_SIDE_GAP_PX = 10
 const DISTANCE_MULTIPLIER = 0.2
 const MAX_OFFSET_PX = 50
 
-export function createPcbComponentAnchorOffsetIndicators(
+export function createAnchorOffsetIndicators(
   params: PcbComponentAnchorOffsetParams,
 ): SvgObject[] {
   const {
