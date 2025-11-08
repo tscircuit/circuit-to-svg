@@ -4,7 +4,7 @@ import type { SvgObject } from "lib/svg-object"
 import { createPcbComponentAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
 
 export function createSvgObjectsFromPcbComponent(
-  component: any,
+  component: PcbComponent,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, circuitJson } = ctx
