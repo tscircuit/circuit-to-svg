@@ -1,11 +1,12 @@
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
-export interface PcbSilkscreenAnchorOffsetParams {
-  anchorPosition: { x: number; y: number }
-  renderedPosition: { x: number; y: number }
+export interface PcbComponentAnchorOffsetParams {
+  groupAnchorPosition: { x: number; y: number }
+  componentPosition: { x: number; y: number }
   transform: Matrix
-  fontSize: number
+  componentWidth?: number
+  componentHeight?: number
 }
 
 interface HorizontalDimensionParams {
@@ -14,7 +15,6 @@ interface HorizontalDimensionParams {
   y: number
   offsetMm: number
   offsetY: number
-  scale: number
 }
 
 interface VerticalDimensionParams {
@@ -23,89 +23,128 @@ interface VerticalDimensionParams {
   endY: number
   offsetMm: number
   offsetX: number
-  offsetY: number
-  scale: number
 }
 
 const OFFSET_THRESHOLD_MM = 0.01
-const BASE_DIMENSION_OFFSET_PX = 20
-const FONT_SIZE_MULTIPLIER = 20
-const EXTRA_OFFSET_PX = 10
-const MIN_DIMENSION_OFFSET_PX = 15
-const CORNER_OFFSET_PX = 12
 const TICK_SIZE_PX = 4
 const LABEL_GAP_PX = 8
 const LABEL_FONT_SIZE_PX = 11
 const STROKE_WIDTH_PX = 1
 const ANCHOR_MARKER_SIZE_PX = 5
 const ANCHOR_MARKER_STROKE_WIDTH_PX = 1.5
+const COMPONENT_GAP_PX = 15
+const COMPONENT_SIDE_GAP_PX = 10
+const DISTANCE_MULTIPLIER = 0.2
+const MAX_OFFSET_PX = 50
 
-export function createPcbSilkscreenAnchorOffsetIndicators(
-  params: PcbSilkscreenAnchorOffsetParams,
+export function createPcbComponentAnchorOffsetIndicators(
+  params: PcbComponentAnchorOffsetParams,
 ): SvgObject[] {
-  const { anchorPosition, renderedPosition, transform, fontSize } = params
+  const {
+    groupAnchorPosition,
+    componentPosition,
+    transform,
+    componentWidth = 0,
+    componentHeight = 0,
+  } = params
   const objects: SvgObject[] = []
 
-  const [screenAnchorX, screenAnchorY] = applyToPoint(transform, [
-    anchorPosition.x,
-    anchorPosition.y,
+  const [screenGroupAnchorX, screenGroupAnchorY] = applyToPoint(transform, [
+    groupAnchorPosition.x,
+    groupAnchorPosition.y,
   ])
-  const [screenRenderedX, screenRenderedY] = applyToPoint(transform, [
-    renderedPosition.x,
-    renderedPosition.y,
+  const [screenComponentX, screenComponentY] = applyToPoint(transform, [
+    componentPosition.x,
+    componentPosition.y,
   ])
 
-  const offsetX = renderedPosition.x - anchorPosition.x
-  const offsetY = renderedPosition.y - anchorPosition.y
+  const offsetX = componentPosition.x - groupAnchorPosition.x
+  const offsetY = componentPosition.y - groupAnchorPosition.y
 
   const scale = Math.abs(transform.a)
+  const screenComponentWidth = componentWidth * scale
+  const screenComponentHeight = componentHeight * scale
 
-  objects.push(createAnchorMarker(screenAnchorX, screenAnchorY, scale))
+  objects.push(
+    createAnchorMarker(screenGroupAnchorX, screenGroupAnchorY),
+  )
 
-  const dimensionOffset =
-    BASE_DIMENSION_OFFSET_PX + fontSize * FONT_SIZE_MULTIPLIER
-  const verticalDirection =
-    Math.abs(offsetY) < OFFSET_THRESHOLD_MM ? -1 : -Math.sign(offsetY)
-  const extraOffset =
-    Math.abs(offsetY) < OFFSET_THRESHOLD_MM ? EXTRA_OFFSET_PX : 0
-  const actualDimensionOffset =
-    Math.abs(offsetY) < OFFSET_THRESHOLD_MM
-      ? MIN_DIMENSION_OFFSET_PX
-      : dimensionOffset
-  const offsetCornerY =
-    screenRenderedY - verticalDirection * (actualDimensionOffset + extraOffset)
-  const horizontalDirection =
-    Math.abs(offsetX) > OFFSET_THRESHOLD_MM ? -Math.sign(offsetX) : 1
-  const cornerX = screenAnchorX + horizontalDirection * CORNER_OFFSET_PX
-  const cornerY = offsetCornerY
+  objects.push({
+    name: "line",
+    type: "element",
+    attributes: {
+      x1: screenGroupAnchorX.toString(),
+      y1: screenGroupAnchorY.toString(),
+      x2: screenComponentX.toString(),
+      y2: screenComponentY.toString(),
+      stroke: "#ffffff",
+      "stroke-width": "0.5",
+      "stroke-dasharray": "3,3",
+      opacity: "0.5",
+      class: "anchor-offset-connector",
+    },
+    children: [],
+    value: "",
+  })
+
+  objects.push({
+    name: "circle",
+    type: "element",
+    attributes: {
+      cx: screenComponentX.toString(),
+      cy: screenComponentY.toString(),
+      r: "2",
+      fill: "#ffffff",
+      opacity: "0.7",
+      class: "anchor-offset-component-marker",
+    },
+    children: [],
+    value: "",
+  })
+
+  const yDistance = Math.abs(screenComponentY - screenGroupAnchorY)
+  const xDistance = Math.abs(screenComponentX - screenGroupAnchorX)
+  const totalDistance = Math.sqrt(
+    xDistance * xDistance + yDistance * yDistance,
+  )
+
+  const componentHeightOffset = screenComponentHeight / 2 + COMPONENT_GAP_PX
+  const dynamicOffset = Math.max(
+    componentHeightOffset,
+    Math.min(MAX_OFFSET_PX, totalDistance * DISTANCE_MULTIPLIER),
+  )
+
+  const horizontalLineY =
+    offsetY > 0
+      ? screenComponentY - dynamicOffset
+      : screenComponentY + dynamicOffset
+
+  const componentWidthOffset = screenComponentWidth / 2 + COMPONENT_SIDE_GAP_PX
+  const verticalLineX =
+    offsetX > 0
+      ? screenComponentX + componentWidthOffset
+      : screenComponentX - componentWidthOffset
 
   if (Math.abs(offsetX) > OFFSET_THRESHOLD_MM) {
     objects.push(
       ...createHorizontalDimension({
-        startX: screenAnchorX,
-        endX: screenRenderedX,
-        y: cornerY,
+        startX: screenGroupAnchorX,
+        endX: screenComponentX,
+        y: horizontalLineY,
         offsetMm: offsetX,
         offsetY: offsetY,
-        scale,
       }),
     )
   }
 
   if (Math.abs(offsetY) > OFFSET_THRESHOLD_MM) {
-    const distanceToTextCenter = Math.abs(screenRenderedY - screenAnchorY)
-    const directionMultiplier = Math.sign(offsetY)
-    const lineEndY = screenAnchorY + directionMultiplier * distanceToTextCenter
-
     objects.push(
       ...createVerticalDimension({
-        x: cornerX,
-        startY: screenAnchorY,
-        endY: lineEndY,
+        x: verticalLineX,
+        startY: screenGroupAnchorY,
+        endY: screenComponentY,
         offsetMm: -offsetY,
         offsetX: offsetX,
-        offsetY: offsetY,
-        scale,
       }),
     )
   }
@@ -113,7 +152,7 @@ export function createPcbSilkscreenAnchorOffsetIndicators(
   return objects
 }
 
-function createAnchorMarker(x: number, y: number, scale: number): SvgObject {
+function createAnchorMarker(x: number, y: number): SvgObject {
   return {
     name: "g",
     type: "element",
@@ -163,7 +202,6 @@ function createHorizontalDimension({
   y,
   offsetMm,
   offsetY,
-  scale,
 }: HorizontalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
 
@@ -215,9 +253,10 @@ function createHorizontalDimension({
 
   const midX = (startX + endX) / 2
   const labelY =
-    offsetY < 0
+    offsetY > 0
       ? y - TICK_SIZE_PX - LABEL_GAP_PX
       : y + TICK_SIZE_PX + LABEL_GAP_PX
+
   objects.push({
     name: "text",
     type: "element",
@@ -228,7 +267,7 @@ function createHorizontalDimension({
       "font-size": LABEL_FONT_SIZE_PX.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": "middle",
-      "dominant-baseline": offsetY < 0 ? "baseline" : "hanging",
+      "dominant-baseline": offsetY > 0 ? "baseline" : "hanging",
       class: "anchor-offset-label",
     },
     children: [
@@ -252,8 +291,6 @@ function createVerticalDimension({
   endY,
   offsetMm,
   offsetX,
-  offsetY,
-  scale,
 }: VerticalDimensionParams): SvgObject[] {
   const objects: SvgObject[] = []
 
@@ -304,7 +341,8 @@ function createVerticalDimension({
   })
 
   const midY = (startY + endY) / 2
-  const labelX = offsetX < 0 ? x + TICK_SIZE_PX + 4 : x - TICK_SIZE_PX - 4
+  const labelX = offsetX < 0 ? x - TICK_SIZE_PX - 4 : x + TICK_SIZE_PX + 4
+
   objects.push({
     name: "text",
     type: "element",
@@ -314,7 +352,7 @@ function createVerticalDimension({
       fill: "#ffffff",
       "font-size": LABEL_FONT_SIZE_PX.toString(),
       "font-family": "Arial, sans-serif",
-      "text-anchor": offsetX < 0 ? "start" : "end",
+      "text-anchor": offsetX < 0 ? "end" : "start",
       "dominant-baseline": "middle",
       class: "anchor-offset-label",
     },

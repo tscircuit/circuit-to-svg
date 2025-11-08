@@ -9,14 +9,12 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { createPcbSilkscreenAnchorOffsetIndicators } from "../../utils/create-pcb-silkscreen-anchor-offset-indicators"
-import { estimateTextWidth } from "../../sch/estimate-text-width"
 
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter, colorMap, circuitJson } = ctx
   const {
     anchor_position,
     text,
@@ -155,61 +153,5 @@ export function createSvgObjectsFromPcbSilkscreenText(
     value: "",
   }
 
-  const svgObjects: SvgObject[] = [svgObject]
-
-  // Add anchor offset indicators if enabled
-  if (ctx.showAnchorOffsets && anchor_position) {
-    const renderedPosition = calculateRenderedTextPosition({
-      anchorPos: anchor_position,
-      alignment: anchor_alignment,
-      text,
-      fontSize: font_size,
-    })
-
-    svgObjects.push(
-      ...createPcbSilkscreenAnchorOffsetIndicators({
-        anchorPosition: anchor_position,
-        renderedPosition,
-        transform,
-        fontSize: font_size,
-      }),
-    )
-  }
-
-  return svgObjects
-}
-
-function calculateRenderedTextPosition({
-  anchorPos,
-  alignment,
-  text,
-  fontSize,
-}: {
-  anchorPos: { x: number; y: number }
-  alignment: string
-  text: string
-  fontSize: number
-}): { x: number; y: number } {
-  const textWidthFSR = estimateTextWidth(text)
-  const textWidth = textWidthFSR * fontSize
-  const textHeight = fontSize
-
-  let x = anchorPos.x
-  let y = anchorPos.y
-
-  // Adjust X based on alignment
-  if (alignment.includes("left")) {
-    x += textWidth / 2
-  } else if (alignment.includes("right")) {
-    x -= textWidth / 2
-  }
-
-  // Adjust Y based on alignment
-  if (alignment.includes("top")) {
-    y += textHeight / 2
-  } else if (alignment.includes("bottom")) {
-    y -= textHeight / 2
-  }
-
-  return { x, y }
+  return [svgObject]
 }

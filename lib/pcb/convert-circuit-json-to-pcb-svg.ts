@@ -92,6 +92,7 @@ export interface PcbContext {
   colorMap: PcbColorMap
   showSolderMask?: boolean
   showAnchorOffsets?: boolean
+  circuitJson?: AnyCircuitElement[]
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -317,6 +318,7 @@ export function convertCircuitJsonToPcbSvg(
     colorMap,
     showSolderMask: options?.showSolderMask,
     showAnchorOffsets: options?.showAnchorOffsets,
+    circuitJson,
   }
 
   const unsortedSvgObjects = circuitJson.flatMap((elm) =>
