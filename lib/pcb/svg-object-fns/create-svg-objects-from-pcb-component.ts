@@ -9,10 +9,10 @@ export function createSvgObjectsFromPcbComponent(
 ): SvgObject[] {
   const { transform, circuitJson } = ctx
   const { center, width, height, rotation = 0 } = component
-  
+
   // Calculate the actual position based on position_mode
   let actualPosition = { x: center.x, y: center.y }
-  
+
   // If positioned relative to a group, calculate absolute position
   if (
     component.positioned_relative_to_pcb_group_id &&
@@ -33,7 +33,7 @@ export function createSvgObjectsFromPcbComponent(
       }
     }
   }
-  
+
   const [x, y] = applyToPoint(transform, [actualPosition.x, actualPosition.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)

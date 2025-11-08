@@ -65,9 +65,7 @@ export function createPcbComponentAnchorOffsetIndicators(
   const screenComponentWidth = componentWidth * scale
   const screenComponentHeight = componentHeight * scale
 
-  objects.push(
-    createAnchorMarker(screenGroupAnchorX, screenGroupAnchorY),
-  )
+  objects.push(createAnchorMarker(screenGroupAnchorX, screenGroupAnchorY))
 
   objects.push({
     name: "line",
@@ -104,9 +102,7 @@ export function createPcbComponentAnchorOffsetIndicators(
 
   const yDistance = Math.abs(screenComponentY - screenGroupAnchorY)
   const xDistance = Math.abs(screenComponentX - screenGroupAnchorX)
-  const totalDistance = Math.sqrt(
-    xDistance * xDistance + yDistance * yDistance,
-  )
+  const totalDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance)
 
   const componentHeightOffset = screenComponentHeight / 2 + COMPONENT_GAP_PX
   const dynamicOffset = Math.max(
