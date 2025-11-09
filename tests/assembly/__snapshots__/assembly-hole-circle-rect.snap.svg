@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
+              .assembly-component { 
+                fill: none; 
+                stroke: #000; 
+              }
+              .assembly-board { 
+                fill: #f2f2f2; 
+                stroke: rgb(0,0,0); 
+                stroke-opacity: 0.8;
+              }
+              .assembly-component-label { 
+                fill: #000; 
+                font-family: Arial, serif;
+                font-weight: bold;
+                dominant-baseline: middle;
+                text-anchor: middle;
+              }
+              .assembly-boundary { 
+                fill: none; 
+                stroke: #fff;
+                stroke-width: 0.2; 
+              }
+            </style><rect fill="#fff" x="0" y="0" width="800" height="600"/><rect class="assembly-boundary" x="36.36363636363632" y="118.18181818181816" width="727.2727272727275" height="363.63636363636374"/><path class="pcb-board" d="M 36.36363636363632 481.81818181818187 L 763.6363636363637 481.81818181818187 L 763.6363636363637 118.18181818181816 L 36.36363636363632 118.18181818181816 Z" fill="none" stroke="rgb(0,0,0)" stroke-opacity="0.8" stroke-width="7.272727272727273"/><circle class="assembly-hole" cx="181.8181818181818" cy="300" r="36.36363636363637" fill="rgb(190, 190, 190)"/><circle class="assembly-hole" cx="327.27272727272725" cy="300" r="27.272727272727273" fill="rgb(190, 190, 190)"/><rect class="assembly-hole" x="418.1818181818182" y="263.6363636363636" width="109.0909090909091" height="72.72727272727273" fill="rgb(190, 190, 190)"/><rect class="assembly-hole" x="590.909090909091" y="227.27272727272725" width="54.54545454545455" height="145.45454545454547" fill="rgb(190, 190, 190)"/><rect class="assembly-hole" x="181.8181818181818" y="381.81818181818187" width="145.45454545454547" height="54.54545454545455" fill="rgb(190, 190, 190)"/><circle class="assembly-hole" cx="545.4545454545455" cy="409.0909090909091" r="18.181818181818183" fill="rgb(190, 190, 190)"/></svg>

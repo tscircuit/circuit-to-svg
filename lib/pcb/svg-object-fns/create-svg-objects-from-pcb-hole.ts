@@ -79,6 +79,30 @@ export function createSvgObjectsFromPcbHole(
     ]
   }
 
+  if (hole.hole_shape === "rect") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    return [
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole",
+          x: (x - scaledWidth / 2).toString(),
+          y: (y - scaledHeight / 2).toString(),
+          width: scaledWidth.toString(),
+          height: scaledHeight.toString(),
+          fill: colorMap.drill,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+
   if (hole.hole_shape === "pill") {
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHeight = hole.hole_height * Math.abs(transform.a)

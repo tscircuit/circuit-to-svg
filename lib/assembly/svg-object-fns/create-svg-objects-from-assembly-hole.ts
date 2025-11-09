@@ -74,6 +74,5 @@ export function createSvgObjectsFromAssemblyHole(
       },
     ]
   }
-
   return []
 }
