@@ -40,8 +40,8 @@ export function createSvgObjectsFromPinoutBoard(
       })
       .join(" ")
   } else {
-    const halfWidth = width / 2
-    const halfHeight = height / 2
+    const halfWidth = width! / 2
+    const halfHeight = height! / 2
 
     const topLeft = applyToPoint(transform, [
       center.x - halfWidth,
