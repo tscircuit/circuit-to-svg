@@ -37,6 +37,14 @@ export function createSvgObjectsFromSchVoltageProbe({
     "Z",
   ].join(" ")
 
+  const textParts: string[] = []
+  if (probe.name) {
+    textParts.push(probe.name)
+  }
+  if (probe.voltage !== undefined) {
+    textParts.push(`${probe.voltage}V`)
+  }
+
   return [
     {
       name: "path",
@@ -68,7 +76,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       children: [
         {
           type: "text",
-          value: probe.voltage ? `${probe.voltage}V` : "",
+          value: textParts.join(" "),
           name: "",
           attributes: {},
           children: [],
