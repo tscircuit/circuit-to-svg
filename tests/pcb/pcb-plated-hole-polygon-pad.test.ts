@@ -1,0 +1,172 @@
+import { test, expect } from "bun:test"
+import { convertCircuitJsonToPcbSvg } from "lib"
+
+test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
+  const result = convertCircuitJsonToPcbSvg([
+    {
+      type: "pcb_board",
+      pcb_board_id: "board_0",
+      center: { x: 0, y: 0 },
+      width: 40,
+      height: 40,
+      material: "fr4",
+      num_layers: 2,
+      thickness: 1.6,
+    },
+
+    // 1) Circle hole (from first test) - moved to top-left
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_1",
+      hole_shape: "circle",
+      hole_diameter: 1.5,
+      x: -10,
+      y: 10,
+      hole_offset_x: 0,
+      hole_offset_y: 0,
+      pad_outline: [
+        { x: -2, y: -2 },
+        { x: 2, y: -2 },
+        { x: 2, y: 2 },
+        { x: -2, y: 2 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 2) Oval hole with offset (from second test) - moved to top-center
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_2",
+      hole_shape: "oval",
+      hole_width: 1.2,
+      hole_height: 2.0,
+      x: 0,
+      y: 10,
+      hole_offset_x: 0.5,
+      hole_offset_y: -0.5,
+      pad_outline: [
+        { x: -3, y: -3 },
+        { x: 3, y: -3 },
+        { x: 3, y: 3 },
+        { x: -3, y: 3 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 3) Pill hole (from third test) - moved to top-right
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_3",
+      hole_shape: "pill",
+      hole_width: 2.0,
+      hole_height: 1.0,
+      x: 10,
+      y: 10,
+      hole_offset_x: 0,
+      hole_offset_y: 0,
+      pad_outline: [
+        { x: -1.5, y: -2 },
+        { x: 1.5, y: -2 },
+        { x: 2.5, y: 0 },
+        { x: 1.5, y: 2 },
+        { x: -1.5, y: 2 },
+        { x: -2.5, y: 0 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 4) Rotated pill hole with offset (from fourth test) - moved to center-left
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_4",
+      hole_shape: "rotated_pill",
+      hole_width: 1.5,
+      hole_height: 3.0,
+      x: -10,
+      y: 0,
+      hole_offset_x: 1.0,
+      hole_offset_y: 0.5,
+      pad_outline: [
+        { x: -2, y: -3 },
+        { x: 3, y: -3 },
+        { x: 4, y: 0 },
+        { x: 3, y: 3 },
+        { x: -2, y: 3 },
+        { x: -3, y: 0 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 5) Circle hole (from fifth test - hole_polygon_5) - moved to center
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_5",
+      hole_shape: "circle",
+      hole_diameter: 1.0,
+      x: 0,
+      y: 0,
+      hole_offset_x: 0,
+      hole_offset_y: 0,
+      pad_outline: [
+        { x: -2, y: -2 },
+        { x: 2, y: -2 },
+        { x: 2, y: 2 },
+        { x: -2, y: 2 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 6) Oval with polygon pad (from fifth test - hole_polygon_6) - moved to center-right
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_6",
+      hole_shape: "oval",
+      hole_width: 1.5,
+      hole_height: 2.5,
+      x: 10,
+      y: 0,
+      hole_offset_x: -0.8,
+      hole_offset_y: 0.3,
+      pad_outline: [
+        { x: -2.5, y: -3 },
+        { x: 2.5, y: -3 },
+        { x: 3, y: 0 },
+        { x: 2.5, y: 3 },
+        { x: -2.5, y: 3 },
+        { x: -3, y: 0 },
+      ],
+      layers: ["top", "bottom"],
+    },
+
+    // 7) Pill with polygon pad (from fifth test - hole_polygon_7) - moved to bottom-center
+    {
+      type: "pcb_plated_hole",
+      shape: "hole_with_polygon_pad",
+      pcb_plated_hole_id: "hole_polygon_7",
+      hole_shape: "pill",
+      hole_width: 2.5,
+      hole_height: 1.2,
+      x: 0,
+      y: -10,
+      hole_offset_x: 0.5,
+      hole_offset_y: -0.3,
+      pad_outline: [
+        { x: -3, y: -2.5 },
+        { x: 3, y: -2.5 },
+        { x: 3.5, y: 0 },
+        { x: 3, y: 2.5 },
+        { x: -3, y: 2.5 },
+        { x: -3.5, y: 0 },
+      ],
+      layers: ["top", "bottom"],
+    },
+  ])
+
+  expect(result).toMatchSvgSnapshot(import.meta.path)
+})
