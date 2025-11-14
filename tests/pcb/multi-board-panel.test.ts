@@ -8,6 +8,7 @@ test("pcb panel with multiple boards", () => {
       pcb_panel_id: "pcb_panel_0",
       width: 100,
       height: 80,
+      center: { x: 25, y: 40 },
       covered_with_solder_mask: false,
     },
     // Board 1
