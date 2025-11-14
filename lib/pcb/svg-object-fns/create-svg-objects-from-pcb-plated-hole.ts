@@ -404,5 +404,160 @@ export function createSvgObjectsFromPcbPlatedHole(
     ]
   }
 
+  if (hole.shape === "hole_with_polygon_pad") {
+    const polygonHole = hole
+    const padOutline = polygonHole.pad_outline || []
+    const holeX = polygonHole.x ?? 0
+    const holeY = polygonHole.y ?? 0
+
+    // Transform polygon pad outline points
+    const padPoints = padOutline.map((point: { x: number; y: number }) =>
+      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
+    )
+    const padPointsString = padPoints
+      .map((p: number[]) => p.join(","))
+      .join(" ")
+
+    // Calculate hole position with offset
+    const [holeCenterX, holeCenterY] = applyToPoint(transform, [
+      holeX + polygonHole.hole_offset_x,
+      holeY + polygonHole.hole_offset_y,
+    ])
+
+    // Helper function to create hole SVG object based on hole_shape
+    const createHoleSvgObject = (): SvgObject => {
+      if (polygonHole.hole_shape === "circle") {
+        const scaledDiameter =
+          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a)
+        const radius = scaledDiameter / 2
+        return {
+          name: "circle",
+          type: "element",
+          attributes: {
+            class: "pcb-hole-inner",
+            fill: colorMap.drill,
+            cx: holeCenterX.toString(),
+            cy: holeCenterY.toString(),
+            r: radius.toString(),
+            "data-type": "pcb_plated_hole_drill",
+            "data-pcb-layer": "drill",
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      if (polygonHole.hole_shape === "oval") {
+        const scaledWidth =
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
+        const scaledHeight =
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const rx = scaledWidth / 2
+        const ry = scaledHeight / 2
+        return {
+          name: "ellipse",
+          type: "element",
+          attributes: {
+            class: "pcb-hole-inner",
+            fill: colorMap.drill,
+            cx: holeCenterX.toString(),
+            cy: holeCenterY.toString(),
+            rx: rx.toString(),
+            ry: ry.toString(),
+            "data-type": "pcb_plated_hole_drill",
+            "data-pcb-layer": "drill",
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      if (
+        polygonHole.hole_shape === "pill" ||
+        polygonHole.hole_shape === "rotated_pill"
+      ) {
+        const scaledWidth =
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
+        const scaledHeight =
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+
+        // Create pill path (same logic as regular pill holes)
+        const isHorizontal = scaledWidth > scaledHeight
+        const radius = Math.min(scaledWidth, scaledHeight) / 2
+        const straightLength = Math.abs(
+          isHorizontal
+            ? scaledWidth - scaledHeight
+            : scaledHeight - scaledWidth,
+        )
+
+        const pathD = isHorizontal
+          ? `M${-straightLength / 2},${-radius} ` +
+            `h${straightLength} ` +
+            `a${radius},${radius} 0 0 1 0,${scaledHeight} ` +
+            `h-${straightLength} ` +
+            `a${radius},${radius} 0 0 1 0,-${scaledHeight} z`
+          : `M${-radius},${-straightLength / 2} ` +
+            `v${straightLength} ` +
+            `a${radius},${radius} 0 0 0 ${scaledWidth},0 ` +
+            `v-${straightLength} ` +
+            `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
+
+        return {
+          name: "path",
+          type: "element",
+          attributes: {
+            class: "pcb-hole-inner",
+            fill: colorMap.drill,
+            d: pathD,
+            transform: `translate(${holeCenterX} ${holeCenterY})`,
+            "data-type": "pcb_plated_hole_drill",
+            "data-pcb-layer": "drill",
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      // Fallback: return empty object (should not happen)
+      return {
+        name: "g",
+        type: "element",
+        attributes: {},
+        value: "",
+        children: [],
+      }
+    }
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
+        children: [
+          // Polygon pad (outer shape)
+          {
+            name: "polygon",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-pad",
+              fill: colorMap.copper.top,
+              points: padPointsString,
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // Hole inside the polygon (with offset)
+          createHoleSvgObject(),
+        ],
+        value: "",
+      },
+    ]
+  }
+
   return []
 }
