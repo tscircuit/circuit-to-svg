@@ -14,7 +14,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       thickness: 1.6,
     },
 
-    // 1) Circle hole (from first test) - moved to top-left
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -34,7 +33,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 2) Oval hole with offset (from second test) - moved to top-center
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -55,7 +53,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 3) Pill hole (from third test) - moved to top-right
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -78,7 +75,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 4) Rotated pill hole with offset (from fourth test) - moved to center-left
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -101,7 +97,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 5) Circle hole (from fifth test - hole_polygon_5) - moved to center
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -121,7 +116,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 6) Oval with polygon pad (from fifth test - hole_polygon_6) - moved to center-right
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
@@ -144,7 +138,6 @@ test("pcb plated hole with polygon pad - all shapes in one snapshot", () => {
       layers: ["top", "bottom"],
     },
 
-    // 7) Pill with polygon pad (from fifth test - hole_polygon_7) - moved to bottom-center
     {
       type: "pcb_plated_hole",
       shape: "hole_with_polygon_pad",
