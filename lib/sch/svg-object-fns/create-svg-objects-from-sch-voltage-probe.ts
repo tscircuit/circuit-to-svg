@@ -37,12 +37,60 @@ export function createSvgObjectsFromSchVoltageProbe({
     "Z",
   ].join(" ")
 
-  const textParts: string[] = []
-  if (probe.name) {
-    textParts.push(probe.name)
-  }
-  if (probe.voltage !== undefined) {
-    textParts.push(`${probe.voltage}V`)
+  const x = (baseX + 8 - (baseX - baseX)).toString()
+  const textChildren: SvgObject[] = []
+
+  if (probe.name && probe.voltage !== undefined) {
+    textChildren.push({
+      type: "element",
+      name: "tspan",
+      value: "",
+      attributes: {
+        x,
+      },
+      children: [
+        {
+          type: "text",
+          value: probe.name,
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    })
+    textChildren.push({
+      type: "element",
+      name: "tspan",
+      value: "",
+      attributes: {
+        x,
+        dy: "1.2em",
+      },
+      children: [
+        {
+          type: "text",
+          value: `${probe.voltage}V`,
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    })
+  } else {
+    const textParts: string[] = []
+    if (probe.name) {
+      textParts.push(probe.name)
+    }
+    if (probe.voltage !== undefined) {
+      textParts.push(`${probe.voltage}V`)
+    }
+    textChildren.push({
+      type: "text",
+      value: textParts.join(" "),
+      name: "",
+      attributes: {},
+      children: [],
+    })
   }
 
   return [
@@ -63,25 +111,17 @@ export function createSvgObjectsFromSchVoltageProbe({
       name: "text",
       value: "",
       attributes: {
-        x: (baseX + 8 - (baseX - baseX)).toString(),
-        y: (baseY - 10 + (baseY - baseY)).toString(),
+        x,
+        y: baseY.toString(),
         fill: colorMap.schematic.reference,
-        "text-anchor": "middle",
+        "text-anchor": "start",
         "dominant-baseline": "middle",
         "font-family": "sans-serif",
         "font-size": `${getSchScreenFontSize(transform, "reference_designator")}px`,
         "font-weight": "bold",
         "data-schematic-voltage-probe-id": probe.schematic_voltage_probe_id,
       },
-      children: [
-        {
-          type: "text",
-          value: textParts.join(" "),
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
+      children: textChildren,
     },
   ]
 }
