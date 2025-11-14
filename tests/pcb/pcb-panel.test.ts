@@ -8,6 +8,7 @@ test("pcb panel renders panel outline", () => {
         type: "pcb_panel",
         pcb_panel_id: "pcb_panel_0",
         width: 80,
+        center: { x: 40, y: 30 },
         height: 60,
         covered_with_solder_mask: true,
       },
