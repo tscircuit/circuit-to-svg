@@ -47,7 +47,6 @@ export function createSvgObjectsFromSchVoltageProbe({
       value: "",
       attributes: {
         x,
-        dy: "-1.2em",
       },
       children: [
         {
@@ -113,9 +112,9 @@ export function createSvgObjectsFromSchVoltageProbe({
       value: "",
       attributes: {
         x,
-        y: (baseY - 10 + (baseY - baseY)).toString(),
+        y: baseY.toString(),
         fill: colorMap.schematic.reference,
-        "text-anchor": "middle",
+        "text-anchor": "start",
         "dominant-baseline": "middle",
         "font-family": "sans-serif",
         "font-size": `${getSchScreenFontSize(transform, "reference_designator")}px`,
