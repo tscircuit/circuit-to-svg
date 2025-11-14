@@ -24,6 +24,29 @@ test("should render voltage probe", async () => {
       schematic_trace_id: "3",
       voltage: 12,
     },
+    {
+      type: "schematic_voltage_probe",
+      position: { x: 2, y: 2 },
+      schematic_voltage_probe_id: "4",
+      schematic_trace_id: "4",
+      name: "VCC",
+    },
+    {
+      type: "schematic_voltage_probe",
+      position: { x: -2, y: -2 },
+      schematic_voltage_probe_id: "5",
+      schematic_trace_id: "5",
+      name: "VEE",
+      voltage: -5,
+    },
+    {
+      type: "schematic_voltage_probe",
+      position: { x: 2, y: -2 },
+      schematic_voltage_probe_id: "6",
+      schematic_trace_id: "6",
+      name: "GND",
+      voltage: 0,
+    },
   ]
 
   expect(
