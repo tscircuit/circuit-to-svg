@@ -63,7 +63,8 @@ export function convertCircuitJsonToSolderPasteMask(
       const width = distance.parse(panel.width)
       const height = distance.parse(panel.height)
       if (width !== undefined && height !== undefined) {
-        updateBounds({ x: width / 2, y: height / 2 }, width, height)
+        const center = panel.center ?? { x: width / 2, y: height / 2 }
+        updateBounds(center, width, height)
       }
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)
