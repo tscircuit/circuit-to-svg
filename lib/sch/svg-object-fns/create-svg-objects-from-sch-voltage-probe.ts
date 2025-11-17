@@ -19,6 +19,8 @@ export function createSvgObjectsFromSchVoltageProbe({
     probe.position.y,
   ])
 
+  const probeColor = probe.color ?? colorMap.schematic.reference
+
   const arrowLength = Math.abs(transform.a) * 0.6
   const arrowWidth = Math.abs(transform.a) * 0.28
 
@@ -99,8 +101,8 @@ export function createSvgObjectsFromSchVoltageProbe({
       type: "element",
       attributes: {
         d: arrowPath,
-        stroke: colorMap.schematic.reference,
-        fill: colorMap.schematic.reference,
+        stroke: probeColor,
+        fill: probeColor,
         "stroke-width": `${getSchStrokeSize(transform)}px`,
       },
       value: "",
@@ -113,7 +115,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       attributes: {
         x,
         y: baseY.toString(),
-        fill: colorMap.schematic.reference,
+        fill: probeColor,
         "text-anchor": "start",
         "dominant-baseline": "middle",
         "font-family": "sans-serif",

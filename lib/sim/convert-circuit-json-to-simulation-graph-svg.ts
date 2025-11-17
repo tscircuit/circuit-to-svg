@@ -169,10 +169,14 @@ function prepareSimulationGraphs(
   const palette = Array.isArray(colorMap.palette) ? colorMap.palette : []
 
   const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
-  const probeIdToName = new Map<string, string>()
+  const sourceComponentIdToProbeName = new Map<string, string>()
+  const sourceComponentIdToProbeColor = new Map<string, string>()
   for (const probe of voltageProbes) {
-    if (probe.name && probe.simulation_voltage_probe_id) {
-      probeIdToName.set(probe.simulation_voltage_probe_id, probe.name)
+    if (probe.name && probe.source_component_id) {
+      sourceComponentIdToProbeName.set(probe.source_component_id, probe.name)
+    }
+    if (probe.color && probe.source_component_id) {
+      sourceComponentIdToProbeColor.set(probe.source_component_id, probe.color)
     }
   }
 
@@ -183,17 +187,23 @@ function prepareSimulationGraphs(
         palette.length > 0
           ? palette[index % palette.length]
           : FALLBACK_LINE_COLOR
-      const color = paletteColor ?? FALLBACK_LINE_COLOR
 
-      const probeId =
-        graph.simulation_voltage_probe_id ?? graph.schematic_voltage_probe_id
-      const probeName = probeId ? probeIdToName.get(probeId) : undefined
+      const probeColor = graph.source_component_id
+        ? sourceComponentIdToProbeColor.get(graph.source_component_id)
+        : undefined
+
+      const color =
+        graph.color ?? probeColor ?? paletteColor ?? FALLBACK_LINE_COLOR
+
+      const probeName = graph.source_component_id
+        ? sourceComponentIdToProbeName.get(graph.source_component_id)
+        : undefined
 
       const label = probeName
         ? `V(${probeName})`
         : graph.name ||
-          (probeId
-            ? `Probe ${probeId}`
+          (graph.source_component_id
+            ? `Probe ${graph.source_component_id}`
             : graph.simulation_transient_voltage_graph_id)
       return { graph, points, color, label }
     })
@@ -712,9 +722,9 @@ function createDataGroup(
         entry.graph.simulation_transient_voltage_graph_id,
     }
 
-    if (entry.graph.schematic_voltage_probe_id) {
-      baseAttributes["data-schematic-voltage-probe-id"] =
-        entry.graph.schematic_voltage_probe_id
+    if (entry.graph.source_component_id) {
+      baseAttributes["data-source-component-id"] =
+        entry.graph.source_component_id
     }
 
     if (entry.graph.subcircuit_connectivity_map_key) {
