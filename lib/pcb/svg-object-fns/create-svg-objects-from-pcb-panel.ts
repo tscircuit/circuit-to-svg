@@ -10,11 +10,27 @@ export function createSvgObjectsFromPcbPanel(
   const { transform, colorMap, showSolderMask } = ctx
   const width = Number(pcbPanel.width)
   const height = Number(pcbPanel.height)
+  const center = pcbPanel.center ?? { x: width / 2, y: height / 2 }
 
-  const topLeft = applyToPoint(transform, [0, 0])
-  const topRight = applyToPoint(transform, [width, 0])
-  const bottomRight = applyToPoint(transform, [width, height])
-  const bottomLeft = applyToPoint(transform, [0, height])
+  const halfWidth = width / 2
+  const halfHeight = height / 2
+
+  const topLeft = applyToPoint(transform, [
+    center.x - halfWidth,
+    center.y - halfHeight,
+  ])
+  const topRight = applyToPoint(transform, [
+    center.x + halfWidth,
+    center.y - halfHeight,
+  ])
+  const bottomRight = applyToPoint(transform, [
+    center.x + halfWidth,
+    center.y + halfHeight,
+  ])
+  const bottomLeft = applyToPoint(transform, [
+    center.x - halfWidth,
+    center.y + halfHeight,
+  ])
 
   const path =
     `M ${topLeft[0]} ${topLeft[1]} ` +

@@ -6,9 +6,9 @@ test("pcb panel with multiple boards", () => {
     {
       type: "pcb_panel",
       pcb_panel_id: "pcb_panel_0",
-      width: 100,
-      height: 80,
-      center: { x: 25, y: 40 },
+      width: 200,
+      height: 200,
+      center: { x: 0, y: 0 },
       covered_with_solder_mask: false,
     },
     // Board 1
@@ -53,6 +53,16 @@ test("pcb panel with multiple boards", () => {
       x: 75,
       y: 40,
       width: 4,
+      height: 3,
+    },
+    {
+      type: "pcb_smtpad",
+      pcb_smtpad_id: "pcb_smtpad_2",
+      layer: "bottom",
+      shape: "rect",
+      x: 0,
+      y: 0,
+      width: 3,
       height: 3,
     },
   ])

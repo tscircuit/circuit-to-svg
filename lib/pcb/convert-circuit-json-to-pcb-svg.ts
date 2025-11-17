@@ -167,7 +167,7 @@ export function convertCircuitJsonToPcbSvg(
       if (width === undefined || height === undefined) {
         continue
       }
-      const center = { x: width / 2, y: height / 2 }
+      const center = panel.center ?? { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
