@@ -78,128 +78,97 @@ export function createSvgObjectsFromPcbCutoutPath(
     cutout.slot_length !== undefined &&
     cutout.space_between_slots !== undefined
   ) {
-    // Dashed pattern: create individual slots that bend with the path,
-    // with uniform spacing and a shortened final slot if needed.
-    //
-    // IMPORTANT:
-    // - cutout.slot_length is treated as the *visible* slot length
-    //   (tip-to-tip including rounded ends if present)
-    // - when slot_corner_radius > 0 we shorten the path segment by 2r
-    //   so the final visible length stays equal to slot_length.
-    const nominalSlotLength = cutout.slot_length * scale // visible length
-    const scaledSpacing = cutout.space_between_slots * scale
-    const slotPitch = nominalSlotLength + scaledSpacing
+    const nominalVisibleLength = cutout.slot_length * scale
+    const spacing = cutout.space_between_slots * scale
+    const pitch = nominalVisibleLength + spacing
 
     const r = cornerRadius
     const usesRoundedCaps = r > 0
 
-    // If radius is specified but slots are too small to honor it, skip everything
+    // Treat slot_length as the *visible* tip-to-tip length.
+    // For rounded caps, the underlying path is shorter by 2r.
     if (
       usesRoundedCaps &&
-      !hasUsableRadius(scaledSlotWidth, nominalSlotLength)
+      !hasUsableRadius(scaledSlotWidth, nominalVisibleLength)
     ) {
       return svgObjects
     }
 
-    // Minimum *visible* slot length we allow (respect width + radius)
-    const minSlotLengthForRadius = usesRoundedCaps ? 2 * r : 0
-    const minVisibleSlotLength = Math.max(
+    const minVisibleLength = Math.max(
       scaledSlotWidth,
-      minSlotLengthForRadius,
+      usesRoundedCaps ? 2 * r : 0,
       tolerance,
     )
 
-    // 1) Generate raw slot ranges along the polyline (in *path* distance space)
-    const slotRanges: Array<{ start: number; end: number }> = []
-    let slotStartVisible = 0 // this is the visible start distance of the slot
+    // 1) Build visible slot ranges along the total distance
+    const visibleRanges: Array<{ start: number; end: number }> = []
+    let startVisible = 0
 
-    while (slotStartVisible < totalDistance - minVisibleSlotLength) {
-      // Can we fit a *full* visible slot here AND still leave a spacing after it
-      // before we hit totalDistance?
-      const canFitFullWithGap =
-        slotStartVisible + nominalSlotLength + scaledSpacing <=
-        totalDistance + tolerance
+    while (startVisible < totalDistance - minVisibleLength) {
+      let endVisible = startVisible + nominalVisibleLength
 
-      let visibleLength: number
-
-      if (canFitFullWithGap) {
-        // Normal full-length slot (visible)
-        visibleLength = nominalSlotLength
-      } else {
-        // This is the last slot: we shrink its VISIBLE length so that the gap from
-        // its end to the end of the path is exactly `scaledSpacing`.
-        const desiredVisibleEnd = totalDistance - scaledSpacing
-        visibleLength = desiredVisibleEnd - slotStartVisible
-
-        // If we can't fit a usable slot here, stop.
-        if (visibleLength < minVisibleSlotLength - tolerance) break
+      // If we can't fit a full visible slot + spacing, shrink the last slot
+      if (endVisible + spacing > totalDistance + tolerance) {
+        endVisible = totalDistance - spacing
+        if (endVisible - startVisible < minVisibleLength - tolerance) break
       }
 
-      // Convert visible length to actual *path* length.
-      // Round caps extend r past each end, so:
-      //   visibleLength = pathLength + 2r  =>  pathLength = visibleLength - 2r
-      const pathLength = usesRoundedCaps
-        ? Math.max(visibleLength - 2 * r, tolerance)
-        : visibleLength
+      visibleRanges.push({ start: startVisible, end: endVisible })
 
-      // For round caps, we keep the visible start at `slotStartVisible`,
-      // so the underlying path starts at slotStartVisible + r and ends at
-      // slotStartVisible + r + pathLength.
-      const pathStart = usesRoundedCaps
-        ? slotStartVisible + r
-        : slotStartVisible
-      const pathEnd = pathStart + pathLength
+      // If that was the last one, stop
+      if (endVisible + spacing > totalDistance + tolerance) break
 
-      slotRanges.push({ start: pathStart, end: pathEnd })
-
-      if (!canFitFullWithGap) {
-        // We just placed the final shortened slot; no more room for others.
-        break
-      }
-
-      // Advance to the next slot's *visible* start position with fixed spacing
-      slotStartVisible += slotPitch
+      startVisible += pitch
     }
 
-    // 2) Precompute distances at each "corner" (polyline vertices between segments)
+    // 2) Convert visible ranges to actual path ranges (trim off caps)
+    const pathRanges: Array<{ start: number; end: number }> = visibleRanges.map(
+      ({ start, end }) => {
+        if (!usesRoundedCaps) return { start, end }
+
+        const pathStart = start + r
+        const pathEnd = end - r
+        // Guard against numeric weirdness
+        if (pathEnd <= pathStart + tolerance) {
+          return { start, end } // fall back to square-ish if it's too tight
+        }
+        return { start: pathStart, end: pathEnd }
+      },
+    )
+
+    // 3) Precompute distances of polyline corners (between segments)
     const cornerDistances: number[] = []
     {
       let acc = 0
-      // corners are at the end of each segment except the very last one
       for (let i = 0; i < segmentDistances.length - 1; i++) {
         acc += segmentDistances[i]!
         cornerDistances.push(acc)
       }
     }
 
-    // 3) Merge slots that meet exactly at a corner to avoid visual blobs
+    // 4) Merge adjacent ranges that meet exactly at a corner
     const mergedRanges: Array<{ start: number; end: number }> = []
-    const mergeEps = tolerance * 10 // slightly looser than tolerance for robustness
+    const mergeEps = tolerance * 10
 
-    for (const range of slotRanges) {
+    for (const range of pathRanges) {
       if (mergedRanges.length > 0) {
         const prev = mergedRanges[mergedRanges.length - 1]!
-        const meetDist = prev.end
+        const meet = prev.end
 
-        // They meet (end of previous == start of current) within epsilon
-        if (Math.abs(meetDist - range.start) <= mergeEps) {
-          // Check if this meeting point lies on a corner
-          const isAtCorner = cornerDistances.some(
-            (c) => Math.abs(c - meetDist) <= mergeEps,
+        if (Math.abs(meet - range.start) <= mergeEps) {
+          const meetsCorner = cornerDistances.some(
+            (d) => Math.abs(d - meet) <= mergeEps,
           )
-
-          if (isAtCorner) {
-            // Merge into a single bent slot through the corner
+          if (meetsCorner) {
             prev.end = range.end
             continue
           }
         }
       }
-
-      mergedRanges.push({ ...range })
+      mergedRanges.push(range)
     }
 
-    // 4) Actually render the (possibly merged) slots
+    // 5) Render each merged range as a slot path
     for (const { start, end } of mergedRanges) {
       const slotPolyline = getSubpathBetweenDistances(
         transformedRoute,
@@ -210,25 +179,25 @@ export function createSvgObjectsFromPcbCutoutPath(
 
       if (slotPolyline.length >= 2) {
         const pathData = polylineToSvgPath(slotPolyline)
-        if (pathData) {
-          svgObjects.push({
-            name: "path",
-            type: "element",
-            attributes: {
-              class: "pcb-cutout pcb-cutout-path-slot",
-              d: pathData,
-              stroke: colorMap.drill,
-              "stroke-width": scaledSlotWidth.toString(),
-              "stroke-linecap": usesRoundedCaps ? "round" : "butt",
-              "stroke-linejoin": usesRoundedCaps ? "round" : "miter",
-              fill: "none",
-              "data-type": "pcb_cutout",
-              "data-pcb-layer": "drill",
-            },
-            children: [],
-            value: "",
-          })
-        }
+        if (!pathData) continue
+
+        svgObjects.push({
+          name: "path",
+          type: "element",
+          attributes: {
+            class: "pcb-cutout pcb-cutout-path-slot",
+            d: pathData,
+            stroke: colorMap.drill,
+            "stroke-width": scaledSlotWidth.toString(),
+            "stroke-linecap": usesRoundedCaps ? "round" : "butt",
+            "stroke-linejoin": usesRoundedCaps ? "round" : "miter",
+            fill: "none",
+            "data-type": "pcb_cutout",
+            "data-pcb-layer": "drill",
+          },
+          children: [],
+          value: "",
+        })
       }
     }
 
@@ -239,7 +208,6 @@ export function createSvgObjectsFromPcbCutoutPath(
   // Continuous slot that bends with the path
   // -------------------------
 
-  // If radius requested but overall slot too short or narrow to honor it, skip rendering
   if (cornerRadius > 0 && !hasUsableRadius(scaledSlotWidth, totalDistance)) {
     return svgObjects
   }
@@ -271,37 +239,16 @@ export function createSvgObjectsFromPcbCutoutPath(
 
 /**
  * Convert a polyline to an SVG "M/L" path string.
+ * (No sampling / epsilon tricks here.)
  */
 function polylineToSvgPath(points: number[][]): string {
-  if (!points.length) return ""
-
-  const epsilon = 1e-6
-
-  // Deduplicate consecutive points that are extremely close
-  const filtered: number[][] = []
-  for (const p of points) {
-    if (!filtered.length) {
-      filtered.push(p)
-      continue
-    }
-    const last = filtered[filtered.length - 1]!
-    const dx = p[0]! - last[0]!
-    const dy = p[1]! - last[1]!
-    if (dx * dx + dy * dy > epsilon * epsilon) {
-      filtered.push(p)
-    }
-  }
-
-  if (filtered.length < 2) return ""
-
-  const [x0, y0] = filtered[0]!
+  if (points.length < 2) return ""
+  const [x0, y0] = points[0]!
   let d = `M${x0},${y0}`
-
-  for (let i = 1; i < filtered.length; i++) {
-    const [x, y] = filtered[i]!
+  for (let i = 1; i < points.length; i++) {
+    const [x, y] = points[i]!
     d += ` L${x},${y}`
   }
-
   return d
 }
 
@@ -319,7 +266,6 @@ function getPointAtDistance(
   for (let i = 0; i < segmentDistances.length; i++) {
     const segmentDist = segmentDistances[i]!
     if (currentDist + segmentDist >= targetDistance) {
-      // The target point is on this segment
       const t =
         segmentDist === 0 ? 0 : (targetDistance - currentDist) / segmentDist
       return [
@@ -330,7 +276,6 @@ function getPointAtDistance(
     currentDist += segmentDist
   }
 
-  // If we get here, return the last point
   return points[points.length - 1] ?? null
 }
 
@@ -347,13 +292,11 @@ function getSubpathBetweenDistances(
   const result: number[][] = []
   if (!points.length) return result
 
-  // Clamp distances
   const totalDistance = segmentDistances.reduce((a, b) => a + b, 0)
   const s = Math.max(0, Math.min(startDistance, totalDistance))
   const e = Math.max(s, Math.min(endDistance, totalDistance))
 
   if (e <= 0) {
-    // Entire subpath is before the first point; return at least the start
     result.push(points[0]!)
     return result
   }
@@ -367,13 +310,11 @@ function getSubpathBetweenDistances(
     const segStart = currentDist
     const segEnd = currentDist + segLen
 
-    // Segment completely before the subpath
     if (segEnd <= s) {
       currentDist += segLen
       continue
     }
 
-    // Segment completely after the subpath
     if (segStart >= e) {
       break
     }
@@ -393,15 +334,11 @@ function getSubpathBetweenDistances(
       p0[1]! + (p1[1]! - p0[1]!) * t1,
     ]
 
-    // Add startPoint if this is the first segment or it doesn't duplicate the last point
     if (result.length === 0) {
       result.push(startPoint)
     } else {
       const last = result[result.length - 1]!
-      if (
-        Math.abs(last[0]! - startPoint[0]!) > 1e-9 ||
-        Math.abs(last[1]! - startPoint[1]!) > 1e-9
-      ) {
+      if (last[0] !== startPoint[0] || last[1] !== startPoint[1]) {
         result.push(startPoint)
       }
     }
