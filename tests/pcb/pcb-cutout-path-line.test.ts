@@ -8,8 +8,8 @@ test("pcb_cutout with dashed path renders multiple slots", () => {
   circuitJson.push({
     type: "pcb_board",
     pcb_board_id: "board1",
-    width: 20,
-    height: 20,
+    width: 25,
+    height: 25,
     center: { x: 0, y: 0 },
     thickness: 1.6,
     num_layers: 2,
@@ -21,25 +21,26 @@ test("pcb_cutout with dashed path renders multiple slots", () => {
     pcb_cutout_id: "cutout1",
     shape: "path",
     route: [
-      { x: -9, y: 4 },
-      { x: 9, y: 4 },
+      { x: -9, y: 0 },
+      { x: 10, y: 0 },
     ],
-    slot_width: 6,
-    slot_length: 1.5,
-    space_between_slots: 1,
-    slot_corner_radius: 0.7,
+    slot_width: 1,
+    slot_length: 6,
+    space_between_slots: 0.6,
   } as AnyCircuitElement)
+
   circuitJson.push({
     type: "pcb_cutout",
     pcb_cutout_id: "cutout1",
     shape: "path",
     route: [
-      { x: -9, y: -4 },
-      { x: 9, y: -4 },
+      { x: -9, y: 5 },
+      { x: 10, y: 5 },
     ],
-    slot_width: 6,
-    slot_length: 1.5,
-    space_between_slots: 1,
+    slot_width: 1,
+    slot_length: 6,
+    space_between_slots: 0.6,
+    slot_corner_radius: 0.5,
   } as AnyCircuitElement)
 
   const svgContent = convertCircuitJsonToPcbSvg(circuitJson)
