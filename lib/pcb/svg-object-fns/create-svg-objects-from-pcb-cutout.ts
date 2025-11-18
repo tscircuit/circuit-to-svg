@@ -14,6 +14,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { createSvgObjectsFromPcbCutoutPath } from "./create-svg-objects-from-pcb-cutout-path"
 
 export function createSvgObjectsFromPcbCutout(
   cutout: PcbCutout,
@@ -104,6 +105,10 @@ export function createSvgObjectsFromPcbCutout(
         value: "",
       },
     ]
+  }
+
+  if (cutout.shape === "path") {
+    return createSvgObjectsFromPcbCutoutPath(cutout, ctx)
   }
 
   return []
