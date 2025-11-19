@@ -94,6 +94,64 @@ test("solder mask margin renders correctly with positive and negative values", (
       is_covered_with_solder_mask: true,
       soldermask_margin: -0.12,
     },
+
+    // Silkscreen labels for positive margin pads (top row)
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_rect_pos",
+      layer: "top",
+      anchor_position: { x: -4, y: 3.2 },
+      anchor_alignment: "center",
+      text: "+0.2mm",
+      font_size: 0.4,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_circle_pos",
+      layer: "top",
+      anchor_position: { x: 0, y: 3.2 },
+      anchor_alignment: "center",
+      text: "+0.15mm",
+      font_size: 0.4,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_pill_pos",
+      layer: "top",
+      anchor_position: { x: 4, y: 3.2 },
+      anchor_alignment: "center",
+      text: "+0.1mm",
+      font_size: 0.4,
+    },
+
+    // Silkscreen labels for negative margin pads (bottom row)
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_rect_neg",
+      layer: "top",
+      anchor_position: { x: -4, y: -3.2 },
+      anchor_alignment: "center",
+      text: "-0.15mm",
+      font_size: 0.4,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_circle_neg",
+      layer: "top",
+      anchor_position: { x: 0, y: -3.2 },
+      anchor_alignment: "center",
+      text: "-0.2mm",
+      font_size: 0.4,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      pcb_silkscreen_text_id: "text_pill_neg",
+      layer: "top",
+      anchor_position: { x: 4, y: -3.2 },
+      anchor_alignment: "center",
+      text: "-0.12mm",
+      font_size: 0.4,
+    },
   ]
 
   const svg = convertCircuitJsonToPcbSvg(circuit, {
