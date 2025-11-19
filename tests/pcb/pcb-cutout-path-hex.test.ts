@@ -21,18 +21,42 @@ test("pcb_cutout with dashed path renders multiple slots", () => {
     pcb_cutout_id: "cutout1",
     shape: "path",
     route: [
-      { x: 0, y: 9 },
-      { x: 9, y: 9 },
-      { x: 9, y: -9 },
-      { x: -9, y: -9 },
-      { x: -9, y: 9 },
-      { x: -0.6, y: 9 },
+      // Start at top center
+      { x: 2.5, y: 10 },
+
+      // Move to top-right corner
+      { x: 7, y: 10 },
+      { x: 10, y: 7 },
+
+      // Move to right center
+      { x: 10, y: 0 },
+
+      // Move to bottom-right corner
+      { x: 10, y: -7 },
+      { x: 7, y: -10 },
+
+      // Move to bottom center
+      { x: 0, y: -10 },
+
+      // Move to bottom-left corner
+      { x: -7, y: -10 },
+      { x: -10, y: -7 },
+
+      // Move to left center
+      { x: -10, y: 0 },
+
+      // Move to top-left corner
+      { x: -10, y: 7 },
+      { x: -7, y: 10 },
+
+      // Back to top center
+      { x: 3, y: 10 },
     ],
     slot_width: 1,
     slot_length: 6,
     space_between_slots: 0.6,
-    slot_corner_radius: 0.5,
   } as AnyCircuitElement)
+
   const svgContent = convertCircuitJsonToPcbSvg(circuitJson)
 
   expect(svgContent).toMatchSvgSnapshot(import.meta.path)

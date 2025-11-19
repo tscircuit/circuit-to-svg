@@ -26,7 +26,7 @@ test("pcb_cutout with dashed path renders multiple slots", () => {
       { x: 9, y: -9 },
       { x: -9, y: -9 },
       { x: -9, y: 9 },
-      { x: 0, y: 9 },
+      { x: -0.6, y: 9 },
     ],
     slot_width: 1,
     slot_length: 6,
