@@ -1,0 +1,181 @@
+import { expect, test } from "bun:test"
+import { convertCircuitJsonToPcbSvg } from "lib"
+
+const circuitJson: any = [
+  {
+    type: "pcb_board",
+    pcb_board_id: "board_hole_soldermask",
+    center: { x: 0, y: 0 },
+    width: 30,
+    height: 20,
+  },
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "circle_hole_with_mask",
+    hole_shape: "circle",
+    x: -10,
+    y: 5,
+    hole_diameter: 2,
+    soldermask_margin: 0.3,
+  },
+  // Circle hole with negative soldermask margin
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "circle_hole_negative_margin",
+    hole_shape: "circle",
+    x: -10,
+    y: -5,
+    hole_diameter: 2,
+    soldermask_margin: -0.2,
+  },
+  // Square hole with soldermask margin
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "square_hole_with_mask",
+    hole_shape: "square",
+    x: -5,
+    y: 5,
+    hole_diameter: 2,
+    soldermask_margin: 0.25,
+  },
+  // Rect hole with soldermask margin
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "rect_hole_with_mask",
+    hole_shape: "rect",
+    x: 0,
+    y: 5,
+    hole_width: 3,
+    hole_height: 2,
+    soldermask_margin: 0.4,
+  },
+  // Oval hole with soldermask margin
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "oval_hole_with_mask",
+    hole_shape: "oval",
+    x: 5,
+    y: 5,
+    hole_width: 3,
+    hole_height: 1.5,
+    soldermask_margin: 0.35,
+  },
+  // Pill hole with soldermask margin (horizontal)
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "pill_hole_horizontal_with_mask",
+    hole_shape: "pill",
+    x: 10,
+    y: 5,
+    hole_width: 4,
+    hole_height: 2,
+    soldermask_margin: 0.3,
+  },
+  // Circle hole without soldermask margin (for comparison)
+  {
+    type: "pcb_hole",
+    pcb_hole_id: "circle_hole_no_mask",
+    hole_shape: "circle",
+    x: -5,
+    y: -5,
+    hole_diameter: 2,
+  },
+
+  // Silkscreen labels showing margin values (positioned to be visible)
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_circle_pos",
+    text: "+0.3mm",
+    anchor_position: { x: -10, y: 7 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_circle_neg",
+    text: "-0.2mm",
+    anchor_position: { x: -10, y: -7 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_square",
+    text: "+0.25mm",
+    anchor_position: { x: -5, y: 7 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_rect",
+    text: "+0.4mm",
+    anchor_position: { x: 0, y: 7.2 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_oval",
+    text: "+0.35mm",
+    anchor_position: { x: 5, y: 7 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_pill_h",
+    text: "+0.3mm",
+    anchor_position: { x: 10, y: 7.2 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_pill_v",
+    text: "+0.3mm",
+    anchor_position: { x: 0, y: -7.2 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_pill_rot",
+    text: "+0.3mm",
+    anchor_position: { x: 10, y: -7.2 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+  {
+    type: "pcb_silkscreen_text",
+    pcb_silkscreen_text_id: "label_no_mask",
+    text: "0mm",
+    anchor_position: { x: -5, y: -7 },
+    layer: "top",
+    anchor_alignment: "center",
+    font: "tscircuit2024",
+    font_size: 0.4,
+  },
+]
+
+test("pcb_hole with soldermask_margin", () => {
+  expect(
+    convertCircuitJsonToPcbSvg(circuitJson, { showSolderMask: true }),
+  ).toMatchSvgSnapshot(import.meta.path)
+})

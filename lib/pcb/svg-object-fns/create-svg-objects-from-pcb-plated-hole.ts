@@ -17,12 +17,22 @@ export function createSvgObjectsFromPcbPlatedHole(
   hole: PcbPlatedHole,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap } = ctx
+  const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   const copperLayer =
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
     (hole as any).layer ||
     "top"
+
+  // Positive margin: mask extends beyond hole (less hole exposed)
+  // Negative margin: mask is smaller than hole (spacing around edges)
+  const soldermaskMargin =
+    ((hole as any).soldermask_margin ?? 0) * Math.abs(transform.a)
+
+  // Show soldermask if it's enabled and there's a margin defined
+  const shouldShowSolderMask = showSolderMask && soldermaskMargin !== 0
+
+  const solderMaskColor = colorMap.soldermask.top
 
   if (hole.shape === "pill") {
     const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
@@ -77,6 +87,58 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
+    const children: SvgObject[] = [
+      // Outer pill shape
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer",
+          fill: colorMap.copper.top,
+          d: createPillPath(scaledOuterWidth, scaledOuterHeight),
+          transform: outerTransform,
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      // Inner pill shape
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+          d: createPillPath(scaledHoleWidth, scaledHoleHeight),
+          transform: innerTransform,
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    // Add soldermask if needed
+    if (shouldShowSolderMask) {
+      const maskWidth = scaledOuterWidth + 2 * soldermaskMargin
+      const maskHeight = scaledOuterHeight + 2 * soldermaskMargin
+      children.push({
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          d: createPillPath(maskWidth, maskHeight),
+          transform: outerTransform,
+          "data-type": "pcb_soldermask",
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     return [
       {
         name: "g",
@@ -85,38 +147,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
         },
-        children: [
-          // Outer pill shape
-          {
-            name: "path",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-outer",
-              fill: colorMap.copper.top,
-              d: createPillPath(scaledOuterWidth, scaledOuterHeight),
-              transform: outerTransform,
-              "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
-            },
-            value: "",
-            children: [],
-          },
-          // Inner pill shape
-          {
-            name: "path",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-inner",
-              fill: colorMap.drill,
-              d: createPillPath(scaledHoleWidth, scaledHoleHeight),
-              transform: innerTransform,
-              "data-type": "pcb_plated_hole_drill",
-              "data-pcb-layer": "drill",
-            },
-            value: "",
-            children: [],
-          },
-        ],
+        children,
         value: "",
       },
     ]
@@ -131,6 +162,60 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
     const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+
+    const children: SvgObject[] = [
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer",
+          fill: colorMap.copper.top,
+          cx: x.toString(),
+          cy: y.toString(),
+          r: outerRadius.toString(),
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+
+          cx: x.toString(),
+          cy: y.toString(),
+          r: innerRadius.toString(),
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    // Add soldermask if needed
+    if (shouldShowSolderMask) {
+      const maskRadius = outerRadius + soldermaskMargin
+      children.push({
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          cx: x.toString(),
+          cy: y.toString(),
+          r: maskRadius.toString(),
+          "data-type": "pcb_soldermask",
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     return [
       {
         name: "g",
@@ -139,39 +224,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
         },
-        children: [
-          {
-            name: "circle",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-outer",
-              fill: colorMap.copper.top,
-              cx: x.toString(),
-              cy: y.toString(),
-              r: outerRadius.toString(),
-              "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
-            },
-            value: "",
-            children: [],
-          },
-          {
-            name: "circle",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-inner",
-              fill: colorMap.drill,
-
-              cx: x.toString(),
-              cy: y.toString(),
-              r: innerRadius.toString(),
-              "data-type": "pcb_plated_hole_drill",
-              "data-pcb-layer": "drill",
-            },
-            value: "",
-            children: [],
-          },
-        ],
+        children,
         value: "",
       },
     ]
@@ -192,6 +245,76 @@ export function createSvgObjectsFromPcbPlatedHole(
       h.y + (h.hole_offset_y ?? 0),
     ])
 
+    const children: SvgObject[] = [
+      // Rectangular pad (outer shape)
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer-pad",
+          fill: colorMap.copper.top,
+          x: (x - scaledRectPadWidth / 2).toString(),
+          y: (y - scaledRectPadHeight / 2).toString(),
+          width: scaledRectPadWidth.toString(),
+          height: scaledRectPadHeight.toString(),
+          ...(scaledRectBorderRadius
+            ? {
+                rx: scaledRectBorderRadius.toString(),
+                ry: scaledRectBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      // Circular hole inside the rectangle (with optional offset)
+      {
+        name: "circle",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+          cx: holeCx.toString(),
+          cy: holeCy.toString(),
+          r: holeRadius.toString(),
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    // Add soldermask if needed
+    if (shouldShowSolderMask) {
+      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
+      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
+      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      children.push({
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          x: (x - maskWidth / 2).toString(),
+          y: (y - maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          ...(scaledRectBorderRadius
+            ? {
+                rx: maskBorderRadius.toString(),
+                ry: maskBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_soldermask",
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     return [
       {
         name: "g",
@@ -200,47 +323,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
         },
-        children: [
-          // Rectangular pad (outer shape)
-          {
-            name: "rect",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-outer-pad",
-              fill: colorMap.copper.top,
-              x: (x - scaledRectPadWidth / 2).toString(),
-              y: (y - scaledRectPadHeight / 2).toString(),
-              width: scaledRectPadWidth.toString(),
-              height: scaledRectPadHeight.toString(),
-              ...(scaledRectBorderRadius
-                ? {
-                    rx: scaledRectBorderRadius.toString(),
-                    ry: scaledRectBorderRadius.toString(),
-                  }
-                : {}),
-              "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
-            },
-            value: "",
-            children: [],
-          },
-          // Circular hole inside the rectangle (with optional offset)
-          {
-            name: "circle",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-inner",
-              fill: colorMap.drill,
-              cx: holeCx.toString(),
-              cy: holeCy.toString(),
-              r: holeRadius.toString(),
-              "data-type": "pcb_plated_hole_drill",
-              "data-pcb-layer": "drill",
-            },
-            value: "",
-            children: [],
-          },
-        ],
+        children,
         value: "",
       },
     ]
@@ -267,6 +350,79 @@ export function createSvgObjectsFromPcbPlatedHole(
     // Use the minimum of scaledHoleHeight and scaledHoleWidth for the radius
     const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
 
+    const children: SvgObject[] = [
+      // Rectangular pad (outer shape)
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer-pad",
+          fill: colorMap.copper.top,
+          x: (x - scaledRectPadWidth / 2).toString(),
+          y: (y - scaledRectPadHeight / 2).toString(),
+          width: scaledRectPadWidth.toString(),
+          height: scaledRectPadHeight.toString(),
+          ...(scaledRectBorderRadius
+            ? {
+                rx: scaledRectBorderRadius.toString(),
+                ry: scaledRectBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      // pill hole inside the rectangle
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+          x: (holeCenterX - scaledHoleWidth / 2).toString(),
+          y: (holeCenterY - scaledHoleHeight / 2).toString(),
+          width: scaledHoleWidth.toString(),
+          height: scaledHoleHeight.toString(),
+          rx: holeRadius.toString(),
+          ry: holeRadius.toString(),
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    // Add soldermask if needed
+    if (shouldShowSolderMask) {
+      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
+      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
+      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      children.push({
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          x: (x - maskWidth / 2).toString(),
+          y: (y - maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          ...(scaledRectBorderRadius
+            ? {
+                rx: maskBorderRadius.toString(),
+                ry: maskBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_soldermask",
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     return [
       {
         name: "g",
@@ -275,50 +431,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
         },
-        children: [
-          // Rectangular pad (outer shape)
-          {
-            name: "rect",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-outer-pad",
-              fill: colorMap.copper.top,
-              x: (x - scaledRectPadWidth / 2).toString(),
-              y: (y - scaledRectPadHeight / 2).toString(),
-              width: scaledRectPadWidth.toString(),
-              height: scaledRectPadHeight.toString(),
-              ...(scaledRectBorderRadius
-                ? {
-                    rx: scaledRectBorderRadius.toString(),
-                    ry: scaledRectBorderRadius.toString(),
-                  }
-                : {}),
-              "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
-            },
-            value: "",
-            children: [],
-          },
-          // pill hole inside the rectangle
-          {
-            name: "rect",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-inner",
-              fill: colorMap.drill,
-              x: (holeCenterX - scaledHoleWidth / 2).toString(),
-              y: (holeCenterY - scaledHoleHeight / 2).toString(),
-              width: scaledHoleWidth.toString(),
-              height: scaledHoleHeight.toString(),
-              rx: holeRadius.toString(),
-              ry: holeRadius.toString(),
-              "data-type": "pcb_plated_hole_drill",
-              "data-pcb-layer": "drill",
-            },
-            value: "",
-            children: [],
-          },
-        ],
+        children,
         value: "",
       },
     ]
@@ -347,6 +460,80 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
 
+    const children: SvgObject[] = [
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer-pad",
+          fill: colorMap.copper.top,
+          x: (-scaledRectPadWidth / 2).toString(),
+          y: (-scaledRectPadHeight / 2).toString(),
+          width: scaledRectPadWidth.toString(),
+          height: scaledRectPadHeight.toString(),
+          transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
+          ...(scaledRectBorderRadius
+            ? {
+                rx: scaledRectBorderRadius.toString(),
+                ry: scaledRectBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+          x: (-scaledHoleWidth / 2).toString(),
+          y: (-scaledHoleHeight / 2).toString(),
+          width: scaledHoleWidth.toString(),
+          height: scaledHoleHeight.toString(),
+          rx: holeRadius.toString(),
+          ry: holeRadius.toString(),
+          transform: `translate(${holeCenterX} ${holeCenterY}) rotate(${-rotatedHole.hole_ccw_rotation})`,
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    // Add soldermask if needed
+    if (shouldShowSolderMask) {
+      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
+      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
+      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      children.push({
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          x: (-maskWidth / 2).toString(),
+          y: (-maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
+          ...(scaledRectBorderRadius
+            ? {
+                rx: maskBorderRadius.toString(),
+                ry: maskBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_soldermask",
+        },
+        value: "",
+        children: [],
+      })
+    }
+
     return [
       {
         name: "g",
@@ -355,50 +542,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
         },
-        children: [
-          {
-            name: "rect",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-outer-pad",
-              fill: colorMap.copper.top,
-              x: (-scaledRectPadWidth / 2).toString(),
-              y: (-scaledRectPadHeight / 2).toString(),
-              width: scaledRectPadWidth.toString(),
-              height: scaledRectPadHeight.toString(),
-              transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
-              ...(scaledRectBorderRadius
-                ? {
-                    rx: scaledRectBorderRadius.toString(),
-                    ry: scaledRectBorderRadius.toString(),
-                  }
-                : {}),
-              "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
-            },
-            value: "",
-            children: [],
-          },
-          {
-            name: "rect",
-            type: "element",
-            attributes: {
-              class: "pcb-hole-inner",
-              fill: colorMap.drill,
-              x: (-scaledHoleWidth / 2).toString(),
-              y: (-scaledHoleHeight / 2).toString(),
-              width: scaledHoleWidth.toString(),
-              height: scaledHoleHeight.toString(),
-              rx: holeRadius.toString(),
-              ry: holeRadius.toString(),
-              transform: `translate(${holeCenterX} ${holeCenterY}) rotate(${-rotatedHole.hole_ccw_rotation})`,
-              "data-type": "pcb_plated_hole_drill",
-              "data-pcb-layer": "drill",
-            },
-            value: "",
-            children: [],
-          },
-        ],
+        children,
         value: "",
       },
     ]

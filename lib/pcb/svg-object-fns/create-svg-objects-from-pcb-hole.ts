@@ -7,51 +7,103 @@ export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap } = ctx
+  const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
+
+  // Positive margin: mask extends beyond hole (less hole exposed)
+  // Negative margin: mask is smaller than hole (spacing around edges)
+  const soldermaskMargin = (hole.soldermask_margin ?? 0) * Math.abs(transform.a)
+
+  // Show soldermask if it's enabled and there's a margin defined
+  const shouldShowSolderMask = showSolderMask && soldermaskMargin !== 0
+
+  const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
     const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
     const radius = scaledDiameter / 2
 
     if (hole.hole_shape === "circle") {
-      return [
-        {
-          name: "circle",
-          type: "element",
-          attributes: {
-            class: "pcb-hole",
-            cx: x.toString(),
-            cy: y.toString(),
-            r: radius.toString(),
-            fill: colorMap.drill,
-            "data-type": "pcb_hole",
-            "data-pcb-layer": "drill",
-          },
-          children: [],
-          value: "",
-        },
-      ]
-    }
-    // Square hole
-    return [
-      {
-        name: "rect",
+      const holeElement: SvgObject = {
+        name: "circle",
         type: "element",
         attributes: {
           class: "pcb-hole",
-          x: (x - radius).toString(),
-          y: (y - radius).toString(),
-          width: scaledDiameter.toString(),
-          height: scaledDiameter.toString(),
+          cx: x.toString(),
+          cy: y.toString(),
+          r: radius.toString(),
           fill: colorMap.drill,
           "data-type": "pcb_hole",
           "data-pcb-layer": "drill",
         },
         children: [],
         value: "",
+      }
+
+      if (!shouldShowSolderMask) {
+        return [holeElement]
+      }
+
+      const maskRadius = radius + soldermaskMargin
+
+      const maskElement: SvgObject = {
+        name: holeElement.name,
+        type: holeElement.type,
+        value: "",
+        children: [],
+        attributes: {
+          ...holeElement.attributes,
+          class: "pcb-solder-mask",
+          fill: solderMaskColor,
+          "data-type": "pcb_soldermask",
+          r: maskRadius.toString(),
+        },
+      }
+
+      return [holeElement, maskElement]
+    }
+    // Square hole
+    const holeElement: SvgObject = {
+      name: "rect",
+      type: "element",
+      attributes: {
+        class: "pcb-hole",
+        x: (x - radius).toString(),
+        y: (y - radius).toString(),
+        width: scaledDiameter.toString(),
+        height: scaledDiameter.toString(),
+        fill: colorMap.drill,
+        "data-type": "pcb_hole",
+        "data-pcb-layer": "drill",
       },
-    ]
+      children: [],
+      value: "",
+    }
+
+    if (!shouldShowSolderMask) {
+      return [holeElement]
+    }
+
+    const maskDiameter = scaledDiameter + 2 * soldermaskMargin
+
+    const maskElement: SvgObject = {
+      name: holeElement.name,
+      type: holeElement.type,
+      value: "",
+      children: [],
+      attributes: {
+        ...holeElement.attributes,
+        class: "pcb-solder-mask",
+        fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
+        x: (x - maskDiameter / 2).toString(),
+        y: (y - maskDiameter / 2).toString(),
+        width: maskDiameter.toString(),
+        height: maskDiameter.toString(),
+      },
+    }
+
+    return [holeElement, maskElement]
   }
   if (hole.hole_shape === "oval") {
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
@@ -59,48 +111,94 @@ export function createSvgObjectsFromPcbHole(
     const rx = scaledWidth / 2
     const ry = scaledHeight / 2
 
-    return [
-      {
-        name: "ellipse",
-        type: "element",
-        attributes: {
-          class: "pcb-hole",
-          cx: x.toString(),
-          cy: y.toString(),
-          rx: rx.toString(),
-          ry: ry.toString(),
-          fill: colorMap.drill,
-          "data-type": "pcb_hole",
-          "data-pcb-layer": "drill",
-        },
-        children: [],
-        value: "",
+    const holeElement: SvgObject = {
+      name: "ellipse",
+      type: "element",
+      attributes: {
+        class: "pcb-hole",
+        cx: x.toString(),
+        cy: y.toString(),
+        rx: rx.toString(),
+        ry: ry.toString(),
+        fill: colorMap.drill,
+        "data-type": "pcb_hole",
+        "data-pcb-layer": "drill",
       },
-    ]
+      children: [],
+      value: "",
+    }
+
+    if (!shouldShowSolderMask) {
+      return [holeElement]
+    }
+
+    const maskRx = rx + soldermaskMargin
+    const maskRy = ry + soldermaskMargin
+
+    const maskElement: SvgObject = {
+      name: holeElement.name,
+      type: holeElement.type,
+      value: "",
+      children: [],
+      attributes: {
+        ...holeElement.attributes,
+        class: "pcb-solder-mask",
+        fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
+        rx: maskRx.toString(),
+        ry: maskRy.toString(),
+      },
+    }
+
+    return [holeElement, maskElement]
   }
 
   if (hole.hole_shape === "rect") {
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHeight = hole.hole_height * Math.abs(transform.a)
 
-    return [
-      {
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-hole",
-          x: (x - scaledWidth / 2).toString(),
-          y: (y - scaledHeight / 2).toString(),
-          width: scaledWidth.toString(),
-          height: scaledHeight.toString(),
-          fill: colorMap.drill,
-          "data-type": "pcb_hole",
-          "data-pcb-layer": "drill",
-        },
-        children: [],
-        value: "",
+    const holeElement: SvgObject = {
+      name: "rect",
+      type: "element",
+      attributes: {
+        class: "pcb-hole",
+        x: (x - scaledWidth / 2).toString(),
+        y: (y - scaledHeight / 2).toString(),
+        width: scaledWidth.toString(),
+        height: scaledHeight.toString(),
+        fill: colorMap.drill,
+        "data-type": "pcb_hole",
+        "data-pcb-layer": "drill",
       },
-    ]
+      children: [],
+      value: "",
+    }
+
+    if (!shouldShowSolderMask) {
+      return [holeElement]
+    }
+
+    const maskWidth = scaledWidth + 2 * soldermaskMargin
+    const maskHeight = scaledHeight + 2 * soldermaskMargin
+
+    const maskElement: SvgObject = {
+      name: holeElement.name,
+      type: holeElement.type,
+      value: "",
+      children: [],
+      attributes: {
+        ...holeElement.attributes,
+        class: "pcb-solder-mask",
+        fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
+        x: (x - maskWidth / 2).toString(),
+        y: (y - maskHeight / 2).toString(),
+        width: maskWidth.toString(),
+        height: maskHeight.toString(),
+      },
+    }
+
+    return [holeElement, maskElement]
   }
 
   if (hole.hole_shape === "pill") {
@@ -129,21 +227,61 @@ export function createSvgObjectsFromPcbHole(
         `v-${straightLength} ` +
         `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
-    return [
-      {
-        name: "path",
-        type: "element",
-        attributes: {
-          class: "pcb-hole",
-          fill: colorMap.drill,
-          d: pathD,
-          "data-type": "pcb_hole",
-          "data-pcb-layer": "drill",
-        },
-        children: [],
-        value: "",
+    const holeElement: SvgObject = {
+      name: "path",
+      type: "element",
+      attributes: {
+        class: "pcb-hole",
+        fill: colorMap.drill,
+        d: pathD,
+        "data-type": "pcb_hole",
+        "data-pcb-layer": "drill",
       },
-    ]
+      children: [],
+      value: "",
+    }
+
+    if (!shouldShowSolderMask) {
+      return [holeElement]
+    }
+
+    const maskWidth = scaledWidth + 2 * soldermaskMargin
+    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskIsHorizontal = maskWidth > maskHeight
+    const maskRadius = Math.min(maskWidth, maskHeight) / 2
+    const maskStraightLength = Math.abs(
+      maskIsHorizontal ? maskWidth - maskHeight : maskHeight - maskWidth,
+    )
+
+    const maskPathD = maskIsHorizontal
+      ? // Horizontal pill (wider than tall)
+        `M${x - maskStraightLength / 2},${y - maskRadius} ` +
+        `h${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 1 0,${maskHeight} ` +
+        `h-${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 1 0,-${maskHeight} z`
+      : // Vertical pill (taller than wide)
+        `M${x - maskRadius},${y - maskStraightLength / 2} ` +
+        `v${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 0 ${maskWidth},0 ` +
+        `v-${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 0 -${maskWidth},0 z`
+
+    const maskElement: SvgObject = {
+      name: holeElement.name,
+      type: holeElement.type,
+      value: "",
+      children: [],
+      attributes: {
+        ...holeElement.attributes,
+        class: "pcb-solder-mask",
+        fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
+        d: maskPathD,
+      },
+    }
+
+    return [holeElement, maskElement]
   }
 
   if (hole.hole_shape === "rotated_pill") {
@@ -174,22 +312,62 @@ export function createSvgObjectsFromPcbHole(
         `v-${straightLength} ` +
         `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
-    return [
-      {
-        name: "path",
-        type: "element",
-        attributes: {
-          class: "pcb-hole",
-          fill: colorMap.drill,
-          d: pathD,
-          transform: `translate(${x} ${y}) rotate(${-rotation})`,
-          "data-type": "pcb_hole",
-          "data-pcb-layer": "drill",
-        },
-        children: [],
-        value: "",
+    const holeElement: SvgObject = {
+      name: "path",
+      type: "element",
+      attributes: {
+        class: "pcb-hole",
+        fill: colorMap.drill,
+        d: pathD,
+        transform: `translate(${x} ${y}) rotate(${-rotation})`,
+        "data-type": "pcb_hole",
+        "data-pcb-layer": "drill",
       },
-    ]
+      children: [],
+      value: "",
+    }
+
+    if (!shouldShowSolderMask) {
+      return [holeElement]
+    }
+
+    const maskWidth = scaledWidth + 2 * soldermaskMargin
+    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskIsHorizontal = maskWidth > maskHeight
+    const maskRadius = Math.min(maskWidth, maskHeight) / 2
+    const maskStraightLength = Math.abs(
+      maskIsHorizontal ? maskWidth - maskHeight : maskHeight - maskWidth,
+    )
+
+    const maskPathD = maskIsHorizontal
+      ? // Horizontal pill (wider than tall)
+        `M${-maskStraightLength / 2},${-maskRadius} ` +
+        `h${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 1 0,${maskHeight} ` +
+        `h-${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 1 0,-${maskHeight} z`
+      : // Vertical pill (taller than wide)
+        `M${-maskRadius},${-maskStraightLength / 2} ` +
+        `v${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 0 ${maskWidth},0 ` +
+        `v-${maskStraightLength} ` +
+        `a${maskRadius},${maskRadius} 0 0 0 -${maskWidth},0 z`
+
+    const maskElement: SvgObject = {
+      name: holeElement.name,
+      type: holeElement.type,
+      value: "",
+      children: [],
+      attributes: {
+        ...holeElement.attributes,
+        class: "pcb-solder-mask",
+        fill: solderMaskColor,
+        "data-type": "pcb_soldermask",
+        d: maskPathD,
+      },
+    }
+
+    return [holeElement, maskElement]
   }
 
   return []
