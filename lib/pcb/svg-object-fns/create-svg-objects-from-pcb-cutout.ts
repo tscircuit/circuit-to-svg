@@ -30,23 +30,39 @@ export function createSvgObjectsFromPcbCutout(
     const scaledHeight = rectCutout.height * Math.abs(transform.d)
     const svgRotation = -(rectCutout.rotation ?? 0)
 
+    const { corner_radius } = rectCutout as any
+    const baseCornerRadius =
+      typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+    const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
+    const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
+
+    const attributes: { [key: string]: string } = {
+      class: "pcb-cutout pcb-cutout-rect",
+      x: (-scaledWidth / 2).toString(),
+      y: (-scaledHeight / 2).toString(),
+      width: scaledWidth.toString(),
+      height: scaledHeight.toString(),
+      fill: colorMap.drill,
+      transform: matrixToString(
+        compose(translate(cx, cy), rotate((svgRotation * Math.PI) / 180)),
+      ),
+      "data-type": "pcb_cutout",
+      "data-pcb-layer": "drill",
+    }
+
+    if (transformedCornerRadiusX > 0) {
+      attributes.rx = transformedCornerRadiusX.toString()
+    }
+
+    if (transformedCornerRadiusY > 0) {
+      attributes.ry = transformedCornerRadiusY.toString()
+    }
+
     return [
       {
         name: "rect",
         type: "element",
-        attributes: {
-          class: "pcb-cutout pcb-cutout-rect",
-          x: (-scaledWidth / 2).toString(),
-          y: (-scaledHeight / 2).toString(),
-          width: scaledWidth.toString(),
-          height: scaledHeight.toString(),
-          fill: colorMap.drill,
-          transform: matrixToString(
-            compose(translate(cx, cy), rotate((svgRotation * Math.PI) / 180)),
-          ),
-          "data-type": "pcb_cutout",
-          "data-pcb-layer": "drill",
-        },
+        attributes,
         children: [],
         value: "",
       },
