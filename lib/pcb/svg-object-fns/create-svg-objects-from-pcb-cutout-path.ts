@@ -34,21 +34,21 @@ export function createSvgObjectsFromPcbCutoutPath(
 
   const segLengths: number[] = []
   const cumulative: number[] = [0]
-  let total = 0
+  let totalDistance = 0
   for (let i = 0; i < pts.length - 1; i++) {
     const dx = pts[i + 1]![0]! - pts[i]![0]!
     const dy = pts[i + 1]![1]! - pts[i]![1]!
     const d = Math.sqrt(dx * dx + dy * dy)
     segLengths.push(d)
-    total += d
-    cumulative.push(total)
+    totalDistance += d
+    cumulative.push(totalDistance)
   }
 
   const svgObjects: SvgObject[] = []
 
   function pointAt(distance: number): number[] {
     if (distance <= 0) return pts[0]!
-    if (distance >= total) return pts[pts.length - 1]!
+    if (distance >= totalDistance) return pts[pts.length - 1]!
 
     let acc = 0
     for (let i = 0; i < segLengths.length; i++) {
@@ -81,7 +81,7 @@ export function createSvgObjectsFromPcbCutoutPath(
     if (linecap === "round") {
       const half = slotWidth / 2
       s = Math.max(0, s + half)
-      e = Math.min(total, e - half)
+      e = Math.min(totalDistance, e - half)
       if (e <= s) return
     }
 
@@ -146,9 +146,9 @@ export function createSvgObjectsFromPcbCutoutPath(
   const gap = spacing!
   const pitch = slotLen + gap
 
-  for (let d = 0; d < total; d += pitch) {
+  for (let d = 0; d < totalDistance; d += pitch) {
     const s = d
-    const e = Math.min(d + slotLen, total)
+    const e = Math.min(d + slotLen, totalDistance)
     emitSlotPath(s, e)
   }
 
