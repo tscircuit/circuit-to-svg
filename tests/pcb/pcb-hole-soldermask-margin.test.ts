@@ -11,6 +11,7 @@ const circuitJson: any = [
   },
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "circle_hole_with_mask",
     hole_shape: "circle",
     x: -10,
@@ -21,6 +22,7 @@ const circuitJson: any = [
   // Circle hole with negative soldermask margin
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "circle_hole_negative_margin",
     hole_shape: "circle",
     x: -10,
@@ -31,6 +33,7 @@ const circuitJson: any = [
   // Square hole with soldermask margin
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "square_hole_with_mask",
     hole_shape: "square",
     x: -5,
@@ -41,6 +44,7 @@ const circuitJson: any = [
   // Rect hole with soldermask margin
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "rect_hole_with_mask",
     hole_shape: "rect",
     x: 0,
@@ -52,6 +56,7 @@ const circuitJson: any = [
   // Oval hole with soldermask margin
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "oval_hole_with_mask",
     hole_shape: "oval",
     x: 5,
@@ -63,6 +68,7 @@ const circuitJson: any = [
   // Pill hole with soldermask margin (horizontal)
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: true,
     pcb_hole_id: "pill_hole_horizontal_with_mask",
     hole_shape: "pill",
     x: 10,
@@ -74,6 +80,7 @@ const circuitJson: any = [
   // Circle hole without soldermask margin (for comparison)
   {
     type: "pcb_hole",
+    is_covered_with_solder_mask: false,
     pcb_hole_id: "circle_hole_no_mask",
     hole_shape: "circle",
     x: -5,

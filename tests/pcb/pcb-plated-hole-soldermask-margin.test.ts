@@ -12,6 +12,7 @@ const circuitJson: any = [
   // Circle plated hole with positive soldermask margin
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "circle_plated_hole_with_mask",
     shape: "circle",
     x: -10,
@@ -23,6 +24,7 @@ const circuitJson: any = [
   // Circle plated hole with negative soldermask margin
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "circle_plated_hole_negative_margin",
     shape: "circle",
     x: -10,
@@ -34,6 +36,7 @@ const circuitJson: any = [
   // Pill plated hole with soldermask margin (horizontal)
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "pill_plated_hole_horizontal_with_mask",
     shape: "pill",
     x: -5,
@@ -47,6 +50,7 @@ const circuitJson: any = [
   // Pill plated hole with soldermask margin (vertical)
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "pill_plated_hole_vertical_with_mask",
     shape: "pill",
     x: 0,
@@ -60,6 +64,7 @@ const circuitJson: any = [
   // Circular hole with rect pad and soldermask margin
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "circular_hole_rect_pad_with_mask",
     shape: "circular_hole_with_rect_pad",
     x: 5,
@@ -72,6 +77,7 @@ const circuitJson: any = [
   // Pill hole with rect pad and soldermask margin
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: true,
     pcb_plated_hole_id: "pill_hole_rect_pad_with_mask",
     shape: "pill_hole_with_rect_pad",
     x: 10,
@@ -86,6 +92,7 @@ const circuitJson: any = [
   // Circle plated hole without soldermask margin (for comparison)
   {
     type: "pcb_plated_hole",
+    is_covered_with_solder_mask: false,
     pcb_plated_hole_id: "circle_plated_hole_no_mask",
     shape: "circle",
     x: 0,
