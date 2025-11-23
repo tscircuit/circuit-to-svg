@@ -2,7 +2,6 @@ import type {
   AnyCircuitElement,
   PCBBoard,
   PcbCopperPour,
-  PcbSmtPad,
 } from "circuit-json"
 import Flatten from "@flatten-js/core"
 import type { SvgObject } from "lib/svg-object"
@@ -42,11 +41,9 @@ export function createSvgObjectsForSoldermaskCopperPours(
   const boardPolygon = createBoardPolygon(board, ctx)
   if (!boardPolygon) return []
 
-  // Collect copper pours and SMT pads
+  // Collect copper pours only (SMT pads are handled separately)
   const coveredPours: PcbCopperPour[] = []
   const uncoveredPours: PcbCopperPour[] = []
-  const coveredPads: PcbSmtPad[] = []
-  const uncoveredPads: PcbSmtPad[] = []
 
   for (const elm of circuitJson) {
     if (elm.type === "pcb_copper_pour") {
@@ -58,21 +55,12 @@ export function createSvgObjectsForSoldermaskCopperPours(
       } else if (pour.covered_with_solder_mask === false) {
         uncoveredPours.push(pour)
       }
-    } else if (elm.type === "pcb_smtpad") {
-      const pad = elm as PcbSmtPad
-      if (pad.layer !== currentLayer) continue
-
-      if (pad.is_covered_with_solder_mask === true) {
-        coveredPads.push(pad)
-      } else if (pad.is_covered_with_solder_mask === false) {
-        uncoveredPads.push(pad)
-      }
     }
   }
 
   const objects: SvgObject[] = []
 
-  // Create soldermask layer, subtracting uncovered copper pours and pads
+  // Create soldermask layer, subtracting uncovered copper pours
   let maskPolygon = boardPolygon
 
   for (const pour of uncoveredPours) {
@@ -82,17 +70,6 @@ export function createSvgObjectsForSoldermaskCopperPours(
         maskPolygon = BooleanOperations.subtract(maskPolygon, pourPolygon)
       } catch (e) {
         console.warn("Failed to subtract uncovered copper pour:", e)
-      }
-    }
-  }
-
-  for (const pad of uncoveredPads) {
-    const padPolygon = createSmtPadPolygon(pad, ctx)
-    if (padPolygon) {
-      try {
-        maskPolygon = BooleanOperations.subtract(maskPolygon, padPolygon)
-      } catch (e) {
-        console.warn("Failed to subtract uncovered SMT pad:", e)
       }
     }
   }
@@ -148,36 +125,6 @@ export function createSvgObjectsForSoldermaskCopperPours(
     }
   }
 
-  // Create brighter green layer for covered SMT pads
-  for (const pad of coveredPads) {
-    const padPolygon = createSmtPadPolygon(pad, ctx)
-    if (padPolygon) {
-      try {
-        const coveredArea = BooleanOperations.intersect(
-          boardPolygon,
-          padPolygon,
-        )
-        if (!coveredArea.isEmpty()) {
-          objects.push({
-            name: "path",
-            type: "element",
-            value: "",
-            children: [],
-            attributes: {
-              class: "pcb-soldermask-over-copper",
-              d: polygonToPathD(coveredArea),
-              fill: brighterGreen,
-              "fill-opacity": "0.9",
-              "data-type": "pcb_soldermask_over_copper",
-              "data-pcb-layer": `${currentLayer}-soldermask`,
-            },
-          })
-        }
-      } catch (e) {
-        console.warn("Failed to create soldermask over SMT pad:", e)
-      }
-    }
-  }
 
   return objects
 }
@@ -230,85 +177,6 @@ function createBoardPolygon(
     console.warn("Failed to create board polygon:", e)
     return null
   }
-}
-
-function createSmtPadPolygon(
-  pad: PcbSmtPad,
-  ctx: PcbContext,
-): Flatten.Polygon | null {
-  const { transform } = ctx
-
-  try {
-    if (
-      pad.shape === "rect" ||
-      pad.shape === "rotated_rect" ||
-      pad.shape === "pill"
-    ) {
-      const [cx, cy] = applyToPoint(transform, [pad.x, pad.y])
-      const width = pad.width * Math.abs(transform.a)
-      const height = pad.height * Math.abs(transform.d)
-
-      let points: [number, number][]
-      if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
-        // For rotated rects, we need to rotate the corners
-        const angle = (pad.ccw_rotation * Math.PI) / 180
-        const cos = Math.cos(angle)
-        const sin = Math.sin(angle)
-        const corners = [
-          [-width / 2, -height / 2],
-          [width / 2, -height / 2],
-          [width / 2, height / 2],
-          [-width / 2, height / 2],
-        ]
-        points = corners.map((corner) => {
-          const [x, y] = corner
-          if (x === undefined || y === undefined) {
-            throw new Error("Invalid corner coordinates")
-          }
-          const rx = x * cos - y * sin
-          const ry = x * sin + y * cos
-          return [cx + rx, cy + ry] as [number, number]
-        })
-      } else {
-        points = [
-          [cx - width / 2, cy - height / 2],
-          [cx + width / 2, cy - height / 2],
-          [cx + width / 2, cy + height / 2],
-          [cx - width / 2, cy + height / 2],
-        ]
-      }
-
-      return new Polygon(points.map(([x, y]) => flattenPoint(x, y)))
-    }
-
-    if (pad.shape === "circle") {
-      const [cx, cy] = applyToPoint(transform, [pad.x, pad.y])
-      const radius = pad.radius * Math.abs(transform.a)
-      // Approximate circle as a polygon
-      const segments = 16
-      const points: [number, number][] = []
-      for (let i = 0; i < segments; i++) {
-        const angle = (i / segments) * 2 * Math.PI
-        points.push([
-          cx + radius * Math.cos(angle),
-          cy + radius * Math.sin(angle),
-        ])
-      }
-      return new Polygon(points.map(([x, y]) => flattenPoint(x, y)))
-    }
-
-    if (pad.shape === "polygon" && pad.points) {
-      const points = pad.points.map((p) => {
-        const [x, y] = applyToPoint(transform, [p.x, p.y])
-        return [x, y] as [number, number]
-      })
-      return new Polygon(points.map(([x, y]) => flattenPoint(x, y)))
-    }
-  } catch (e) {
-    console.warn("Failed to create SMT pad polygon:", e)
-  }
-
-  return null
 }
 
 function createCopperPourPolygon(
