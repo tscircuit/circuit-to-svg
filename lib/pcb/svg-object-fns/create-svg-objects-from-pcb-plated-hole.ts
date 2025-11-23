@@ -205,28 +205,6 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
 
-    // Add soldermask if needed
-    if (shouldShowSolderMask) {
-      const maskWidth = scaledOuterWidth + 2 * soldermaskMargin
-      const maskHeight = scaledOuterHeight + 2 * soldermaskMargin
-      children.push({
-        name: "ellipse",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          cx: "0",
-          cy: "0",
-          rx: (maskWidth / 2).toString(),
-          ry: (maskHeight / 2).toString(),
-          transform: transformStr,
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
-    }
-
     return [
       {
         name: "g",
