@@ -196,7 +196,12 @@ function createBoardPolygon(
       const [x, y] = applyToPoint(transform, [point.x, point.y])
       return [x, y] as [number, number]
     })
-  } else if (width && height && center.x !== undefined && center.y !== undefined) {
+  } else if (
+    width &&
+    height &&
+    center.x !== undefined &&
+    center.y !== undefined
+  ) {
     const halfWidth = width / 2
     const halfHeight = height / 2
 
@@ -234,7 +239,11 @@ function createSmtPadPolygon(
   const { transform } = ctx
 
   try {
-    if (pad.shape === "rect" || pad.shape === "rotated_rect" || pad.shape === "pill") {
+    if (
+      pad.shape === "rect" ||
+      pad.shape === "rotated_rect" ||
+      pad.shape === "pill"
+    ) {
       const [cx, cy] = applyToPoint(transform, [pad.x, pad.y])
       const width = pad.width * Math.abs(transform.a)
       const height = pad.height * Math.abs(transform.d)
@@ -251,7 +260,11 @@ function createSmtPadPolygon(
           [width / 2, height / 2],
           [-width / 2, height / 2],
         ]
-        points = corners.map(([x, y]) => {
+        points = corners.map((corner) => {
+          const [x, y] = corner
+          if (x === undefined || y === undefined) {
+            throw new Error("Invalid corner coordinates")
+          }
           const rx = x * cos - y * sin
           const ry = x * sin + y * cos
           return [cx + rx, cy + ry] as [number, number]
@@ -383,4 +396,3 @@ function darkenColor(color: string): string {
   // If parsing fails, return a darker green
   return "rgb(10, 50, 30)"
 }
-

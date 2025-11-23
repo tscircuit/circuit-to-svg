@@ -27,7 +27,7 @@ export function createSvgObjectsFromPcbCopperPour(
   }
 
   const copperColor = layerNameToColor(layer, colorMap)
-  
+
   // Render uncovered copper pours as copper color (red)
   const color = copperColor
   const opacity = "0.5"
