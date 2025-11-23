@@ -1,8 +1,4 @@
-import type {
-  AnyCircuitElement,
-  PCBBoard,
-  PcbCopperPour,
-} from "circuit-json"
+import type { AnyCircuitElement, PCBBoard, PcbCopperPour } from "circuit-json"
 import Flatten from "@flatten-js/core"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -124,7 +120,6 @@ export function createSvgObjectsForSoldermaskCopperPours(
       }
     }
   }
-
 
   return objects
 }
