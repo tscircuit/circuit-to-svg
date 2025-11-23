@@ -86,7 +86,10 @@ export function convertCircuitJsonToSimulationGraphSvg({
   }
 
   const timeAxis = buildAxisInfo(allPoints.map((point) => point.timeMs))
-  const voltageAxis = buildAxisInfo(allPoints.map((point) => point.voltage))
+  const voltageAxis = buildAxisInfo(
+    allPoints.map((point) => point.voltage),
+    true,
+  )
 
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
@@ -259,7 +262,7 @@ function getTimestamps(graph: SimulationTransientVoltageGraph): number[] {
   return timestamps
 }
 
-function buildAxisInfo(values: number[]): AxisInfo {
+function buildAxisInfo(values: number[], applyPadding = false): AxisInfo {
   if (values.length === 0) {
     return {
       domainMin: 0,
@@ -281,9 +284,25 @@ function buildAxisInfo(values: number[]): AxisInfo {
   }
 
   const ticks = generateTickValues(min, max)
-  const safeTicks = ticks.length > 0 ? ticks : [min, max]
-  const domainMin = safeTicks[0]!
-  const domainMax = safeTicks[safeTicks.length - 1]!
+  // Create a mutable copy of the ticks
+  const safeTicks = ticks.length > 0 ? [...ticks] : [min, max]
+  let domainMin = safeTicks[0]!
+  let domainMax = safeTicks[safeTicks.length - 1]!
+
+  if (applyPadding && safeTicks.length > 1) {
+    const tickStep = Math.abs(safeTicks[1]! - safeTicks[0]!)
+    const PADDING_TOLERANCE_RATIO = 0.1 // 10% of tick step
+
+    // Add padding if the data's min/max are too close to the domain edges
+    if (min < domainMin + tickStep * PADDING_TOLERANCE_RATIO) {
+      domainMin -= tickStep
+      safeTicks.unshift(domainMin)
+    }
+    if (max > domainMax - tickStep * PADDING_TOLERANCE_RATIO) {
+      domainMax += tickStep
+      safeTicks.push(domainMax)
+    }
+  }
 
   return { domainMin, domainMax, ticks: safeTicks }
 }
