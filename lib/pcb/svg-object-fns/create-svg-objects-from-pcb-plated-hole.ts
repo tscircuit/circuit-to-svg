@@ -154,7 +154,70 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
   }
+  // Handle oval shape
+  if (hole.shape === "oval") {
+    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
+    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
+    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const rotation = hole.ccw_rotation || 0
 
+    const transformStr = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : `translate(${x} ${y})`
+
+    const children: SvgObject[] = [
+      // Outer oval shape
+      {
+        name: "ellipse",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-outer",
+          fill: colorMap.copper.top,
+          cx: "0",
+          cy: "0",
+          rx: (scaledOuterWidth / 2).toString(),
+          ry: (scaledOuterHeight / 2).toString(),
+          transform: transformStr,
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": copperLayer,
+        },
+        value: "",
+        children: [],
+      },
+      // Inner oval shape
+      {
+        name: "ellipse",
+        type: "element",
+        attributes: {
+          class: "pcb-hole-inner",
+          fill: colorMap.drill,
+          cx: "0",
+          cy: "0",
+          rx: (scaledHoleWidth / 2).toString(),
+          ry: (scaledHoleHeight / 2).toString(),
+          transform: transformStr,
+          "data-type": "pcb_plated_hole_drill",
+          "data-pcb-layer": "drill",
+        },
+        value: "",
+        children: [],
+      },
+    ]
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        attributes: {
+          "data-type": "pcb_plated_hole",
+          "data-pcb-layer": "through",
+        },
+        children,
+        value: "",
+      },
+    ]
+  }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
     const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
