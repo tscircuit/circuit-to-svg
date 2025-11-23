@@ -8,19 +8,14 @@ export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
-  const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
-  const shouldshowSolderMask = showSolderMask && isCoveredWithSolderMask
-
-  const solderMaskColor =
-    colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
-    colorMap.soldermask.top
-
-  // Positive margin: mask extends beyond pad (less copper exposed)
-  // Negative margin: mask is smaller than pad (spacing/copper visible around edges)
-  const soldermaskMargin = (pad.soldermask_margin ?? 0) * Math.abs(transform.a)
+  // If soldermask is enabled and this pad is covered, don't render the pad element
+  // The soldermask layer will handle the visual representation
+  if (ctx.showSolderMask && pad.is_covered_with_solder_mask === true) {
+    return []
+  }
 
   if (pad.shape === "rect" || pad.shape === "rotated_rect") {
     const width = pad.width * Math.abs(transform.a)
@@ -57,40 +52,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      if (!shouldshowSolderMask) {
-        return [padElement]
-      }
-
-      const maskWidth = width + 2 * soldermaskMargin
-      const maskHeight = height + 2 * soldermaskMargin
-      const maskBorderRadius = scaledBorderRadius
-        ? scaledBorderRadius + soldermaskMargin
-        : 0
-
-      const maskElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
-        value: "",
-        children: [],
-        attributes: {
-          ...padElement.attributes,
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          "data-type": "pcb_soldermask",
-          x: (-maskWidth / 2).toString(),
-          y: (-maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          ...(maskBorderRadius > 0
-            ? {
-                rx: maskBorderRadius.toString(),
-                ry: maskBorderRadius.toString(),
-              }
-            : {}),
-        },
-      }
-
-      return [padElement, maskElement]
+      return [padElement]
     }
 
     const padElement: SvgObject = {
@@ -116,41 +78,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldshowSolderMask) {
-      return [padElement]
-    }
-
-    // Apply soldermask margin to dimensions
-    const maskWidth = width + 2 * soldermaskMargin
-    const maskHeight = height + 2 * soldermaskMargin
-    const maskBorderRadius = scaledBorderRadius
-      ? scaledBorderRadius + soldermaskMargin
-      : 0
-
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        x: (x - maskWidth / 2).toString(),
-        y: (y - maskHeight / 2).toString(),
-        width: maskWidth.toString(),
-        height: maskHeight.toString(),
-        ...(maskBorderRadius > 0
-          ? {
-              rx: maskBorderRadius.toString(),
-              ry: maskBorderRadius.toString(),
-            }
-          : {}),
-      },
-    }
-
-    return [padElement, maskElement]
+    return [padElement]
   }
 
   if (pad.shape === "pill") {
@@ -178,35 +106,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldshowSolderMask) {
-      return [padElement]
-    }
-
-    // Apply soldermask margin to dimensions
-    const maskWidth = width + 2 * soldermaskMargin
-    const maskHeight = height + 2 * soldermaskMargin
-    const maskRadius = radius + soldermaskMargin
-
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        x: (x - maskWidth / 2).toString(),
-        y: (y - maskHeight / 2).toString(),
-        width: maskWidth.toString(),
-        height: maskHeight.toString(),
-        rx: maskRadius.toString(),
-        ry: maskRadius.toString(),
-      },
-    }
-
-    return [padElement, maskElement]
+    return [padElement]
   }
   if (pad.shape === "circle") {
     const radius = pad.radius * Math.abs(transform.a)
@@ -228,28 +128,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldshowSolderMask) {
-      return [padElement]
-    }
-
-    // Apply soldermask margin to radius
-    const maskRadius = radius + soldermaskMargin
-
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        r: maskRadius.toString(),
-      },
-    }
-
-    return [padElement, maskElement]
+    return [padElement]
   }
 
   if (pad.shape === "polygon") {
@@ -271,48 +150,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldshowSolderMask) {
-      return [padElement]
-    }
-
-    // Apply soldermask margin to polygon by offsetting each point from centroid
-    let maskPoints = points
-    if (soldermaskMargin !== 0) {
-      // Calculate centroid
-      const centroidX = points.reduce((sum, p) => sum + p[0], 0) / points.length
-      const centroidY = points.reduce((sum, p) => sum + p[1], 0) / points.length
-
-      // Offset each point away from or toward the centroid
-      maskPoints = points.map(([px, py]) => {
-        const dx = px - centroidX
-        const dy = py - centroidY
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        if (distance === 0) return [px, py]
-
-        const normalizedDx = dx / distance
-        const normalizedDy = dy / distance
-        return [
-          px + normalizedDx * soldermaskMargin,
-          py + normalizedDy * soldermaskMargin,
-        ]
-      })
-    }
-
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        points: maskPoints.map((p) => p.join(",")).join(" "),
-      },
-    }
-
-    return [padElement, maskElement]
+    return [padElement]
   }
 
   // TODO: Implement SMT pad circles/ovals etc.

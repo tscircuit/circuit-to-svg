@@ -20,7 +20,16 @@ export function createSvgObjectsFromPcbCopperPour(
 
   if (layerFilter && layer !== layerFilter) return []
 
-  const color = layerNameToColor(layer, colorMap)
+  // If soldermask is enabled and this pour is covered, don't render the copper element
+  // The soldermask layer will handle the visual representation
+  if (ctx.showSolderMask && pour.covered_with_solder_mask === true) {
+    return []
+  }
+
+  const copperColor = layerNameToColor(layer, colorMap)
+  
+  // Render uncovered copper pours as copper color (red)
+  const color = copperColor
   const opacity = "0.5"
 
   if (pour.shape === "rect") {

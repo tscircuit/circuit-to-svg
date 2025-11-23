@@ -41,6 +41,7 @@ import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createSvgObjectsForSoldermaskCopperPours } from "./svg-object-fns/create-svg-objects-for-soldermask-copper-pours"
 import {
   createSvgObjectsForPcbGrid,
   type PcbGridOptions,
@@ -339,6 +340,15 @@ export function convertCircuitJsonToPcbSvg(
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
     svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
+  }
+
+  // Add soldermask layers for copper pours (minimal boolean operations)
+  if (options?.showSolderMask) {
+    const soldermaskObjects = createSvgObjectsForSoldermaskCopperPours(
+      circuitJson,
+      ctx,
+    )
+    svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...soldermaskObjects])
   }
 
   const children: SvgObject[] = [

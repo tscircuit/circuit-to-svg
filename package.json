@@ -36,6 +36,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "dependencies": {
+    "@flatten-js/core": "^1.6.8",
     "@types/node": "^22.5.5",
     "bun-types": "^1.1.40",
     "calculate-elbow": "0.0.12",
