@@ -7,8 +7,9 @@ export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap, showSolderMask } = ctx
-  const maskLayer = ctx.layer ?? "top"
+  const { transform, colorMap, showSolderMask, layer } = ctx
+  // Holes are through-hole, so use the view layer for soldermask
+  const maskLayer = layer ?? "top"
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)

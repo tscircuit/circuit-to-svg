@@ -19,10 +19,12 @@ export function createSvgObjectsFromPcbPlatedHole(
 ): SvgObject[] {
   const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
+  // Extract the actual copper layer from the plated hole
   const copperLayer =
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
     (hole as any).layer ||
     "top"
+  // Use the actual copper layer for soldermask cutouts/overlays
   const maskLayer = copperLayer
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)

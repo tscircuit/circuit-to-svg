@@ -26,6 +26,7 @@ export function createSvgObjectsFromPcbCopperPour(
   const color = layerNameToColor(layer, colorMap)
   const opacity = "0.5"
   const isCoveredWithSolderMask = pour.covered_with_solder_mask !== false
+  // Use the actual layer for soldermask cutouts/overlays
   const maskLayer = layer
 
   const baseMaskColor =
