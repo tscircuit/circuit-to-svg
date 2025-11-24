@@ -27,8 +27,9 @@ export function createSvgObjectsFromPcbTrace(
 
     const copperColor = layerNameToColor(layer, colorMap)
     const maskColor =
-      colorMap.soldermask[layer as keyof typeof colorMap.soldermask] ??
-      copperColor
+      colorMap.soldermaskWithCopperUnderneath[
+        layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+      ]
 
     const traceWidth =
       "width" in start ? start.width : "width" in end ? end.width : null
