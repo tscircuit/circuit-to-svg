@@ -14,6 +14,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_copper_pour: 35,
   pcb_via: 36,
   pcb_soldermask: 40,
+  pcb_soldermask_opening: 41,
   pcb_solder_paste: 45,
   pcb_silkscreen_text: 50,
   pcb_silkscreen_path: 50,
@@ -69,6 +70,8 @@ function getLayerPriority(layer?: string): number {
   if (normalized === "global") return -100
   if (normalized === "bottom") return 0
   if (normalized === "board") return 2
+  if (normalized === "soldermask-top" || normalized === "soldermask-bottom")
+    return 3
   if (normalized.startsWith("inner")) {
     const match = normalized.match(/\d+/)
     const layerIndex = match ? parseInt(match[0], 10) : 0

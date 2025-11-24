@@ -34,7 +34,7 @@ export function createSvgObjectsFromPcbPlatedHole(
   const shouldShowSolderMask =
     showSolderMask && isCoveredWithSolderMask && soldermaskMargin !== 0
 
-  const solderMaskColor = colorMap.soldermask.top
+  const solderMaskColor = colorMap.soldermaskWithCopperUnderneath.top
 
   if (hole.shape === "pill") {
     const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
@@ -89,7 +89,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    const children: SvgObject[] = [
+    let children: SvgObject[] = [
       // Outer pill shape
       {
         name: "path",
@@ -126,19 +126,60 @@ export function createSvgObjectsFromPcbPlatedHole(
     if (shouldShowSolderMask) {
       const maskWidth = scaledOuterWidth + 2 * soldermaskMargin
       const maskHeight = scaledOuterHeight + 2 * soldermaskMargin
-      children.push({
-        name: "path",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          d: createPillPath(maskWidth, maskHeight),
-          transform: outerTransform,
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
+
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        // Replace children array to show soldermask ring
+        children = [
+          // 1. Draw the outer pad in soldermask color (covered)
+          {
+            name: "path",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-covered",
+              fill: solderMaskColor,
+              d: createPillPath(scaledOuterWidth, scaledOuterHeight),
+              transform: outerTransform,
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // 2. Draw the exposed opening in copper color
+          {
+            name: "path",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-exposed",
+              fill: colorMap.copper.top,
+              d: createPillPath(maskWidth, maskHeight),
+              transform: outerTransform,
+              "data-type": "pcb_soldermask",
+            },
+            value: "",
+            children: [],
+          },
+          // 3. Draw the drill hole on top
+          children[1] as SvgObject, // Original inner hole
+        ]
+      } else {
+        // For positive margins, draw substrate cutout
+        children.unshift({
+          name: "path",
+          type: "element",
+          attributes: {
+            class: "pcb-soldermask-cutout",
+            fill: colorMap.substrate,
+            d: createPillPath(maskWidth, maskHeight),
+            transform: outerTransform,
+            "data-type": "pcb_soldermask_opening",
+            "data-pcb-layer": "soldermask-top",
+          },
+          value: "",
+          children: [],
+        })
+      }
     }
 
     return [
@@ -228,7 +269,7 @@ export function createSvgObjectsFromPcbPlatedHole(
     const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
     const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
 
-    const children: SvgObject[] = [
+    let children: SvgObject[] = [
       {
         name: "circle",
         type: "element",
@@ -265,20 +306,63 @@ export function createSvgObjectsFromPcbPlatedHole(
     // Add soldermask if needed
     if (shouldShowSolderMask) {
       const maskRadius = outerRadius + soldermaskMargin
-      children.push({
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          cx: x.toString(),
-          cy: y.toString(),
-          r: maskRadius.toString(),
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
+
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        // Replace children array to show soldermask ring
+        children = [
+          // 1. Draw the outer ring in soldermask color (covered)
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-covered",
+              fill: solderMaskColor,
+              cx: x.toString(),
+              cy: y.toString(),
+              r: outerRadius.toString(),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // 2. Draw the exposed opening in copper color
+          {
+            name: "circle",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-exposed",
+              fill: colorMap.copper.top,
+              cx: x.toString(),
+              cy: y.toString(),
+              r: maskRadius.toString(),
+              "data-type": "pcb_soldermask",
+            },
+            value: "",
+            children: [],
+          },
+          // 3. Draw the drill hole on top
+          children[1] as SvgObject, // Original inner hole
+        ]
+      } else {
+        // For positive margins, draw substrate cutout
+        children.unshift({
+          name: "circle",
+          type: "element",
+          attributes: {
+            class: "pcb-soldermask-cutout",
+            fill: colorMap.substrate,
+            cx: x.toString(),
+            cy: y.toString(),
+            r: maskRadius.toString(),
+            "data-type": "pcb_soldermask_opening",
+            "data-pcb-layer": "soldermask-top",
+          },
+          value: "",
+          children: [],
+        })
+      }
     }
 
     return [
@@ -310,7 +394,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       h.y + (h.hole_offset_y ?? 0),
     ])
 
-    const children: SvgObject[] = [
+    let children: SvgObject[] = [
       // Rectangular pad (outer shape)
       {
         name: "rect",
@@ -357,27 +441,84 @@ export function createSvgObjectsFromPcbPlatedHole(
       const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
       const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
       const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
-      children.push({
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          x: (x - maskWidth / 2).toString(),
-          y: (y - maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          ...(scaledRectBorderRadius
-            ? {
-                rx: maskBorderRadius.toString(),
-                ry: maskBorderRadius.toString(),
-              }
-            : {}),
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
+
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        // Replace children array to show soldermask ring
+        children = [
+          // 1. Draw the outer pad in soldermask color (covered)
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-covered",
+              fill: solderMaskColor,
+              x: (x - scaledRectPadWidth / 2).toString(),
+              y: (y - scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // 2. Draw the exposed opening in copper color
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-exposed",
+              fill: colorMap.copper.top,
+              x: (x - maskWidth / 2).toString(),
+              y: (y - maskHeight / 2).toString(),
+              width: maskWidth.toString(),
+              height: maskHeight.toString(),
+              ...(maskBorderRadius > 0
+                ? {
+                    rx: maskBorderRadius.toString(),
+                    ry: maskBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_soldermask",
+            },
+            value: "",
+            children: [],
+          },
+          // 3. Draw the drill hole on top
+          children[1] as SvgObject, // Original hole
+        ]
+      } else {
+        // For positive margins, draw substrate cutout
+        children.unshift({
+          name: "rect",
+          type: "element",
+          attributes: {
+            class: "pcb-soldermask-cutout",
+            fill: colorMap.substrate,
+            x: (x - maskWidth / 2).toString(),
+            y: (y - maskHeight / 2).toString(),
+            width: maskWidth.toString(),
+            height: maskHeight.toString(),
+            ...(scaledRectBorderRadius
+              ? {
+                  rx: maskBorderRadius.toString(),
+                  ry: maskBorderRadius.toString(),
+                }
+              : {}),
+            "data-type": "pcb_soldermask_opening",
+            "data-pcb-layer": "soldermask-top",
+          },
+          value: "",
+          children: [],
+        })
+      }
     }
 
     return [
@@ -415,7 +556,7 @@ export function createSvgObjectsFromPcbPlatedHole(
     // Use the minimum of scaledHoleHeight and scaledHoleWidth for the radius
     const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
 
-    const children: SvgObject[] = [
+    let children: SvgObject[] = [
       // Rectangular pad (outer shape)
       {
         name: "rect",
@@ -465,27 +606,84 @@ export function createSvgObjectsFromPcbPlatedHole(
       const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
       const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
       const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
-      children.push({
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          x: (x - maskWidth / 2).toString(),
-          y: (y - maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          ...(scaledRectBorderRadius
-            ? {
-                rx: maskBorderRadius.toString(),
-                ry: maskBorderRadius.toString(),
-              }
-            : {}),
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
+
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        // Replace children array to show soldermask ring
+        children = [
+          // 1. Draw the outer pad in soldermask color (covered)
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-covered",
+              fill: solderMaskColor,
+              x: (x - scaledRectPadWidth / 2).toString(),
+              y: (y - scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // 2. Draw the exposed opening in copper color
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-exposed",
+              fill: colorMap.copper.top,
+              x: (x - maskWidth / 2).toString(),
+              y: (y - maskHeight / 2).toString(),
+              width: maskWidth.toString(),
+              height: maskHeight.toString(),
+              ...(maskBorderRadius > 0
+                ? {
+                    rx: maskBorderRadius.toString(),
+                    ry: maskBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_soldermask",
+            },
+            value: "",
+            children: [],
+          },
+          // 3. Draw the drill hole on top
+          children[1] as SvgObject, // Original hole
+        ]
+      } else {
+        // For positive margins, draw substrate cutout
+        children.unshift({
+          name: "rect",
+          type: "element",
+          attributes: {
+            class: "pcb-soldermask-cutout",
+            fill: colorMap.substrate,
+            x: (x - maskWidth / 2).toString(),
+            y: (y - maskHeight / 2).toString(),
+            width: maskWidth.toString(),
+            height: maskHeight.toString(),
+            ...(scaledRectBorderRadius
+              ? {
+                  rx: maskBorderRadius.toString(),
+                  ry: maskBorderRadius.toString(),
+                }
+              : {}),
+            "data-type": "pcb_soldermask_opening",
+            "data-pcb-layer": "soldermask-top",
+          },
+          value: "",
+          children: [],
+        })
+      }
     }
 
     return [
@@ -525,7 +723,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     const holeRadius = Math.min(scaledHoleHeight, scaledHoleWidth) / 2
 
-    const children: SvgObject[] = [
+    let children: SvgObject[] = [
       {
         name: "rect",
         type: "element",
@@ -575,28 +773,85 @@ export function createSvgObjectsFromPcbPlatedHole(
       const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
       const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
       const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
-      children.push({
-        name: "rect",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          x: (-maskWidth / 2).toString(),
-          y: (-maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
-          ...(scaledRectBorderRadius
-            ? {
-                rx: maskBorderRadius.toString(),
-                ry: maskBorderRadius.toString(),
-              }
-            : {}),
-          "data-type": "pcb_soldermask",
-        },
-        value: "",
-        children: [],
-      })
+
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        // Replace children array to show soldermask ring
+        children = [
+          // 1. Draw the outer pad in soldermask color (covered)
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-covered",
+              fill: solderMaskColor,
+              x: (-scaledRectPadWidth / 2).toString(),
+              y: (-scaledRectPadHeight / 2).toString(),
+              width: scaledRectPadWidth.toString(),
+              height: scaledRectPadHeight.toString(),
+              transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
+              ...(scaledRectBorderRadius
+                ? {
+                    rx: scaledRectBorderRadius.toString(),
+                    ry: scaledRectBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_plated_hole",
+              "data-pcb-layer": copperLayer,
+            },
+            value: "",
+            children: [],
+          },
+          // 2. Draw the exposed opening in copper color
+          {
+            name: "rect",
+            type: "element",
+            attributes: {
+              class: "pcb-hole-outer-exposed",
+              fill: colorMap.copper.top,
+              x: (-maskWidth / 2).toString(),
+              y: (-maskHeight / 2).toString(),
+              width: maskWidth.toString(),
+              height: maskHeight.toString(),
+              transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
+              ...(maskBorderRadius > 0
+                ? {
+                    rx: maskBorderRadius.toString(),
+                    ry: maskBorderRadius.toString(),
+                  }
+                : {}),
+              "data-type": "pcb_soldermask",
+            },
+            value: "",
+            children: [],
+          },
+          // 3. Draw the drill hole on top
+          children[1] as SvgObject, // Original hole
+        ]
+      } else {
+        children.push({
+          name: "rect",
+          type: "element",
+          attributes: {
+            class: "pcb-solder-mask",
+            fill: solderMaskColor,
+            x: (-maskWidth / 2).toString(),
+            y: (-maskHeight / 2).toString(),
+            width: maskWidth.toString(),
+            height: maskHeight.toString(),
+            transform: `translate(${x} ${y}) rotate(${-rotatedHole.rect_ccw_rotation})`,
+            ...(scaledRectBorderRadius
+              ? {
+                  rx: maskBorderRadius.toString(),
+                  ry: maskBorderRadius.toString(),
+                }
+              : {}),
+            "data-type": "pcb_soldermask",
+          },
+          value: "",
+          children: [],
+        })
+      }
     }
 
     return [

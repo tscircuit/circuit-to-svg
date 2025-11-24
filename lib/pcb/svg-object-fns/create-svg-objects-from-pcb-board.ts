@@ -7,7 +7,7 @@ export function createSvgObjectsFromPcbBoard(
   pcbBoard: PCBBoard,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap } = ctx
+  const { transform, colorMap, showSolderMask } = ctx
   const { width, height, center, outline } = pcbBoard
 
   let path: string
@@ -48,21 +48,42 @@ export function createSvgObjectsFromPcbBoard(
 
   path += " Z"
 
-  return [
-    {
+  const svgObjects: SvgObject[] = []
+
+  // Add solder mask layer covering the entire board if showSolderMask is enabled
+  if (showSolderMask) {
+    svgObjects.push({
       name: "path",
       type: "element",
       value: "",
       children: [],
       attributes: {
-        class: "pcb-board",
+        class: "pcb-board-soldermask",
         d: path,
-        fill: "none",
-        stroke: colorMap.boardOutline,
-        "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
-        "data-type": "pcb_board",
-        "data-pcb-layer": "board",
+        fill: colorMap.soldermask.top,
+        "fill-opacity": "0.8",
+        stroke: "none",
+        "data-type": "pcb_soldermask",
+        "data-pcb-layer": "soldermask-top",
       },
+    })
+  }
+
+  svgObjects.push({
+    name: "path",
+    type: "element",
+    value: "",
+    children: [],
+    attributes: {
+      class: "pcb-board",
+      d: path,
+      fill: "none",
+      stroke: colorMap.boardOutline,
+      "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
+      "data-type": "pcb_board",
+      "data-pcb-layer": "board",
     },
-  ]
+  })
+
+  return svgObjects
 }
