@@ -58,7 +58,7 @@ export function createSvgObjectsFromSmtPad(
       }
 
       if (!shouldshowSolderMask) {
-        return [padElement]
+      return [padElement]
       }
 
       const maskWidth = width + 2 * soldermaskMargin
@@ -138,7 +138,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldshowSolderMask) {
-      return [padElement]
+    return [padElement]
     }
 
     // Apply soldermask margin to dimensions
@@ -221,7 +221,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldshowSolderMask) {
-      return [padElement]
+    return [padElement]
     }
 
     // Apply soldermask margin to dimensions
@@ -292,7 +292,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldshowSolderMask) {
-      return [padElement]
+    return [padElement]
     }
 
     // Apply soldermask margin to radius
@@ -356,7 +356,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldshowSolderMask) {
-      return [padElement]
+    return [padElement]
     }
 
     // Apply soldermask margin to polygon by offsetting each point from centroid

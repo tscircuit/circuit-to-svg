@@ -10,7 +10,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_plated_hole_drill: 19,
   pcb_plated_hole: 20,
   pcb_trace: 30,
-  pcb_smtpad: 30,
+  pcb_smtpad: 34,
   pcb_copper_pour: 35,
   pcb_via: 36,
   pcb_soldermask: 40,
