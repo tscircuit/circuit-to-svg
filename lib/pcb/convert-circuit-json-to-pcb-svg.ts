@@ -334,8 +334,6 @@ export function convertCircuitJsonToPcbSvg(
     createSvgObjects({ elm, circuitJson, ctx }),
   )
 
-  let svgObjects = sortSvgObjectsByPcbLayer(unsortedSvgObjects)
-
   let strokeWidth = String(0.05 * scaleFactor)
 
   for (const element of circuitJson) {
@@ -345,10 +343,13 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
+  let allSvgObjects = [...unsortedSvgObjects]
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
-    svgObjects = sortSvgObjectsByPcbLayer([...svgObjects, ...ratsNestObjects])
+    allSvgObjects.push(...ratsNestObjects)
   }
+
+  const svgObjects = sortSvgObjectsByPcbLayer(allSvgObjects)
 
   const children: SvgObject[] = [
     {

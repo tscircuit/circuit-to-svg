@@ -8,6 +8,7 @@ export function createSvgObjectsFromPcbHole(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, colorMap, showSolderMask } = ctx
+  const maskLayer = ctx.layer ?? "top"
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)
@@ -98,7 +99,7 @@ export function createSvgObjectsFromPcbHole(
           cy: y.toString(),
           r: maskRadius.toString(),
           "data-type": "pcb_soldermask_opening",
-          "data-pcb-layer": "soldermask-top",
+          "data-pcb-layer": maskLayer,
         },
       }
 
@@ -180,7 +181,7 @@ export function createSvgObjectsFromPcbHole(
         width: maskDiameter.toString(),
         height: maskDiameter.toString(),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -268,7 +269,7 @@ export function createSvgObjectsFromPcbHole(
         rx: maskRx.toString(),
         ry: maskRy.toString(),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -355,7 +356,7 @@ export function createSvgObjectsFromPcbHole(
         width: maskWidth.toString(),
         height: maskHeight.toString(),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -471,7 +472,7 @@ export function createSvgObjectsFromPcbHole(
         fill: colorMap.substrate,
         d: maskPathD,
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -592,7 +593,7 @@ export function createSvgObjectsFromPcbHole(
         fill: colorMap.substrate,
         d: maskPathD,
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     }
 

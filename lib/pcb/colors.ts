@@ -67,7 +67,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   },
   soldermask: {
     top: "rgb(12, 55, 33)",
-    bottom: "rgb(52, 87, 136)",
+    bottom: "rgb(12, 55, 33)",
   },
   substrate: "rgb(201, 162, 110)", // FR4 substrate color (tan/beige)
   drill: "#FF26E2",

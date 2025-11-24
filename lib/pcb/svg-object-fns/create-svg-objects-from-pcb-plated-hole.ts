@@ -23,6 +23,7 @@ export function createSvgObjectsFromPcbPlatedHole(
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
     (hole as any).layer ||
     "top"
+  const maskLayer = copperLayer
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)
 
@@ -174,7 +175,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             d: createPillPath(maskWidth, maskHeight),
             transform: outerTransform,
             "data-type": "pcb_soldermask_opening",
-            "data-pcb-layer": "soldermask-top",
+            "data-pcb-layer": maskLayer,
           },
           value: "",
           children: [],
@@ -357,7 +358,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             cy: y.toString(),
             r: maskRadius.toString(),
             "data-type": "pcb_soldermask_opening",
-            "data-pcb-layer": "soldermask-top",
+            "data-pcb-layer": maskLayer,
           },
           value: "",
           children: [],
@@ -513,7 +514,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                 }
               : {}),
             "data-type": "pcb_soldermask_opening",
-            "data-pcb-layer": "soldermask-top",
+            "data-pcb-layer": maskLayer,
           },
           value: "",
           children: [],
@@ -678,7 +679,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                 }
               : {}),
             "data-type": "pcb_soldermask_opening",
-            "data-pcb-layer": "soldermask-top",
+            "data-pcb-layer": maskLayer,
           },
           value: "",
           children: [],
