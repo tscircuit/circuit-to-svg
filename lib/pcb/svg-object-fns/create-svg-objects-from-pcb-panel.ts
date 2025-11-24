@@ -39,7 +39,7 @@ export function createSvgObjectsFromPcbPanel(
     `L ${bottomLeft[0]} ${bottomLeft[1]} Z`
 
   const isCoveredWithSolderMask = pcbPanel.covered_with_solder_mask !== false
-  const shouldshowSolderMask = Boolean(
+  const shouldShowSolderMask = Boolean(
     showSolderMask && isCoveredWithSolderMask,
   )
 

@@ -159,6 +159,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               d: createPillPath(maskWidth, maskHeight),
               transform: outerTransform,
               "data-type": "pcb_soldermask",
+              "data-pcb-layer": maskLayer,
             },
             value: "",
             children: [],
@@ -341,6 +342,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               cy: y.toString(),
               r: maskRadius.toString(),
               "data-type": "pcb_soldermask",
+              "data-pcb-layer": maskLayer,
             },
             value: "",
             children: [],
@@ -490,6 +492,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_soldermask",
+              "data-pcb-layer": maskLayer,
             },
             value: "",
             children: [],
@@ -655,6 +658,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_soldermask",
+              "data-pcb-layer": maskLayer,
             },
             value: "",
             children: [],
@@ -824,6 +828,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_soldermask",
+              "data-pcb-layer": maskLayer,
             },
             value: "",
             children: [],
@@ -850,6 +855,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                 }
               : {}),
             "data-type": "pcb_soldermask",
+            "data-pcb-layer": maskLayer,
           },
           value: "",
           children: [],

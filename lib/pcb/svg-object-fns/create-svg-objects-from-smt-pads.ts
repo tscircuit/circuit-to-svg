@@ -11,8 +11,12 @@ export function createSvgObjectsFromSmtPad(
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
+  // Extract layer and derive maskLayer for consistency
+  const layer = pad.layer
+  const maskLayer = layer
+
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
-  const shouldshowSolderMask = showSolderMask && isCoveredWithSolderMask
+  const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
 
   const soldermaskWithCopperUnderneathColor =
     colorMap.soldermaskWithCopperUnderneath[
@@ -48,7 +52,7 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
           ...(scaledBorderRadius
             ? {
                 rx: scaledBorderRadius.toString(),
@@ -58,7 +62,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      if (!shouldshowSolderMask) {
+      if (!shouldShowSolderMask) {
         return [padElement]
       }
 
@@ -84,7 +88,7 @@ export function createSvgObjectsFromSmtPad(
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-type": "pcb_smtpad",
-            "data-pcb-layer": pad.layer,
+            "data-pcb-layer": layer,
             ...(scaledBorderRadius
               ? {
                   rx: scaledBorderRadius.toString(),
@@ -108,7 +112,7 @@ export function createSvgObjectsFromSmtPad(
             height: maskHeight.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-type": "pcb_soldermask",
-            "data-pcb-layer": pad.layer,
+            "data-pcb-layer": maskLayer,
             ...(maskBorderRadius > 0
               ? {
                   rx: maskBorderRadius.toString(),
@@ -137,7 +141,7 @@ export function createSvgObjectsFromSmtPad(
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-type": "pcb_smtpad",
-            "data-pcb-layer": pad.layer,
+            "data-pcb-layer": layer,
             ...(scaledBorderRadius
               ? {
                   rx: scaledBorderRadius.toString(),
@@ -171,7 +175,7 @@ export function createSvgObjectsFromSmtPad(
               }
             : {}),
           "data-type": "pcb_soldermask_opening",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -191,7 +195,7 @@ export function createSvgObjectsFromSmtPad(
         width: width.toString(),
         height: height.toString(),
         "data-type": "pcb_smtpad",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": layer,
         ...(scaledBorderRadius
           ? {
               rx: scaledBorderRadius.toString(),
@@ -201,7 +205,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    if (!shouldshowSolderMask) {
+    if (!shouldShowSolderMask) {
       return [padElement]
     }
 
@@ -228,7 +232,7 @@ export function createSvgObjectsFromSmtPad(
           width: width.toString(),
           height: height.toString(),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
           ...(scaledBorderRadius
             ? {
                 rx: scaledBorderRadius.toString(),
@@ -252,7 +256,7 @@ export function createSvgObjectsFromSmtPad(
           width: maskWidth.toString(),
           height: maskHeight.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
           ...(maskBorderRadius > 0
             ? {
                 rx: maskBorderRadius.toString(),
@@ -286,7 +290,7 @@ export function createSvgObjectsFromSmtPad(
               }
             : {}),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -313,7 +317,7 @@ export function createSvgObjectsFromSmtPad(
             }
           : {}),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -341,11 +345,11 @@ export function createSvgObjectsFromSmtPad(
         rx: radius.toString(),
         ry: radius.toString(),
         "data-type": "pcb_smtpad",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": layer,
       },
     }
 
-    if (!shouldshowSolderMask) {
+    if (!shouldShowSolderMask) {
       return [padElement]
     }
 
@@ -371,7 +375,7 @@ export function createSvgObjectsFromSmtPad(
           rx: radius.toString(),
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -390,7 +394,7 @@ export function createSvgObjectsFromSmtPad(
           rx: maskRadius.toString(),
           ry: maskRadius.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -414,7 +418,7 @@ export function createSvgObjectsFromSmtPad(
           rx: radius.toString(),
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -437,7 +441,7 @@ export function createSvgObjectsFromSmtPad(
         rx: maskRadius.toString(),
         ry: maskRadius.toString(),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -459,11 +463,11 @@ export function createSvgObjectsFromSmtPad(
         cy: y.toString(),
         r: radius.toString(),
         "data-type": "pcb_smtpad",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": layer,
       },
     }
 
-    if (!shouldshowSolderMask) {
+    if (!shouldShowSolderMask) {
       return [padElement]
     }
 
@@ -484,7 +488,7 @@ export function createSvgObjectsFromSmtPad(
           cy: y.toString(),
           r: radius.toString(),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -500,7 +504,7 @@ export function createSvgObjectsFromSmtPad(
           cy: y.toString(),
           r: maskRadius.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -521,7 +525,7 @@ export function createSvgObjectsFromSmtPad(
           cy: y.toString(),
           r: radius.toString(),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -541,7 +545,7 @@ export function createSvgObjectsFromSmtPad(
         cy: y.toString(),
         r: maskRadius.toString(),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": maskLayer,
       },
     }
 
@@ -563,11 +567,11 @@ export function createSvgObjectsFromSmtPad(
         fill: layerNameToColor(pad.layer, colorMap),
         points: points.map((p) => p.join(",")).join(" "),
         "data-type": "pcb_smtpad",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": layer,
       },
     }
 
-    if (!shouldshowSolderMask) {
+    if (!shouldShowSolderMask) {
       return [padElement]
     }
 
@@ -606,7 +610,7 @@ export function createSvgObjectsFromSmtPad(
           fill: soldermaskWithCopperUnderneathColor,
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -620,7 +624,7 @@ export function createSvgObjectsFromSmtPad(
           fill: layerNameToColor(pad.layer, colorMap),
           points: maskPoints.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -639,7 +643,7 @@ export function createSvgObjectsFromSmtPad(
           fill: soldermaskWithCopperUnderneathColor,
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          "data-pcb-layer": layer,
         },
       }
 
@@ -657,7 +661,7 @@ export function createSvgObjectsFromSmtPad(
         fill: colorMap.substrate,
         points: maskPoints.map((p) => p.join(",")).join(" "),
         "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": pad.layer,
+        "data-pcb-layer": maskLayer,
       },
     }
 
