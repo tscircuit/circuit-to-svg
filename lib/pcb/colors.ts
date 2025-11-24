@@ -24,7 +24,7 @@ export interface PcbColorMap {
     top: string
     bottom: string
   }
-  soldermaskCovered: {
+  soldermaskWithCopperUnderneath: {
     top: string
     bottom: string
   }
@@ -42,7 +42,9 @@ export interface PcbColorOverrides {
   silkscreen?: Partial<PcbColorMap["silkscreen"]>
   boardOutline?: string
   soldermask?: Partial<PcbColorMap["soldermask"]>
-  soldermaskCovered?: Partial<PcbColorMap["soldermaskCovered"]>
+  soldermaskWithCopperUnderneath?: Partial<
+    PcbColorMap["soldermaskWithCopperUnderneath"]
+  >
   substrate?: string
   courtyard?: string
   debugComponent?: Partial<PcbColorMap["debugComponent"]>
@@ -63,7 +65,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
     top: "rgb(18, 82, 50)",
     bottom: "rgb(77, 127, 196)",
   },
-  soldermaskCovered: {
+  soldermaskWithCopperUnderneath: {
     top: "rgb(12, 55, 33)",
     bottom: "rgb(52, 87, 136)",
   },

@@ -14,10 +14,10 @@ export function createSvgObjectsFromSmtPad(
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
   const shouldshowSolderMask = showSolderMask && isCoveredWithSolderMask
 
-  const solderMaskCoveredColor =
-    colorMap.soldermaskCovered[
-      pad.layer as keyof typeof colorMap.soldermaskCovered
-    ] ?? colorMap.soldermaskCovered.top
+  const soldermaskWithCopperUnderneathColor =
+    colorMap.soldermaskWithCopperUnderneath[
+      pad.layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+    ] ?? colorMap.soldermaskWithCopperUnderneath.top
 
   // Positive margin: mask extends beyond pad (less copper exposed)
   // Negative margin: mask is smaller than pad (spacing/copper visible around edges)
@@ -77,7 +77,7 @@ export function createSvgObjectsFromSmtPad(
           children: [],
           attributes: {
             class: "pcb-pad-covered",
-            fill: solderMaskCoveredColor,
+            fill: soldermaskWithCopperUnderneathColor,
             x: (-width / 2).toString(),
             y: (-height / 2).toString(),
             width: width.toString(),
@@ -130,7 +130,7 @@ export function createSvgObjectsFromSmtPad(
           children: [],
           attributes: {
             class: "pcb-pad-covered",
-            fill: solderMaskCoveredColor,
+            fill: soldermaskWithCopperUnderneathColor,
             x: (-width / 2).toString(),
             y: (-height / 2).toString(),
             width: width.toString(),
@@ -222,7 +222,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -274,7 +274,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -363,7 +363,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -406,7 +406,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           x: (x - width / 2).toString(),
           y: (y - height / 2).toString(),
           width: width.toString(),
@@ -479,7 +479,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           cx: x.toString(),
           cy: y.toString(),
           r: radius.toString(),
@@ -516,7 +516,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           cx: x.toString(),
           cy: y.toString(),
           r: radius.toString(),
@@ -603,7 +603,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
@@ -636,7 +636,7 @@ export function createSvgObjectsFromSmtPad(
         children: [],
         attributes: {
           class: "pcb-pad-covered",
-          fill: solderMaskCoveredColor,
+          fill: soldermaskWithCopperUnderneathColor,
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,

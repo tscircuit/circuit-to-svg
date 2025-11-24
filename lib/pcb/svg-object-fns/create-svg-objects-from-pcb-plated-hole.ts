@@ -34,7 +34,7 @@ export function createSvgObjectsFromPcbPlatedHole(
   const shouldShowSolderMask =
     showSolderMask && isCoveredWithSolderMask && soldermaskMargin !== 0
 
-  const solderMaskColor = colorMap.soldermaskCovered.top
+  const solderMaskColor = colorMap.soldermaskWithCopperUnderneath.top
 
   if (hole.shape === "pill") {
     const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
