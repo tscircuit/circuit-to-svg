@@ -49,21 +49,60 @@ export function createSvgObjectsFromPcbHole(
 
       const maskRadius = radius + soldermaskMargin
 
-      const maskElement: SvgObject = {
-        name: holeElement.name,
-        type: holeElement.type,
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        const coveredElement: SvgObject = {
+          name: "circle",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-hole-covered",
+            fill: solderMaskColor,
+            cx: x.toString(),
+            cy: y.toString(),
+            r: radius.toString(),
+            "data-type": "pcb_hole",
+            "data-pcb-layer": "drill",
+          },
+        }
+
+        const exposedElement: SvgObject = {
+          name: "circle",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-hole-exposed",
+            fill: colorMap.drill,
+            cx: x.toString(),
+            cy: y.toString(),
+            r: maskRadius.toString(),
+            "data-type": "pcb_soldermask",
+          },
+        }
+
+        return [coveredElement, exposedElement]
+      }
+
+      // For positive margins, draw substrate cutout then hole on top
+      const substrateElement: SvgObject = {
+        name: "circle",
+        type: "element",
         value: "",
         children: [],
         attributes: {
-          ...holeElement.attributes,
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          "data-type": "pcb_soldermask",
+          class: "pcb-soldermask-cutout",
+          fill: colorMap.substrate,
+          cx: x.toString(),
+          cy: y.toString(),
           r: maskRadius.toString(),
+          "data-type": "pcb_soldermask_opening",
+          "data-pcb-layer": "soldermask-top",
         },
       }
 
-      return [holeElement, maskElement]
+      return [substrateElement, holeElement]
     }
     // Square hole
     const holeElement: SvgObject = {
@@ -89,24 +128,63 @@ export function createSvgObjectsFromPcbHole(
 
     const maskDiameter = scaledDiameter + 2 * soldermaskMargin
 
-    const maskElement: SvgObject = {
-      name: holeElement.name,
-      type: holeElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-covered",
+          fill: solderMaskColor,
+          x: (x - radius).toString(),
+          y: (y - radius).toString(),
+          width: scaledDiameter.toString(),
+          height: scaledDiameter.toString(),
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+      }
+
+      const exposedElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-exposed",
+          fill: colorMap.drill,
+          x: (x - maskDiameter / 2).toString(),
+          y: (y - maskDiameter / 2).toString(),
+          width: maskDiameter.toString(),
+          height: maskDiameter.toString(),
+          "data-type": "pcb_soldermask",
+        },
+      }
+
+      return [coveredElement, exposedElement]
+    }
+
+    // For positive margins, draw substrate cutout then hole on top
+    const substrateElement: SvgObject = {
+      name: "rect",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...holeElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         x: (x - maskDiameter / 2).toString(),
         y: (y - maskDiameter / 2).toString(),
         width: maskDiameter.toString(),
         height: maskDiameter.toString(),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": "soldermask-top",
       },
     }
 
-    return [holeElement, maskElement]
+    return [substrateElement, holeElement]
   }
   if (hole.hole_shape === "oval") {
     const scaledWidth = hole.hole_width * Math.abs(transform.a)
@@ -138,22 +216,63 @@ export function createSvgObjectsFromPcbHole(
     const maskRx = rx + soldermaskMargin
     const maskRy = ry + soldermaskMargin
 
-    const maskElement: SvgObject = {
-      name: holeElement.name,
-      type: holeElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredElement: SvgObject = {
+        name: "ellipse",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-covered",
+          fill: solderMaskColor,
+          cx: x.toString(),
+          cy: y.toString(),
+          rx: rx.toString(),
+          ry: ry.toString(),
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+      }
+
+      const exposedElement: SvgObject = {
+        name: "ellipse",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-exposed",
+          fill: colorMap.drill,
+          cx: x.toString(),
+          cy: y.toString(),
+          rx: maskRx.toString(),
+          ry: maskRy.toString(),
+          "data-type": "pcb_soldermask",
+        },
+      }
+
+      return [coveredElement, exposedElement]
+    }
+
+    // For positive margins, draw substrate cutout then hole on top
+    const substrateElement: SvgObject = {
+      name: "ellipse",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...holeElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
+        cx: x.toString(),
+        cy: y.toString(),
         rx: maskRx.toString(),
         ry: maskRy.toString(),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": "soldermask-top",
       },
     }
 
-    return [holeElement, maskElement]
+    return [substrateElement, holeElement]
   }
 
   if (hole.hole_shape === "rect") {
@@ -184,24 +303,63 @@ export function createSvgObjectsFromPcbHole(
     const maskWidth = scaledWidth + 2 * soldermaskMargin
     const maskHeight = scaledHeight + 2 * soldermaskMargin
 
-    const maskElement: SvgObject = {
-      name: holeElement.name,
-      type: holeElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-covered",
+          fill: solderMaskColor,
+          x: (x - scaledWidth / 2).toString(),
+          y: (y - scaledHeight / 2).toString(),
+          width: scaledWidth.toString(),
+          height: scaledHeight.toString(),
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+      }
+
+      const exposedElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-exposed",
+          fill: colorMap.drill,
+          x: (x - maskWidth / 2).toString(),
+          y: (y - maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          "data-type": "pcb_soldermask",
+        },
+      }
+
+      return [coveredElement, exposedElement]
+    }
+
+    // For positive margins, draw substrate cutout then hole on top
+    const substrateElement: SvgObject = {
+      name: "rect",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...holeElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         x: (x - maskWidth / 2).toString(),
         y: (y - maskHeight / 2).toString(),
         width: maskWidth.toString(),
         height: maskHeight.toString(),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": "soldermask-top",
       },
     }
 
-    return [holeElement, maskElement]
+    return [substrateElement, holeElement]
   }
 
   if (hole.hole_shape === "pill") {
@@ -270,21 +428,54 @@ export function createSvgObjectsFromPcbHole(
         `v-${maskStraightLength} ` +
         `a${maskRadius},${maskRadius} 0 0 0 -${maskWidth},0 z`
 
-    const maskElement: SvgObject = {
-      name: holeElement.name,
-      type: holeElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredElement: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-covered",
+          fill: solderMaskColor,
+          d: pathD,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+      }
+
+      const exposedElement: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-exposed",
+          fill: colorMap.drill,
+          d: maskPathD,
+          "data-type": "pcb_soldermask",
+        },
+      }
+
+      return [coveredElement, exposedElement]
+    }
+
+    // For positive margins, draw substrate cutout then hole on top
+    const substrateElement: SvgObject = {
+      name: "path",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...holeElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         d: maskPathD,
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": "soldermask-top",
       },
     }
 
-    return [holeElement, maskElement]
+    return [substrateElement, holeElement]
   }
 
   if (hole.hole_shape === "rotated_pill") {
@@ -356,21 +547,56 @@ export function createSvgObjectsFromPcbHole(
         `v-${maskStraightLength} ` +
         `a${maskRadius},${maskRadius} 0 0 0 -${maskWidth},0 z`
 
-    const maskElement: SvgObject = {
-      name: holeElement.name,
-      type: holeElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredElement: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-covered",
+          fill: solderMaskColor,
+          d: pathD,
+          transform: `translate(${x} ${y}) rotate(${-rotation})`,
+          "data-type": "pcb_hole",
+          "data-pcb-layer": "drill",
+        },
+      }
+
+      const exposedElement: SvgObject = {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-hole-exposed",
+          fill: colorMap.drill,
+          d: maskPathD,
+          transform: `translate(${x} ${y}) rotate(${-rotation})`,
+          "data-type": "pcb_soldermask",
+        },
+      }
+
+      return [coveredElement, exposedElement]
+    }
+
+    // For positive margins, draw substrate cutout then hole on top
+    const substrateElement: SvgObject = {
+      name: "path",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...holeElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         d: maskPathD,
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": "soldermask-top",
       },
     }
 
-    return [holeElement, maskElement]
+    return [substrateElement, holeElement]
   }
 
   return []
