@@ -14,9 +14,10 @@ export function createSvgObjectsFromSmtPad(
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
   const shouldshowSolderMask = showSolderMask && isCoveredWithSolderMask
 
-  const solderMaskColor =
-    colorMap.soldermask[pad.layer as keyof typeof colorMap.soldermask] ??
-    colorMap.soldermask.top
+  const soldermaskWithCopperUnderneathColor =
+    colorMap.soldermaskWithCopperUnderneath[
+      pad.layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+    ] ?? colorMap.soldermaskWithCopperUnderneath.top
 
   // Positive margin: mask extends beyond pad (less copper exposed)
   // Negative margin: mask is smaller than pad (spacing/copper visible around edges)
@@ -67,51 +68,114 @@ export function createSvgObjectsFromSmtPad(
         ? scaledBorderRadius + soldermaskMargin
         : 0
 
-      const maskElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
+      // For negative margins, create a ring effect
+      if (soldermaskMargin < 0) {
+        const coveredPadElement: SvgObject = {
+          name: "rect",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-pad-covered",
+            fill: soldermaskWithCopperUnderneathColor,
+            x: (-width / 2).toString(),
+            y: (-height / 2).toString(),
+            width: width.toString(),
+            height: height.toString(),
+            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
+            "data-type": "pcb_smtpad",
+            "data-pcb-layer": pad.layer,
+            ...(scaledBorderRadius
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
+              : {}),
+          },
+        }
+
+        const exposedOpeningElement: SvgObject = {
+          name: "rect",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-pad-exposed",
+            fill: layerNameToColor(pad.layer, colorMap),
+            x: (-maskWidth / 2).toString(),
+            y: (-maskHeight / 2).toString(),
+            width: maskWidth.toString(),
+            height: maskHeight.toString(),
+            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
+            "data-type": "pcb_soldermask",
+            "data-pcb-layer": pad.layer,
+            ...(maskBorderRadius > 0
+              ? {
+                  rx: maskBorderRadius.toString(),
+                  ry: maskBorderRadius.toString(),
+                }
+              : {}),
+          },
+        }
+
+        return [coveredPadElement, exposedOpeningElement]
+      }
+
+      // For zero margin, pad is fully covered with soldermask
+      if (soldermaskMargin === 0) {
+        const coveredPadElement: SvgObject = {
+          name: "rect",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-pad-covered",
+            fill: soldermaskWithCopperUnderneathColor,
+            x: (-width / 2).toString(),
+            y: (-height / 2).toString(),
+            width: width.toString(),
+            height: height.toString(),
+            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
+            "data-type": "pcb_smtpad",
+            "data-pcb-layer": pad.layer,
+            ...(scaledBorderRadius
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
+              : {}),
+          },
+        }
+
+        return [coveredPadElement]
+      }
+
+      // For positive margins, draw substrate cutout then pad on top
+      const substrateElement: SvgObject = {
+        name: "rect",
+        type: "element",
         value: "",
         children: [],
         attributes: {
-          ...padElement.attributes,
-          class: "pcb-solder-mask",
-          fill: solderMaskColor,
-          "data-type": "pcb_soldermask",
+          class: "pcb-soldermask-cutout",
+          fill: colorMap.substrate,
           x: (-maskWidth / 2).toString(),
           y: (-maskHeight / 2).toString(),
           width: maskWidth.toString(),
           height: maskHeight.toString(),
+          transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
           ...(maskBorderRadius > 0
             ? {
                 rx: maskBorderRadius.toString(),
                 ry: maskBorderRadius.toString(),
               }
             : {}),
+          "data-type": "pcb_soldermask_opening",
+          "data-pcb-layer": `soldermask-${pad.layer}`,
         },
       }
 
-      const result: SvgObject[] = [padElement, maskElement]
-
-      // For negative margins, add red outline showing original pad boundary
-      if (soldermaskMargin < 0) {
-        const outlineElement: SvgObject = {
-          name: padElement.name,
-          type: padElement.type,
-          value: "",
-          children: [],
-          attributes: {
-            ...padElement.attributes,
-            class: "pcb-pad-outline",
-            fill: "none",
-            stroke: layerNameToColor(pad.layer, colorMap),
-            "stroke-width": "1",
-            "data-type": "pcb_pad_outline",
-          },
-        }
-        result.push(outlineElement)
-      }
-
-      return result
+      return [substrateElement, padElement]
     }
 
     const padElement: SvgObject = {
@@ -148,16 +212,96 @@ export function createSvgObjectsFromSmtPad(
       ? scaledBorderRadius + soldermaskMargin
       : 0
 
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
+    // For negative margins, create a ring effect where soldermask covers only the edges
+    if (soldermaskMargin < 0) {
+      // Draw the pad in soldermask color (covered)
+      const coveredPadElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          x: (x - width / 2).toString(),
+          y: (y - height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+          ...(scaledBorderRadius
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
+            : {}),
+        },
+      }
+
+      // Draw the exposed opening in copper color
+      const exposedOpeningElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-exposed",
+          fill: layerNameToColor(pad.layer, colorMap),
+          x: (x - maskWidth / 2).toString(),
+          y: (y - maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": pad.layer,
+          ...(maskBorderRadius > 0
+            ? {
+                rx: maskBorderRadius.toString(),
+                ry: maskBorderRadius.toString(),
+              }
+            : {}),
+        },
+      }
+
+      return [coveredPadElement, exposedOpeningElement]
+    }
+
+    // For zero margin, pad is fully covered with soldermask
+    if (soldermaskMargin === 0) {
+      const coveredPadElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          x: (x - width / 2).toString(),
+          y: (y - height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          ...(maskBorderRadius > 0
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
+            : {}),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement]
+    }
+
+    // For positive margins, draw substrate cutout (soldermask opening) then pad on top
+    const substrateElement: SvgObject = {
+      name: "rect",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         x: (x - maskWidth / 2).toString(),
         y: (y - maskHeight / 2).toString(),
         width: maskWidth.toString(),
@@ -168,31 +312,12 @@ export function createSvgObjectsFromSmtPad(
               ry: maskBorderRadius.toString(),
             }
           : {}),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": `soldermask-${pad.layer}`,
       },
     }
 
-    const result: SvgObject[] = [padElement, maskElement]
-
-    // For negative margins, add red outline showing original pad boundary
-    if (soldermaskMargin < 0) {
-      const outlineElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
-        value: "",
-        children: [],
-        attributes: {
-          ...padElement.attributes,
-          class: "pcb-pad-outline",
-          fill: "none",
-          stroke: layerNameToColor(pad.layer, colorMap),
-          "stroke-width": "1",
-          "data-type": "pcb_pad_outline",
-        },
-      }
-      result.push(outlineElement)
-    }
-
-    return result
+    return [substrateElement, padElement]
   }
 
   if (pad.shape === "pill") {
@@ -229,47 +354,94 @@ export function createSvgObjectsFromSmtPad(
     const maskHeight = height + 2 * soldermaskMargin
     const maskRadius = radius + soldermaskMargin
 
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
+    // For negative margins, create a ring effect
+    if (soldermaskMargin < 0) {
+      const coveredPadElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          x: (x - width / 2).toString(),
+          y: (y - height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          rx: radius.toString(),
+          ry: radius.toString(),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      const exposedOpeningElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-exposed",
+          fill: layerNameToColor(pad.layer, colorMap),
+          x: (x - maskWidth / 2).toString(),
+          y: (y - maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          rx: maskRadius.toString(),
+          ry: maskRadius.toString(),
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement, exposedOpeningElement]
+    }
+
+    // For zero margin, pad is fully covered with soldermask
+    if (soldermaskMargin === 0) {
+      const coveredPadElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          x: (x - width / 2).toString(),
+          y: (y - height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          rx: radius.toString(),
+          ry: radius.toString(),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement]
+    }
+
+    // For positive margins, draw substrate cutout then pad on top
+    const substrateElement: SvgObject = {
+      name: "rect",
+      type: "element",
       value: "",
       children: [],
       attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
         x: (x - maskWidth / 2).toString(),
         y: (y - maskHeight / 2).toString(),
         width: maskWidth.toString(),
         height: maskHeight.toString(),
         rx: maskRadius.toString(),
         ry: maskRadius.toString(),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": `soldermask-${pad.layer}`,
       },
     }
 
-    const result: SvgObject[] = [padElement, maskElement]
-
-    // For negative margins, add red outline showing original pad boundary
-    if (soldermaskMargin < 0) {
-      const outlineElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
-        value: "",
-        children: [],
-        attributes: {
-          ...padElement.attributes,
-          class: "pcb-pad-outline",
-          fill: "none",
-          stroke: layerNameToColor(pad.layer, colorMap),
-          "stroke-width": "1",
-          "data-type": "pcb_pad_outline",
-        },
-      }
-      result.push(outlineElement)
-    }
-
-    return result
+    return [substrateElement, padElement]
   }
   if (pad.shape === "circle") {
     const radius = pad.radius * Math.abs(transform.a)
@@ -298,42 +470,82 @@ export function createSvgObjectsFromSmtPad(
     // Apply soldermask margin to radius
     const maskRadius = radius + soldermaskMargin
 
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        r: maskRadius.toString(),
-      },
-    }
-
-    const result: SvgObject[] = [padElement, maskElement]
-
-    // For negative margins, add red outline showing original pad boundary
+    // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
-      const outlineElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
+      const coveredPadElement: SvgObject = {
+        name: "circle",
+        type: "element",
         value: "",
         children: [],
         attributes: {
-          ...padElement.attributes,
-          class: "pcb-pad-outline",
-          fill: "none",
-          stroke: layerNameToColor(pad.layer, colorMap),
-          "stroke-width": "1",
-          "data-type": "pcb_pad_outline",
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          cx: x.toString(),
+          cy: y.toString(),
+          r: radius.toString(),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
         },
       }
-      result.push(outlineElement)
+
+      const exposedOpeningElement: SvgObject = {
+        name: "circle",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-exposed",
+          fill: layerNameToColor(pad.layer, colorMap),
+          cx: x.toString(),
+          cy: y.toString(),
+          r: maskRadius.toString(),
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement, exposedOpeningElement]
     }
 
-    return result
+    // For zero margin, pad is fully covered with soldermask
+    if (soldermaskMargin === 0) {
+      const coveredPadElement: SvgObject = {
+        name: "circle",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          cx: x.toString(),
+          cy: y.toString(),
+          r: radius.toString(),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement]
+    }
+
+    // For positive margins, draw substrate cutout (soldermask opening) then pad on top
+    const substrateElement: SvgObject = {
+      name: "circle",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
+        cx: x.toString(),
+        cy: y.toString(),
+        r: maskRadius.toString(),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": `soldermask-${pad.layer}`,
+      },
+    }
+
+    return [substrateElement, padElement]
   }
 
   if (pad.shape === "polygon") {
@@ -382,42 +594,74 @@ export function createSvgObjectsFromSmtPad(
       })
     }
 
-    const maskElement: SvgObject = {
-      name: padElement.name,
-      type: padElement.type,
-      value: "",
-      children: [],
-      attributes: {
-        ...padElement.attributes,
-        class: "pcb-solder-mask",
-        fill: solderMaskColor,
-        "data-type": "pcb_soldermask",
-        points: maskPoints.map((p) => p.join(",")).join(" "),
-      },
-    }
-
-    const result: SvgObject[] = [padElement, maskElement]
-
-    // For negative margins, add red outline showing original pad boundary
+    // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
-      const outlineElement: SvgObject = {
-        name: padElement.name,
-        type: padElement.type,
+      const coveredPadElement: SvgObject = {
+        name: "polygon",
+        type: "element",
         value: "",
         children: [],
         attributes: {
-          ...padElement.attributes,
-          class: "pcb-pad-outline",
-          fill: "none",
-          stroke: layerNameToColor(pad.layer, colorMap),
-          "stroke-width": "1",
-          "data-type": "pcb_pad_outline",
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          points: points.map((p) => p.join(",")).join(" "),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
         },
       }
-      result.push(outlineElement)
+
+      const exposedOpeningElement: SvgObject = {
+        name: "polygon",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-exposed",
+          fill: layerNameToColor(pad.layer, colorMap),
+          points: maskPoints.map((p) => p.join(",")).join(" "),
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement, exposedOpeningElement]
     }
 
-    return result
+    // For zero margin, pad is fully covered with soldermask
+    if (soldermaskMargin === 0) {
+      const coveredPadElement: SvgObject = {
+        name: "polygon",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          points: points.map((p) => p.join(",")).join(" "),
+          "data-type": "pcb_smtpad",
+          "data-pcb-layer": pad.layer,
+        },
+      }
+
+      return [coveredPadElement]
+    }
+
+    // For positive margins, draw substrate cutout then pad on top
+    const substrateElement: SvgObject = {
+      name: "polygon",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: "pcb-soldermask-cutout",
+        fill: colorMap.substrate,
+        points: maskPoints.map((p) => p.join(",")).join(" "),
+        "data-type": "pcb_soldermask_opening",
+        "data-pcb-layer": `soldermask-${pad.layer}`,
+      },
+    }
+
+    return [substrateElement, padElement]
   }
 
   // TODO: Implement SMT pad circles/ovals etc.
