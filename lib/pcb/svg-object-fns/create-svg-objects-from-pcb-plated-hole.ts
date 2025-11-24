@@ -20,12 +20,12 @@ export function createSvgObjectsFromPcbPlatedHole(
   const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   // Extract the actual copper layer from the plated hole
-  const copperLayer =
+  const layer =
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
     (hole as any).layer ||
     "top"
   // Use the actual copper layer for soldermask cutouts/overlays
-  const maskLayer = copperLayer
+  const maskLayer = layer
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)
 
@@ -103,7 +103,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           d: createPillPath(scaledOuterWidth, scaledOuterHeight),
           transform: outerTransform,
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -144,7 +144,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               d: createPillPath(scaledOuterWidth, scaledOuterHeight),
               transform: outerTransform,
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
@@ -224,7 +224,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           ry: (scaledOuterHeight / 2).toString(),
           transform: transformStr,
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -283,7 +283,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           cy: y.toString(),
           r: outerRadius.toString(),
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -325,7 +325,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               cy: y.toString(),
               r: outerRadius.toString(),
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
@@ -416,7 +416,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               }
             : {}),
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -467,7 +467,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
@@ -578,7 +578,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               }
             : {}),
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -632,7 +632,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
@@ -745,7 +745,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               }
             : {}),
           "data-type": "pcb_plated_hole",
-          "data-pcb-layer": copperLayer,
+          "data-pcb-layer": layer,
         },
         value: "",
         children: [],
@@ -800,7 +800,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }
                 : {}),
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
@@ -1013,7 +1013,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               fill: colorMap.copper.top,
               points: padPointsString,
               "data-type": "pcb_plated_hole",
-              "data-pcb-layer": copperLayer,
+              "data-pcb-layer": layer,
             },
             value: "",
             children: [],
