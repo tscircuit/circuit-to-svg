@@ -12,6 +12,7 @@ export function createSoldermaskCutoutElement(
   colorMap: PcbColorMap,
   additionalAttributes?: Record<string, string>,
 ): SvgObject {
+  // `layer` should be the actual copper layer (e.g. "top" or "bottom") so it sorts with the copper it exposes.
   const baseAttributes: Record<string, string> = {
     class: "pcb-soldermask-cutout",
     fill: colorMap.substrate,

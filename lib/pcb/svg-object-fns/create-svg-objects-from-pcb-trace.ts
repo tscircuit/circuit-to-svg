@@ -24,6 +24,8 @@ export function createSvgObjectsFromPcbTrace(
       "layer" in start ? start.layer : "layer" in end ? end.layer : null
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
+    // Trace soldermask strokes live on the same copper layer (top/bottom/etc.)
+    const maskLayer = layer
 
     const copperColor = layerNameToColor(layer, colorMap)
     const maskColor =
@@ -73,7 +75,7 @@ export function createSvgObjectsFromPcbTrace(
           "stroke-linejoin": "round",
           "shape-rendering": "crispEdges",
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": layer,
+          "data-pcb-layer": maskLayer,
         },
       }
 

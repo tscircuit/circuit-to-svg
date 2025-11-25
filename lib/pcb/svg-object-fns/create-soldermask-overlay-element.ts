@@ -13,6 +13,7 @@ export function createSoldermaskOverlayElement(
   className: string,
   additionalAttributes?: Record<string, string>,
 ): SvgObject {
+  // `layer` is the copper layer being covered so overlays stack alongside the copper they belong to.
   const baseAttributes: Record<string, string> = {
     class: className,
     fill: fillColor,
