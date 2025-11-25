@@ -63,7 +63,7 @@ export function createSvgObjectsFromSmtPad(
       }
 
       if (!shouldShowSolderMask) {
-      return [padElement]
+        return [padElement]
       }
 
       const maskWidth = width + 2 * soldermaskMargin
@@ -174,8 +174,8 @@ export function createSvgObjectsFromSmtPad(
                 ry: maskBorderRadius.toString(),
               }
             : {}),
-        "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": maskLayer,
+          "data-type": "pcb_soldermask_opening",
+          "data-pcb-layer": maskLayer,
         },
       }
 
@@ -206,7 +206,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-    return [padElement]
+      return [padElement]
     }
 
     // Apply soldermask margin to dimensions
@@ -350,7 +350,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-    return [padElement]
+      return [padElement]
     }
 
     // Apply soldermask margin to dimensions
@@ -468,7 +468,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-    return [padElement]
+      return [padElement]
     }
 
     // Apply soldermask margin to radius
@@ -572,7 +572,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-    return [padElement]
+      return [padElement]
     }
 
     // Apply soldermask margin to polygon by offsetting each point from centroid
@@ -623,8 +623,8 @@ export function createSvgObjectsFromSmtPad(
           class: "pcb-pad-exposed",
           fill: layerNameToColor(pad.layer, colorMap),
           points: maskPoints.map((p) => p.join(",")).join(" "),
-        "data-type": "pcb_soldermask",
-        "data-pcb-layer": maskLayer,
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": maskLayer,
         },
       }
 
