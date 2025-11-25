@@ -26,8 +26,6 @@ export function createSvgObjectsFromPcbCopperPour(
   const color = layerNameToColor(layer, colorMap)
   const opacity = "0.5"
   const isCoveredWithSolderMask = pour.covered_with_solder_mask !== false
-  // Use the actual layer for soldermask cutouts/overlays
-  const maskLayer = layer
 
   const baseMaskColor =
     layer === "bottom" ? colorMap.soldermask.bottom : colorMap.soldermask.top
@@ -70,17 +68,12 @@ export function createSvgObjectsFromPcbCopperPour(
         ? createSoldermaskOverlayElement(
             "rect",
             rectAttributes,
-            maskLayer,
+            layer,
             maskOverlayColor,
             maskOverlayOpacity,
             "pcb-soldermask-covered-pour",
           )
-        : createSoldermaskCutoutElement(
-            "rect",
-            rectAttributes,
-            maskLayer,
-            colorMap,
-          )
+        : createSoldermaskCutoutElement("rect", rectAttributes, layer, colorMap)
       : null
 
     if (!maskRect) {
@@ -132,7 +125,7 @@ export function createSvgObjectsFromPcbCopperPour(
         ? createSoldermaskOverlayElement(
             "polygon",
             { points: pointsString },
-            maskLayer,
+            layer,
             maskOverlayColor,
             maskOverlayOpacity,
             "pcb-soldermask-covered-pour",
@@ -140,7 +133,7 @@ export function createSvgObjectsFromPcbCopperPour(
         : createSoldermaskCutoutElement(
             "polygon",
             { points: pointsString },
-            maskLayer,
+            layer,
             colorMap,
           )
       : null
@@ -191,7 +184,7 @@ export function createSvgObjectsFromPcbCopperPour(
         ? createSoldermaskOverlayElement(
             "path",
             { d, "fill-rule": "evenodd" },
-            maskLayer,
+            layer,
             maskOverlayColor,
             maskOverlayOpacity,
             "pcb-soldermask-covered-pour",
@@ -199,7 +192,7 @@ export function createSvgObjectsFromPcbCopperPour(
         : createSoldermaskCutoutElement(
             "path",
             { d, "fill-rule": "evenodd" },
-            maskLayer,
+            layer,
             colorMap,
           )
       : null
