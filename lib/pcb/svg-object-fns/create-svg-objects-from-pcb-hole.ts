@@ -11,8 +11,6 @@ export function createSvgObjectsFromPcbHole(
   // Holes are through-hole, so we use the viewer layer ("top"/"bottom") for soldermask cutouts.
   const layer = ctx.layer ?? "top"
   const maskLayer = layer
-  // Exposed centers stay on the drill layer so the drill color always renders last.
-  const drillLayer = "drill"
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
   const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)
@@ -42,7 +40,7 @@ export function createSvgObjectsFromPcbHole(
           r: radius.toString(),
           fill: colorMap.drill,
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
         children: [],
         value: "",
@@ -68,7 +66,7 @@ export function createSvgObjectsFromPcbHole(
             cy: y.toString(),
             r: radius.toString(),
             "data-type": "pcb_hole",
-            "data-pcb-layer": drillLayer,
+            "data-pcb-layer": "drill",
           },
         }
 
@@ -84,7 +82,7 @@ export function createSvgObjectsFromPcbHole(
             cy: y.toString(),
             r: maskRadius.toString(),
             "data-type": "pcb_soldermask",
-            "data-pcb-layer": drillLayer,
+            "data-pcb-layer": "drill",
           },
         }
 
@@ -122,7 +120,7 @@ export function createSvgObjectsFromPcbHole(
         height: scaledDiameter.toString(),
         fill: colorMap.drill,
         "data-type": "pcb_hole",
-        "data-pcb-layer": drillLayer,
+        "data-pcb-layer": "drill",
       },
       children: [],
       value: "",
@@ -149,7 +147,7 @@ export function createSvgObjectsFromPcbHole(
           width: scaledDiameter.toString(),
           height: scaledDiameter.toString(),
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -166,7 +164,7 @@ export function createSvgObjectsFromPcbHole(
           width: maskDiameter.toString(),
           height: maskDiameter.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -210,7 +208,7 @@ export function createSvgObjectsFromPcbHole(
         ry: ry.toString(),
         fill: colorMap.drill,
         "data-type": "pcb_hole",
-        "data-pcb-layer": drillLayer,
+        "data-pcb-layer": "drill",
       },
       children: [],
       value: "",
@@ -238,7 +236,7 @@ export function createSvgObjectsFromPcbHole(
           rx: rx.toString(),
           ry: ry.toString(),
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -255,7 +253,7 @@ export function createSvgObjectsFromPcbHole(
           rx: maskRx.toString(),
           ry: maskRy.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -298,7 +296,7 @@ export function createSvgObjectsFromPcbHole(
         height: scaledHeight.toString(),
         fill: colorMap.drill,
         "data-type": "pcb_hole",
-        "data-pcb-layer": drillLayer,
+        "data-pcb-layer": "drill",
       },
       children: [],
       value: "",
@@ -326,7 +324,7 @@ export function createSvgObjectsFromPcbHole(
           width: scaledWidth.toString(),
           height: scaledHeight.toString(),
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -343,7 +341,7 @@ export function createSvgObjectsFromPcbHole(
           width: maskWidth.toString(),
           height: maskHeight.toString(),
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -405,7 +403,7 @@ export function createSvgObjectsFromPcbHole(
         fill: colorMap.drill,
         d: pathD,
         "data-type": "pcb_hole",
-        "data-pcb-layer": drillLayer,
+        "data-pcb-layer": "drill",
       },
       children: [],
       value: "",
@@ -449,7 +447,7 @@ export function createSvgObjectsFromPcbHole(
           fill: solderMaskColor,
           d: pathD,
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -463,7 +461,7 @@ export function createSvgObjectsFromPcbHole(
           fill: colorMap.drill,
           d: maskPathD,
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -525,7 +523,7 @@ export function createSvgObjectsFromPcbHole(
         d: pathD,
         transform: `translate(${x} ${y}) rotate(${-rotation})`,
         "data-type": "pcb_hole",
-        "data-pcb-layer": drillLayer,
+        "data-pcb-layer": "drill",
       },
       children: [],
       value: "",
@@ -570,7 +568,7 @@ export function createSvgObjectsFromPcbHole(
           d: pathD,
           transform: `translate(${x} ${y}) rotate(${-rotation})`,
           "data-type": "pcb_hole",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
@@ -585,7 +583,7 @@ export function createSvgObjectsFromPcbHole(
           d: maskPathD,
           transform: `translate(${x} ${y}) rotate(${-rotation})`,
           "data-type": "pcb_soldermask",
-          "data-pcb-layer": drillLayer,
+          "data-pcb-layer": "drill",
         },
       }
 
