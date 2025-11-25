@@ -52,6 +52,10 @@ export function createSvgObjectsFromPcbBoard(
 
   // Add solder mask layer covering the entire board if showSolderMask is enabled
   if (showSolderMask) {
+    // Base board mask uses soldermask layer names (different from cutouts/overlays)
+    const layer = ctx.layer ?? "top"
+    const maskLayer =
+      layer === "bottom" ? "soldermask-bottom" : "soldermask-top"
     svgObjects.push({
       name: "path",
       type: "element",
@@ -64,7 +68,7 @@ export function createSvgObjectsFromPcbBoard(
         "fill-opacity": "0.8",
         stroke: "none",
         "data-type": "pcb_soldermask",
-        "data-pcb-layer": "soldermask-top",
+        "data-pcb-layer": maskLayer,
       },
     })
   }

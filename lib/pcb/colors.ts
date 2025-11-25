@@ -28,6 +28,10 @@ export interface PcbColorMap {
     top: string
     bottom: string
   }
+  soldermaskOverCopper: {
+    top: string
+    bottom: string
+  }
   substrate: string
   courtyard: string
   debugComponent: {
@@ -45,6 +49,7 @@ export interface PcbColorOverrides {
   soldermaskWithCopperUnderneath?: Partial<
     PcbColorMap["soldermaskWithCopperUnderneath"]
   >
+  soldermaskOverCopper?: Partial<PcbColorMap["soldermaskOverCopper"]>
   substrate?: string
   courtyard?: string
   debugComponent?: Partial<PcbColorMap["debugComponent"]>
@@ -67,7 +72,11 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   },
   soldermask: {
     top: "rgb(12, 55, 33)",
-    bottom: "rgb(52, 87, 136)",
+    bottom: "rgb(12, 55, 33)",
+  },
+  soldermaskOverCopper: {
+    top: "rgb(52, 135, 73)",
+    bottom: "rgb(52, 135, 73)",
   },
   substrate: "rgb(201, 162, 110)", // FR4 substrate color (tan/beige)
   drill: "#FF26E2",
