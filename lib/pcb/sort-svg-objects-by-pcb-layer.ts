@@ -9,6 +9,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_hole: 18,
   pcb_plated_hole_drill: 19,
   pcb_plated_hole: 20,
+  pcb_trace_soldermask: 25,
   pcb_trace: 30,
   pcb_smtpad: 30,
   pcb_copper_pour: 35,
@@ -74,7 +75,7 @@ function getLayerPriority(layer?: string): number {
     return 3
   if (normalized.startsWith("inner")) {
     const match = normalized.match(/\d+/)
-    const layerIndex = match ? parseInt(match[0], 10) : 0
+    const layerIndex = match ? Number.parseInt(match[0], 10) : 0
     return 5 + layerIndex
   }
   if (normalized === "through") return 18
