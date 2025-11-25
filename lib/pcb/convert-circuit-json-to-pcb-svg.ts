@@ -134,6 +134,14 @@ export function convertCircuitJsonToPcbSvg(
         colorOverrides?.soldermask?.bottom ??
         DEFAULT_PCB_COLOR_MAP.soldermask.bottom,
     },
+    soldermaskOverCopper: {
+      top:
+        colorOverrides?.soldermaskOverCopper?.top ??
+        DEFAULT_PCB_COLOR_MAP.soldermaskOverCopper.top,
+      bottom:
+        colorOverrides?.soldermaskOverCopper?.bottom ??
+        DEFAULT_PCB_COLOR_MAP.soldermaskOverCopper.bottom,
+    },
     soldermaskWithCopperUnderneath: {
       top:
         colorOverrides?.soldermaskWithCopperUnderneath?.top ??
@@ -330,7 +338,7 @@ export function convertCircuitJsonToPcbSvg(
     circuitJson,
   }
 
-  const unsortedSvgObjects = circuitJson.flatMap((elm) =>
+  let unsortedSvgObjects = circuitJson.flatMap((elm) =>
     createSvgObjects({ elm, circuitJson, ctx }),
   )
 
@@ -343,13 +351,12 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  let allSvgObjects = [...unsortedSvgObjects]
   if (options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
-    allSvgObjects.push(...ratsNestObjects)
+    unsortedSvgObjects = [...unsortedSvgObjects, ...ratsNestObjects]
   }
 
-  const svgObjects = sortSvgObjectsByPcbLayer(allSvgObjects)
+  const svgObjects = sortSvgObjectsByPcbLayer(unsortedSvgObjects)
 
   const children: SvgObject[] = [
     {

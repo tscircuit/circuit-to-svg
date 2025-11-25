@@ -12,7 +12,6 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { ringToPathD } from "lib/utils/ring-to-path-d"
 import { createSoldermaskCutoutElement } from "./create-soldermask-cutout-element"
 import { createSoldermaskOverlayElement } from "./create-soldermask-overlay-element"
-import { lightenMaskColor } from "./lighten-mask-color"
 
 export function createSvgObjectsFromPcbCopperPour(
   pour: PcbCopperPour,
@@ -27,9 +26,10 @@ export function createSvgObjectsFromPcbCopperPour(
   const opacity = "0.5"
   const isCoveredWithSolderMask = pour.covered_with_solder_mask !== false
 
-  const baseMaskColor =
-    layer === "bottom" ? colorMap.soldermask.bottom : colorMap.soldermask.top
-  const maskOverlayColor = lightenMaskColor(baseMaskColor)
+  const maskOverlayColor =
+    layer === "bottom"
+      ? colorMap.soldermaskOverCopper.bottom
+      : colorMap.soldermaskOverCopper.top
   const maskOverlayOpacity = "0.9"
 
   if (pour.shape === "rect") {
@@ -65,15 +65,20 @@ export function createSvgObjectsFromPcbCopperPour(
 
     const maskRect: SvgObject | null = showSolderMask
       ? isCoveredWithSolderMask
-        ? createSoldermaskOverlayElement(
-            "rect",
-            rectAttributes,
+        ? createSoldermaskOverlayElement({
+            elementType: "rect",
+            shapeAttributes: rectAttributes,
             layer,
-            maskOverlayColor,
-            maskOverlayOpacity,
-            "pcb-soldermask-covered-pour",
-          )
-        : createSoldermaskCutoutElement("rect", rectAttributes, layer, colorMap)
+            fillColor: maskOverlayColor,
+            fillOpacity: maskOverlayOpacity,
+            className: "pcb-soldermask-covered-pour",
+          })
+        : createSoldermaskCutoutElement({
+            elementType: "rect",
+            shapeAttributes: rectAttributes,
+            layer,
+            colorMap,
+          })
       : null
 
     if (!maskRect) {
@@ -90,9 +95,7 @@ export function createSvgObjectsFromPcbCopperPour(
       return [maskRect] // Only return the substrate cutout, no copper
     }
 
-    return isCoveredWithSolderMask
-      ? [copperRect, maskRect]
-      : [maskRect, copperRect]
+    return [copperRect, maskRect]
   }
 
   if (pour.shape === "polygon") {
@@ -122,20 +125,20 @@ export function createSvgObjectsFromPcbCopperPour(
 
     const maskPolygon: SvgObject | null = showSolderMask
       ? isCoveredWithSolderMask
-        ? createSoldermaskOverlayElement(
-            "polygon",
-            { points: pointsString },
+        ? createSoldermaskOverlayElement({
+            elementType: "polygon",
+            shapeAttributes: { points: pointsString },
             layer,
-            maskOverlayColor,
-            maskOverlayOpacity,
-            "pcb-soldermask-covered-pour",
-          )
-        : createSoldermaskCutoutElement(
-            "polygon",
-            { points: pointsString },
+            fillColor: maskOverlayColor,
+            fillOpacity: maskOverlayOpacity,
+            className: "pcb-soldermask-covered-pour",
+          })
+        : createSoldermaskCutoutElement({
+            elementType: "polygon",
+            shapeAttributes: { points: pointsString },
             layer,
             colorMap,
-          )
+          })
       : null
 
     if (!maskPolygon) {
@@ -151,9 +154,7 @@ export function createSvgObjectsFromPcbCopperPour(
       return [maskPolygon] // Only return the substrate cutout, no copper
     }
 
-    return isCoveredWithSolderMask
-      ? [copperPolygon, maskPolygon]
-      : [maskPolygon, copperPolygon]
+    return [copperPolygon, maskPolygon]
   }
 
   if (pour.shape === "brep") {
@@ -181,20 +182,20 @@ export function createSvgObjectsFromPcbCopperPour(
 
     const maskPath: SvgObject | null = showSolderMask
       ? isCoveredWithSolderMask
-        ? createSoldermaskOverlayElement(
-            "path",
-            { d, "fill-rule": "evenodd" },
+        ? createSoldermaskOverlayElement({
+            elementType: "path",
+            shapeAttributes: { d, "fill-rule": "evenodd" },
             layer,
-            maskOverlayColor,
-            maskOverlayOpacity,
-            "pcb-soldermask-covered-pour",
-          )
-        : createSoldermaskCutoutElement(
-            "path",
-            { d, "fill-rule": "evenodd" },
+            fillColor: maskOverlayColor,
+            fillOpacity: maskOverlayOpacity,
+            className: "pcb-soldermask-covered-pour",
+          })
+        : createSoldermaskCutoutElement({
+            elementType: "path",
+            shapeAttributes: { d, "fill-rule": "evenodd" },
             layer,
             colorMap,
-          )
+          })
       : null
 
     if (!maskPath) {
@@ -210,9 +211,7 @@ export function createSvgObjectsFromPcbCopperPour(
       return [maskPath] // Only return the substrate cutout, no copper
     }
 
-    return isCoveredWithSolderMask
-      ? [copperPath, maskPath]
-      : [maskPath, copperPath]
+    return [copperPath, maskPath]
   }
 
   return []

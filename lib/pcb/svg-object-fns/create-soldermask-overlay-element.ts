@@ -4,15 +4,25 @@ import type { SvgObject } from "lib/svg-object"
  * Creates a soldermask overlay element (pcb_soldermask) that covers copper.
  * This is used for covered copper features (pours, pads).
  */
-export function createSoldermaskOverlayElement(
-  elementType: "rect" | "polygon" | "path" | "circle",
-  shapeAttributes: Record<string, string>,
-  layer: string,
-  fillColor: string,
-  fillOpacity: string,
-  className: string,
-  additionalAttributes?: Record<string, string>,
-): SvgObject {
+type SoldermaskOverlayOptions = {
+  elementType: "rect" | "polygon" | "path" | "circle"
+  shapeAttributes: Record<string, string>
+  layer: string
+  fillColor: string
+  fillOpacity: string
+  className: string
+  additionalAttributes?: Record<string, string>
+}
+
+export function createSoldermaskOverlayElement({
+  elementType,
+  shapeAttributes,
+  layer,
+  fillColor,
+  fillOpacity,
+  className,
+  additionalAttributes,
+}: SoldermaskOverlayOptions): SvgObject {
   // `layer` is the copper layer being covered so overlays stack alongside the copper they belong to.
   const baseAttributes: Record<string, string> = {
     class: className,
