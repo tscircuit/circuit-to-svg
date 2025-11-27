@@ -339,7 +339,9 @@ export function createSvgObjectsFromSmtPad(
       "data-type": "pcb_smtpad",
       "data-pcb-layer": pad.layer,
       ...(isRotated
-        ? { transform: `translate(${x} ${y}) rotate(${-(pad.ccw_rotation ?? 0)})` }
+        ? {
+            transform: `translate(${x} ${y}) rotate(${-(pad.ccw_rotation ?? 0)})`,
+          }
         : {}),
     }
 
