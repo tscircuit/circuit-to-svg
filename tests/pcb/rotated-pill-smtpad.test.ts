@@ -40,8 +40,20 @@ test("renders rotated pill SMT pad with soldermask", () => {
       width: 2,
       height: 1,
       radius: 0.5,
-      ccw_rotation: 190,
+      ccw_rotation: 0,
       is_covered_with_solder_mask: true,
+    },
+    {
+      type: "pcb_smtpad",
+      x: 0,
+      y: -3,
+      layer: "top",
+      shape: "rotated_pill",
+      pcb_smtpad_id: "pcb_smt_pad_3",
+      width: 2,
+      height: 1,
+      radius: 0.5,
+      ccw_rotation: -35,
     },
   ]
   expect(
