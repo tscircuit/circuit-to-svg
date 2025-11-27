@@ -320,29 +320,35 @@ export function createSvgObjectsFromSmtPad(
     return [substrateElement, padElement]
   }
 
-  if (pad.shape === "pill") {
+  if (pad.shape === "pill" || pad.shape === "rotated_pill") {
+    const isRotated = pad.shape === "rotated_pill"
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+
+    const baseAttributes = {
+      class: "pcb-pad",
+      fill: layerNameToColor(pad.layer, colorMap),
+      x: isRotated ? (-width / 2).toString() : (x - width / 2).toString(),
+      y: isRotated ? (-height / 2).toString() : (y - height / 2).toString(),
+      width: width.toString(),
+      height: height.toString(),
+      rx: radius.toString(),
+      ry: radius.toString(),
+      "data-type": "pcb_smtpad",
+      "data-pcb-layer": pad.layer,
+      ...(isRotated && pad.ccw_rotation
+        ? { transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})` }
+        : {}),
+    }
 
     const padElement: SvgObject = {
       name: "rect",
       type: "element",
       value: "",
       children: [],
-      attributes: {
-        class: "pcb-pad",
-        fill: layerNameToColor(pad.layer, colorMap),
-        x: (x - width / 2).toString(),
-        y: (y - height / 2).toString(),
-        width: width.toString(),
-        height: height.toString(),
-        rx: radius.toString(),
-        ry: radius.toString(),
-        "data-type": "pcb_smtpad",
-        "data-pcb-layer": pad.layer,
-      },
+      attributes: baseAttributes,
     }
 
     if (!shouldShowSolderMask) {
@@ -375,23 +381,32 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
+      const exposedAttributes = {
+        class: "pcb-pad-exposed",
+        fill: layerNameToColor(pad.layer, colorMap),
+        x: isRotated
+          ? (-maskWidth / 2).toString()
+          : (x - maskWidth / 2).toString(),
+        y: isRotated
+          ? (-maskHeight / 2).toString()
+          : (y - maskHeight / 2).toString(),
+        width: maskWidth.toString(),
+        height: maskHeight.toString(),
+        rx: maskRadius.toString(),
+        ry: maskRadius.toString(),
+        "data-type": "pcb_soldermask",
+        "data-pcb-layer": pad.layer,
+        ...(isRotated && pad.ccw_rotation
+          ? { transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})` }
+          : {}),
+      }
+
       const exposedOpeningElement: SvgObject = {
         name: "rect",
         type: "element",
         value: "",
         children: [],
-        attributes: {
-          class: "pcb-pad-exposed",
-          fill: layerNameToColor(pad.layer, colorMap),
-          x: (x - maskWidth / 2).toString(),
-          y: (y - maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          rx: maskRadius.toString(),
-          ry: maskRadius.toString(),
-          "data-type": "pcb_soldermask",
-          "data-pcb-layer": pad.layer,
-        },
+        attributes: exposedAttributes,
       }
 
       return [coveredPadElement, exposedOpeningElement]
@@ -422,23 +437,32 @@ export function createSvgObjectsFromSmtPad(
     }
 
     // For positive margins, draw substrate cutout then pad on top
+    const substrateAttributes = {
+      class: "pcb-soldermask-cutout",
+      fill: colorMap.substrate,
+      x: isRotated
+        ? (-maskWidth / 2).toString()
+        : (x - maskWidth / 2).toString(),
+      y: isRotated
+        ? (-maskHeight / 2).toString()
+        : (y - maskHeight / 2).toString(),
+      width: maskWidth.toString(),
+      height: maskHeight.toString(),
+      rx: maskRadius.toString(),
+      ry: maskRadius.toString(),
+      "data-type": "pcb_soldermask_opening",
+      "data-pcb-layer": pad.layer,
+      ...(isRotated && pad.ccw_rotation
+        ? { transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})` }
+        : {}),
+    }
+
     const substrateElement: SvgObject = {
       name: "rect",
       type: "element",
       value: "",
       children: [],
-      attributes: {
-        class: "pcb-soldermask-cutout",
-        fill: colorMap.substrate,
-        x: (x - maskWidth / 2).toString(),
-        y: (y - maskHeight / 2).toString(),
-        width: maskWidth.toString(),
-        height: maskHeight.toString(),
-        rx: maskRadius.toString(),
-        ry: maskRadius.toString(),
-        "data-type": "pcb_soldermask_opening",
-        "data-pcb-layer": pad.layer,
-      },
+      attributes: substrateAttributes,
     }
 
     return [substrateElement, padElement]
