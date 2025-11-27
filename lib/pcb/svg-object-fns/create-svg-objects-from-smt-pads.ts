@@ -326,6 +326,11 @@ export function createSvgObjectsFromSmtPad(
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const rotationTransformAttributes = isRotated
+      ? {
+          transform: `translate(${x} ${y}) rotate(${-(pad.ccw_rotation ?? 0)})`,
+        }
+      : undefined
 
     const baseAttributes = {
       class: "pcb-pad",
@@ -338,11 +343,7 @@ export function createSvgObjectsFromSmtPad(
       ry: radius.toString(),
       "data-type": "pcb_smtpad",
       "data-pcb-layer": pad.layer,
-      ...(isRotated
-        ? {
-            transform: `translate(${x} ${y}) rotate(${-(pad.ccw_rotation ?? 0)})`,
-          }
-        : {}),
+      ...(rotationTransformAttributes ?? {}),
     }
 
     const padElement: SvgObject = {
@@ -372,14 +373,15 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad-covered",
           fill: soldermaskWithCopperUnderneathColor,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
+          x: isRotated ? (-width / 2).toString() : (x - width / 2).toString(),
+          y: isRotated ? (-height / 2).toString() : (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...(rotationTransformAttributes ?? {}),
         },
       }
 
@@ -398,9 +400,7 @@ export function createSvgObjectsFromSmtPad(
         ry: maskRadius.toString(),
         "data-type": "pcb_soldermask",
         "data-pcb-layer": pad.layer,
-        ...(isRotated && pad.ccw_rotation
-          ? { transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})` }
-          : {}),
+        ...(rotationTransformAttributes ?? {}),
       }
 
       const exposedOpeningElement: SvgObject = {
@@ -424,14 +424,15 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad-covered",
           fill: soldermaskWithCopperUnderneathColor,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
+          x: isRotated ? (-width / 2).toString() : (x - width / 2).toString(),
+          y: isRotated ? (-height / 2).toString() : (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...(rotationTransformAttributes ?? {}),
         },
       }
 
@@ -454,9 +455,7 @@ export function createSvgObjectsFromSmtPad(
       ry: maskRadius.toString(),
       "data-type": "pcb_soldermask_opening",
       "data-pcb-layer": pad.layer,
-      ...(isRotated && pad.ccw_rotation
-        ? { transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})` }
-        : {}),
+      ...(rotationTransformAttributes ?? {}),
     }
 
     const substrateElement: SvgObject = {
