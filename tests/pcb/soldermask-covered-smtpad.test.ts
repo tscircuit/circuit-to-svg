@@ -71,6 +71,19 @@ test("solder mask renders for each SMT pad shape and stays below other copper", 
       ],
       is_covered_with_solder_mask: true,
     },
+    {
+      type: "pcb_smtpad",
+      x: 2,
+      y: 0,
+      layer: "top",
+      shape: "rotated_pill",
+      pcb_smtpad_id: "pcb_smt_pad_2",
+      width: 2,
+      height: 1,
+      radius: 0.5,
+      ccw_rotation: 45,
+      is_covered_with_solder_mask: true,
+    },
   ]
 
   const svg = convertCircuitJsonToPcbSvg(circuit, {
