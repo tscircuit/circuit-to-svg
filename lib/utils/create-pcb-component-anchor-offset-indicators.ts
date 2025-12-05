@@ -139,7 +139,7 @@ export function createAnchorOffsetIndicators(
         x: verticalLineX,
         startY: screenGroupAnchorY,
         endY: screenComponentY,
-        offsetMm: -offsetY,
+        offsetMm: offsetY,
         offsetX: offsetX,
       }),
     )
