@@ -1,13 +1,14 @@
-import type { PCBBoard, Point } from "circuit-json"
+import type { PcbBoard, PcbPanel, Point } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
 
 export function createSvgObjectsFromPcbBoard(
-  pcbBoard: PCBBoard,
+  pcbBoard: PcbBoard,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, colorMap, showSolderMask } = ctx
+  const { transform, colorMap, showSolderMask, circuitJson } = ctx
   const { width, height, center, outline } = pcbBoard
 
   let path: string
@@ -88,6 +89,26 @@ export function createSvgObjectsFromPcbBoard(
       "data-pcb-layer": "board",
     },
   })
+
+  // Add anchor offset indicators if there's a panel and showAnchorOffsets is enabled
+  if (ctx.showAnchorOffsets && circuitJson) {
+    const panel = circuitJson.find(
+      (elm): elm is PcbPanel => elm.type === "pcb_panel",
+    )
+
+    if (panel) {
+      const panelCenter = panel.center ?? { x: 0, y: 0 }
+      svgObjects.push(
+        ...createAnchorOffsetIndicators({
+          groupAnchorPosition: panelCenter,
+          componentPosition: center,
+          transform,
+          componentWidth: width,
+          componentHeight: height,
+        }),
+      )
+    }
+  }
 
   return svgObjects
 }
