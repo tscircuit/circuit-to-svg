@@ -11,64 +11,227 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
-import { estimateTextWidth } from "lib/sch/estimate-text-width"
-import opentype, { type Font } from "opentype.js"
+import { svgAlphabet } from "@tscircuit/alphabet"
 
-// ---------------------------------------------------------
-// Load font synchronously (if available). If it fails,
-// knockout still works using estimated text width.
-// ---------------------------------------------------------
-let syncFont: Font | null = null
-try {
-  syncFont = opentype.loadSync(
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-  )
-} catch {}
+// Character spacing constants
+const CHAR_WIDTH = 1.0
+const CHAR_SPACING = 0.2
+const LINE_HEIGHT = 1.4
+
+type AlphabetKey = keyof typeof svgAlphabet
 
 /**
- * Convert a single line of text into SVG path data
+ * Transform a normalized SVG path (0–1 range) to actual coordinates.
  */
-function textToPathData(
+function transformPathData(
+  pathData: string,
+  offsetX: number,
+  offsetY: number,
+  charScale: number,
+): string {
+  return pathData.replace(
+    /([ML])\s*([-\d.]+)\s+([-\d.]+)|([Q])\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)/g,
+    (match, cmd1, x1, y1, cmd2, qx1, qy1, qx2, qy2) => {
+      if (cmd1) {
+        const x = offsetX + Number.parseFloat(x1) * charScale
+        const y = offsetY + Number.parseFloat(y1) * charScale
+        return `${cmd1}${x} ${y}`
+      }
+      if (cmd2) {
+        const cx = offsetX + Number.parseFloat(qx1) * charScale
+        const cy = offsetY + Number.parseFloat(qy1) * charScale
+        const x = offsetX + Number.parseFloat(qx2) * charScale
+        const y = offsetY + Number.parseFloat(qy2) * charScale
+        return `${cmd2}${cx} ${cy} ${x} ${y}`
+      }
+      return match
+    },
+  )
+}
+
+/**
+ * Convert a single line to an alphabet path.
+ */
+function textToAlphabetPath(
   text: string,
   fontSize: number,
-  x: number,
-  y: number,
-): string | null {
-  if (!syncFont) return null
-  const path = syncFont.getPath(text, x, y, fontSize)
-  return path.toPathData(2)
+): { pathData: string; width: number } {
+  const paths: string[] = []
+  const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
+  let x = 0
+
+  for (const char of text) {
+    if (char === " ") {
+      x += charAdvance * 0.6
+      continue
+    }
+
+    const path = svgAlphabet[char as AlphabetKey]
+    if (path) {
+      paths.push(transformPathData(path, x, 0, fontSize))
+    }
+    x += charAdvance
+  }
+
+  const width = x > 0 ? x - CHAR_SPACING * fontSize : 0
+  return { pathData: paths.join(" "), width }
 }
 
 /**
- * Measure real text bounding box using opentype.js
+ * Create rectangle path centered at (0,0)
  */
-function getTextBoundingBox(text: string, fontSize: number) {
-  if (!syncFont) return null
-
-  const asc = (syncFont.ascender / syncFont.unitsPerEm) * fontSize
-  const desc = (syncFont.descender / syncFont.unitsPerEm) * fontSize
-  const lineHeight = asc - desc
-  const lines = text.split("\n")
-
-  const width = Math.max(
-    ...lines.map((l) => syncFont!.getAdvanceWidth(l, fontSize)),
-  )
-
-  return {
-    width,
-    height: lineHeight * lines.length,
-    asc,
-    lineHeight,
-  }
-}
-
-/** Create rectangle path centered at (0,0) */
-function createRectPath(w: number, h: number) {
-  const hw = w / 2,
-    hh = h / 2
+function createRectPath(w: number, h: number): string {
+  const hw = w / 2
+  const hh = h / 2
   return `M ${-hw} ${-hh} L ${hw} ${-hh} L ${hw} ${hh} L ${-hw} ${hh} Z`
 }
 
+/**
+ * Expand stroke-like path into filled polygons to simulate stroke thickness.
+ * This lets us use fill-rule="evenodd" for real knockout text.
+ */
+function strokeToPolygonPath(pathData: string, thickness: number): string {
+  const commands = pathData.match(/[MLQ][^MLQ]+/g) ?? []
+  const polys: string[] = []
+
+  let lastX = 0
+  let lastY = 0
+  let hasLast = false
+
+  for (const cmd of commands) {
+    const c = cmd.trim()
+
+    if (c.startsWith("M")) {
+      const [, xStr, yStr] = c.match(/M\s*([-\d.]+)\s+([-\d.]+)/) || []
+      if (xStr !== undefined && yStr !== undefined) {
+        lastX = Number.parseFloat(xStr)
+        lastY = Number.parseFloat(yStr)
+        hasLast = true
+      }
+      continue
+    }
+
+    if (c.startsWith("L")) {
+      const [, xStr, yStr] = c.match(/L\s*([-\d.]+)\s+([-\d.]+)/) || []
+      if (!hasLast || xStr === undefined || yStr === undefined) continue
+
+      const x = Number.parseFloat(xStr)
+      const y = Number.parseFloat(yStr)
+
+      const dx = x - lastX
+      const dy = y - lastY
+      const len = Math.sqrt(dx * dx + dy * dy)
+      if (len > 0) {
+        const nx = (-dy / len) * (thickness / 2)
+        const ny = (dx / len) * (thickness / 2)
+
+        const poly = [
+          `M ${lastX + nx} ${lastY + ny}`,
+          `L ${x + nx} ${y + ny}`,
+          `L ${x - nx} ${y - ny}`,
+          `L ${lastX - nx} ${lastY - ny}`,
+          "Z",
+        ].join(" ")
+        polys.push(poly)
+      }
+
+      lastX = x
+      lastY = y
+      hasLast = true
+      continue
+    }
+
+    if (c.startsWith("Q")) {
+      const [, cxStr, cyStr, xStr, yStr] =
+        c.match(/Q\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)/) || []
+      if (!hasLast || xStr === undefined || yStr === undefined) continue
+
+      const x = Number.parseFloat(xStr)
+      const y = Number.parseFloat(yStr)
+
+      // Approximate curve as straight for thickness
+      const dx = x - lastX
+      const dy = y - lastY
+      const len = Math.sqrt(dx * dx + dy * dy)
+      if (len > 0) {
+        const nx = (-dy / len) * (thickness / 2)
+        const ny = (dx / len) * (thickness / 2)
+
+        const poly = [
+          `M ${lastX + nx} ${lastY + ny}`,
+          `L ${x + nx} ${y + ny}`,
+          `L ${x - nx} ${y - ny}`,
+          `L ${lastX - nx} ${lastY - ny}`,
+          "Z",
+        ].join(" ")
+        polys.push(poly)
+      }
+
+      lastX = x
+      lastY = y
+      hasLast = true
+    }
+  }
+
+  return polys.join(" ")
+}
+
+/**
+ * MULTI-LINE TEXT:
+ * Correct ordering: first line at top, next lines go downward.
+ */
+function textToCenteredAlphabetPaths(
+  text: string,
+  fontSize: number,
+): { pathData: string; width: number; height: number } {
+  const lines = text.split("\n")
+  const lineHeight = fontSize * LINE_HEIGHT
+  const totalHeight = lines.length * lineHeight
+
+  const lineWidths: number[] = []
+  let maxWidth = 0
+
+  for (const line of lines) {
+    const { width } = textToAlphabetPath(line, fontSize)
+    lineWidths.push(width)
+    if (width > maxWidth) maxWidth = width
+  }
+
+  const paths: string[] = []
+  let y = -totalHeight / 2
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!
+    const lineWidth = lineWidths[i]!
+    const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
+    let x = -lineWidth / 2
+
+    for (const char of line) {
+      if (char === " ") {
+        x += charAdvance * 0.6
+        continue
+      }
+
+      const glyphPath = svgAlphabet[char as AlphabetKey]
+      if (glyphPath) {
+        paths.push(transformPathData(glyphPath, x, y, fontSize))
+      }
+      x += charAdvance
+    }
+
+    y += lineHeight
+  }
+
+  return {
+    pathData: paths.join(" "),
+    width: maxWidth,
+    height: totalHeight,
+  }
+}
+
+/**
+ * MAIN: Convert PCB copper text into SVG objects.
+ */
 export function createSvgObjectsFromPcbCopperText(
   pcbCopperText: PcbCopperText,
   ctx: PcbContext,
@@ -86,8 +249,7 @@ export function createSvgObjectsFromPcbCopperText(
     is_mirrored = false,
   } = pcbCopperText
 
-  const layerName =
-    typeof layer === "string" ? layer : (layer as any)?.name || "top"
+  const layerName = layer ?? "top"
 
   if (filterLayer && filterLayer !== layerName) return []
   if (!anchor_position) return []
@@ -99,57 +261,44 @@ export function createSvgObjectsFromPcbCopperText(
 
   const fontSizeNum = distance.parse(font_size) ?? 0.2
   const scaleFactor = Math.abs(transform.a)
-  const effectiveFontSize = fontSizeNum * scaleFactor
-
-  const lines = text.split("\n")
   const copperColor = layerNameToColor(layerName, colorMap)
 
-  // -----------------------------------------------------------------
-  //  KNOCKOUT MODE (rectangle with text cut-outs using evenodd rule)
-  // -----------------------------------------------------------------
+  const isBottom = layerName === "bottom"
+  // Auto-mirror bottom layer, or explicit mirror
+  const applyMirror = isBottom ? true : is_mirrored === true
+
+  //--------------------------------------
+  // KNOCKOUT MODE
+  //--------------------------------------
   if (is_knockout) {
-    let box = getTextBoundingBox(text, fontSizeNum)
+    const { pathData, width, height } = textToCenteredAlphabetPaths(
+      text,
+      fontSizeNum,
+    )
 
-    let textWidth, textHeight, asc, lineHeight
-
-    if (box) {
-      textWidth = box.width
-      textHeight = box.height
-      asc = box.asc
-      lineHeight = box.lineHeight
-    } else {
-      // fallback estimates
-      const maxLine = Math.max(...lines.map((l) => estimateTextWidth(l)))
-      textWidth = maxLine * fontSizeNum
-      textHeight = fontSizeNum * lines.length
-      asc = fontSizeNum * 0.8
-      lineHeight = fontSizeNum
-    }
-
-    // padding
     const padX = knockout_padding?.left ?? fontSizeNum * 0.5
     const padY = knockout_padding?.top ?? fontSizeNum * 0.3
 
-    const rectW = textWidth + padX * 2
-    const rectH = textHeight + padY * 2
+    const rectW = width + padX * 2
+    const rectH = height + padY * 2
 
-    // ---------------------------------------------------------
-    // Generate actual text cutout paths
-    // ---------------------------------------------------------
-    let paths: string[] = []
-    if (syncFont) {
-      let y = -textHeight / 2 + asc
-      for (const line of lines) {
-        const w = syncFont.getAdvanceWidth(line, fontSizeNum)
-        const x = -w / 2
-        const d = textToPathData(line, fontSizeNum, x, y)
-        if (d) paths.push(d)
-        y += lineHeight
-      }
-    }
+    // Thickness for stroke expansion in local text coords
+    const outlineThickness = fontSizeNum * 0.12
+    const textPolygons = strokeToPolygonPath(pathData, outlineThickness)
 
-    // If no font loaded, still create clean rectangle only
-    const combined = `${createRectPath(rectW, rectH)} ${paths.join(" ")}`
+    const combined = `
+      ${createRectPath(rectW, rectH)}
+      ${textPolygons}
+    `.trim()
+
+    const knockoutTransform = matrixToString(
+      compose(
+        translate(ax, ay),
+        rotate((-ccw_rotation * Math.PI) / 180),
+        ...(applyMirror ? [scale(-1, 1)] : []),
+        scale(scaleFactor, scaleFactor),
+      ),
+    )
 
     return [
       {
@@ -161,7 +310,7 @@ export function createSvgObjectsFromPcbCopperText(
           d: combined,
           fill: copperColor,
           "fill-rule": "evenodd",
-          transform: `translate(${ax} ${ay}) rotate(${-ccw_rotation}) scale(${scaleFactor})`,
+          transform: knockoutTransform,
           class: `pcb-copper-text-knockout pcb-copper-${layerName}`,
           "data-type": "pcb_copper_text",
           "data-pcb-copper-text-id": pcbCopperText.pcb_copper_text_id,
@@ -170,42 +319,45 @@ export function createSvgObjectsFromPcbCopperText(
     ]
   }
 
-  // --------------------------------------------
-  // NORMAL TEXT (not knockout)
-  // --------------------------------------------
-  let anchor = "middle"
-  let baseline = "central"
+  //--------------------------------------
+  // NORMAL TEXT MODE
+  //--------------------------------------
+  const { pathData, width, height } = textToCenteredAlphabetPaths(
+    text,
+    fontSizeNum,
+  )
+
+  let offsetX = 0
+  let offsetY = 0
 
   switch (anchor_alignment) {
     case "top_left":
-      anchor = "start"
-      baseline = "text-before-edge"
+      offsetX = width / 2
+      offsetY = height / 2
       break
     case "top_center":
-      anchor = "middle"
-      baseline = "text-before-edge"
+      offsetY = height / 2
       break
     case "top_right":
-      anchor = "end"
-      baseline = "text-before-edge"
+      offsetX = -width / 2
+      offsetY = height / 2
       break
     case "center_left":
-      anchor = "start"
+      offsetX = width / 2
       break
     case "center_right":
-      anchor = "end"
+      offsetX = -width / 2
       break
     case "bottom_left":
-      anchor = "start"
-      baseline = "text-after-edge"
+      offsetX = width / 2
+      offsetY = -height / 2
       break
     case "bottom_center":
-      anchor = "middle"
-      baseline = "text-after-edge"
+      offsetY = -height / 2
       break
     case "bottom_right":
-      anchor = "end"
-      baseline = "text-after-edge"
+      offsetX = -width / 2
+      offsetY = -height / 2
       break
   }
 
@@ -213,60 +365,32 @@ export function createSvgObjectsFromPcbCopperText(
     compose(
       translate(ax, ay),
       rotate((-ccw_rotation * Math.PI) / 180),
-      ...(is_mirrored || layerName === "bottom" ? [scale(-1, 1)] : []),
+      ...(applyMirror ? [scale(-1, 1)] : []),
+      translate(offsetX, offsetY),
+      scale(scaleFactor, scaleFactor),
     ),
   )
 
-  const children: SvgObject[] =
-    lines.length === 1
-      ? [
-          {
-            type: "text",
-            name: "",
-            value: text,
-            attributes: {},
-            children: [],
-          },
-        ]
-      : lines.map((line, i) => ({
-          type: "element",
-          name: "tspan",
-          value: "",
-          attributes: {
-            x: "0",
-            ...(i > 0 ? { dy: effectiveFontSize.toString() } : {}),
-          },
-          children: [
-            {
-              type: "text",
-              name: "",
-              value: line,
-              attributes: {},
-              children: [],
-            },
-          ],
-        }))
+  const strokeWidth = fontSizeNum * 0.15
 
   return [
     {
-      name: "text",
+      name: "path",
       type: "element",
-      value: "",
-      children,
       attributes: {
-        x: "0",
-        y: "0",
-        fill: copperColor,
-        "font-family": "Arial, sans-serif",
-        "font-size": effectiveFontSize.toString(),
-        "text-anchor": anchor,
-        "dominant-baseline": baseline,
+        d: pathData,
+        fill: "none",
+        stroke: copperColor,
+        "stroke-width": strokeWidth.toString(),
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
         transform: textTransform,
         class: `pcb-copper-text pcb-copper-${layerName}`,
-        stroke: "none",
         "data-type": "pcb_copper_text",
         "data-pcb-copper-text-id": pcbCopperText.pcb_copper_text_id,
       },
+      children: [],
+      value: "",
     },
   ]
 }
