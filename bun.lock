@@ -12,6 +12,7 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
+        "@tscircuit/alphabet": "^0.0.8",
         "@types/bun": "^1.2.8",
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
@@ -27,6 +28,9 @@
         "tsup": "^8.0.2",
         "typescript": "^5.4.5",
         "vite-tsconfig-paths": "^5.0.1",
+      },
+      "peerDependencies": {
+        "@tscircuit/alphabet": "*",
       },
     },
   },
@@ -254,6 +258,8 @@
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.53.3", "", { "os": "win32", "cpu": "x64" }, "sha512-UhTd8u31dXadv0MopwGgNOBpUVROFKWVQgAg5N1ESyCz8AuBcMqm4AuTjrwgQKGDfoFuz02EuMRHQIw/frmYKQ=="],
 
     "@skidding/launch-editor": ["@skidding/launch-editor@2.2.3", "", { "dependencies": { "chalk": "^2.3.0", "shell-quote": "^1.6.1" } }, "sha512-0SuGEsWdulnbryUJ6humogFuuDMWMb4VJyhOc3FGVkibxVdECYDDkGx8VjS/NePZSegNONDIVhCEVZLTv4ycTQ=="],
+
+    "@tscircuit/alphabet": ["@tscircuit/alphabet@0.0.8", "", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-YhYdeBUXXoFWvkkBd3um80Qtfm7zs5B3PXria2BhTcQfCdp6ZfeawY9zRYhM+DXnRm9fxFPH+F7rTp+AkDL/rQ=="],
 
     "@tscircuit/capacity-autorouter": ["@tscircuit/capacity-autorouter@0.0.140", "", { "dependencies": { "fast-json-stable-stringify": "^2.1.0", "object-hash": "^3.0.0" } }, "sha512-WKkcVDobcbnIEeQ0R/sjaao6x6cwn1jlGoC8l7jdziJdSlhbV6GI84xqFzbuOXm+GKLFFjHDrL08kGcebAWShA=="],
 

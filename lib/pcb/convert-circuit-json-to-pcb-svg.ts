@@ -29,6 +29,7 @@ import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
+import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
 import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
 import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
 import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
@@ -258,6 +259,8 @@ export function convertCircuitJsonToPcbSvg(
       circuitJsonElm.type === "pcb_silkscreen_line"
     ) {
       updateSilkscreenBounds(circuitJsonElm)
+    } else if (circuitJsonElm.type === "pcb_copper_text") {
+      updateBounds(circuitJsonElm.anchor_position, 0, 0)
     } else if (circuitJsonElm.type === "pcb_copper_pour") {
       if (circuitJsonElm.shape === "rect") {
         updateBounds(
@@ -611,6 +614,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbSilkscreenCircle(elm, ctx)
     case "pcb_silkscreen_line":
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
+    case "pcb_copper_text":
+      return createSvgObjectsFromPcbCopperText(elm as any, ctx)
     case "pcb_courtyard_rect":
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardRect(elm, ctx)
