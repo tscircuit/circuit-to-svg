@@ -77,104 +77,8 @@ function textToAlphabetPath(
   return { pathData: paths.join(" "), width }
 }
 
-/**
- * Create rectangle path centered at (0,0)
- */
-function createRectPath(w: number, h: number): string {
-  const hw = w / 2
-  const hh = h / 2
-  return `M ${-hw} ${-hh} L ${hw} ${-hh} L ${hw} ${hh} L ${-hw} ${hh} Z`
-}
-
-/**
- * Expand stroke-like path into filled polygons to simulate stroke thickness.
- * This lets us use fill-rule="evenodd" for real knockout text.
- */
-function strokeToPolygonPath(pathData: string, thickness: number): string {
-  const commands = pathData.match(/[MLQ][^MLQ]+/g) ?? []
-  const polys: string[] = []
-
-  let lastX = 0
-  let lastY = 0
-  let hasLast = false
-
-  for (const cmd of commands) {
-    const c = cmd.trim()
-
-    if (c.startsWith("M")) {
-      const [, xStr, yStr] = c.match(/M\s*([-\d.]+)\s+([-\d.]+)/) || []
-      if (xStr !== undefined && yStr !== undefined) {
-        lastX = Number.parseFloat(xStr)
-        lastY = Number.parseFloat(yStr)
-        hasLast = true
-      }
-      continue
-    }
-
-    if (c.startsWith("L")) {
-      const [, xStr, yStr] = c.match(/L\s*([-\d.]+)\s+([-\d.]+)/) || []
-      if (!hasLast || xStr === undefined || yStr === undefined) continue
-
-      const x = Number.parseFloat(xStr)
-      const y = Number.parseFloat(yStr)
-
-      const dx = x - lastX
-      const dy = y - lastY
-      const len = Math.sqrt(dx * dx + dy * dy)
-      if (len > 0) {
-        const nx = (-dy / len) * (thickness / 2)
-        const ny = (dx / len) * (thickness / 2)
-
-        const poly = [
-          `M ${lastX + nx} ${lastY + ny}`,
-          `L ${x + nx} ${y + ny}`,
-          `L ${x - nx} ${y - ny}`,
-          `L ${lastX - nx} ${lastY - ny}`,
-          "Z",
-        ].join(" ")
-        polys.push(poly)
-      }
-
-      lastX = x
-      lastY = y
-      hasLast = true
-      continue
-    }
-
-    if (c.startsWith("Q")) {
-      const [, cxStr, cyStr, xStr, yStr] =
-        c.match(/Q\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)/) || []
-      if (!hasLast || xStr === undefined || yStr === undefined) continue
-
-      const x = Number.parseFloat(xStr)
-      const y = Number.parseFloat(yStr)
-
-      // Approximate curve as straight for thickness
-      const dx = x - lastX
-      const dy = y - lastY
-      const len = Math.sqrt(dx * dx + dy * dy)
-      if (len > 0) {
-        const nx = (-dy / len) * (thickness / 2)
-        const ny = (dx / len) * (thickness / 2)
-
-        const poly = [
-          `M ${lastX + nx} ${lastY + ny}`,
-          `L ${x + nx} ${y + ny}`,
-          `L ${x - nx} ${y - ny}`,
-          `L ${lastX - nx} ${lastY - ny}`,
-          "Z",
-        ].join(" ")
-        polys.push(poly)
-      }
-
-      lastX = x
-      lastY = y
-      hasLast = true
-    }
-  }
-
-  return polys.join(" ")
-}
+// Counter for generating unique mask IDs
+let maskIdCounter = 0
 
 /**
  * MULTI-LINE TEXT:
@@ -282,14 +186,8 @@ export function createSvgObjectsFromPcbCopperText(
     const rectW = width + padX * 2
     const rectH = height + padY * 2
 
-    // Thickness for stroke expansion in local text coords
-    const outlineThickness = fontSizeNum * 0.12
-    const textPolygons = strokeToPolygonPath(pathData, outlineThickness)
-
-    const combined = `
-      ${createRectPath(rectW, rectH)}
-      ${textPolygons}
-    `.trim()
+    // Stroke width for text cutout - matches normal text rendering
+    const strokeWidth = fontSizeNum * 0.15
 
     const knockoutTransform = matrixToString(
       compose(
@@ -300,16 +198,73 @@ export function createSvgObjectsFromPcbCopperText(
       ),
     )
 
+    // Generate unique mask ID
+    const maskId = `knockout-mask-${pcbCopperText.pcb_copper_text_id}-${maskIdCounter++}`
+
+    // Use SVG mask for knockout effect:
+    // - White background in mask = visible copper
+    // - Black text strokes in mask = cutout (transparent)
+    // This uses native SVG stroke rendering with round caps/joins for perfect cuts
     return [
       {
-        name: "path",
+        name: "defs",
+        type: "element",
+        value: "",
+        children: [
+          {
+            name: "mask",
+            type: "element",
+            value: "",
+            attributes: {
+              id: maskId,
+            },
+            children: [
+              // White background - area that will show copper
+              {
+                name: "rect",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: (-rectW / 2).toString(),
+                  y: (-rectH / 2).toString(),
+                  width: rectW.toString(),
+                  height: rectH.toString(),
+                  fill: "white",
+                },
+                children: [],
+              },
+              // Black text strokes - area that will be cut out
+              {
+                name: "path",
+                type: "element",
+                value: "",
+                attributes: {
+                  d: pathData,
+                  fill: "none",
+                  stroke: "black",
+                  "stroke-width": strokeWidth.toString(),
+                  "stroke-linecap": "round",
+                  "stroke-linejoin": "round",
+                },
+                children: [],
+              },
+            ],
+          },
+        ],
+        attributes: {},
+      },
+      {
+        name: "rect",
         type: "element",
         value: "",
         children: [],
         attributes: {
-          d: combined,
+          x: (-rectW / 2).toString(),
+          y: (-rectH / 2).toString(),
+          width: rectW.toString(),
+          height: rectH.toString(),
           fill: copperColor,
-          "fill-rule": "evenodd",
+          mask: `url(#${maskId})`,
           transform: knockoutTransform,
           class: `pcb-copper-text-knockout pcb-copper-${layerName}`,
           "data-type": "pcb_copper_text",
