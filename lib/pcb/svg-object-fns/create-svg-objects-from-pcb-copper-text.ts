@@ -11,46 +11,39 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
-import { svgAlphabet } from "@tscircuit/alphabet"
+import { lineAlphabet } from "@tscircuit/alphabet"
 
 // Character spacing constants
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
 
-type AlphabetKey = keyof typeof svgAlphabet
+type AlphabetKey = keyof typeof lineAlphabet
 
 /**
- * Transform a normalized SVG path (0–1 range) to actual coordinates.
+ * Convert line segments to SVG path data.
+ * lineAlphabet uses mathematical coordinates (y=0 at bottom, y=1 at top)
+ * SVG uses screen coordinates (y=0 at top), so we invert y with (1 - y)
  */
-function transformPathData(
-  pathData: string,
+function linesToPathData(
+  lines: Array<{ x1: number; y1: number; x2: number; y2: number }>,
   offsetX: number,
   offsetY: number,
   charScale: number,
 ): string {
-  return pathData.replace(
-    /([ML])\s*([-\d.]+)\s+([-\d.]+)|([Q])\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)/g,
-    (match, cmd1, x1, y1, cmd2, qx1, qy1, qx2, qy2) => {
-      if (cmd1) {
-        const x = offsetX + Number.parseFloat(x1) * charScale
-        const y = offsetY + Number.parseFloat(y1) * charScale
-        return `${cmd1}${x} ${y}`
-      }
-      if (cmd2) {
-        const cx = offsetX + Number.parseFloat(qx1) * charScale
-        const cy = offsetY + Number.parseFloat(qy1) * charScale
-        const x = offsetX + Number.parseFloat(qx2) * charScale
-        const y = offsetY + Number.parseFloat(qy2) * charScale
-        return `${cmd2}${cx} ${cy} ${x} ${y}`
-      }
-      return match
-    },
-  )
+  return lines
+    .map((line) => {
+      const x1 = offsetX + line.x1 * charScale
+      const y1 = offsetY + (1 - line.y1) * charScale
+      const x2 = offsetX + line.x2 * charScale
+      const y2 = offsetY + (1 - line.y2) * charScale
+      return `M${x1} ${y1}L${x2} ${y2}`
+    })
+    .join(" ")
 }
 
 /**
- * Convert a single line to an alphabet path.
+ * Convert a single line of text to an SVG path.
  */
 function textToAlphabetPath(
   text: string,
@@ -66,9 +59,9 @@ function textToAlphabetPath(
       continue
     }
 
-    const path = svgAlphabet[char as AlphabetKey]
-    if (path) {
-      paths.push(transformPathData(path, x, 0, fontSize))
+    const lines = lineAlphabet[char as AlphabetKey]
+    if (lines) {
+      paths.push(linesToPathData(lines, x, 0, fontSize))
     }
     x += charAdvance
   }
@@ -88,14 +81,14 @@ function textToCenteredAlphabetPaths(
   text: string,
   fontSize: number,
 ): { pathData: string; width: number; height: number } {
-  const lines = text.split("\n")
+  const textLines = text.split("\n")
   const lineHeight = fontSize * LINE_HEIGHT
-  const totalHeight = lines.length * lineHeight
+  const totalHeight = textLines.length * lineHeight
 
   const lineWidths: number[] = []
   let maxWidth = 0
 
-  for (const line of lines) {
+  for (const line of textLines) {
     const { width } = textToAlphabetPath(line, fontSize)
     lineWidths.push(width)
     if (width > maxWidth) maxWidth = width
@@ -104,8 +97,8 @@ function textToCenteredAlphabetPaths(
   const paths: string[] = []
   let y = -totalHeight / 2
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!
+  for (let i = 0; i < textLines.length; i++) {
+    const line = textLines[i]!
     const lineWidth = lineWidths[i]!
     const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
     let x = -lineWidth / 2
@@ -116,9 +109,9 @@ function textToCenteredAlphabetPaths(
         continue
       }
 
-      const glyphPath = svgAlphabet[char as AlphabetKey]
-      if (glyphPath) {
-        paths.push(transformPathData(glyphPath, x, y, fontSize))
+      const charLines = lineAlphabet[char as AlphabetKey]
+      if (charLines) {
+        paths.push(linesToPathData(charLines, x, y, fontSize))
       }
       x += charAdvance
     }
