@@ -15,7 +15,10 @@ export function createSvgObjectsFromPcbBoard(
   if (outline && Array.isArray(outline) && outline.length >= 3) {
     path = outline
       .map((point: Point, index: number) => {
-        const [x, y] = applyToPoint(transform, [point.x, point.y])
+        const [x, y] = applyToPoint(transform, [
+          center.x + point.x,
+          center.y + point.y,
+        ])
         return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
       })
       .join(" ")

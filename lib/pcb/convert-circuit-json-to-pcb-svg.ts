@@ -192,8 +192,14 @@ export function convertCircuitJsonToPcbSvg(
         Array.isArray(circuitJsonElm.outline) &&
         circuitJsonElm.outline.length >= 3
       ) {
-        updateBoundsToIncludeOutline(circuitJsonElm.outline)
-        updateBoardBoundsToIncludeOutline(circuitJsonElm.outline)
+        updateBoundsToIncludeOutline(
+          circuitJsonElm.outline,
+          circuitJsonElm.center,
+        )
+        updateBoardBoundsToIncludeOutline(
+          circuitJsonElm.outline,
+          circuitJsonElm.center,
+        )
       } else if (
         "center" in circuitJsonElm &&
         "width" in circuitJsonElm &&
@@ -486,16 +492,18 @@ export function convertCircuitJsonToPcbSvg(
     hasBoardBounds = true
   }
 
-  function updateBoundsToIncludeOutline(outline: Point[]) {
+  function updateBoundsToIncludeOutline(outline: Point[], center: any) {
     let updated = false
+    const cx = (center && distance.parse(center.x)) ?? 0
+    const cy = (center && distance.parse(center.y)) ?? 0
     for (const point of outline) {
       const x = distance.parse(point.x)
       const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
+      minX = Math.min(minX, cx + x)
+      minY = Math.min(minY, cy + y)
+      maxX = Math.max(maxX, cx + x)
+      maxY = Math.max(maxY, cy + y)
       updated = true
     }
     if (updated) {
@@ -503,16 +511,18 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  function updateBoardBoundsToIncludeOutline(outline: Point[]) {
+  function updateBoardBoundsToIncludeOutline(outline: Point[], center: any) {
     let updated = false
+    const cx = (center && distance.parse(center.x)) ?? 0
+    const cy = (center && distance.parse(center.y)) ?? 0
     for (const point of outline) {
       const x = distance.parse(point.x)
       const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
-      boardMinX = Math.min(boardMinX, x)
-      boardMinY = Math.min(boardMinY, y)
-      boardMaxX = Math.max(boardMaxX, x)
-      boardMaxY = Math.max(boardMaxY, y)
+      boardMinX = Math.min(boardMinX, cx + x)
+      boardMinY = Math.min(boardMinY, cy + y)
+      boardMaxX = Math.max(boardMaxX, cx + x)
+      boardMaxY = Math.max(boardMaxY, cy + y)
       updated = true
     }
     if (updated) {
