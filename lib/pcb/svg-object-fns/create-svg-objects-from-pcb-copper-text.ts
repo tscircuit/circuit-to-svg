@@ -17,6 +17,7 @@ import { lineAlphabet } from "@tscircuit/alphabet"
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
+const FONT_SCALE = 0.53
 
 type AlphabetKey = keyof typeof lineAlphabet
 
@@ -168,19 +169,21 @@ export function createSvgObjectsFromPcbCopperText(
   // KNOCKOUT MODE
   //--------------------------------------
   if (is_knockout) {
+    // Scale font size to match SVG text rendering
+    const scaledFontSize = fontSizeNum * FONT_SCALE
     const { pathData, width, height } = textToCenteredAlphabetPaths(
       text,
-      fontSizeNum,
+      scaledFontSize,
     )
 
-    const padX = knockout_padding?.left ?? fontSizeNum * 0.5
-    const padY = knockout_padding?.top ?? fontSizeNum * 0.3
+    const padX = knockout_padding?.left ?? scaledFontSize * 0.5
+    const padY = knockout_padding?.top ?? scaledFontSize * 0.3
 
     const rectW = width + padX * 2
     const rectH = height + padY * 2
 
     // Stroke width for text cutout - matches normal text rendering
-    const strokeWidth = fontSizeNum * 0.15
+    const strokeWidth = scaledFontSize * 0.15
 
     const knockoutTransform = matrixToString(
       compose(
@@ -270,9 +273,11 @@ export function createSvgObjectsFromPcbCopperText(
   //--------------------------------------
   // NORMAL TEXT MODE
   //--------------------------------------
+  // Scale font size to match SVG text rendering
+  const scaledFontSize = fontSizeNum * FONT_SCALE
   const { pathData, width, height } = textToCenteredAlphabetPaths(
     text,
-    fontSizeNum,
+    scaledFontSize,
   )
 
   let offsetX = 0
@@ -319,7 +324,7 @@ export function createSvgObjectsFromPcbCopperText(
     ),
   )
 
-  const strokeWidth = fontSizeNum * 0.15
+  const strokeWidth = scaledFontSize * 0.15
 
   return [
     {
