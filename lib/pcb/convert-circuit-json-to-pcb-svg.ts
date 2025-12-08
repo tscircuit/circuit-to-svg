@@ -176,6 +176,13 @@ export function convertCircuitJsonToPcbSvg(
   let boardMaxY = Number.NEGATIVE_INFINITY
   let hasBoardBounds = false
 
+  // Track panel bounds separately for texture rendering
+  let panelMinX = Number.POSITIVE_INFINITY
+  let panelMinY = Number.POSITIVE_INFINITY
+  let panelMaxX = Number.NEGATIVE_INFINITY
+  let panelMaxY = Number.NEGATIVE_INFINITY
+  let hasPanelBounds = false
+
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
@@ -187,6 +194,7 @@ export function convertCircuitJsonToPcbSvg(
       }
       const center = panel.center ?? { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
+      updatePanelBounds({ center, width, height })
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
@@ -275,14 +283,32 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
-  const boundsMinX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
-  const boundsMinY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
-  const boundsMaxX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
-  const boundsMaxY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
+
+  // If a panel exists, always use panel bounds for rendering
+  let boundsMinX: number
+  let boundsMinY: number
+  let boundsMaxX: number
+  let boundsMaxY: number
+
+  if (hasPanelBounds && Number.isFinite(panelMinX)) {
+    // Use panel bounds when a panel exists
+    boundsMinX = panelMinX
+    boundsMinY = panelMinY
+    boundsMaxX = panelMaxX
+    boundsMaxY = panelMaxY
+  } else if (drawPaddingOutsideBoard || !Number.isFinite(boardMinX)) {
+    // Use all bounds (includes padding and off-board elements)
+    boundsMinX = minX
+    boundsMinY = minY
+    boundsMaxX = maxX
+    boundsMaxY = maxY
+  } else {
+    // Use board bounds only
+    boundsMinX = boardMinX
+    boundsMinY = boardMinY
+    boundsMaxX = boardMaxX
+    boundsMaxY = boardMaxY
+  }
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -569,6 +595,30 @@ export function convertCircuitJsonToPcbSvg(
         updateTraceBounds(cutout.points)
       }
     }
+  }
+
+  function updatePanelBounds({
+    center,
+    width,
+    height,
+  }: {
+    center: any
+    width: any
+    height: any
+  }) {
+    if (!center) return
+    const centerX = distance.parse(center.x)
+    const centerY = distance.parse(center.y)
+    if (centerX === undefined || centerY === undefined) return
+    const numericWidth = distance.parse(width) ?? 0
+    const numericHeight = distance.parse(height) ?? 0
+    const halfWidth = numericWidth / 2
+    const halfHeight = numericHeight / 2
+    panelMinX = Math.min(panelMinX, centerX - halfWidth)
+    panelMinY = Math.min(panelMinY, centerY - halfHeight)
+    panelMaxX = Math.max(panelMaxX, centerX + halfWidth)
+    panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
+    hasPanelBounds = true
   }
 }
 
