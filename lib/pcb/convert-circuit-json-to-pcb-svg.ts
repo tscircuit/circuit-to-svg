@@ -81,6 +81,7 @@ interface Options {
   showSolderMask?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  useOnlyBoardBounds?: boolean
 }
 
 export interface PcbContext {
@@ -284,14 +285,20 @@ export function convertCircuitJsonToPcbSvg(
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
 
-  // If a panel exists, always use panel bounds for rendering
+  // Determine which bounds to use for rendering
   let boundsMinX: number
   let boundsMinY: number
   let boundsMaxX: number
   let boundsMaxY: number
 
-  if (hasPanelBounds && Number.isFinite(panelMinX)) {
-    // Use panel bounds when a panel exists
+  if (options?.useOnlyBoardBounds && Number.isFinite(boardMinX)) {
+    // Use board bounds only (useful for texture rendering where content is board-relative)
+    boundsMinX = boardMinX
+    boundsMinY = boardMinY
+    boundsMaxX = boardMaxX
+    boundsMaxY = boardMaxY
+  } else if (hasPanelBounds && Number.isFinite(panelMinX) && !drawPaddingOutsideBoard) {
+    // Use panel bounds when a panel exists and padding is disabled
     boundsMinX = panelMinX
     boundsMinY = panelMinY
     boundsMaxX = panelMaxX
