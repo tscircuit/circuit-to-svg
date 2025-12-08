@@ -37,9 +37,9 @@ test("REPRO: panel bounds vs board bounds - texture should cover full panel", ()
       num_layers: 2,
       thickness: 1.6,
     },
-  ] as any
+  ]
 
-  const svgString = convertCircuitJsonToPcbSvg(circuitJson, {
+  const svgString = convertCircuitJsonToPcbSvg(circuitJson as any, {
     width: 800,
     height: 600,
     drawPaddingOutsideBoard: true,
