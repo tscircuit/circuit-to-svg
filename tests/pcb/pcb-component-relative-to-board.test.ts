@@ -30,7 +30,5 @@ test("pcb_component positioned relative to pcb_board shows anchor offsets", () =
     showAnchorOffsets: true,
   })
 
-  expect(svg).toContain('data-type="anchor_offset_marker"')
-  expect(svg).toContain("X: 1.5mm")
-  expect(svg).toContain("Y: 2.5mm")
+  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
