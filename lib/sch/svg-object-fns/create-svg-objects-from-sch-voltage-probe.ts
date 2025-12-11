@@ -24,7 +24,7 @@ export function createSvgObjectsFromSchVoltageProbe({
   const arrowLength = Math.abs(transform.a) * 0.6
   const arrowWidth = Math.abs(transform.a) * 0.28
 
-  const labelAlignment = probe.label_alignment ?? "center_right"
+  const labelAlignment = probe.label_alignment ?? "top_right"
 
   let baseAngleRad: number
   let textAnchor: "start" | "end" | "middle"
