@@ -25,13 +25,76 @@ export function createSvgObjectsFromSchVoltageProbe({
   const arrowWidth = Math.abs(transform.a) * 0.28
 
   const labelAlignment = probe.label_alignment ?? "center_right"
-  const isFlipped = labelAlignment.includes("left")
 
-  // Adjust arrow angle according to label alignment
-  const baseAngle = isFlipped ? (-130 * Math.PI) / 180 : (-50 * Math.PI) / 180
+  let baseAngleRad: number
+  let textAnchor: "start" | "end" | "middle"
+  let textOffsetX: number
+  let textOffsetY: number
 
-  const baseX = screenX + arrowLength * Math.cos(baseAngle)
-  const baseY = screenY + arrowLength * Math.sin(baseAngle)
+  switch (labelAlignment) {
+    case "top_left":
+      baseAngleRad = (-135 * Math.PI) / 180
+      textAnchor = "end"
+      textOffsetX = -8
+      textOffsetY = -8
+      break
+    case "top_center":
+      baseAngleRad = (-90 * Math.PI) / 180
+      textAnchor = "middle"
+      textOffsetX = 0
+      textOffsetY = -8
+      break
+    case "top_right":
+      baseAngleRad = (-45 * Math.PI) / 180
+      textAnchor = "start"
+      textOffsetX = 8
+      textOffsetY = -8
+      break
+    case "center_left":
+      baseAngleRad = (-130 * Math.PI) / 180
+      textAnchor = "end"
+      textOffsetX = -8
+      textOffsetY = 0
+      break
+    case "center":
+      baseAngleRad = (-90 * Math.PI) / 180
+      textAnchor = "middle"
+      textOffsetX = 0
+      textOffsetY = -8
+      break
+    case "center_right":
+      baseAngleRad = (-50 * Math.PI) / 180
+      textAnchor = "start"
+      textOffsetX = 8
+      textOffsetY = 0
+      break
+    case "bottom_left":
+      baseAngleRad = (135 * Math.PI) / 180
+      textAnchor = "end"
+      textOffsetX = -8
+      textOffsetY = 8
+      break
+    case "bottom_center":
+      baseAngleRad = (90 * Math.PI) / 180
+      textAnchor = "middle"
+      textOffsetX = 0
+      textOffsetY = 8
+      break
+    case "bottom_right":
+      baseAngleRad = (45 * Math.PI) / 180
+      textAnchor = "start"
+      textOffsetX = 8
+      textOffsetY = 8
+      break
+    default:
+      baseAngleRad = (-50 * Math.PI) / 180
+      textAnchor = "start"
+      textOffsetX = 8
+      textOffsetY = 0
+  }
+
+  const baseX = screenX + arrowLength * Math.cos(baseAngleRad)
+  const baseY = screenY + arrowLength * Math.sin(baseAngleRad)
 
   const tipX = screenX
   const tipY = screenY
@@ -40,14 +103,13 @@ export function createSvgObjectsFromSchVoltageProbe({
     `M ${baseX},${baseY}`,
     `L ${tipX},${tipY}`,
     `M ${tipX},${tipY}`,
-    `L ${tipX - arrowWidth * Math.cos((((baseAngle * 180) / Math.PI + 150) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngle * 180) / Math.PI + 150) * Math.PI) / 180)}`,
-    `L ${tipX - arrowWidth * Math.cos((((baseAngle * 180) / Math.PI + 210) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngle * 180) / Math.PI + 210) * Math.PI) / 180)}`,
+    `L ${tipX - arrowWidth * Math.cos((((baseAngleRad * 180) / Math.PI + 150) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngleRad * 180) / Math.PI + 150) * Math.PI) / 180)}`,
+    `L ${tipX - arrowWidth * Math.cos((((baseAngleRad * 180) / Math.PI + 210) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngleRad * 180) / Math.PI + 210) * Math.PI) / 180)}`,
     "Z",
   ].join(" ")
 
-  const textOffset = isFlipped ? -8 : 8
-  const textAnchor = isFlipped ? "end" : "start"
-  const x = (baseX + textOffset).toString()
+  const x = (baseX + textOffsetX).toString()
+  const y = (baseY + textOffsetY).toString()
   const textChildren: SvgObject[] = []
 
   if (probe.name && probe.voltage !== undefined) {
@@ -122,7 +184,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       value: "",
       attributes: {
         x,
-        y: baseY.toString(),
+        y,
         fill: probeColor,
         "text-anchor": textAnchor,
         "dominant-baseline": "middle",
