@@ -19,7 +19,7 @@ test("pcb_component positioned relative to pcb_board shows anchor offsets", () =
       center: { x: 4, y: 3 },
       width: 4,
       height: 4,
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
       positioned_relative_to_pcb_board_id: "board_1",
       display_x_offset: "1.5mm",
       display_y_offset: 2.5,

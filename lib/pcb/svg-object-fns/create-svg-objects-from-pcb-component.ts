@@ -2,9 +2,10 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import type { SvgObject } from "lib/svg-object"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
+import type { PcbComponent } from "circuit-json"
 
 export function createSvgObjectsFromPcbComponent(
-  component: any,
+  component: PcbComponent,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, circuitJson } = ctx
@@ -19,7 +20,7 @@ export function createSvgObjectsFromPcbComponent(
   // Add anchor offset indicators if this component is positioned relative to a group
   if (
     ctx.showAnchorOffsets &&
-    component.position_mode === "relative" &&
+    component.position_mode === "relative_to_group_anchor" &&
     circuitJson
   ) {
     const anchorPosition = getAnchorPosition(component, circuitJson)
@@ -32,8 +33,8 @@ export function createSvgObjectsFromPcbComponent(
           transform,
           componentWidth: width,
           componentHeight: height,
-          displayXOffset: component.display_x_offset,
-          displayYOffset: component.display_y_offset,
+          displayXOffset: component.display_offset_x,
+          displayYOffset: component.display_offset_y,
         }),
       )
     }
