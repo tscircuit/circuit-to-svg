@@ -21,8 +21,8 @@ export function createSvgObjectsFromPcbComponent(
   if (
     ctx.showAnchorOffsets &&
     circuitJson &&
-    ((component as any).positioned_relative_to_pcb_group_id ||
-      (component as any).positioned_relative_to_pcb_board_id)
+    (component.positioned_relative_to_pcb_group_id ||
+      component.positioned_relative_to_pcb_board_id)
   ) {
     const anchorPosition = getAnchorPosition(component, circuitJson)
 
