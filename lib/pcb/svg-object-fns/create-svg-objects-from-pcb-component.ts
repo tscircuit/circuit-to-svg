@@ -17,11 +17,12 @@ export function createSvgObjectsFromPcbComponent(
 
   const svgObjects: SvgObject[] = []
 
-  // Add anchor offset indicators if this component is positioned relative to a group
+  // Add anchor offset indicators if this component is positioned relative to a group or board
   if (
     ctx.showAnchorOffsets &&
-    component.position_mode === "relative_to_group_anchor" &&
-    circuitJson
+    circuitJson &&
+    ((component as any).positioned_relative_to_pcb_group_id ||
+      (component as any).positioned_relative_to_pcb_board_id)
   ) {
     const anchorPosition = getAnchorPosition(component, circuitJson)
 
