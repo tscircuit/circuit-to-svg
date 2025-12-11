@@ -24,8 +24,14 @@ export function createSvgObjectsFromSchVoltageProbe({
   const arrowLength = Math.abs(transform.a) * 0.6
   const arrowWidth = Math.abs(transform.a) * 0.28
 
-  const baseX = screenX + arrowLength * Math.cos((-50 * Math.PI) / 180)
-  const baseY = screenY + arrowLength * Math.sin((-50 * Math.PI) / 180)
+  const labelAlignment = probe.label_alignment ?? "center_right"
+  const isFlipped = labelAlignment.includes("left")
+
+  // Adjust arrow angle according to label alignment
+  const baseAngle = isFlipped ? (-130 * Math.PI) / 180 : (-50 * Math.PI) / 180
+
+  const baseX = screenX + arrowLength * Math.cos(baseAngle)
+  const baseY = screenY + arrowLength * Math.sin(baseAngle)
 
   const tipX = screenX
   const tipY = screenY
@@ -34,12 +40,14 @@ export function createSvgObjectsFromSchVoltageProbe({
     `M ${baseX},${baseY}`,
     `L ${tipX},${tipY}`,
     `M ${tipX},${tipY}`,
-    `L ${tipX - arrowWidth * Math.cos(((-50 + 150) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin(((-50 + 150) * Math.PI) / 180)}`,
-    `L ${tipX - arrowWidth * Math.cos(((-50 + 210) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin(((-50 + 210) * Math.PI) / 180)}`,
+    `L ${tipX - arrowWidth * Math.cos((((baseAngle * 180) / Math.PI + 150) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngle * 180) / Math.PI + 150) * Math.PI) / 180)}`,
+    `L ${tipX - arrowWidth * Math.cos((((baseAngle * 180) / Math.PI + 210) * Math.PI) / 180)},${tipY - arrowWidth * Math.sin((((baseAngle * 180) / Math.PI + 210) * Math.PI) / 180)}`,
     "Z",
   ].join(" ")
 
-  const x = (baseX + 8 - (baseX - baseX)).toString()
+  const textOffset = isFlipped ? -8 : 8
+  const textAnchor = isFlipped ? "end" : "start"
+  const x = (baseX + textOffset).toString()
   const textChildren: SvgObject[] = []
 
   if (probe.name && probe.voltage !== undefined) {
@@ -116,7 +124,7 @@ export function createSvgObjectsFromSchVoltageProbe({
         x,
         y: baseY.toString(),
         fill: probeColor,
-        "text-anchor": "start",
+        "text-anchor": textAnchor,
         "dominant-baseline": "middle",
         "font-family": "sans-serif",
         "font-size": `${getSchScreenFontSize(transform, "reference_designator")}px`,
