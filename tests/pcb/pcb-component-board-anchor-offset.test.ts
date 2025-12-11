@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offsets", () => {
@@ -55,7 +56,7 @@ test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offset
       rotation: 0,
       // No positioned_relative_to_pcb_board_id or positioned_relative_to_pcb_group_id
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showAnchorOffsets: true,
@@ -123,7 +124,7 @@ test("pcb_component with both group and board positioning shows correct anchor o
       display_offset_x: "10mm",
       display_offset_y: "-8mm",
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showPcbGroups: true,

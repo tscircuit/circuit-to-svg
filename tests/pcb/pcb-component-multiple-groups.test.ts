@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("multiple pcb_groups with different sized components", () => {
@@ -153,7 +154,7 @@ test("multiple pcb_groups with different sized components", () => {
       positioned_relative_to_pcb_group_id: "group_4",
       position_mode: "relative_to_group_anchor",
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showPcbGroups: true,

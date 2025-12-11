@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("pcb_component positioned relative to pcb_board shows anchor offsets", () => {
@@ -24,7 +25,7 @@ test("pcb_component positioned relative to pcb_board shows anchor offsets", () =
       display_x_offset: "1.5mm",
       display_y_offset: 2.5,
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showAnchorOffsets: true,
