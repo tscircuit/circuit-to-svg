@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offsets without position_mode", () => {
+test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offsets", () => {
   const circuitJson = [
     {
       type: "pcb_board",
@@ -13,7 +13,7 @@ test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offset
       material: "fr4",
       thickness: 1.6,
     },
-    // Component positioned relative to board (new way - no position_mode needed)
+    // Component positioned relative to board (requires position_mode)
     {
       type: "pcb_component",
       pcb_component_id: "comp_1",
@@ -23,6 +23,7 @@ test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offset
       height: 3,
       layer: "top",
       rotation: 0,
+      position_mode: "relative_to_group_anchor",
       positioned_relative_to_pcb_board_id: "board_1",
       display_offset_x: "8mm",
       display_offset_y: "5mm",
@@ -37,6 +38,7 @@ test("pcb_component with positioned_relative_to_pcb_board_id shows anchor offset
       height: 2.5,
       layer: "top",
       rotation: 0,
+      position_mode: "relative_to_group_anchor",
       positioned_relative_to_pcb_board_id: "board_1",
       display_offset_x: "-6mm",
       display_offset_y: "-4mm",
@@ -101,6 +103,7 @@ test("pcb_component with both group and board positioning shows correct anchor o
       height: 3,
       layer: "top",
       rotation: 0,
+      position_mode: "relative_to_group_anchor",
       positioned_relative_to_pcb_group_id: "group_1",
       display_offset_x: "2mm",
       display_offset_y: "2mm",
@@ -115,6 +118,7 @@ test("pcb_component with both group and board positioning shows correct anchor o
       height: 4,
       layer: "top",
       rotation: 0,
+      position_mode: "relative_to_group_anchor",
       positioned_relative_to_pcb_board_id: "board_1",
       display_offset_x: "10mm",
       display_offset_y: "-8mm",
