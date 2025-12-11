@@ -19,25 +19,21 @@ export function createSvgObjectsFromPcbComponent(
   // Add anchor offset indicators if this component is positioned relative to a group
   if (
     ctx.showAnchorOffsets &&
-    component.positioned_relative_to_pcb_group_id &&
     component.position_mode === "relative" &&
     circuitJson
   ) {
-    // Find the referenced PCB group
-    const pcbGroup = circuitJson.find(
-      (elm: any) =>
-        elm.type === "pcb_group" &&
-        elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as any
+    const anchorPosition = getAnchorPosition(component, circuitJson)
 
-    if (pcbGroup?.center) {
+    if (anchorPosition) {
       svgObjects.push(
         ...createAnchorOffsetIndicators({
-          groupAnchorPosition: pcbGroup.center,
+          groupAnchorPosition: anchorPosition,
           componentPosition: center,
           transform,
           componentWidth: width,
           componentHeight: height,
+          displayXOffset: component.display_x_offset,
+          displayYOffset: component.display_y_offset,
         }),
       )
     }
@@ -79,4 +75,31 @@ export function createSvgObjectsFromPcbComponent(
   })
 
   return svgObjects
+}
+
+function getAnchorPosition(
+  component: any,
+  circuitJson: any[],
+): { x: number; y: number } | undefined {
+  if (component.positioned_relative_to_pcb_group_id) {
+    const pcbGroup = circuitJson.find(
+      (elm) =>
+        elm.type === "pcb_group" &&
+        elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
+    ) as any
+
+    if (pcbGroup?.center) return pcbGroup.center
+  }
+
+  if (component.positioned_relative_to_pcb_board_id) {
+    const pcbBoard = circuitJson.find(
+      (elm) =>
+        elm.type === "pcb_board" &&
+        elm.pcb_board_id === component.positioned_relative_to_pcb_board_id,
+    ) as any
+
+    if (pcbBoard?.center) return pcbBoard.center
+  }
+
+  return undefined
 }

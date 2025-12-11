@@ -7,6 +7,8 @@ export interface PcbComponentAnchorOffsetParams {
   transform: Matrix
   componentWidth?: number
   componentHeight?: number
+  displayXOffset?: number | string
+  displayYOffset?: number | string
 }
 
 interface HorizontalDimensionParams {
@@ -46,6 +48,8 @@ export function createAnchorOffsetIndicators(
     transform,
     componentWidth = 0,
     componentHeight = 0,
+    displayXOffset,
+    displayYOffset,
   } = params
   const objects: SvgObject[] = []
 
@@ -129,6 +133,7 @@ export function createAnchorOffsetIndicators(
         y: horizontalLineY,
         offsetMm: offsetX,
         offsetY: offsetY,
+        displayOffset: displayXOffset,
       }),
     )
   }
@@ -141,6 +146,7 @@ export function createAnchorOffsetIndicators(
         endY: screenComponentY,
         offsetMm: offsetY,
         offsetX: offsetX,
+        displayOffset: displayYOffset,
       }),
     )
   }
@@ -198,7 +204,10 @@ function createHorizontalDimension({
   y,
   offsetMm,
   offsetY,
-}: HorizontalDimensionParams): SvgObject[] {
+  displayOffset,
+}: HorizontalDimensionParams & {
+  displayOffset?: number | string
+}): SvgObject[] {
   const objects: SvgObject[] = []
 
   objects.push({
@@ -269,7 +278,7 @@ function createHorizontalDimension({
     children: [
       {
         type: "text",
-        value: `X: ${offsetMm.toFixed(2)}mm`,
+        value: formatOffsetLabel("X", offsetMm, displayOffset),
         name: "",
         attributes: {},
         children: [],
@@ -287,7 +296,8 @@ function createVerticalDimension({
   endY,
   offsetMm,
   offsetX,
-}: VerticalDimensionParams): SvgObject[] {
+  displayOffset,
+}: VerticalDimensionParams & { displayOffset?: number | string }): SvgObject[] {
   const objects: SvgObject[] = []
 
   objects.push({
@@ -355,7 +365,7 @@ function createVerticalDimension({
     children: [
       {
         type: "text",
-        value: `Y: ${offsetMm.toFixed(2)}mm`,
+        value: formatOffsetLabel("Y", offsetMm, displayOffset),
         name: "",
         attributes: {},
         children: [],
@@ -365,4 +375,18 @@ function createVerticalDimension({
   })
 
   return objects
+}
+
+function formatOffsetLabel(
+  axis: "X" | "Y",
+  offsetMm: number,
+  displayOffset?: number | string,
+): string {
+  const baseValue = displayOffset ?? offsetMm.toFixed(2)
+  const valueStr =
+    typeof baseValue === "number" ? baseValue.toString() : baseValue
+  const hasUnit = typeof valueStr === "string" && valueStr.trim().endsWith("mm")
+  const unitSuffix = hasUnit ? "" : "mm"
+
+  return `${axis}: ${valueStr}${unitSuffix}`
 }
