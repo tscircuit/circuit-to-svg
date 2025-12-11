@@ -16,30 +16,51 @@ export function createSvgObjectsFromPcbComponent(
 
   const svgObjects: SvgObject[] = []
 
-  // Add anchor offset indicators if this component is positioned relative to a group
-  if (
-    ctx.showAnchorOffsets &&
-    component.positioned_relative_to_pcb_group_id &&
-    component.position_mode === "relative" &&
-    circuitJson
-  ) {
-    // Find the referenced PCB group
-    const pcbGroup = circuitJson.find(
-      (elm: any) =>
-        elm.type === "pcb_group" &&
-        elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as any
+  if (ctx.showAnchorOffsets && circuitJson) {
+    // Add anchor offset indicators if this component is positioned relative to a group
+    if (
+      component.positioned_relative_to_pcb_group_id &&
+      component.position_mode === "relative"
+    ) {
+      // Find the referenced PCB group
+      const pcbGroup = circuitJson.find(
+        (elm: any) =>
+          elm.type === "pcb_group" &&
+          elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
+      ) as any
 
-    if (pcbGroup?.center) {
-      svgObjects.push(
-        ...createAnchorOffsetIndicators({
-          groupAnchorPosition: pcbGroup.center,
-          componentPosition: center,
-          transform,
-          componentWidth: width,
-          componentHeight: height,
-        }),
-      )
+      if (pcbGroup?.center) {
+        svgObjects.push(
+          ...createAnchorOffsetIndicators({
+            groupAnchorPosition: pcbGroup.center,
+            componentPosition: center,
+            transform,
+            componentWidth: width,
+            componentHeight: height,
+          }),
+        )
+      }
+    }
+
+    // Treat pcb_board as a named group and draw anchor offsets to components on it
+    if (component.pcb_board_id) {
+      const pcbBoard = circuitJson.find(
+        (elm: any) =>
+          elm.type === "pcb_board" &&
+          elm.pcb_board_id === component.pcb_board_id,
+      ) as any
+
+      if (pcbBoard?.center) {
+        svgObjects.push(
+          ...createAnchorOffsetIndicators({
+            groupAnchorPosition: pcbBoard.center,
+            componentPosition: center,
+            transform,
+            componentWidth: width,
+            componentHeight: height,
+          }),
+        )
+      }
     }
   }
 
