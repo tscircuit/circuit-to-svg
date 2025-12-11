@@ -51,7 +51,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       textOffsetY = -8
       break
     case "center_left":
-      baseAngleRad = (-130 * Math.PI) / 180
+      baseAngleRad = (180 * Math.PI) / 180
       textAnchor = "end"
       textOffsetX = -8
       textOffsetY = 0
@@ -63,7 +63,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       textOffsetY = -8
       break
     case "center_right":
-      baseAngleRad = (-50 * Math.PI) / 180
+      baseAngleRad = (0 * Math.PI) / 180
       textAnchor = "start"
       textOffsetX = 8
       textOffsetY = 0
