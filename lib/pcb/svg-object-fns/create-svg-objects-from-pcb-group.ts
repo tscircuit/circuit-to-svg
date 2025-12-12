@@ -3,6 +3,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
+import { getPcbGroupAnchorPosition } from "../../utils/get-pcb-group-anchor-position"
 
 const DEFAULT_GROUP_COLOR = "rgba(100, 200, 255, 0.6)"
 const DEFAULT_STROKE_WIDTH = 0.1 // 0.1mm default stroke width
@@ -149,7 +150,9 @@ function getAnchorPosition(
         elm.pcb_group_id === group.positioned_relative_to_pcb_group_id,
     ) as PcbGroup | undefined
 
-    if (pcbGroup?.center) return pcbGroup.center
+    if (pcbGroup) {
+      return getPcbGroupAnchorPosition(pcbGroup)
+    }
   }
 
   if (group.positioned_relative_to_pcb_board_id) {

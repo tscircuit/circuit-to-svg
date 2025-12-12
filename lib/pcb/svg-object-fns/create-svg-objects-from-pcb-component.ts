@@ -2,7 +2,8 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import type { SvgObject } from "lib/svg-object"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
-import type { PcbComponent } from "circuit-json"
+import { getPcbGroupAnchorPosition } from "../../utils/get-pcb-group-anchor-position"
+import type { PcbComponent, PcbGroup } from "circuit-json"
 
 export function createSvgObjectsFromPcbComponent(
   component: PcbComponent,
@@ -89,9 +90,11 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_group" &&
         elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as any
+    ) as PcbGroup | undefined
 
-    if (pcbGroup?.center) return pcbGroup.center
+    if (pcbGroup) {
+      return getPcbGroupAnchorPosition(pcbGroup)
+    }
   }
 
   if (component.positioned_relative_to_pcb_board_id) {
