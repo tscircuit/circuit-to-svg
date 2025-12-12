@@ -148,7 +148,7 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_group" &&
         elm.pcb_group_id === group.positioned_relative_to_pcb_group_id,
-    ) as PcbGroup | undefined
+    ) as PcbGroup
 
     if (pcbGroup) {
       return getPcbGroupAnchorPosition(pcbGroup)
@@ -160,7 +160,7 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_board" &&
         elm.pcb_board_id === group.positioned_relative_to_pcb_board_id,
-    ) as PcbGroup | undefined
+    ) as PcbGroup
 
     if (pcbBoard?.center) return pcbBoard.center
   }

@@ -110,4 +110,3 @@ test("pcb_component with group anchor_position and anchor_alignment shows correc
 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
-

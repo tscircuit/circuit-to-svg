@@ -61,4 +61,3 @@ export function getPcbGroupAnchorPosition(
   // Fall back to center
   return center
 }
-

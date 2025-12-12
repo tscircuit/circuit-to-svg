@@ -90,7 +90,7 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_group" &&
         elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as PcbGroup | undefined
+    ) as PcbGroup
 
     if (pcbGroup) {
       return getPcbGroupAnchorPosition(pcbGroup)
