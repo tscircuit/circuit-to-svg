@@ -81,6 +81,12 @@ interface Options {
   showSolderMask?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  viewport?: {
+    minX: number
+    minY: number
+    maxX: number
+    maxY: number
+  }
 }
 
 export interface PcbContext {
@@ -176,6 +182,13 @@ export function convertCircuitJsonToPcbSvg(
   let boardMaxY = Number.NEGATIVE_INFINITY
   let hasBoardBounds = false
 
+  // Track panel bounds
+  let panelMinX = Number.POSITIVE_INFINITY
+  let panelMinY = Number.POSITIVE_INFINITY
+  let panelMaxX = Number.NEGATIVE_INFINITY
+  let panelMaxY = Number.NEGATIVE_INFINITY
+  let hasPanelBounds = false
+
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
@@ -187,6 +200,7 @@ export function convertCircuitJsonToPcbSvg(
       }
       const center = panel.center ?? { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
+      updatePanelBounds({ center, width, height })
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
@@ -274,15 +288,38 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  const padding = drawPaddingOutsideBoard ? 1 : 0
-  const boundsMinX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
-  const boundsMinY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
-  const boundsMaxX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
-  const boundsMaxY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
+  let padding = drawPaddingOutsideBoard ? 1 : 0
+
+  // Determine which bounds to use for rendering
+  let boundsMinX: number
+  let boundsMinY: number
+  let boundsMaxX: number
+  let boundsMaxY: number
+
+  const viewport = options?.viewport
+
+  if (viewport) {
+    boundsMinX = viewport.minX
+    boundsMinY = viewport.minY
+    boundsMaxX = viewport.maxX
+    boundsMaxY = viewport.maxY
+    padding = 0
+  } else if (hasPanelBounds && Number.isFinite(panelMinX)) {
+    // If a panel exists, render to the panel bounds
+    boundsMinX = panelMinX
+    boundsMinY = panelMinY
+    boundsMaxX = panelMaxX
+    boundsMaxY = panelMaxY
+  } else {
+    boundsMinX =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
+    boundsMinY =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
+    boundsMaxX =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
+    boundsMaxY =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
+  }
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -291,10 +328,10 @@ export function convertCircuitJsonToPcbSvg(
   let svgHeight = options?.height ?? 600
 
   if (options?.matchBoardAspectRatio) {
-    const boardWidth = boardMaxX - boardMinX
-    const boardHeight = boardMaxY - boardMinY
-    if (boardWidth > 0 && boardHeight > 0) {
-      const aspect = boardWidth / boardHeight
+    const viewportWidth = boundsMaxX - boundsMinX
+    const viewportHeight = boundsMaxY - boundsMinY
+    if (viewportWidth > 0 && viewportHeight > 0) {
+      const aspect = viewportWidth / viewportHeight
       if (options?.width && !options?.height) {
         svgHeight = options.width / aspect
       } else if (options?.height && !options?.width) {
@@ -569,6 +606,30 @@ export function convertCircuitJsonToPcbSvg(
         updateTraceBounds(cutout.points)
       }
     }
+  }
+
+  function updatePanelBounds({
+    center,
+    width,
+    height,
+  }: {
+    center: any
+    width: any
+    height: any
+  }) {
+    if (!center) return
+    const centerX = distance.parse(center.x)
+    const centerY = distance.parse(center.y)
+    if (centerX === undefined || centerY === undefined) return
+    const numericWidth = distance.parse(width) ?? 0
+    const numericHeight = distance.parse(height) ?? 0
+    const halfWidth = numericWidth / 2
+    const halfHeight = numericHeight / 2
+    panelMinX = Math.min(panelMinX, centerX - halfWidth)
+    panelMinY = Math.min(panelMinY, centerY - halfHeight)
+    panelMaxX = Math.max(panelMaxX, centerX + halfWidth)
+    panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
+    hasPanelBounds = true
   }
 }
 
