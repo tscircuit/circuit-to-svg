@@ -81,7 +81,12 @@ interface Options {
   showSolderMask?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
-  useOnlyBoardBounds?: boolean
+  viewport?: {
+    minX: number
+    minY: number
+    maxX: number
+    maxY: number
+  }
 }
 
 export interface PcbContext {
@@ -177,7 +182,7 @@ export function convertCircuitJsonToPcbSvg(
   let boardMaxY = Number.NEGATIVE_INFINITY
   let hasBoardBounds = false
 
-  // Track panel bounds separately for texture rendering
+  // Track panel bounds
   let panelMinX = Number.POSITIVE_INFINITY
   let panelMinY = Number.POSITIVE_INFINITY
   let panelMaxX = Number.NEGATIVE_INFINITY
@@ -283,7 +288,7 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  const padding = drawPaddingOutsideBoard ? 1 : 0
+  let padding = drawPaddingOutsideBoard ? 1 : 0
 
   // Determine which bounds to use for rendering
   let boundsMinX: number
@@ -291,34 +296,29 @@ export function convertCircuitJsonToPcbSvg(
   let boundsMaxX: number
   let boundsMaxY: number
 
-  if (options?.useOnlyBoardBounds && Number.isFinite(boardMinX)) {
-    // Use board bounds only (useful for texture rendering where content is board-relative)
-    boundsMinX = boardMinX
-    boundsMinY = boardMinY
-    boundsMaxX = boardMaxX
-    boundsMaxY = boardMaxY
-  } else if (
-    hasPanelBounds &&
-    Number.isFinite(panelMinX) &&
-    !drawPaddingOutsideBoard
-  ) {
-    // Use panel bounds when a panel exists and padding is disabled
+  const viewport = options?.viewport
+
+  if (viewport) {
+    boundsMinX = viewport.minX
+    boundsMinY = viewport.minY
+    boundsMaxX = viewport.maxX
+    boundsMaxY = viewport.maxY
+    padding = 0
+  } else if (hasPanelBounds && Number.isFinite(panelMinX)) {
+    // If a panel exists, render to the panel bounds
     boundsMinX = panelMinX
     boundsMinY = panelMinY
     boundsMaxX = panelMaxX
     boundsMaxY = panelMaxY
-  } else if (drawPaddingOutsideBoard || !Number.isFinite(boardMinX)) {
-    // Use all bounds (includes padding and off-board elements)
-    boundsMinX = minX
-    boundsMinY = minY
-    boundsMaxX = maxX
-    boundsMaxY = maxY
   } else {
-    // Use board bounds only
-    boundsMinX = boardMinX
-    boundsMinY = boardMinY
-    boundsMaxX = boardMaxX
-    boundsMaxY = boardMaxY
+    boundsMinX =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
+    boundsMinY =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
+    boundsMaxX =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
+    boundsMaxY =
+      drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
   }
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
@@ -328,10 +328,10 @@ export function convertCircuitJsonToPcbSvg(
   let svgHeight = options?.height ?? 600
 
   if (options?.matchBoardAspectRatio) {
-    const boardWidth = boardMaxX - boardMinX
-    const boardHeight = boardMaxY - boardMinY
-    if (boardWidth > 0 && boardHeight > 0) {
-      const aspect = boardWidth / boardHeight
+    const viewportWidth = boundsMaxX - boundsMinX
+    const viewportHeight = boundsMaxY - boundsMinY
+    if (viewportWidth > 0 && viewportHeight > 0) {
+      const aspect = viewportWidth / viewportHeight
       if (options?.width && !options?.height) {
         svgHeight = options.width / aspect
       } else if (options?.height && !options?.width) {
@@ -631,6 +631,7 @@ export function convertCircuitJsonToPcbSvg(
     panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
     hasPanelBounds = true
   }
+
 }
 
 interface CreateSvgObjectsParams {

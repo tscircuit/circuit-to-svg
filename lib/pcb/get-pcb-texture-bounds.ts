@@ -10,8 +10,8 @@ export interface PcbTextureBounds {
 
 /**
  * Compute the bounds used for PCB textures.
- * - Prefers pcb_board bounds (textures are board-relative).
- * - Falls back to pcb_panel when no boards exist.
+ * - Uses panel bounds when a panel exists.
+ * - Otherwise uses board bounds.
  * Throws if neither is present.
  */
 export function getPcbTextureBounds(
@@ -22,7 +22,6 @@ export function getPcbTextureBounds(
   let boardMaxX = Number.NEGATIVE_INFINITY
   let boardMaxY = Number.NEGATIVE_INFINITY
   let hasBoardBounds = false
-
   let panelMinX = Number.POSITIVE_INFINITY
   let panelMinY = Number.POSITIVE_INFINITY
   let panelMaxX = Number.NEGATIVE_INFINITY
@@ -75,21 +74,21 @@ export function getPcbTextureBounds(
     }
   }
 
-  if (hasBoardBounds && Number.isFinite(boardMinX)) {
-    return {
-      minX: boardMinX,
-      maxX: boardMaxX,
-      minY: boardMinY,
-      maxY: boardMaxY,
-    }
-  }
-
   if (hasPanelBounds && Number.isFinite(panelMinX)) {
     return {
       minX: panelMinX,
       maxX: panelMaxX,
       minY: panelMinY,
       maxY: panelMaxY,
+    }
+  }
+
+  if (hasBoardBounds && Number.isFinite(boardMinX)) {
+    return {
+      minX: boardMinX,
+      maxX: boardMaxX,
+      minY: boardMinY,
+      maxY: boardMaxY,
     }
   }
 

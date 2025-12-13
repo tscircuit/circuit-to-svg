@@ -50,3 +50,32 @@ test("REPRO: panel bounds vs board bounds - texture should cover full panel", ()
   expect(svgString).toContain("pcb-boundary")
   expect(svgString).toMatchSvgSnapshot(import.meta.path)
 })
+
+test("renders to explicit viewport when provided", () => {
+  const circuitJson = [
+    {
+      type: "pcb_panel" as const,
+      width: 100,
+      height: 100,
+      center: { x: 50, y: 50 },
+    },
+    {
+      type: "pcb_board" as const,
+      pcb_board_id: "pcb_board_0",
+      center: { x: 25, y: 25 },
+      width: 30,
+      height: 30,
+    },
+  ]
+
+  const svgString = convertCircuitJsonToPcbSvg(circuitJson as any, {
+    width: 400,
+    height: 400,
+    drawPaddingOutsideBoard: true,
+    viewport: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+  })
+
+  expect(svgString).toContain("svg")
+  expect(svgString).toContain("pcb-boundary")
+  expect(svgString).toMatchSvgSnapshot(`${import.meta.path}-viewport`)
+})

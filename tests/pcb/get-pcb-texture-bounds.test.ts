@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test"
 import { getPcbTextureBounds } from "lib"
 
-test("returns board bounds when boards exist", () => {
+test("returns panel bounds when panel exists (panel preferred over board)", () => {
   const circuitJson = [
     {
       type: "pcb_panel" as const,
@@ -24,7 +24,7 @@ test("returns board bounds when boards exist", () => {
   ]
 
   const bounds = getPcbTextureBounds(circuitJson as any)
-  expect(bounds).toEqual({ minX: 10, maxX: 90, minY: 10, maxY: 90 })
+  expect(bounds).toEqual({ minX: 0, maxX: 100, minY: 0, maxY: 100 })
 })
 
 test("falls back to panel bounds when no boards exist", () => {
@@ -39,6 +39,26 @@ test("falls back to panel bounds when no boards exist", () => {
 
   const bounds = getPcbTextureBounds(circuitJson as any)
   expect(bounds).toEqual({ minX: -30, maxX: 50, minY: 0, maxY: 40 })
+})
+
+test("returns board bounds when no panel exists", () => {
+  const circuitJson = [
+    {
+      type: "pcb_board" as const,
+      center: { x: 25, y: 25 },
+      width: 30,
+      height: 30,
+    },
+    {
+      type: "pcb_board" as const,
+      center: { x: 75, y: 75 },
+      width: 30,
+      height: 30,
+    },
+  ]
+
+  const bounds = getPcbTextureBounds(circuitJson as any)
+  expect(bounds).toEqual({ minX: 10, maxX: 90, minY: 10, maxY: 90 })
 })
 
 test("throws when no board or panel present", () => {
