@@ -76,13 +76,24 @@ export function getPcbTextureBounds(
   }
 
   if (hasBoardBounds && Number.isFinite(boardMinX)) {
-    return { minX: boardMinX, maxX: boardMaxX, minY: boardMinY, maxY: boardMaxY }
+    return {
+      minX: boardMinX,
+      maxX: boardMaxX,
+      minY: boardMinY,
+      maxY: boardMaxY,
+    }
   }
 
   if (hasPanelBounds && Number.isFinite(panelMinX)) {
-    return { minX: panelMinX, maxX: panelMaxX, minY: panelMinY, maxY: panelMaxY }
+    return {
+      minX: panelMinX,
+      maxX: panelMaxX,
+      minY: panelMinY,
+      maxY: panelMaxY,
+    }
   }
 
-  throw new Error("No pcb_board or pcb_panel elements found while computing texture bounds")
+  throw new Error(
+    "No pcb_board or pcb_panel elements found while computing texture bounds",
+  )
 }
-

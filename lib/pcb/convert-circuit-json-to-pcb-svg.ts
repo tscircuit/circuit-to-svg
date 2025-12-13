@@ -297,7 +297,11 @@ export function convertCircuitJsonToPcbSvg(
     boundsMinY = boardMinY
     boundsMaxX = boardMaxX
     boundsMaxY = boardMaxY
-  } else if (hasPanelBounds && Number.isFinite(panelMinX) && !drawPaddingOutsideBoard) {
+  } else if (
+    hasPanelBounds &&
+    Number.isFinite(panelMinX) &&
+    !drawPaddingOutsideBoard
+  ) {
     // Use panel bounds when a panel exists and padding is disabled
     boundsMinX = panelMinX
     boundsMinY = panelMinY

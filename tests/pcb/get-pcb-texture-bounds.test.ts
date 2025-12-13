@@ -44,4 +44,3 @@ test("falls back to panel bounds when no boards exist", () => {
 test("throws when no board or panel present", () => {
   expect(() => getPcbTextureBounds([] as any)).toThrow()
 })
-
