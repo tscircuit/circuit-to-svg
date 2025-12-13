@@ -13,39 +13,32 @@ import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
 import { lineAlphabet } from "@tscircuit/alphabet"
 
-// Character spacing constants
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
 const FONT_SCALE = 0.53
+const BASELINE_Y = 0.241
 
 type AlphabetKey = keyof typeof lineAlphabet
 
-/**
- * Convert line segments to SVG path data.
- * lineAlphabet uses mathematical coordinates (y=0 at bottom, y=1 at top)
- * SVG uses screen coordinates (y=0 at top), so we invert y with (1 - y)
- */
 function linesToPathData(
   lines: Array<{ x1: number; y1: number; x2: number; y2: number }>,
   offsetX: number,
   offsetY: number,
   charScale: number,
+  baselineAdjust: number = 0,
 ): string {
   return lines
     .map((line) => {
       const x1 = offsetX + line.x1 * charScale
-      const y1 = offsetY + (1 - line.y1) * charScale
+      const y1 = offsetY + (1 - line.y1 + baselineAdjust) * charScale
       const x2 = offsetX + line.x2 * charScale
-      const y2 = offsetY + (1 - line.y2) * charScale
+      const y2 = offsetY + (1 - line.y2 + baselineAdjust) * charScale
       return `M${x1} ${y1}L${x2} ${y2}`
     })
     .join(" ")
 }
 
-/**
- * Convert a single line of text to an SVG path.
- */
 function textToAlphabetPath(
   text: string,
   fontSize: number,
@@ -62,7 +55,9 @@ function textToAlphabetPath(
 
     const lines = lineAlphabet[char as AlphabetKey]
     if (lines) {
-      paths.push(linesToPathData(lines, x, 0, fontSize))
+      const isLowercase = char >= "a" && char <= "z"
+      const baselineAdjust = isLowercase ? BASELINE_Y : 0
+      paths.push(linesToPathData(lines, x, 0, fontSize, baselineAdjust))
     }
     x += charAdvance
   }
@@ -71,13 +66,8 @@ function textToAlphabetPath(
   return { pathData: paths.join(" "), width }
 }
 
-// Counter for generating unique mask IDs
 let maskIdCounter = 0
 
-/**
- * MULTI-LINE TEXT:
- * Correct ordering: first line at top, next lines go downward.
- */
 function textToCenteredAlphabetPaths(
   text: string,
   fontSize: number,
@@ -112,7 +102,9 @@ function textToCenteredAlphabetPaths(
 
       const charLines = lineAlphabet[char as AlphabetKey]
       if (charLines) {
-        paths.push(linesToPathData(charLines, x, y, fontSize))
+        const isLowercase = char >= "a" && char <= "z"
+        const baselineAdjust = isLowercase ? BASELINE_Y : 0
+        paths.push(linesToPathData(charLines, x, y, fontSize, baselineAdjust))
       }
       x += charAdvance
     }
@@ -127,9 +119,6 @@ function textToCenteredAlphabetPaths(
   }
 }
 
-/**
- * MAIN: Convert PCB copper text into SVG objects.
- */
 export function createSvgObjectsFromPcbCopperText(
   pcbCopperText: PcbCopperText,
   ctx: PcbContext,
@@ -162,14 +151,9 @@ export function createSvgObjectsFromPcbCopperText(
   const copperColor = layerNameToColor(layerName, colorMap)
 
   const isBottom = layerName === "bottom"
-  // Auto-mirror bottom layer, or explicit mirror
   const applyMirror = isBottom ? true : is_mirrored === true
 
-  //--------------------------------------
-  // KNOCKOUT MODE
-  //--------------------------------------
   if (is_knockout) {
-    // Scale font size to match SVG text rendering
     const scaledFontSize = fontSizeNum * FONT_SCALE
     const { pathData, width, height } = textToCenteredAlphabetPaths(
       text,
@@ -181,8 +165,6 @@ export function createSvgObjectsFromPcbCopperText(
 
     const rectW = width + padX * 2
     const rectH = height + padY * 2
-
-    // Stroke width for text cutout - matches normal text rendering
     const strokeWidth = scaledFontSize * 0.15
 
     const knockoutTransform = matrixToString(
@@ -194,13 +176,7 @@ export function createSvgObjectsFromPcbCopperText(
       ),
     )
 
-    // Generate unique mask ID
     const maskId = `knockout-mask-${pcbCopperText.pcb_copper_text_id}-${maskIdCounter++}`
-
-    // Use SVG mask for knockout effect:
-    // - White background in mask = visible copper
-    // - Black text strokes in mask = cutout (transparent)
-    // This uses native SVG stroke rendering with round caps/joins for perfect cuts
     return [
       {
         name: "defs",
@@ -215,7 +191,6 @@ export function createSvgObjectsFromPcbCopperText(
               id: maskId,
             },
             children: [
-              // White background - area that will show copper
               {
                 name: "rect",
                 type: "element",
@@ -229,7 +204,6 @@ export function createSvgObjectsFromPcbCopperText(
                 },
                 children: [],
               },
-              // Black text strokes - area that will be cut out
               {
                 name: "path",
                 type: "element",
@@ -270,10 +244,6 @@ export function createSvgObjectsFromPcbCopperText(
     ]
   }
 
-  //--------------------------------------
-  // NORMAL TEXT MODE
-  //--------------------------------------
-  // Scale font size to match SVG text rendering
   const scaledFontSize = fontSizeNum * FONT_SCALE
   const { pathData, width, height } = textToCenteredAlphabetPaths(
     text,
