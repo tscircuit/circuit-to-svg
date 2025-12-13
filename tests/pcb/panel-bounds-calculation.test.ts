@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("REPRO: panel bounds vs board bounds - texture should cover full panel", () => {
@@ -48,4 +48,5 @@ test("REPRO: panel bounds vs board bounds - texture should cover full panel", ()
   // Verify SVG renders successfully
   expect(svgString).toContain("svg")
   expect(svgString).toContain("pcb-boundary")
+  expect(svgString).toMatchSvgSnapshot(import.meta.path)
 })

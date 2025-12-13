@@ -29,9 +29,9 @@ export function getPcbTextureBounds(
   let panelMaxY = Number.NEGATIVE_INFINITY
   let hasPanelBounds = false
 
-  for (const el of circuitJson) {
-    if (el.type === "pcb_board") {
-      const board = el as PcbBoard
+  for (const element of circuitJson) {
+    if (element.type === "pcb_board") {
+      const board = element as PcbBoard
       const centerX = distance.parse(board.center?.x)
       const centerY = distance.parse(board.center?.y)
       const width = distance.parse((board as any).width)
@@ -51,8 +51,8 @@ export function getPcbTextureBounds(
       boardMinY = Math.min(boardMinY, centerY - halfH)
       boardMaxY = Math.max(boardMaxY, centerY + halfH)
       hasBoardBounds = true
-    } else if (el.type === "pcb_panel") {
-      const panel = el as PcbPanel
+    } else if (element.type === "pcb_panel") {
+      const panel = element as PcbPanel
       const centerX = distance.parse(panel.center?.x ?? 0)
       const centerY = distance.parse(panel.center?.y ?? 0)
       const width = distance.parse(panel.width)
