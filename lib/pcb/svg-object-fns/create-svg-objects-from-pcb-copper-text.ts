@@ -18,6 +18,10 @@ const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
 const FONT_SCALE = 0.53
+// Baseline position in alphabet coordinates (y=0 at bottom, y=1 at top)
+// This matches how SVG text aligns lowercase letters on the baseline
+// Determined by examining the alphabet: lowercase 'a' bottom is at y=0.241
+const BASELINE_Y = 0.241
 
 type AlphabetKey = keyof typeof lineAlphabet
 
@@ -25,19 +29,24 @@ type AlphabetKey = keyof typeof lineAlphabet
  * Convert line segments to SVG path data.
  * lineAlphabet uses mathematical coordinates (y=0 at bottom, y=1 at top)
  * SVG uses screen coordinates (y=0 at top), so we invert y with (1 - y)
+ * @param baselineAdjust - Adjustment to align baseline (0.241 for uppercase to align with lowercase baseline)
  */
 function linesToPathData(
   lines: Array<{ x1: number; y1: number; x2: number; y2: number }>,
   offsetX: number,
   offsetY: number,
   charScale: number,
+  baselineAdjust: number = 0,
 ): string {
   return lines
     .map((line) => {
       const x1 = offsetX + line.x1 * charScale
-      const y1 = offsetY + (1 - line.y1) * charScale
+      // Adjust y to align baseline: uppercase (bottom at y=0) needs to shift up to baseline (y=0.241)
+      // In alphabet coords: shift up by baselineAdjust (positive means move up in alphabet, which is down in SVG after inversion)
+      // After inversion: shift becomes (1 - (y + baselineAdjust)) = (1 - y - baselineAdjust) = (1 - y) - baselineAdjust
+      const y1 = offsetY + (1 - line.y1 - baselineAdjust) * charScale
       const x2 = offsetX + line.x2 * charScale
-      const y2 = offsetY + (1 - line.y2) * charScale
+      const y2 = offsetY + (1 - line.y2 - baselineAdjust) * charScale
       return `M${x1} ${y1}L${x2} ${y2}`
     })
     .join(" ")
@@ -62,7 +71,12 @@ function textToAlphabetPath(
 
     const lines = lineAlphabet[char as AlphabetKey]
     if (lines) {
-      paths.push(linesToPathData(lines, x, 0, fontSize))
+      // Uppercase letters and numbers have bottom at y=0, lowercase at y=0.241 (baseline)
+      // To align baselines, shift uppercase/numbers up by 0.241 in alphabet coords
+      const isUppercase = char >= "A" && char <= "Z"
+      const isNumber = char >= "0" && char <= "9"
+      const baselineAdjust = isUppercase || isNumber ? BASELINE_Y : 0
+      paths.push(linesToPathData(lines, x, 0, fontSize, baselineAdjust))
     }
     x += charAdvance
   }
@@ -96,6 +110,13 @@ function textToCenteredAlphabetPaths(
   }
 
   const paths: string[] = []
+  // Baseline alignment: Characters should align on their baseline for proper mixed-case rendering
+  // In alphabet coords, baseline is at BASELINE_Y (from bottom, where 0=bottom, 1=top)
+  // After inversion in linesToPathData: baseline is at (1 - BASELINE_Y) * fontSize from offsetY
+  // So if character is at offsetY, baseline is at: offsetY + (1 - BASELINE_Y) * fontSize
+  // To align baselines: all characters in a line should have same baseline y-position
+  const baselineOffsetFromCharTop = (1 - BASELINE_Y) * fontSize
+  // Center the text block (for anchor alignment), but align baselines within it
   let y = -totalHeight / 2
 
   for (let i = 0; i < textLines.length; i++) {
@@ -103,6 +124,11 @@ function textToCenteredAlphabetPaths(
     const lineWidth = lineWidths[i]!
     const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
     let x = -lineWidth / 2
+    // Position characters so their baseline aligns
+    // The baseline for this line should be at: y + baselineOffsetFromCharTop
+    // Character offsetY so baseline is at that position: offsetY + baselineOffsetFromCharTop = y + baselineOffsetFromCharTop
+    // Therefore: offsetY = y
+    const charOffsetY = y
 
     for (const char of line) {
       if (char === " ") {
@@ -112,7 +138,14 @@ function textToCenteredAlphabetPaths(
 
       const charLines = lineAlphabet[char as AlphabetKey]
       if (charLines) {
-        paths.push(linesToPathData(charLines, x, y, fontSize))
+        // Uppercase letters and numbers have bottom at y=0, lowercase at y=0.241 (baseline)
+        // To align baselines, shift uppercase/numbers up by 0.241 in alphabet coords
+        const isUppercase = char >= "A" && char <= "Z"
+        const isNumber = char >= "0" && char <= "9"
+        const baselineAdjust = isUppercase || isNumber ? BASELINE_Y : 0
+        paths.push(
+          linesToPathData(charLines, x, charOffsetY, fontSize, baselineAdjust),
+        )
       }
       x += charAdvance
     }
