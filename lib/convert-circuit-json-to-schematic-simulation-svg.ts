@@ -23,6 +23,8 @@ interface ConvertSchematicSimulationParams {
     "width" | "height" | "includeVersion"
   >
   includeVersion?: boolean
+  /** When true, place the simulation graph above the schematic instead of below (defaults to false). */
+  graphAboveSchematic?: boolean
   showErrorsInTextOverlay?: boolean
 }
 
@@ -39,6 +41,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   schematicHeightRatio = DEFAULT_SCHEMATIC_RATIO,
   schematicOptions,
   includeVersion,
+  graphAboveSchematic = false,
   showErrorsInTextOverlay,
 }: ConvertSchematicSimulationParams): string {
   const schematicElements = circuitJson.filter(
@@ -76,18 +79,33 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const simulationNode = ensureElementNode(parseSync(simulationSvg))
 
   const combinedChildren: SvgObject[] = []
-  combinedChildren.push(
-    translateNestedSvg(schematicNode, 0, 0, width, schematicHeight),
-  )
-  combinedChildren.push(
-    translateNestedSvg(
-      simulationNode,
-      0,
-      schematicHeight,
-      width,
-      simulationHeight,
-    ),
-  )
+  if (graphAboveSchematic) {
+    combinedChildren.push(
+      translateNestedSvg(simulationNode, 0, 0, width, simulationHeight),
+    )
+    combinedChildren.push(
+      translateNestedSvg(
+        schematicNode,
+        0,
+        simulationHeight,
+        width,
+        schematicHeight,
+      ),
+    )
+  } else {
+    combinedChildren.push(
+      translateNestedSvg(schematicNode, 0, 0, width, schematicHeight),
+    )
+    combinedChildren.push(
+      translateNestedSvg(
+        simulationNode,
+        0,
+        schematicHeight,
+        width,
+        simulationHeight,
+      ),
+    )
+  }
 
   const softwareUsedString = getSoftwareUsedString(schematicElements)
 

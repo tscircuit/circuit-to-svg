@@ -172,6 +172,8 @@ const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
 - `schematicOptions` – forward additional schematic rendering options (except `width`, `height`, and `includeVersion`).
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
+- `graphAboveSchematic` – if `true`, place the simulation graph above the
+  schematic instead of below (defaults to `false`).
 
 ## convertCircuitJsonToSimulationGraphSvg
 
