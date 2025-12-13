@@ -631,7 +631,6 @@ export function convertCircuitJsonToPcbSvg(
     panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
     hasPanelBounds = true
   }
-
 }
 
 interface CreateSvgObjectsParams {
