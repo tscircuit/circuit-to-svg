@@ -1,8 +1,9 @@
-import type { AnyCircuitElement, PcbGroup, Point } from "circuit-json"
+import type { AnyCircuitElement, PcbBoard, PcbGroup, Point } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
+import { getPointFromElm } from "../../utils/get-point-from-elm"
 
 const DEFAULT_GROUP_COLOR = "rgba(100, 200, 255, 0.6)"
 const DEFAULT_STROKE_WIDTH = 0.1 // 0.1mm default stroke width
@@ -28,7 +29,7 @@ export function createSvgObjectsFromPcbGroup(
       svgObjects.push(
         ...createAnchorOffsetIndicators({
           groupAnchorPosition: anchorPosition,
-          componentPosition: pcbGroup.center,
+          componentPosition: pcbGroup.anchor_position ?? pcbGroup.center,
           transform,
           componentWidth: pcbGroup.width,
           componentHeight: pcbGroup.height,
@@ -149,7 +150,8 @@ function getAnchorPosition(
         elm.pcb_group_id === group.positioned_relative_to_pcb_group_id,
     ) as PcbGroup | undefined
 
-    if (pcbGroup?.center) return pcbGroup.center
+    const point = getPointFromElm(pcbGroup)
+    if (point) return point
   }
 
   if (group.positioned_relative_to_pcb_board_id) {
@@ -157,9 +159,10 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_board" &&
         elm.pcb_board_id === group.positioned_relative_to_pcb_board_id,
-    ) as PcbGroup | undefined
+    ) as PcbBoard | undefined
 
-    if (pcbBoard?.center) return pcbBoard.center
+    const point = getPointFromElm(pcbBoard)
+    if (point) return point
   }
 
   return undefined
