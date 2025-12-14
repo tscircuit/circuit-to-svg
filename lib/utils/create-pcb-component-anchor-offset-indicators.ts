@@ -456,10 +456,8 @@ function formatOffsetLabel(
   // `display_offset_*` is sometimes emitted as a number (often defaulting to 0)
   // even when the real offset is non-zero. Prefer string display offsets (e.g.
   // "2mm"), otherwise show the computed signed offset.
-  const baseValue =
-    typeof displayOffset === "string" ? displayOffset : undefined
-  const value = baseValue ?? offsetMm.toFixed(2)
-  const valueStr = typeof value === "number" ? value.toString() : value
+  const valueStr =
+    typeof displayOffset === "string" ? displayOffset : offsetMm.toFixed(2)
   const hasUnit = typeof valueStr === "string" && valueStr.trim().endsWith("mm")
   const unitSuffix = hasUnit ? "" : "mm"
 
