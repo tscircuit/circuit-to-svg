@@ -87,6 +87,10 @@ interface Options {
     maxX: number
     maxY: number
   }
+  viewportTarget?: {
+    pcb_panel_id?: string
+    pcb_board_id?: string
+  }
 }
 
 export interface PcbContext {
@@ -189,6 +193,33 @@ export function convertCircuitJsonToPcbSvg(
   let panelMaxY = Number.NEGATIVE_INFINITY
   let hasPanelBounds = false
 
+  // Track bounds by id for viewportTarget
+  const panelBoundsById = new Map<
+    string,
+    { minX: number; minY: number; maxX: number; maxY: number }
+  >()
+  const boardBoundsById = new Map<
+    string,
+    { minX: number; minY: number; maxX: number; maxY: number }
+  >()
+
+  // Helpers to pick ids without any casting
+  const getStringProp = (obj: unknown, key: string): string | undefined => {
+    if (obj && typeof obj === "object" && key in obj) {
+      const val = (obj as Record<string, unknown>)[key]
+      return typeof val === "string" ? val : undefined
+    }
+    return undefined
+  }
+  const getBoardId = (elm: AnyCircuitElement): string =>
+    getStringProp(elm, "pcb_board_id") ??
+    getStringProp(elm, "board_id") ??
+    "pcb_board"
+  const getPanelId = (elm: AnyCircuitElement): string =>
+    getStringProp(elm, "pcb_panel_id") ??
+    getStringProp(elm, "panel_id") ??
+    "panel"
+
   // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
@@ -200,7 +231,12 @@ export function convertCircuitJsonToPcbSvg(
       }
       const center = panel.center ?? { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
-      updatePanelBounds({ center, width, height })
+      updatePanelBounds({
+        center,
+        width,
+        height,
+        id: getPanelId(panel),
+      })
     } else if (circuitJsonElm.type === "pcb_board") {
       if (
         circuitJsonElm.outline &&
@@ -208,7 +244,10 @@ export function convertCircuitJsonToPcbSvg(
         circuitJsonElm.outline.length >= 3
       ) {
         updateBoundsToIncludeOutline(circuitJsonElm.outline)
-        updateBoardBoundsToIncludeOutline(circuitJsonElm.outline)
+        updateBoardBoundsToIncludeOutline(
+          circuitJsonElm.outline,
+          getBoardId(circuitJsonElm),
+        )
       } else if (
         "center" in circuitJsonElm &&
         "width" in circuitJsonElm &&
@@ -223,6 +262,7 @@ export function convertCircuitJsonToPcbSvg(
           circuitJsonElm.center,
           circuitJsonElm.width,
           circuitJsonElm.height,
+          getBoardId(circuitJsonElm),
         )
       }
     } else if (circuitJsonElm.type === "pcb_smtpad") {
@@ -303,6 +343,30 @@ export function convertCircuitJsonToPcbSvg(
     boundsMinY = viewport.minY
     boundsMaxX = viewport.maxX
     boundsMaxY = viewport.maxY
+    padding = 0
+  } else if (options?.viewportTarget?.pcb_panel_id) {
+    const panelBounds = panelBoundsById.get(options.viewportTarget.pcb_panel_id)
+    if (!panelBounds) {
+      throw new Error(
+        `Viewport target panel '${options.viewportTarget.pcb_panel_id}' not found`,
+      )
+    }
+    boundsMinX = panelBounds.minX
+    boundsMinY = panelBounds.minY
+    boundsMaxX = panelBounds.maxX
+    boundsMaxY = panelBounds.maxY
+    padding = 0
+  } else if (options?.viewportTarget?.pcb_board_id) {
+    const boardBounds = boardBoundsById.get(options.viewportTarget.pcb_board_id)
+    if (!boardBounds) {
+      throw new Error(
+        `Viewport target board '${options.viewportTarget.pcb_board_id}' not found`,
+      )
+    }
+    boundsMinX = boardBounds.minX
+    boundsMinY = boardBounds.minY
+    boundsMaxX = boardBounds.maxX
+    boundsMaxY = boardBounds.maxY
     padding = 0
   } else if (hasPanelBounds && Number.isFinite(panelMinX)) {
     // If a panel exists, render to the panel bounds
@@ -509,7 +573,7 @@ export function convertCircuitJsonToPcbSvg(
     hasBounds = true
   }
 
-  function updateBoardBounds(center: any, width: any, height: any) {
+  function updateBoardBounds(center: any, width: any, height: any, id?: string) {
     if (!center) return
     const centerX = distance.parse(center.x)
     const centerY = distance.parse(center.y)
@@ -524,6 +588,14 @@ export function convertCircuitJsonToPcbSvg(
     boardMaxY = Math.max(boardMaxY, centerY + halfHeight)
     hasBounds = true
     hasBoardBounds = true
+    if (id) {
+      boardBoundsById.set(id, {
+        minX: centerX - halfWidth,
+        minY: centerY - halfHeight,
+        maxX: centerX + halfWidth,
+        maxY: centerY + halfHeight,
+      })
+    }
   }
 
   function updateBoundsToIncludeOutline(outline: Point[]) {
@@ -543,7 +615,7 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  function updateBoardBoundsToIncludeOutline(outline: Point[]) {
+  function updateBoardBoundsToIncludeOutline(outline: Point[], id?: string) {
     let updated = false
     for (const point of outline) {
       const x = distance.parse(point.x)
@@ -558,6 +630,14 @@ export function convertCircuitJsonToPcbSvg(
     if (updated) {
       hasBounds = true
       hasBoardBounds = true
+      if (id) {
+        boardBoundsById.set(id, {
+          minX: boardMinX,
+          minY: boardMinY,
+          maxX: boardMaxX,
+          maxY: boardMaxY,
+        })
+      }
     }
   }
 
@@ -612,10 +692,12 @@ export function convertCircuitJsonToPcbSvg(
     center,
     width,
     height,
+    id,
   }: {
     center: any
     width: any
     height: any
+    id?: string
   }) {
     if (!center) return
     const centerX = distance.parse(center.x)
@@ -630,6 +712,14 @@ export function convertCircuitJsonToPcbSvg(
     panelMaxX = Math.max(panelMaxX, centerX + halfWidth)
     panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
     hasPanelBounds = true
+    if (id) {
+      panelBoundsById.set(id, {
+        minX: centerX - halfWidth,
+        minY: centerY - halfHeight,
+        maxX: centerX + halfWidth,
+        maxY: centerY + halfHeight,
+      })
+    }
   }
 }
 
