@@ -573,7 +573,12 @@ export function convertCircuitJsonToPcbSvg(
     hasBounds = true
   }
 
-  function updateBoardBounds(center: any, width: any, height: any, id?: string) {
+  function updateBoardBounds(
+    center: any,
+    width: any,
+    height: any,
+    id?: string,
+  ) {
     if (!center) return
     const centerX = distance.parse(center.x)
     const centerY = distance.parse(center.y)
