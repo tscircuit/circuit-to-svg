@@ -9,8 +9,11 @@ const getStringProp = (obj: unknown, key: string): string | undefined => {
 }
 
 export const getBoardId = (elm: AnyCircuitElement): string =>
-  getStringProp(elm, "pcb_board_id") ?? getStringProp(elm, "board_id") ?? "pcb_board"
+  getStringProp(elm, "pcb_board_id") ??
+  getStringProp(elm, "board_id") ??
+  "pcb_board"
 
 export const getPanelId = (elm: AnyCircuitElement): string =>
-  getStringProp(elm, "pcb_panel_id") ?? getStringProp(elm, "panel_id") ?? "panel"
-
+  getStringProp(elm, "pcb_panel_id") ??
+  getStringProp(elm, "panel_id") ??
+  "panel"
