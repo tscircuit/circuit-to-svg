@@ -373,7 +373,6 @@ export function convertCircuitJsonToPcbSvg(
     console.error("Error stringifying SVG object:", error)
     throw error
   }
-
 }
 
 interface CreateSvgObjectsParams {
