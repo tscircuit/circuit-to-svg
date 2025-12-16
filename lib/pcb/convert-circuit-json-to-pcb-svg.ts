@@ -1,9 +1,9 @@
 import type {
-  Point,
   AnyCircuitElement,
-  pcb_cutout,
   PcbCutout,
   PcbPanel,
+  Point,
+  pcb_cutout,
 } from "circuit-json"
 import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
@@ -14,50 +14,56 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
-import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
-import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
-import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
-import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
-import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
-import { createSvgObjectsFromPcbFabricationNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-dimension"
-import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
-import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
-import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
-import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
-import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
-import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
-import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
-import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
-import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
-import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
-import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
-import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
-import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
-import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
-import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
-import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
-import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
-import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
-import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
-import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
-import {
-  createSvgObjectsForPcbGrid,
-  type PcbGridOptions,
-} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
 import {
   DEFAULT_PCB_COLOR_MAP,
   type CopperColorMap,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
-import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
-import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { type Bounds } from "@tscircuit/math-utils"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
+import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
+import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
+import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
+import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbFabricationNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-dimension"
+import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
+import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
+import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
+import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
+import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
+import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
+import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
+import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
+import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
+import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
+import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
+import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
+import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
+import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
+import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
+import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
+import {
+  createSvgObjectsForPcbGrid,
+  type PcbGridOptions,
+} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
+import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
+import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
+import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import { getBoardId, getPanelId } from "./utils/id-helpers"
+import {
+  computePcbBounds,
+  type ComputeBoundsOptions,
+} from "./utils/compute-bounds"
 
 interface PointObjectNotation {
   x: number
@@ -173,217 +179,22 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-  let hasBounds = false
-
-  // Track bounds for pcb_board specifically
-  let boardMinX = Number.POSITIVE_INFINITY
-  let boardMinY = Number.POSITIVE_INFINITY
-  let boardMaxX = Number.NEGATIVE_INFINITY
-  let boardMaxY = Number.NEGATIVE_INFINITY
-  let hasBoardBounds = false
-
-  // Track panel bounds
-  let panelMinX = Number.POSITIVE_INFINITY
-  let panelMinY = Number.POSITIVE_INFINITY
-  let panelMaxX = Number.NEGATIVE_INFINITY
-  let panelMaxY = Number.NEGATIVE_INFINITY
-  let hasPanelBounds = false
-
-  // Track bounds by id for viewportTarget
-  const panelBoundsById = new Map<
-    string,
-    { minX: number; minY: number; maxX: number; maxY: number }
-  >()
-  const boardBoundsById = new Map<
-    string,
-    { minX: number; minY: number; maxX: number; maxY: number }
-  >()
-
-  // Helpers to pick ids without any casting
-  const getStringProp = (obj: unknown, key: string): string | undefined => {
-    if (obj && typeof obj === "object" && key in obj) {
-      const val = (obj as Record<string, unknown>)[key]
-      return typeof val === "string" ? val : undefined
-    }
-    return undefined
-  }
-  const getBoardId = (elm: AnyCircuitElement): string =>
-    getStringProp(elm, "pcb_board_id") ??
-    getStringProp(elm, "board_id") ??
-    "pcb_board"
-  const getPanelId = (elm: AnyCircuitElement): string =>
-    getStringProp(elm, "pcb_panel_id") ??
-    getStringProp(elm, "panel_id") ??
-    "panel"
-
-  // Process all elements to determine bounds
-  for (const circuitJsonElm of circuitJson) {
-    if (circuitJsonElm.type === "pcb_panel") {
-      const panel = circuitJsonElm as PcbPanel
-      const width = distance.parse(panel.width)
-      const height = distance.parse(panel.height)
-      if (width === undefined || height === undefined) {
-        continue
-      }
-      const center = panel.center ?? { x: width / 2, y: height / 2 }
-      updateBounds(center, width, height)
-      updatePanelBounds({
-        center,
-        width,
-        height,
-        id: getPanelId(panel),
-      })
-    } else if (circuitJsonElm.type === "pcb_board") {
-      if (
-        circuitJsonElm.outline &&
-        Array.isArray(circuitJsonElm.outline) &&
-        circuitJsonElm.outline.length >= 3
-      ) {
-        updateBoundsToIncludeOutline(circuitJsonElm.outline)
-        updateBoardBoundsToIncludeOutline(
-          circuitJsonElm.outline,
-          getBoardId(circuitJsonElm),
-        )
-      } else if (
-        "center" in circuitJsonElm &&
-        "width" in circuitJsonElm &&
-        "height" in circuitJsonElm
-      ) {
-        updateBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-        updateBoardBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-          getBoardId(circuitJsonElm),
-        )
-      }
-    } else if (circuitJsonElm.type === "pcb_smtpad") {
-      const pad = circuitJsonElm as any
-      if (
-        pad.shape === "rect" ||
-        pad.shape === "rotated_rect" ||
-        pad.shape === "pill"
-      ) {
-        updateBounds({ x: pad.x, y: pad.y }, pad.width, pad.height)
-      } else if (pad.shape === "circle") {
-        const radius = distance.parse(pad.radius)
-        if (radius !== undefined) {
-          updateBounds({ x: pad.x, y: pad.y }, radius * 2, radius * 2)
-        }
-      } else if (pad.shape === "polygon") {
-        updateTraceBounds(pad.points)
-      }
-    } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
-      updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
-    } else if ("route" in circuitJsonElm) {
-      updateTraceBounds(circuitJsonElm.route)
-    } else if (
-      circuitJsonElm.type === "pcb_note_rect" ||
-      circuitJsonElm.type === "pcb_fabrication_note_rect"
-    ) {
-      updateBounds(
-        (circuitJsonElm as any).center,
-        (circuitJsonElm as any).width,
-        (circuitJsonElm as any).height,
-      )
-    } else if (circuitJsonElm.type === "pcb_cutout") {
-      const cutout = circuitJsonElm as PcbCutout
-      if (cutout.shape === "rect") {
-        updateBounds(cutout.center, cutout.width, cutout.height)
-      } else if (cutout.shape === "circle") {
-        const radius = distance.parse(cutout.radius)
-        if (radius !== undefined) {
-          updateBounds(cutout.center, radius * 2, radius * 2)
-        }
-      } else if (cutout.shape === "polygon") {
-        updateTraceBounds(cutout.points)
-      }
-    } else if (
-      circuitJsonElm.type === "pcb_silkscreen_text" ||
-      circuitJsonElm.type === "pcb_silkscreen_rect" ||
-      circuitJsonElm.type === "pcb_silkscreen_circle" ||
-      circuitJsonElm.type === "pcb_silkscreen_line"
-    ) {
-      updateSilkscreenBounds(circuitJsonElm)
-    } else if (circuitJsonElm.type === "pcb_copper_text") {
-      updateBounds(circuitJsonElm.anchor_position, 0, 0)
-    } else if (circuitJsonElm.type === "pcb_copper_pour") {
-      if (circuitJsonElm.shape === "rect") {
-        updateBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-      } else if (circuitJsonElm.shape === "polygon") {
-        updateTraceBounds(circuitJsonElm.points)
-      }
-    }
-  }
-
-  let padding = drawPaddingOutsideBoard ? 1 : 0
-
-  // Determine which bounds to use for rendering
-  let boundsMinX: number
-  let boundsMinY: number
-  let boundsMaxX: number
-  let boundsMaxY: number
-
-  const viewport = options?.viewport
-
-  if (viewport) {
-    boundsMinX = viewport.minX
-    boundsMinY = viewport.minY
-    boundsMaxX = viewport.maxX
-    boundsMaxY = viewport.maxY
-    padding = 0
-  } else if (options?.viewportTarget?.pcb_panel_id) {
-    const panelBounds = panelBoundsById.get(options.viewportTarget.pcb_panel_id)
-    if (!panelBounds) {
-      throw new Error(
-        `Viewport target panel '${options.viewportTarget.pcb_panel_id}' not found`,
-      )
-    }
-    boundsMinX = panelBounds.minX
-    boundsMinY = panelBounds.minY
-    boundsMaxX = panelBounds.maxX
-    boundsMaxY = panelBounds.maxY
-    padding = 0
-  } else if (options?.viewportTarget?.pcb_board_id) {
-    const boardBounds = boardBoundsById.get(options.viewportTarget.pcb_board_id)
-    if (!boardBounds) {
-      throw new Error(
-        `Viewport target board '${options.viewportTarget.pcb_board_id}' not found`,
-      )
-    }
-    boundsMinX = boardBounds.minX
-    boundsMinY = boardBounds.minY
-    boundsMaxX = boardBounds.maxX
-    boundsMaxY = boardBounds.maxY
-    padding = 0
-  } else if (hasPanelBounds && Number.isFinite(panelMinX)) {
-    // If a panel exists, render to the panel bounds
-    boundsMinX = panelMinX
-    boundsMinY = panelMinY
-    boundsMaxX = panelMaxX
-    boundsMaxY = panelMaxY
-  } else {
-    boundsMinX =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
-    boundsMinY =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
-    boundsMaxX =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
-    boundsMaxY =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
-  }
+  const {
+    boundsMinX,
+    boundsMinY,
+    boundsMaxX,
+    boundsMaxY,
+    padding,
+    overallMinX,
+    overallMinY,
+    overallMaxX,
+    overallMaxY,
+  } = computePcbBounds({
+    circuitJson,
+    drawPaddingOutsideBoard,
+    viewport: options?.viewport,
+    viewportTarget: options?.viewportTarget,
+  })
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -509,7 +320,13 @@ export function convertCircuitJsonToPcbSvg(
 
   if (drawPaddingOutsideBoard) {
     children.push(
-      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
+      createSvgObjectFromPcbBoundary(
+        transform,
+        overallMinX,
+        overallMinY,
+        overallMaxX,
+        overallMaxY,
+      ),
     )
   }
 
@@ -577,7 +394,7 @@ export function convertCircuitJsonToPcbSvg(
     center: any,
     width: any,
     height: any,
-    id?: string,
+    pcb_board_id?: string,
   ) {
     if (!center) return
     const centerX = distance.parse(center.x)
@@ -593,8 +410,8 @@ export function convertCircuitJsonToPcbSvg(
     boardMaxY = Math.max(boardMaxY, centerY + halfHeight)
     hasBounds = true
     hasBoardBounds = true
-    if (id) {
-      boardBoundsById.set(id, {
+    if (pcb_board_id) {
+      boardBoundsById.set(pcb_board_id, {
         minX: centerX - halfWidth,
         minY: centerY - halfHeight,
         maxX: centerX + halfWidth,
@@ -620,7 +437,10 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  function updateBoardBoundsToIncludeOutline(outline: Point[], id?: string) {
+  function updateBoardBoundsToIncludeOutline(
+    outline: Point[],
+    pcb_board_id?: string,
+  ) {
     let updated = false
     for (const point of outline) {
       const x = distance.parse(point.x)
@@ -635,8 +455,8 @@ export function convertCircuitJsonToPcbSvg(
     if (updated) {
       hasBounds = true
       hasBoardBounds = true
-      if (id) {
-        boardBoundsById.set(id, {
+      if (pcb_board_id) {
+        boardBoundsById.set(pcb_board_id, {
           minX: boardMinX,
           minY: boardMinY,
           maxX: boardMaxX,
@@ -697,12 +517,12 @@ export function convertCircuitJsonToPcbSvg(
     center,
     width,
     height,
-    id,
+    pcb_panel_id,
   }: {
     center: any
     width: any
     height: any
-    id?: string
+    pcb_panel_id?: string
   }) {
     if (!center) return
     const centerX = distance.parse(center.x)
@@ -717,8 +537,8 @@ export function convertCircuitJsonToPcbSvg(
     panelMaxX = Math.max(panelMaxX, centerX + halfWidth)
     panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
     hasPanelBounds = true
-    if (id) {
-      panelBoundsById.set(id, {
+    if (pcb_panel_id) {
+      panelBoundsById.set(pcb_panel_id, {
         minX: centerX - halfWidth,
         minY: centerY - halfHeight,
         maxX: centerX + halfWidth,
