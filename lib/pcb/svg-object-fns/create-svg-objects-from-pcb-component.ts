@@ -2,7 +2,13 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import type { SvgObject } from "lib/svg-object"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
-import type { PcbComponent } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PcbBoard,
+  PcbComponent,
+  PcbGroup,
+} from "circuit-json"
+import { getPointFromElm } from "../../utils/get-point-from-elm"
 
 export function createSvgObjectsFromPcbComponent(
   component: PcbComponent,
@@ -81,17 +87,18 @@ export function createSvgObjectsFromPcbComponent(
 }
 
 function getAnchorPosition(
-  component: any,
-  circuitJson: any[],
+  component: PcbComponent,
+  circuitJson: AnyCircuitElement[],
 ): { x: number; y: number } | undefined {
   if (component.positioned_relative_to_pcb_group_id) {
     const pcbGroup = circuitJson.find(
       (elm) =>
         elm.type === "pcb_group" &&
         elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as any
+    ) as PcbGroup | undefined
 
-    if (pcbGroup?.center) return pcbGroup.center
+    const point = getPointFromElm(pcbGroup)
+    if (point) return point
   }
 
   if (component.positioned_relative_to_pcb_board_id) {
@@ -99,9 +106,10 @@ function getAnchorPosition(
       (elm) =>
         elm.type === "pcb_board" &&
         elm.pcb_board_id === component.positioned_relative_to_pcb_board_id,
-    ) as any
+    ) as PcbBoard | undefined
 
-    if (pcbBoard?.center) return pcbBoard.center
+    const point = getPointFromElm(pcbBoard)
+    if (point) return point
   }
 
   return undefined
