@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 const board = {
@@ -21,10 +22,10 @@ const pcbGroup = {
   center: { x: 5, y: 3 },
   pcb_component_ids: ["comp_1", "comp_2"],
   name: "Test Group",
-}
+} as AnyCircuitElement
 
 const pcbGroupWithOutline = {
-  type: "pcb_group" as const,
+  type: "pcb_group",
   pcb_group_id: "group_outline",
   source_group_id: "source_group_outline",
   pcb_component_ids: [],
@@ -38,7 +39,8 @@ const pcbGroupWithOutline = {
   center: { x: 5, y: 2.5 },
   width: 10,
   height: 5,
-}
+  anchor_alignment: "center",
+} as AnyCircuitElement
 
 test("pcb_group renders with dashed border when showPcbGroups is true", () => {
   const svg = convertCircuitJsonToPcbSvg([board, pcbGroup], {
