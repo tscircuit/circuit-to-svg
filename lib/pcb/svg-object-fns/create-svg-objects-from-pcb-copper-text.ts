@@ -55,9 +55,7 @@ function textToAlphabetPath(
 
     const lines = lineAlphabet[char as AlphabetKey]
     if (lines) {
-      const isLowercase = char >= "a" && char <= "z"
-      const baselineAdjust = isLowercase ? BASELINE_Y : 0
-      paths.push(linesToPathData(lines, x, 0, fontSize, baselineAdjust))
+      paths.push(linesToPathData(lines, x, 0, fontSize))
     }
     x += charAdvance
   }
@@ -102,9 +100,7 @@ function textToCenteredAlphabetPaths(
 
       const charLines = lineAlphabet[char as AlphabetKey]
       if (charLines) {
-        const isLowercase = char >= "a" && char <= "z"
-        const baselineAdjust = isLowercase ? BASELINE_Y : 0
-        paths.push(linesToPathData(charLines, x, y, fontSize, baselineAdjust))
+        paths.push(linesToPathData(charLines, x, y, fontSize))
       }
       x += charAdvance
     }
