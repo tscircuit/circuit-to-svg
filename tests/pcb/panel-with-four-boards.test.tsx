@@ -6,7 +6,7 @@ test("panel with four boards and anchor offsets", () => {
   const circuit = new Circuit()
 
   circuit.add(
-    <panel width="100mm" height="100mm" pcbX={0} pcbY={0}>
+    <panel pcbX={0} pcbY={0} panelizationMethod="tab-routing">
       <board width="10mm" height="10mm" />
       <board width="10mm" height="10mm" />
       <board width="10mm" height="10mm" />
