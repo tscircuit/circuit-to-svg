@@ -2,7 +2,6 @@ import type { PcbSilkscreenPill } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { distance } from "circuit-json"
 
 export function createSvgObjectsFromPcbSilkscreenPill(
   pcbSilkscreenPill: PcbSilkscreenPill,
@@ -19,37 +18,16 @@ export function createSvgObjectsFromPcbSilkscreenPill(
 
   if (layerFilter && layer !== layerFilter) return []
 
-  // Parse width and height if they're Length types (string) or use as numbers
-  const numericWidth =
-    distance.parse(width) ?? (typeof width === "number" ? width : 0)
-  const numericHeight =
-    distance.parse(height) ?? (typeof height === "number" ? height : 0)
-
-  if (
-    !center ||
-    typeof center.x !== "number" ||
-    typeof center.y !== "number" ||
-    numericWidth <= 0 ||
-    numericHeight <= 0
-  ) {
-    console.error("Invalid PCB Silkscreen Pill data:", {
-      center,
-      width,
-      height,
-    })
-    return []
-  }
-
   const [transformedX, transformedY] = applyToPoint(transform, [
     center.x,
     center.y,
   ])
 
-  const transformedWidth = numericWidth * Math.abs(transform.a)
-  const transformedHeight = numericHeight * Math.abs(transform.d)
+  const transformedWidth = width * Math.abs(transform.a)
+  const transformedHeight = height * Math.abs(transform.d)
 
   // For a pill shape, the corner radius is half of the smaller dimension
-  const minDimension = Math.min(numericWidth, numericHeight)
+  const minDimension = Math.min(width, height)
   const baseCornerRadius = minDimension / 2
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
