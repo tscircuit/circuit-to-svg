@@ -44,5 +44,3 @@ test("silkscreen pill shape", () => {
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })
-
-
