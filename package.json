@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.298",
+  "version": "0.0.299",
   "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
   "files": [
@@ -25,6 +25,7 @@
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
     "circuit-json": "^0.0.337",
+    "circuit-json": "^0.0.342",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "19.1.0",
