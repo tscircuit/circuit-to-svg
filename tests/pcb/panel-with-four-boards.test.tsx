@@ -16,6 +16,14 @@ test("panel with four boards and anchor offsets", () => {
 
   const circuitJson = circuit.getCircuitJson()
 
+  for (const elm of circuitJson) {
+    if (elm.type === "pcb_board") {
+      elm.position_mode = "relative_to_panel_anchor"
+      elm.display_offset_x = `${elm.center.x}mm`
+      elm.display_offset_y = `${elm.center.y}mm`
+    }
+  }
+
   const svg = convertCircuitJsonToPcbSvg(circuitJson as any, {
     showAnchorOffsets: true,
   })

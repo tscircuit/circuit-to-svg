@@ -23,12 +23,12 @@ export function createSvgObjectsFromPcbGroup(
     pcbGroup.position_mode === "relative_to_group_anchor" &&
     circuitJson
   ) {
-    const anchorPosition = getAnchorPosition(pcbGroup, circuitJson)
+    const parentAnchorPosition = getParentAnchorPosition(pcbGroup, circuitJson)
 
-    if (anchorPosition) {
+    if (parentAnchorPosition) {
       svgObjects.push(
         ...createAnchorOffsetIndicators({
-          groupAnchorPosition: anchorPosition,
+          groupAnchorPosition: parentAnchorPosition,
           componentPosition: pcbGroup.anchor_position ?? pcbGroup.center,
           transform,
           componentWidth: pcbGroup.width,
@@ -139,7 +139,7 @@ export function createSvgObjectsFromPcbGroup(
   return svgObjects
 }
 
-function getAnchorPosition(
+function getParentAnchorPosition(
   group: PcbGroup,
   circuitJson: AnyCircuitElement[],
 ): { x: number; y: number } | undefined {
