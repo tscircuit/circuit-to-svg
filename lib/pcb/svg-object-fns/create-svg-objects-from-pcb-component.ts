@@ -2,9 +2,16 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import type { SvgObject } from "lib/svg-object"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
+import type {
+  AnyCircuitElement,
+  PcbBoard,
+  PcbComponent,
+  PcbGroup,
+} from "circuit-json"
+import { getPointFromElm } from "../../utils/get-point-from-elm"
 
 export function createSvgObjectsFromPcbComponent(
-  component: any,
+  component: PcbComponent,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, circuitJson } = ctx
@@ -16,28 +23,26 @@ export function createSvgObjectsFromPcbComponent(
 
   const svgObjects: SvgObject[] = []
 
-  // Add anchor offset indicators if this component is positioned relative to a group
+  // Add anchor offset indicators if this component is positioned relative to a group or board
   if (
     ctx.showAnchorOffsets &&
-    component.positioned_relative_to_pcb_group_id &&
-    component.position_mode === "relative" &&
-    circuitJson
+    circuitJson &&
+    component.position_mode === "relative_to_group_anchor" &&
+    (component.positioned_relative_to_pcb_group_id ||
+      component.positioned_relative_to_pcb_board_id)
   ) {
-    // Find the referenced PCB group
-    const pcbGroup = circuitJson.find(
-      (elm: any) =>
-        elm.type === "pcb_group" &&
-        elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
-    ) as any
+    const parentAnchorPosition = getParentAnchorPosition(component, circuitJson)
 
-    if (pcbGroup?.center) {
+    if (parentAnchorPosition) {
       svgObjects.push(
         ...createAnchorOffsetIndicators({
-          groupAnchorPosition: pcbGroup.center,
+          groupAnchorPosition: parentAnchorPosition,
           componentPosition: center,
           transform,
           componentWidth: width,
           componentHeight: height,
+          displayXOffset: component.display_offset_x,
+          displayYOffset: component.display_offset_y,
         }),
       )
     }
@@ -79,4 +84,33 @@ export function createSvgObjectsFromPcbComponent(
   })
 
   return svgObjects
+}
+
+function getParentAnchorPosition(
+  component: PcbComponent,
+  circuitJson: AnyCircuitElement[],
+): { x: number; y: number } | undefined {
+  if (component.positioned_relative_to_pcb_group_id) {
+    const pcbGroup = circuitJson.find(
+      (elm) =>
+        elm.type === "pcb_group" &&
+        elm.pcb_group_id === component.positioned_relative_to_pcb_group_id,
+    ) as PcbGroup | undefined
+
+    const point = getPointFromElm(pcbGroup)
+    if (point) return point
+  }
+
+  if (component.positioned_relative_to_pcb_board_id) {
+    const pcbBoard = circuitJson.find(
+      (elm) =>
+        elm.type === "pcb_board" &&
+        elm.pcb_board_id === component.positioned_relative_to_pcb_board_id,
+    ) as PcbBoard | undefined
+
+    const point = getPointFromElm(pcbBoard)
+    if (point) return point
+  }
+
+  return undefined
 }

@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("multiple pcb_groups with different sized components", () => {
@@ -34,7 +35,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_1",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     {
       type: "pcb_component",
@@ -46,7 +47,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_1",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     // Group 2: Top-right with medium components
     {
@@ -69,7 +70,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_2",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     {
       type: "pcb_component",
@@ -81,7 +82,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_2",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     // Group 3: Bottom-left with large components
     {
@@ -104,7 +105,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_3",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     {
       type: "pcb_component",
@@ -116,7 +117,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_3",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     // Group 4: Bottom-right with varied components
     {
@@ -139,7 +140,7 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_4",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     {
       type: "pcb_component",
@@ -151,9 +152,9 @@ test("multiple pcb_groups with different sized components", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_4",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showPcbGroups: true,

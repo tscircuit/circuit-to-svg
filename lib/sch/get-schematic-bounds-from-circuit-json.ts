@@ -79,6 +79,36 @@ export function getSchematicBoundsFromCircuitJson(
       updateBounds(item.position, { width, height }, item.rotation ?? 0)
     } else if (item.type === "schematic_voltage_probe") {
       updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and height of the probe (Arrow)
+
+      if (item.name) {
+        const fontSize = getSchMmFontSize("net_label")
+        const textWidth = estimateTextWidth(item.name) * fontSize
+        const textHeight = fontSize
+        const labelOffset = 0.3
+
+        const alignment = item.label_alignment ?? "top_right"
+        let labelCenterX = item.position.x
+        let labelCenterY = item.position.y
+
+        // Offset based on alignment
+        if (alignment.includes("top")) {
+          labelCenterY += labelOffset + textHeight / 2
+        } else if (alignment.includes("bottom")) {
+          labelCenterY -= labelOffset + textHeight / 2
+        }
+
+        if (alignment.includes("right")) {
+          labelCenterX += labelOffset + textWidth / 2
+        } else if (alignment.includes("left")) {
+          labelCenterX -= labelOffset + textWidth / 2
+        }
+
+        updateBounds(
+          { x: labelCenterX, y: labelCenterY },
+          { width: textWidth, height: textHeight },
+          0,
+        )
+      }
     } else if (item.type === "schematic_box") {
       updateBounds(
         {

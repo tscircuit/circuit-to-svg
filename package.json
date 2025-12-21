@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.286",
+  "version": "0.0.300",
   "description": "Convert Circuit JSON to SVG",
   "main": "dist/index.js",
   "files": [
@@ -19,19 +19,19 @@
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@tscircuit/alphabet": "^0.0.8",
+    "@tscircuit/alphabet": "^0.0.9",
     "@types/bun": "^1.2.8",
     "@vitejs/plugin-react": "5.0.0",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
-    "circuit-json": "^0.0.327",
+    "circuit-json": "^0.0.342",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "19.1.0",
     "react-cosmos": "7.0.0",
     "react-cosmos-plugin-vite": "7.0.0",
     "react-dom": "19.1.0",
-    "tscircuit": "^0.0.1018",
+    "tscircuit": "^0.0.1059",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1"

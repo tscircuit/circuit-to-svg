@@ -1,4 +1,5 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("pcb_component with positioned_relative_to_pcb_group_id", () => {
@@ -35,7 +36,7 @@ test("pcb_component with positioned_relative_to_pcb_group_id", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_1",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     // Another component in the same group
     {
@@ -48,7 +49,7 @@ test("pcb_component with positioned_relative_to_pcb_group_id", () => {
       layer: "top",
       rotation: 0,
       positioned_relative_to_pcb_group_id: "group_1",
-      position_mode: "relative",
+      position_mode: "relative_to_group_anchor",
     },
     // Component with absolute positioning (for comparison)
     {
@@ -61,7 +62,7 @@ test("pcb_component with positioned_relative_to_pcb_group_id", () => {
       layer: "top",
       rotation: 0,
     },
-  ] as any
+  ] as AnyCircuitElement[]
 
   const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     showPcbGroups: true,

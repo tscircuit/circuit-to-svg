@@ -49,6 +49,8 @@ import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-pill"
+import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
 import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
@@ -417,6 +419,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbSilkscreenCircle(elm, ctx)
     case "pcb_silkscreen_line":
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
+    case "pcb_silkscreen_pill":
+      return createSvgObjectsFromPcbSilkscreenPill(elm, ctx)
     case "pcb_copper_text":
       return createSvgObjectsFromPcbCopperText(elm as any, ctx)
     case "pcb_courtyard_rect":
