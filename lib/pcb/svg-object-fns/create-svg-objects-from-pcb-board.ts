@@ -3,13 +3,23 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
+import { getPointFromElm } from "../../utils/get-point-from-elm"
 
 export function createSvgObjectsFromPcbBoard(
   pcbBoard: PcbBoard,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, colorMap, showSolderMask, circuitJson } = ctx
-  const { width, height, center, outline } = pcbBoard
+  const {
+    width,
+    height,
+    center,
+    outline,
+    position_mode,
+    anchor_position: boardAnchorPosition,
+    display_offset_x,
+    display_offset_y,
+  } = pcbBoard
 
   let path: string
   if (outline && Array.isArray(outline) && outline.length >= 3) {
@@ -91,22 +101,30 @@ export function createSvgObjectsFromPcbBoard(
   })
 
   // Add anchor offset indicators if there's a panel and showAnchorOffsets is enabled
-  if (ctx.showAnchorOffsets && circuitJson) {
+  if (
+    ctx.showAnchorOffsets &&
+    circuitJson &&
+    position_mode === "relative_to_panel_anchor"
+  ) {
     const panel = circuitJson.find(
       (elm): elm is PcbPanel => elm.type === "pcb_panel",
     )
 
     if (panel) {
-      const panelCenter = panel.center ?? { x: 0, y: 0 }
-      svgObjects.push(
-        ...createAnchorOffsetIndicators({
-          groupAnchorPosition: panelCenter,
-          componentPosition: center,
-          transform,
-          componentWidth: width,
-          componentHeight: height,
-        }),
-      )
+      const panelAnchorPosition = getPointFromElm(panel)
+      if (panelAnchorPosition) {
+        svgObjects.push(
+          ...createAnchorOffsetIndicators({
+            groupAnchorPosition: panelAnchorPosition,
+            componentPosition: boardAnchorPosition ?? center,
+            transform,
+            componentWidth: width,
+            componentHeight: height,
+            displayXOffset: display_offset_x,
+            displayYOffset: display_offset_y,
+          }),
+        )
+      }
     }
   }
 

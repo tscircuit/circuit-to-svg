@@ -31,12 +31,12 @@ export function createSvgObjectsFromPcbComponent(
     (component.positioned_relative_to_pcb_group_id ||
       component.positioned_relative_to_pcb_board_id)
   ) {
-    const anchorPosition = getAnchorPosition(component, circuitJson)
+    const parentAnchorPosition = getParentAnchorPosition(component, circuitJson)
 
-    if (anchorPosition) {
+    if (parentAnchorPosition) {
       svgObjects.push(
         ...createAnchorOffsetIndicators({
-          groupAnchorPosition: anchorPosition,
+          groupAnchorPosition: parentAnchorPosition,
           componentPosition: center,
           transform,
           componentWidth: width,
@@ -86,7 +86,7 @@ export function createSvgObjectsFromPcbComponent(
   return svgObjects
 }
 
-function getAnchorPosition(
+function getParentAnchorPosition(
   component: PcbComponent,
   circuitJson: AnyCircuitElement[],
 ): { x: number; y: number } | undefined {
