@@ -1,19 +1,21 @@
 import type { AnyCircuitElement } from "circuit-json"
 
-const getStringProp = (obj: unknown, key: string): string | undefined => {
-  if (obj && typeof obj === "object" && key in obj) {
-    const val = (obj as Record<string, unknown>)[key]
-    return typeof val === "string" ? val : undefined
+export const getBoardId = (elm: AnyCircuitElement): string => {
+  if ("pcb_board_id" in elm && typeof elm.pcb_board_id === "string") {
+    return elm.pcb_board_id
   }
-  return undefined
+  if ("board_id" in elm && typeof (elm as any).board_id === "string") {
+    return (elm as any).board_id
+  }
+  return "pcb_board"
 }
 
-export const getBoardId = (elm: AnyCircuitElement): string =>
-  getStringProp(elm, "pcb_board_id") ??
-  getStringProp(elm, "board_id") ??
-  "pcb_board"
-
-export const getPanelId = (elm: AnyCircuitElement): string =>
-  getStringProp(elm, "pcb_panel_id") ??
-  getStringProp(elm, "panel_id") ??
-  "panel"
+export const getPanelId = (elm: AnyCircuitElement): string => {
+  if ("pcb_panel_id" in elm && typeof elm.pcb_panel_id === "string") {
+    return elm.pcb_panel_id
+  }
+  if ("panel_id" in elm && typeof (elm as any).panel_id === "string") {
+    return (elm as any).panel_id
+  }
+  return "panel"
+}

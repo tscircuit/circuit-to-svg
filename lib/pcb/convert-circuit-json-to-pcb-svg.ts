@@ -320,13 +320,13 @@ export function convertCircuitJsonToPcbSvg(
 
   if (drawPaddingOutsideBoard) {
     children.push(
-      createSvgObjectFromPcbBoundary(
+      createSvgObjectFromPcbBoundary({
         transform,
-        overallMinX,
-        overallMinY,
-        overallMaxX,
-        overallMaxY,
-      ),
+        minX: overallMinX,
+        minY: overallMinY,
+        maxX: overallMaxX,
+        maxY: overallMaxY,
+      }),
     )
   }
 
@@ -464,13 +464,19 @@ function createSvgObjects({
   }
 }
 
-function createSvgObjectFromPcbBoundary(
-  transform: any,
-  minX: number,
-  minY: number,
-  maxX: number,
-  maxY: number,
-): SvgObject {
+function createSvgObjectFromPcbBoundary({
+  transform,
+  minX,
+  minY,
+  maxX,
+  maxY,
+}: {
+  transform: Matrix
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}): SvgObject {
   const [x1, y1] = applyToPoint(transform, [minX, minY])
   const [x2, y2] = applyToPoint(transform, [maxX, maxY])
   const width = Math.abs(x2 - x1)
