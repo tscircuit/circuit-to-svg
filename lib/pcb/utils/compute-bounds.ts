@@ -36,22 +36,10 @@ export function computePcbBounds({
   viewport,
   viewportTarget,
 }: ComputeBoundsOptions): ComputedBoundsResult {
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-  let hasBounds = false
-
-  let boardMinX = Number.POSITIVE_INFINITY
-  let boardMinY = Number.POSITIVE_INFINITY
-  let boardMaxX = Number.NEGATIVE_INFINITY
-  let boardMaxY = Number.NEGATIVE_INFINITY
+  let overallBounds = getEmptyBounds()
+  let boardBounds = getEmptyBounds()
   let hasBoardBounds = false
-
-  let panelMinX = Number.POSITIVE_INFINITY
-  let panelMinY = Number.POSITIVE_INFINITY
-  let panelMaxX = Number.NEGATIVE_INFINITY
-  let panelMaxY = Number.NEGATIVE_INFINITY
+  let panelBounds = getEmptyBounds()
   let hasPanelBounds = false
 
   const panelBoundsById = new Map<string, Bounds>()
@@ -175,43 +163,56 @@ export function computePcbBounds({
     boundsMaxY = viewport.maxY
     padding = 0
   } else if (viewportTarget?.pcb_panel_id) {
-    const panelBounds = panelBoundsById.get(viewportTarget.pcb_panel_id)
-    if (!panelBounds) {
+    const panel = panelBoundsById.get(viewportTarget.pcb_panel_id)
+    if (!panel || !isFiniteBounds(panel)) {
       throw new Error(
         `Viewport target panel '${viewportTarget.pcb_panel_id}' not found`,
       )
     }
-    boundsMinX = panelBounds.minX
-    boundsMinY = panelBounds.minY
-    boundsMaxX = panelBounds.maxX
-    boundsMaxY = panelBounds.maxY
+    ;({
+      minX: boundsMinX,
+      minY: boundsMinY,
+      maxX: boundsMaxX,
+      maxY: boundsMaxY,
+    } = panel)
     padding = 0
   } else if (viewportTarget?.pcb_board_id) {
-    const boardBounds = boardBoundsById.get(viewportTarget.pcb_board_id)
-    if (!boardBounds) {
+    const board = boardBoundsById.get(viewportTarget.pcb_board_id)
+    if (!board || !isFiniteBounds(board)) {
       throw new Error(
         `Viewport target board '${viewportTarget.pcb_board_id}' not found`,
       )
     }
-    boundsMinX = boardBounds.minX
-    boundsMinY = boardBounds.minY
-    boundsMaxX = boardBounds.maxX
-    boundsMaxY = boardBounds.maxY
+    ;({
+      minX: boundsMinX,
+      minY: boundsMinY,
+      maxX: boundsMaxX,
+      maxY: boundsMaxY,
+    } = board)
     padding = 0
-  } else if (hasPanelBounds && Number.isFinite(panelMinX)) {
-    boundsMinX = panelMinX
-    boundsMinY = panelMinY
-    boundsMaxX = panelMaxX
-    boundsMaxY = panelMaxY
+  } else if (hasPanelBounds && isFiniteBounds(panelBounds)) {
+    ;({
+      minX: boundsMinX,
+      minY: boundsMinY,
+      maxX: boundsMaxX,
+      maxY: boundsMaxY,
+    } = panelBounds)
+  } else if (hasBoardBounds && isFiniteBounds(boardBounds)) {
+    ;({
+      minX: boundsMinX,
+      minY: boundsMinY,
+      maxX: boundsMaxX,
+      maxY: boundsMaxY,
+    } = boardBounds)
+  } else if (isFiniteBounds(overallBounds)) {
+    ;({
+      minX: boundsMinX,
+      minY: boundsMinY,
+      maxX: boundsMaxX,
+      maxY: boundsMaxY,
+    } = overallBounds)
   } else {
-    boundsMinX =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
-    boundsMinY =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
-    boundsMaxX =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
-    boundsMaxY =
-      drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
+    throw new Error("No finite bounds found in circuit JSON")
   }
 
   return {
@@ -220,10 +221,10 @@ export function computePcbBounds({
     boundsMaxX,
     boundsMaxY,
     padding,
-    overallMinX: minX,
-    overallMinY: minY,
-    overallMaxX: maxX,
-    overallMaxY: maxY,
+    overallMinX: overallBounds.minX,
+    overallMinY: overallBounds.minY,
+    overallMaxX: overallBounds.maxX,
+    overallMaxY: overallBounds.maxY,
   }
 
   function updateBounds(center: any, width: any, height: any) {
@@ -235,11 +236,13 @@ export function computePcbBounds({
     const numericHeight = distance.parse(height) ?? 0
     const halfWidth = numericWidth / 2
     const halfHeight = numericHeight / 2
-    minX = Math.min(minX, centerX - halfWidth)
-    minY = Math.min(minY, centerY - halfHeight)
-    maxX = Math.max(maxX, centerX + halfWidth)
-    maxY = Math.max(maxY, centerY + halfHeight)
-    hasBounds = true
+    const b: Bounds = {
+      minX: centerX - halfWidth,
+      minY: centerY - halfHeight,
+      maxX: centerX + halfWidth,
+      maxY: centerY + halfHeight,
+    }
+    overallBounds = expandBounds(overallBounds, b)
   }
 
   function updateBoardBounds(
@@ -256,19 +259,20 @@ export function computePcbBounds({
     const numericHeight = distance.parse(height) ?? 0
     const halfWidth = numericWidth / 2
     const halfHeight = numericHeight / 2
-    boardMinX = Math.min(boardMinX, centerX - halfWidth)
-    boardMinY = Math.min(boardMinY, centerY - halfHeight)
-    boardMaxX = Math.max(boardMaxX, centerX + halfWidth)
-    boardMaxY = Math.max(boardMaxY, centerY + halfHeight)
-    hasBounds = true
+    const b: Bounds = {
+      minX: centerX - halfWidth,
+      minY: centerY - halfHeight,
+      maxX: centerX + halfWidth,
+      maxY: centerY + halfHeight,
+    }
+    boardBounds = expandBounds(boardBounds, b)
+    overallBounds = expandBounds(overallBounds, b)
     hasBoardBounds = true
     if (pcb_board_id) {
-      boardBoundsById.set(pcb_board_id, {
-        minX: centerX - halfWidth,
-        minY: centerY - halfHeight,
-        maxX: centerX + halfWidth,
-        maxY: centerY + halfHeight,
-      })
+      boardBoundsById.set(
+        pcb_board_id,
+        expandBounds(boardBoundsById.get(pcb_board_id) ?? getEmptyBounds(), b),
+      )
     }
   }
 
@@ -278,15 +282,15 @@ export function computePcbBounds({
       const x = distance.parse(point.x)
       const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
+      overallBounds = expandBounds(overallBounds, {
+        minX: x,
+        minY: y,
+        maxX: x,
+        maxY: y,
+      })
       updated = true
     }
-    if (updated) {
-      hasBounds = true
-    }
+    if (updated) return
   }
 
   function updateBoardBoundsToIncludeOutline(outline: Point[], id?: string) {
@@ -295,40 +299,36 @@ export function computePcbBounds({
       const x = distance.parse(point.x)
       const y = distance.parse(point.y)
       if (x === undefined || y === undefined) continue
-      boardMinX = Math.min(boardMinX, x)
-      boardMinY = Math.min(boardMinY, y)
-      boardMaxX = Math.max(boardMaxX, x)
-      boardMaxY = Math.max(boardMaxY, y)
+      const b: Bounds = { minX: x, minY: y, maxX: x, maxY: y }
+      boardBounds = expandBounds(boardBounds, b)
+      overallBounds = expandBounds(overallBounds, b)
       updated = true
     }
     if (updated) {
-      hasBounds = true
       hasBoardBounds = true
       if (id) {
-        boardBoundsById.set(id, {
-          minX: boardMinX,
-          minY: boardMinY,
-          maxX: boardMaxX,
-          maxY: boardMaxY,
-        })
+        boardBoundsById.set(
+          id,
+          expandBounds(
+            boardBoundsById.get(id) ?? getEmptyBounds(),
+            boardBounds,
+          ),
+        )
       }
     }
   }
 
   function updateTraceBounds(route: any[]) {
-    let updated = false
     for (const point of route) {
       const x = distance.parse(point?.x)
       const y = distance.parse(point?.y)
       if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-      updated = true
-    }
-    if (updated) {
-      hasBounds = true
+      overallBounds = expandBounds(overallBounds, {
+        minX: x,
+        minY: y,
+        maxX: x,
+        maxY: y,
+      })
     }
   }
 
@@ -381,18 +381,47 @@ export function computePcbBounds({
     const numericHeight = distance.parse(height) ?? 0
     const halfWidth = numericWidth / 2
     const halfHeight = numericHeight / 2
-    panelMinX = Math.min(panelMinX, centerX - halfWidth)
-    panelMinY = Math.min(panelMinY, centerY - halfHeight)
-    panelMaxX = Math.max(panelMaxX, centerX + halfWidth)
-    panelMaxY = Math.max(panelMaxY, centerY + halfHeight)
+    const b: Bounds = {
+      minX: centerX - halfWidth,
+      minY: centerY - halfHeight,
+      maxX: centerX + halfWidth,
+      maxY: centerY + halfHeight,
+    }
+    panelBounds = expandBounds(panelBounds, b)
+    overallBounds = expandBounds(overallBounds, b)
     hasPanelBounds = true
     if (pcb_panel_id) {
-      panelBoundsById.set(pcb_panel_id, {
-        minX: centerX - halfWidth,
-        minY: centerY - halfHeight,
-        maxX: centerX + halfWidth,
-        maxY: centerY + halfHeight,
-      })
+      panelBoundsById.set(
+        pcb_panel_id,
+        expandBounds(panelBoundsById.get(pcb_panel_id) ?? getEmptyBounds(), b),
+      )
     }
   }
+}
+
+function getEmptyBounds(): Bounds {
+  return {
+    minX: Number.POSITIVE_INFINITY,
+    minY: Number.POSITIVE_INFINITY,
+    maxX: Number.NEGATIVE_INFINITY,
+    maxY: Number.NEGATIVE_INFINITY,
+  }
+}
+
+function expandBounds(target: Bounds, source: Bounds): Bounds {
+  return {
+    minX: Math.min(target.minX, source.minX),
+    minY: Math.min(target.minY, source.minY),
+    maxX: Math.max(target.maxX, source.maxX),
+    maxY: Math.max(target.maxY, source.maxY),
+  }
+}
+
+function isFiniteBounds(b: Bounds): boolean {
+  return (
+    Number.isFinite(b.minX) &&
+    Number.isFinite(b.minY) &&
+    Number.isFinite(b.maxX) &&
+    Number.isFinite(b.maxY)
+  )
 }
