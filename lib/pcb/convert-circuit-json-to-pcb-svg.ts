@@ -60,7 +60,8 @@ import {
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
-import { getBoardId, getPanelId } from "./utils/id-helpers"
+import { getBoardId } from "./utils/get-board-id"
+import { getPanelId } from "./utils/get-panel-id"
 import {
   computePcbBounds,
   type ComputeBoundsOptions,
@@ -180,22 +181,22 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  const {
-    boundsMinX,
-    boundsMinY,
-    boundsMaxX,
-    boundsMaxY,
-    padding,
-    overallMinX,
-    overallMinY,
-    overallMaxX,
-    overallMaxY,
-  } = computePcbBounds({
+  const { viewportBounds, boundsContainingAllElements } = computePcbBounds({
     circuitJson,
     drawPaddingOutsideBoard,
     viewport: options?.viewport,
     viewportTarget: options?.viewportTarget,
   })
+
+  let padding = drawPaddingOutsideBoard ? 1 : 0
+  if (options?.viewport || options?.viewportTarget) {
+    padding = 0
+  }
+
+  const boundsMinX = viewportBounds.minX
+  const boundsMinY = viewportBounds.minY
+  const boundsMaxX = viewportBounds.maxX
+  const boundsMaxY = viewportBounds.maxY
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -323,10 +324,10 @@ export function convertCircuitJsonToPcbSvg(
     children.push(
       createSvgObjectFromPcbBoundary({
         transform,
-        minX: overallMinX,
-        minY: overallMinY,
-        maxX: overallMaxX,
-        maxY: overallMaxY,
+        minX: boundsContainingAllElements.minX,
+        minY: boundsContainingAllElements.minY,
+        maxX: boundsContainingAllElements.maxX,
+        maxY: boundsContainingAllElements.maxY,
       }),
     )
   }

@@ -6,9 +6,13 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import type { Bounds } from "@tscircuit/math-utils"
-import { expandBounds, getEmptyBounds, isFiniteBounds } from "./bounds-helpers"
-import { getBoardId, getPanelId } from "./id-helpers"
-import { addRectToBounds, addRectToBoundsWithId } from "./rect-bounds-helpers"
+import { expandBounds } from "./expand-bounds"
+import { getEmptyBounds } from "./get-empty-bounds"
+import { isFiniteBounds } from "./is-finite-bounds"
+import { getBoardId } from "./get-board-id"
+import { getPanelId } from "./get-panel-id"
+import { addRectToBounds } from "./add-rect-to-bounds"
+import { addRectToBoundsWithId } from "./add-rect-to-bounds-with-id"
 
 export interface ComputeBoundsOptions {
   circuitJson: AnyCircuitElement[]
@@ -21,15 +25,8 @@ export interface ComputeBoundsOptions {
 }
 
 export interface ComputedBoundsResult {
-  boundsMinX: number
-  boundsMinY: number
-  boundsMaxX: number
-  boundsMaxY: number
-  padding: number
-  overallMinX: number
-  overallMinY: number
-  overallMaxX: number
-  overallMaxY: number
+  viewportBounds: Bounds
+  boundsContainingAllElements: Bounds
 }
 
 export function computePcbBounds({
@@ -42,9 +39,14 @@ export function computePcbBounds({
     elm: AnyCircuitElement,
   ): elm is AnyCircuitElement & {
     center: Point
-    width: unknown
-    height: unknown
-  } => "center" in elm && "width" in elm && "height" in elm
+    width: number
+    height: number
+  } =>
+    "center" in elm &&
+    "width" in elm &&
+    "height" in elm &&
+    typeof (elm as { width: unknown }).width === "number" &&
+    typeof (elm as { height: unknown }).height === "number"
 
   let overallBounds = getEmptyBounds()
   let boardBounds = getEmptyBounds()
@@ -58,11 +60,10 @@ export function computePcbBounds({
   for (const circuitJsonElm of circuitJson) {
     if (circuitJsonElm.type === "pcb_panel") {
       const panel = circuitJsonElm as PcbPanel
-      const width = distance.parse(panel.width)
-      const height = distance.parse(panel.height)
-      if (width === undefined || height === undefined) {
+      if (typeof panel.width !== "number" || typeof panel.height !== "number")
         continue
-      }
+      const width = panel.width
+      const height = panel.height
       const center = panel.center ?? { x: width / 2, y: height / 2 }
       updateBounds(center, width, height)
       updatePanelBounds({
@@ -80,11 +81,7 @@ export function computePcbBounds({
       ) {
         updateBoundsToIncludeOutline(circuitJsonElm.outline)
         updateBoardBoundsToIncludeOutline(circuitJsonElm.outline, boardId)
-      } else if (
-        "center" in circuitJsonElm &&
-        "width" in circuitJsonElm &&
-        "height" in circuitJsonElm
-      ) {
+      } else if (hasCenterWidthHeight(circuitJsonElm)) {
         updateBounds(
           circuitJsonElm.center,
           circuitJsonElm.width,
@@ -103,10 +100,15 @@ export function computePcbBounds({
         circuitJsonElm.shape === "rotated_rect" ||
         circuitJsonElm.shape === "pill"
       ) {
+        const width = circuitJsonElm.width
+        const height = circuitJsonElm.height
+        if (typeof width !== "number" || typeof height !== "number") {
+          continue
+        }
         updateBounds(
           { x: circuitJsonElm.x, y: circuitJsonElm.y },
-          circuitJsonElm.width,
-          circuitJsonElm.height,
+          width,
+          height,
         )
       } else if (circuitJsonElm.shape === "circle") {
         const radius = distance.parse(circuitJsonElm.radius)
@@ -138,7 +140,10 @@ export function computePcbBounds({
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
-        updateBounds(cutout.center, cutout.width, cutout.height)
+        const { width, height } = cutout
+        if (typeof width === "number" && typeof height === "number") {
+          updateBounds(cutout.center, width, height)
+        }
       } else if (cutout.shape === "circle") {
         const radius = distance.parse(cutout.radius)
         if (radius !== undefined) {
@@ -169,98 +174,58 @@ export function computePcbBounds({
     }
   }
 
-  let padding = drawPaddingOutsideBoard ? 1 : 0
-  let boundsMinX: number
-  let boundsMinY: number
-  let boundsMaxX: number
-  let boundsMaxY: number
-
-  if (viewport) {
-    boundsMinX = viewport.minX
-    boundsMinY = viewport.minY
-    boundsMaxX = viewport.maxX
-    boundsMaxY = viewport.maxY
-    padding = 0
-  } else if (viewportTarget?.pcb_panel_id) {
-    const panel = panelBoundsById.get(viewportTarget.pcb_panel_id)
-    if (!panel || !isFiniteBounds(panel)) {
-      throw new Error(
-        `Viewport target panel '${viewportTarget.pcb_panel_id}' not found`,
-      )
+  const viewportBounds = (() => {
+    if (viewport) return viewport
+    if (viewportTarget?.pcb_panel_id) {
+      const panel = panelBoundsById.get(viewportTarget.pcb_panel_id)
+      if (!panel || !isFiniteBounds(panel)) {
+        throw new Error(
+          `Viewport target panel '${viewportTarget.pcb_panel_id}' not found`,
+        )
+      }
+      return panel
     }
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = panel)
-    padding = 0
-  } else if (viewportTarget?.pcb_board_id) {
-    const board = boardBoundsById.get(viewportTarget.pcb_board_id)
-    if (!board || !isFiniteBounds(board)) {
-      throw new Error(
-        `Viewport target board '${viewportTarget.pcb_board_id}' not found`,
-      )
+    if (viewportTarget?.pcb_board_id) {
+      const board = boardBoundsById.get(viewportTarget.pcb_board_id)
+      if (!board || !isFiniteBounds(board)) {
+        throw new Error(
+          `Viewport target board '${viewportTarget.pcb_board_id}' not found`,
+        )
+      }
+      return board
     }
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = board)
-    padding = 0
-  } else if (drawPaddingOutsideBoard && isFiniteBounds(overallBounds)) {
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = overallBounds)
-  } else if (hasPanelBounds && isFiniteBounds(panelBounds)) {
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = panelBounds)
-  } else if (hasBoardBounds && isFiniteBounds(boardBounds)) {
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = boardBounds)
-  } else if (isFiniteBounds(overallBounds)) {
-    ;({
-      minX: boundsMinX,
-      minY: boundsMinY,
-      maxX: boundsMaxX,
-      maxY: boundsMaxY,
-    } = overallBounds)
-  } else {
+    if (drawPaddingOutsideBoard && isFiniteBounds(overallBounds)) {
+      return overallBounds
+    }
+    if (hasPanelBounds && isFiniteBounds(panelBounds)) {
+      return panelBounds
+    }
+    if (hasBoardBounds && isFiniteBounds(boardBounds)) {
+      return boardBounds
+    }
+    if (isFiniteBounds(overallBounds)) {
+      return overallBounds
+    }
     throw new Error("No finite bounds found in circuit JSON")
-  }
+  })()
 
   return {
-    boundsMinX,
-    boundsMinY,
-    boundsMaxX,
-    boundsMaxY,
-    padding,
-    overallMinX: overallBounds.minX,
-    overallMinY: overallBounds.minY,
-    overallMaxX: overallBounds.maxX,
-    overallMaxY: overallBounds.maxY,
+    viewportBounds,
+    boundsContainingAllElements: overallBounds,
   }
 
-  function updateBounds(center: any, width: any, height: any) {
+  function updateBounds(
+    center: Point | undefined,
+    width: number,
+    height: number,
+  ) {
     overallBounds = addRectToBounds(overallBounds, center, width, height)
   }
 
   function updateBoardBounds(
-    center: any,
-    width: any,
-    height: any,
+    center: Point | undefined,
+    width: number,
+    height: number,
     pcb_board_id?: string,
   ) {
     const { bounds, overall } = addRectToBoundsWithId(
@@ -282,9 +247,9 @@ export function computePcbBounds({
   function updateBoundsToIncludeOutline(outline: Point[]) {
     let updated = false
     for (const point of outline) {
-      const x = distance.parse(point.x)
-      const y = distance.parse(point.y)
-      if (x === undefined || y === undefined) continue
+      if (typeof point.x !== "number" || typeof point.y !== "number") continue
+      const x = point.x
+      const y = point.y
       overallBounds = expandBounds(overallBounds, {
         minX: x,
         minY: y,
@@ -299,9 +264,9 @@ export function computePcbBounds({
   function updateBoardBoundsToIncludeOutline(outline: Point[], id?: string) {
     let updated = false
     for (const point of outline) {
-      const x = distance.parse(point.x)
-      const y = distance.parse(point.y)
-      if (x === undefined || y === undefined) continue
+      if (typeof point.x !== "number" || typeof point.y !== "number") continue
+      const x = point.x
+      const y = point.y
       const b: Bounds = { minX: x, minY: y, maxX: x, maxY: y }
       boardBounds = expandBounds(boardBounds, b)
       overallBounds = expandBounds(overallBounds, b)
@@ -323,9 +288,9 @@ export function computePcbBounds({
 
   function updateTraceBounds(route: any[]) {
     for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
-      if (x === undefined || y === undefined) continue
+      if (typeof point?.x !== "number" || typeof point?.y !== "number") continue
+      const x = point.x
+      const y = point.y
       overallBounds = expandBounds(overallBounds, {
         minX: x,
         minY: y,
@@ -353,7 +318,10 @@ export function computePcbBounds({
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
       if (cutout.shape === "rect") {
-        updateBounds(cutout.center, cutout.width, cutout.height)
+        const { width, height } = cutout
+        if (typeof width === "number" && typeof height === "number") {
+          updateBounds(cutout.center, width, height)
+        }
       } else if (cutout.shape === "circle") {
         const radius = distance.parse(cutout.radius)
         if (radius !== undefined) {
@@ -371,9 +339,9 @@ export function computePcbBounds({
     height,
     pcb_panel_id,
   }: {
-    center: any
-    width: any
-    height: any
+    center: Point | undefined
+    width: number
+    height: number
     pcb_panel_id?: string
   }) {
     const { bounds, overall } = addRectToBoundsWithId(
