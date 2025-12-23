@@ -48,6 +48,92 @@ export function computePcbBounds({
     typeof (elm as { width: unknown }).width === "number" &&
     typeof (elm as { height: unknown }).height === "number"
 
+  const hasCenterRadius = (
+    elm: AnyCircuitElement,
+  ): elm is AnyCircuitElement & { center: Point; radius: number | string } =>
+    "center" in elm && "radius" in elm
+
+  const hasLineEndpoints = (
+    elm: AnyCircuitElement,
+  ): elm is AnyCircuitElement & {
+    x1: number
+    y1: number
+    x2: number
+    y2: number
+  } =>
+    typeof (elm as { x1?: unknown }).x1 === "number" &&
+    typeof (elm as { y1?: unknown }).y1 === "number" &&
+    typeof (elm as { x2?: unknown }).x2 === "number" &&
+    typeof (elm as { y2?: unknown }).y2 === "number"
+
+  const hasNumericXY = (
+    elm: AnyCircuitElement,
+  ): elm is AnyCircuitElement & { x: number; y: number } =>
+    typeof (elm as { x?: unknown }).x === "number" &&
+    typeof (elm as { y?: unknown }).y === "number"
+
+  const hasRouteArray = (
+    elm: AnyCircuitElement,
+  ): elm is AnyCircuitElement & { route: any[] } =>
+    Array.isArray((elm as { route?: unknown }).route)
+
+  const hasPointsArray = (
+    elm: AnyCircuitElement,
+  ): elm is AnyCircuitElement & { points: any[] } =>
+    Array.isArray((elm as { points?: unknown }).points)
+
+  const handlePanel = (panel: AnyCircuitElement): boolean => {
+    if (panel.type !== "pcb_panel") return false
+    const panelTyped = panel as PcbPanel
+    if (
+      typeof panelTyped.width !== "number" ||
+      typeof panelTyped.height !== "number"
+    )
+      return true
+    const width = panelTyped.width
+    const height = panelTyped.height
+    const center = panelTyped.center ?? { x: width / 2, y: height / 2 }
+    updateBounds(center, width, height)
+    updatePanelBounds({
+      center,
+      width,
+      height,
+      pcb_panel_id: getPanelId(panelTyped),
+    })
+    return true
+  }
+
+  const handleBoard = (board: AnyCircuitElement): boolean => {
+    if (board.type !== "pcb_board") return false
+    const boardId = getBoardId(board)
+    if (
+      board.outline &&
+      Array.isArray(board.outline) &&
+      board.outline.length >= 3
+    ) {
+      updateBoundsToIncludeOutline(board.outline)
+      updateBoardBoundsToIncludeOutline(board.outline, boardId)
+      return true
+    }
+    if (hasCenterWidthHeight(board)) {
+      updateBounds(board.center, board.width, board.height)
+      updateBoardBounds(board.center, board.width, board.height, boardId)
+    }
+    return true
+  }
+
+  const updateTraceIfPresent = (elm: AnyCircuitElement): boolean => {
+    if (hasRouteArray(elm)) {
+      updateTraceBounds(elm.route)
+      return true
+    }
+    if (hasPointsArray(elm)) {
+      updateTraceBounds(elm.points)
+      return true
+    }
+    return false
+  }
+
   let overallBounds = getEmptyBounds()
   let boardBounds = getEmptyBounds()
   let hasBoardBounds = false
@@ -58,80 +144,41 @@ export function computePcbBounds({
   const boardBoundsById = new Map<string, Bounds>()
 
   for (const circuitJsonElm of circuitJson) {
-    if (circuitJsonElm.type === "pcb_panel") {
-      const panel = circuitJsonElm as PcbPanel
-      if (typeof panel.width !== "number" || typeof panel.height !== "number")
-        continue
-      const width = panel.width
-      const height = panel.height
-      const center = panel.center ?? { x: width / 2, y: height / 2 }
-      updateBounds(center, width, height)
-      updatePanelBounds({
-        center,
-        width,
-        height,
-        pcb_panel_id: getPanelId(panel),
-      })
-    } else if (circuitJsonElm.type === "pcb_board") {
-      const boardId = getBoardId(circuitJsonElm)
-      if (
-        circuitJsonElm.outline &&
-        Array.isArray(circuitJsonElm.outline) &&
-        circuitJsonElm.outline.length >= 3
-      ) {
-        updateBoundsToIncludeOutline(circuitJsonElm.outline)
-        updateBoardBoundsToIncludeOutline(circuitJsonElm.outline, boardId)
-      } else if (hasCenterWidthHeight(circuitJsonElm)) {
-        updateBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-        updateBoardBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-          boardId,
-        )
-      }
+    if (handlePanel(circuitJsonElm)) {
+      continue
+    } else if (handleBoard(circuitJsonElm)) {
+      continue
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       if (
-        circuitJsonElm.shape === "rect" ||
-        circuitJsonElm.shape === "rotated_rect" ||
-        circuitJsonElm.shape === "pill"
+        (circuitJsonElm.shape === "rect" ||
+          circuitJsonElm.shape === "rotated_rect" ||
+          circuitJsonElm.shape === "pill") &&
+        typeof circuitJsonElm.width === "number" &&
+        typeof circuitJsonElm.height === "number"
       ) {
-        const width = circuitJsonElm.width
-        const height = circuitJsonElm.height
-        if (typeof width !== "number" || typeof height !== "number") {
-          continue
-        }
-        updateBounds(
+        updateRectBounds(
           { x: circuitJsonElm.x, y: circuitJsonElm.y },
-          width,
-          height,
+          circuitJsonElm.width,
+          circuitJsonElm.height,
         )
       } else if (circuitJsonElm.shape === "circle") {
-        const radius = distance.parse(circuitJsonElm.radius)
-        if (radius !== undefined) {
-          updateBounds(
-            { x: circuitJsonElm.x, y: circuitJsonElm.y },
-            radius * 2,
-            radius * 2,
-          )
-        }
+        updateCircleBounds(
+          { x: circuitJsonElm.x, y: circuitJsonElm.y },
+          circuitJsonElm.radius,
+        )
       } else if (circuitJsonElm.shape === "polygon") {
         updateTraceBounds(circuitJsonElm.points)
       }
-    } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
+    } else if (hasNumericXY(circuitJsonElm)) {
       updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
-    } else if ("route" in circuitJsonElm) {
-      updateTraceBounds(circuitJsonElm.route)
+    } else if (updateTraceIfPresent(circuitJsonElm)) {
+      // handled
     } else if (
       circuitJsonElm.type === "pcb_note_rect" ||
       circuitJsonElm.type === "pcb_fabrication_note_rect"
     ) {
       if (hasCenterWidthHeight(circuitJsonElm)) {
-        updateBounds(
+        updateRectBounds(
           circuitJsonElm.center,
           circuitJsonElm.width,
           circuitJsonElm.height,
@@ -140,15 +187,9 @@ export function computePcbBounds({
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
-        const { width, height } = cutout
-        if (typeof width === "number" && typeof height === "number") {
-          updateBounds(cutout.center, width, height)
-        }
+        updateRectBounds(cutout.center, cutout.width, cutout.height)
       } else if (cutout.shape === "circle") {
-        const radius = distance.parse(cutout.radius)
-        if (radius !== undefined) {
-          updateBounds(cutout.center, radius * 2, radius * 2)
-        }
+        updateCircleBounds(cutout.center, cutout.radius)
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       }
@@ -163,7 +204,7 @@ export function computePcbBounds({
       updateBounds(circuitJsonElm.anchor_position, 0, 0)
     } else if (circuitJsonElm.type === "pcb_copper_pour") {
       if (circuitJsonElm.shape === "rect") {
-        updateBounds(
+        updateRectBounds(
           circuitJsonElm.center,
           circuitJsonElm.width,
           circuitJsonElm.height,
@@ -306,31 +347,64 @@ export function computePcbBounds({
     } else if (item.type === "pcb_silkscreen_path") {
       updateTraceBounds(item.route)
     } else if (item.type === "pcb_silkscreen_rect") {
-      updateBounds(item.center, item.width, item.height)
+      updateRectBounds(item.center, item.width, item.height)
     } else if (item.type === "pcb_silkscreen_circle") {
-      const radius = distance.parse(item.radius)
-      if (radius !== undefined) {
-        updateBounds(item.center, radius * 2, radius * 2)
-      }
-    } else if (item.type === "pcb_silkscreen_line") {
-      updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
-      updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
+      updateCircleBounds(item.center, item.radius)
+    } else if (item.type === "pcb_silkscreen_line" && hasLineEndpoints(item)) {
+      updateLineBounds(item)
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
       if (cutout.shape === "rect") {
         const { width, height } = cutout
         if (typeof width === "number" && typeof height === "number") {
-          updateBounds(cutout.center, width, height)
+          updateRectBounds(cutout.center, width, height)
         }
       } else if (cutout.shape === "circle") {
-        const radius = distance.parse(cutout.radius)
-        if (radius !== undefined) {
-          updateBounds(cutout.center, radius * 2, radius * 2)
-        }
+        updateCircleBounds(cutout.center, cutout.radius)
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       }
     }
+  }
+
+  function updateRectBounds(
+    center: Point | undefined,
+    width: number | undefined,
+    height: number | undefined,
+  ) {
+    if (
+      typeof width !== "number" ||
+      typeof height !== "number" ||
+      !center ||
+      typeof center.x !== "number" ||
+      typeof center.y !== "number"
+    )
+      return
+    updateBounds(center, width, height)
+  }
+
+  function updateCircleBounds(
+    center: Point | undefined,
+    radius: number | string | undefined,
+  ) {
+    if (!hasCenterRadius({ center, radius } as AnyCircuitElement)) return
+    const parsedRadius = distance.parse(radius)
+    if (parsedRadius === undefined) return
+    updateBounds(center, parsedRadius * 2, parsedRadius * 2)
+  }
+
+  function updateLineBounds(
+    line:
+      | (AnyCircuitElement & { x1: number; y1: number; x2: number; y2: number })
+      | {
+          x1: number
+          y1: number
+          x2: number
+          y2: number
+        },
+  ) {
+    updateBounds({ x: line.x1, y: line.y1 }, 0, 0)
+    updateBounds({ x: line.x2, y: line.y2 }, 0, 0)
   }
 
   function updatePanelBounds({
