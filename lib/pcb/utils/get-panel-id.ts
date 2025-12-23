@@ -5,4 +5,3 @@ export const getPanelId = (elm: AnyCircuitElement): string => {
   if (hasStringProp(elm, "pcb_panel_id")) return elm.pcb_panel_id
   return "panel"
 }
-

@@ -366,7 +366,7 @@ export function computePcbBounds({
       }
     }
   }
-
+ 
   function updateRectBounds(
     center: Point | undefined,
     width: number | undefined,

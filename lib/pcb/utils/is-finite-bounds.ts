@@ -5,4 +5,3 @@ export const isFiniteBounds = (b: Bounds): boolean =>
   Number.isFinite(b.minY) &&
   Number.isFinite(b.maxX) &&
   Number.isFinite(b.maxY)
-

@@ -6,4 +6,3 @@ export const getEmptyBounds = (): Bounds => ({
   maxX: Number.NEGATIVE_INFINITY,
   maxY: Number.NEGATIVE_INFINITY,
 })
-

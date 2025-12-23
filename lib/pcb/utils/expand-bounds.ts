@@ -6,4 +6,3 @@ export const expandBounds = (target: Bounds, source: Bounds): Bounds => ({
   maxX: Math.max(target.maxX, source.maxX),
   maxY: Math.max(target.maxY, source.maxY),
 })
-
