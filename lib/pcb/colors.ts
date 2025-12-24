@@ -34,6 +34,7 @@ export interface PcbColorMap {
   }
   substrate: string
   courtyard: string
+  keepout?: string
   debugComponent: {
     fill: string | null
     stroke: string | null
@@ -52,6 +53,7 @@ export interface PcbColorOverrides {
   soldermaskOverCopper?: Partial<PcbColorMap["soldermaskOverCopper"]>
   substrate?: string
   courtyard?: string
+  keepout?: string
   debugComponent?: Partial<PcbColorMap["debugComponent"]>
 }
 
@@ -86,6 +88,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
   },
   boardOutline: "rgba(255, 255, 255, 0.5)",
   courtyard: "#FF00FF",
+  keepout: "#FF6B6B", // Red color for keepout zones
   debugComponent: {
     fill: null,
     stroke: null,
