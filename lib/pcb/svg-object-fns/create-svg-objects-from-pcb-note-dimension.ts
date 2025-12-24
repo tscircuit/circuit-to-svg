@@ -36,6 +36,7 @@ export function createSvgObjectsFromPcbNoteDimension(
     arrow_size,
     offset_distance,
     offset_direction,
+    text_ccw_rotation,
   } = dimension
 
   if (!from || !to) {
@@ -167,13 +168,7 @@ export function createSvgObjectsFromPcbNoteDimension(
     y: (from.y + to.y) / 2 + offsetVector.y,
   }
 
-  const textOffset = arrow_size * 1.5
-  const textPoint = {
-    x: midPoint.x + perpendicular.x * textOffset,
-    y: midPoint.y + perpendicular.y * textOffset,
-  }
-
-  const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
+  // Calculate text angle first to determine if we need additional offset
   const [screenFromX, screenFromY] = applyToPoint(transform, [
     fromOffset.x,
     fromOffset.y,
@@ -194,6 +189,49 @@ export function createSvgObjectsFromPcbNoteDimension(
   if (textAngle > 90 || textAngle < -90) {
     textAngle += 180
   }
+
+  // Apply text_ccw_rotation if provided (in degrees, subtract because SVG rotate is clockwise)
+  const finalTextAngle =
+    typeof text_ccw_rotation === "number" && Number.isFinite(text_ccw_rotation)
+      ? textAngle - text_ccw_rotation
+      : textAngle
+
+  // Calculate additional offset to prevent text from intersecting the line when rotated
+  let additionalOffset = 0
+  if (
+    text &&
+    typeof text_ccw_rotation === "number" &&
+    Number.isFinite(text_ccw_rotation)
+  ) {
+    // Estimate text dimensions (approximate for Arial font)
+    const textWidth = text.length * font_size * 0.6 // Approximate character width
+    const textHeight = font_size
+
+    // Calculate how much the rotated text extends toward the line
+    // The text is rotated by text_ccw_rotation relative to the line direction
+    const rotationRad = (text_ccw_rotation * Math.PI) / 180
+    const sinRot = Math.abs(Math.sin(rotationRad))
+    const cosRot = Math.abs(Math.cos(rotationRad))
+
+    // Half-width and half-height of text bounding box
+    const halfWidth = textWidth / 2
+    const halfHeight = textHeight / 2
+
+    // Maximum extension toward the line (perpendicular direction)
+    // This is the distance from text center to edge in the perpendicular direction
+    const maxExtension = halfWidth * sinRot + halfHeight * cosRot
+
+    // Add padding to ensure no intersection
+    additionalOffset = maxExtension + font_size * 0.3
+  }
+
+  const textOffset = arrow_size * 1.5 + additionalOffset
+  const textPoint = {
+    x: midPoint.x + perpendicular.x * textOffset,
+    y: midPoint.y + perpendicular.y * textOffset,
+  }
+
+  const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
 
   const transformedFontSize = font_size * Math.abs(transform.a)
 
@@ -251,7 +289,7 @@ export function createSvgObjectsFromPcbNoteDimension(
         "text-anchor": "middle",
         "dominant-baseline": "central",
         class: "pcb-note-dimension-text",
-        transform: `rotate(${textAngle} ${textX} ${textY})`,
+        transform: `rotate(${finalTextAngle} ${textX} ${textY})`,
       },
       children: [
         {
