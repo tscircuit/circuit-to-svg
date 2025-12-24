@@ -13,6 +13,10 @@ function normalize(vector: Point2D): Point2D {
   return { x: vector.x / length, y: vector.y / length }
 }
 
+const TEXT_OFFSET_MULTIPLIER = 1.5 // Text offset multiplier relative to arrow size
+const CHARACTER_WIDTH_MULTIPLIER = 0.6 // Approximate character width relative to font size
+const TEXT_INTERSECTION_PADDING_MULTIPLIER = 0.3 // Padding multiplier to prevent text-line intersection
+
 function toPath(points: Point2D[]): string {
   return points
     .map((point, index) =>
@@ -236,7 +240,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     Number.isFinite(text_ccw_rotation)
   ) {
     // Estimate text dimensions (approximate for Arial font)
-    const textWidth = text.length * font_size * 0.6 // Approximate character width
+    const textWidth = text.length * font_size * CHARACTER_WIDTH_MULTIPLIER
     const textHeight = font_size
 
     // Calculate how much the rotated text extends toward the line
@@ -254,10 +258,11 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     const maxExtension = halfWidth * sinRot + halfHeight * cosRot
 
     // Add padding to ensure no intersection
-    additionalOffset = maxExtension + font_size * 0.3
+    additionalOffset =
+      maxExtension + font_size * TEXT_INTERSECTION_PADDING_MULTIPLIER
   }
 
-  const textOffset = arrowSize * 1.5 + additionalOffset
+  const textOffset = arrowSize * TEXT_OFFSET_MULTIPLIER + additionalOffset
   const textPoint = {
     x: midPoint.x + perpendicular.x * textOffset,
     y: midPoint.y + perpendicular.y * textOffset,
