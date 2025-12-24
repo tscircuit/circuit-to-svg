@@ -28,6 +28,48 @@ const angledDimension = {
   offset_direction: { x: -Math.SQRT1_2, y: Math.SQRT1_2 },
 }
 
+const rotatedDimension90 = {
+  type: "pcb_note_dimension" as const,
+  pcb_note_dimension_id: "note_dimension_3",
+  from: { x: 0, y: -8 },
+  to: { x: 10, y: -8 },
+  text: "10.00 mm",
+  font: "tscircuit2024" as const,
+  font_size: 1.2,
+  arrow_size: 0.8,
+  offset_distance: 1,
+  offset_direction: { x: 0, y: 1 },
+  text_ccw_rotation: 90,
+}
+
+const rotatedDimension45 = {
+  type: "pcb_note_dimension" as const,
+  pcb_note_dimension_id: "note_dimension_4",
+  from: { x: -10, y: 0 },
+  to: { x: -2, y: 0 },
+  text: "8.00 mm",
+  font: "tscircuit2024" as const,
+  font_size: 1.0,
+  arrow_size: 0.7,
+  offset_distance: 1,
+  offset_direction: { x: 0, y: 1 },
+  text_ccw_rotation: 45,
+}
+
+const rotatedDimension30 = {
+  type: "pcb_note_dimension" as const,
+  pcb_note_dimension_id: "note_dimension_7",
+  from: { x: -10, y: -8 },
+  to: { x: -4, y: -8 },
+  text: "6.00 mm",
+  font: "tscircuit2024" as const,
+  font_size: 0.9,
+  arrow_size: 0.6,
+  offset_distance: 1,
+  offset_direction: { x: 0, y: 1 },
+  text_ccw_rotation: 30,
+}
+
 test("pcb note dimension renders", () => {
   const svg = convertCircuitJsonToPcbSvg([
     {
@@ -42,6 +84,9 @@ test("pcb note dimension renders", () => {
     },
     dimension,
     angledDimension,
+    rotatedDimension90,
+    rotatedDimension45,
+    rotatedDimension30,
   ])
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
