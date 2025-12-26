@@ -35,6 +35,7 @@ import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
 import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
 import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-pill"
+import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
 import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
@@ -275,7 +276,8 @@ export function convertCircuitJsonToPcbSvg(
       circuitJsonElm.type === "pcb_silkscreen_text" ||
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
       circuitJsonElm.type === "pcb_silkscreen_circle" ||
-      circuitJsonElm.type === "pcb_silkscreen_line"
+      circuitJsonElm.type === "pcb_silkscreen_line" ||
+      circuitJsonElm.type === "pcb_silkscreen_oval"
     ) {
       updateSilkscreenBounds(circuitJsonElm)
     } else if (circuitJsonElm.type === "pcb_copper_text") {
@@ -575,6 +577,12 @@ export function convertCircuitJsonToPcbSvg(
     } else if (item.type === "pcb_silkscreen_line") {
       updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
       updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
+    } else if (item.type === "pcb_silkscreen_oval") {
+      const radiusX = distance.parse(item.radius_x)
+      const radiusY = distance.parse(item.radius_y)
+      if (radiusX !== undefined && radiusY !== undefined) {
+        updateBounds(item.center, radiusX * 2, radiusY * 2)
+      }
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
       if (cutout.shape === "rect") {
@@ -635,6 +643,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbSilkscreenLine(elm, ctx)
     case "pcb_silkscreen_pill":
       return createSvgObjectsFromPcbSilkscreenPill(elm, ctx)
+    case "pcb_silkscreen_oval":
+      return createSvgObjectsFromPcbSilkscreenOval(elm, ctx)
     case "pcb_copper_text":
       return createSvgObjectsFromPcbCopperText(elm as any, ctx)
     case "pcb_courtyard_rect":
