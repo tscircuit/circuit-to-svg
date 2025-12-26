@@ -4,6 +4,8 @@ import type {
   pcb_cutout,
   PcbCutout,
   PcbPanel,
+  PCBKeepoutRect,
+  PCBKeepoutCircle,
 } from "circuit-json"
 import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
@@ -42,6 +44,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbKeepout } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
   createSvgObjectsForPcbGrid,
@@ -154,6 +157,7 @@ export function convertCircuitJsonToPcbSvg(
     },
     substrate: colorOverrides?.substrate ?? DEFAULT_PCB_COLOR_MAP.substrate,
     courtyard: colorOverrides?.courtyard ?? DEFAULT_PCB_COLOR_MAP.courtyard,
+    keepout: colorOverrides?.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout,
     debugComponent: {
       fill:
         colorOverrides?.debugComponent?.fill ??
@@ -252,6 +256,20 @@ export function convertCircuitJsonToPcbSvg(
         }
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
+      }
+    } else if (circuitJsonElm.type === "pcb_keepout") {
+      const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
+      if (keepout.shape === "rect") {
+        updateBounds(keepout.center, keepout.width, keepout.height)
+      } else if (keepout.shape === "circle") {
+        // radius is a number, not a Distance type
+        const radius =
+          typeof keepout.radius === "number"
+            ? keepout.radius
+            : (distance.parse(keepout.radius as any) ?? 0)
+        if (radius > 0) {
+          updateBounds(keepout.center, radius * 2, radius * 2)
+        }
       }
     } else if (
       circuitJsonElm.type === "pcb_silkscreen_text" ||
@@ -655,6 +673,11 @@ function createSvgObjects({
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
+    case "pcb_keepout":
+      return createSvgObjectsFromPcbKeepout(
+        elm as PCBKeepoutRect | PCBKeepoutCircle,
+        ctx,
+      )
     case "pcb_group":
       return ctx.showPcbGroups
         ? createSvgObjectsFromPcbGroup(elm as any, ctx)
