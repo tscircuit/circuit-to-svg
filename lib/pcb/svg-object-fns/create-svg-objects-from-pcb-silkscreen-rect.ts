@@ -19,6 +19,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     has_stroke,
     is_stroke_dashed,
     corner_radius,
+    ccw_rotation = 0,
   } = pcbSilkscreenRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -52,14 +53,23 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
   const attributes: { [key: string]: string } = {
-    x: (transformedX - transformedWidth / 2).toString(),
-    y: (transformedY - transformedHeight / 2).toString(),
+    x: (-transformedWidth / 2).toString(),
+    y: (-transformedHeight / 2).toString(),
     width: transformedWidth.toString(),
     height: transformedHeight.toString(),
     class: `pcb-silkscreen-rect pcb-silkscreen-${layer}`,
     "data-pcb-silkscreen-rect-id": pcb_silkscreen_rect_id,
     "data-type": "pcb_silkscreen_rect",
     "data-pcb-layer": layer,
+  }
+
+  // Add transform for rotation if ccw_rotation is provided
+  if (typeof ccw_rotation === "number" && ccw_rotation !== 0) {
+    attributes.transform = `translate(${transformedX} ${transformedY}) rotate(${-ccw_rotation})`
+  } else {
+    // No rotation, just translate to center position
+    attributes.x = (transformedX - transformedWidth / 2).toString()
+    attributes.y = (transformedY - transformedHeight / 2).toString()
   }
   if (transformedCornerRadiusX > 0) {
     attributes.rx = transformedCornerRadiusX.toString()
