@@ -114,4 +114,3 @@ test("silkscreen rect with rotation", () => {
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })
-
