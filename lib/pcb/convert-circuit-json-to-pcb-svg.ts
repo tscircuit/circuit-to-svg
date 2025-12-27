@@ -259,7 +259,7 @@ export function convertCircuitJsonToPcbSvg(
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       } else if (cutout.shape === "path") {
-        const cutoutPath = cutout as any
+        const cutoutPath = cutout
         if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
           updateTraceBounds(cutoutPath.route)
         }
@@ -601,7 +601,7 @@ export function convertCircuitJsonToPcbSvg(
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
       } else if (cutout.shape === "path") {
-        const cutoutPath = cutout as any
+        const cutoutPath = cutout
         if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
           updateTraceBounds(cutoutPath.route)
         }
@@ -693,7 +693,7 @@ function createSvgObjects({
     case "pcb_via":
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
-      const cutout = elm as any
+      const cutout = elm as PcbCutout
       if (cutout.shape === "path") {
         return createSvgObjectsFromPcbCutoutPath(cutout, ctx)
       }
