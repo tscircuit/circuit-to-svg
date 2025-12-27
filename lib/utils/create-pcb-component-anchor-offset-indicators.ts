@@ -30,20 +30,18 @@ interface VerticalDimensionParams {
 // Treat very small deltas as axis-aligned to avoid cluttering the debug overlay
 // with near-zero dimensions caused by floating point noise.
 const OFFSET_THRESHOLD_MM = 0.05
-const TICK_SIZE_PX = 4
-const LABEL_GAP_PX = 8
-const LABEL_FONT_SIZE_PX = 11
-const STROKE_WIDTH_PX = 1
-const ANCHOR_MARKER_SIZE_PX = 5
-const ANCHOR_MARKER_STROKE_WIDTH_PX = 1.5
-const COMPONENT_ANCHOR_MARKER_RADIUS_PX = 2
-const CONNECTOR_GROUP_GAP_PX = ANCHOR_MARKER_SIZE_PX + 2
-const CONNECTOR_COMPONENT_GAP_PX = COMPONENT_ANCHOR_MARKER_RADIUS_PX + 2
-const DIMENSION_ANCHOR_CLEARANCE_PX = ANCHOR_MARKER_SIZE_PX + TICK_SIZE_PX + 6
-const COMPONENT_GAP_PX = 15
-const COMPONENT_SIDE_GAP_PX = 10
 const DISTANCE_MULTIPLIER = 0.2
 const MAX_OFFSET_PX = 50
+
+const BASE_TICK_SIZE_PX = 4
+const BASE_LABEL_GAP_PX = 8
+const BASE_LABEL_FONT_SIZE_PX = 11
+const BASE_STROKE_WIDTH_PX = 1
+const BASE_ANCHOR_MARKER_SIZE_PX = 5
+const BASE_ANCHOR_MARKER_STROKE_WIDTH_PX = 1.5
+const BASE_COMPONENT_ANCHOR_MARKER_RADIUS_PX = 2
+const BASE_COMPONENT_GAP_PX = 15
+const BASE_COMPONENT_SIDE_GAP_PX = 10
 
 export function createAnchorOffsetIndicators(
   params: PcbComponentAnchorOffsetParams,
@@ -75,13 +73,49 @@ export function createAnchorOffsetIndicators(
   const screenComponentWidth = componentWidth * scale
   const screenComponentHeight = componentHeight * scale
 
-  objects.push(createAnchorMarker(screenGroupAnchorX, screenGroupAnchorY))
+  const yDistance = Math.abs(screenComponentY - screenGroupAnchorY)
+  const xDistance = Math.abs(screenComponentX - screenGroupAnchorX)
+  const totalDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance)
+
+  // Compute dynamic sizes so indicators scale with the component/board size.
+  const referenceLength = Math.max(
+    screenComponentWidth,
+    screenComponentHeight,
+    totalDistance,
+  )
+  const scaleFactor = Math.min(1, referenceLength / 200)
+
+  const sizes = {
+    tickSizePx: BASE_TICK_SIZE_PX * scaleFactor,
+    labelGapPx: BASE_LABEL_GAP_PX * scaleFactor,
+    labelFontSizePx: BASE_LABEL_FONT_SIZE_PX * scaleFactor,
+    strokeWidthPx: Math.max(0.25, BASE_STROKE_WIDTH_PX * scaleFactor),
+    anchorMarkerSizePx: BASE_ANCHOR_MARKER_SIZE_PX * scaleFactor,
+    anchorMarkerStrokeWidthPx: Math.max(
+      0.25,
+      BASE_ANCHOR_MARKER_STROKE_WIDTH_PX * scaleFactor,
+    ),
+    componentAnchorMarkerRadiusPx:
+      BASE_COMPONENT_ANCHOR_MARKER_RADIUS_PX * scaleFactor,
+    connectorGroupGapPx: (BASE_ANCHOR_MARKER_SIZE_PX + 2) * scaleFactor,
+    connectorComponentGapPx:
+      (BASE_COMPONENT_ANCHOR_MARKER_RADIUS_PX + 2) * scaleFactor,
+    dimensionAnchorClearancePx:
+      (BASE_ANCHOR_MARKER_SIZE_PX + BASE_TICK_SIZE_PX + 6) * scaleFactor,
+    componentGapPx: BASE_COMPONENT_GAP_PX * scaleFactor,
+    componentSideGapPx: BASE_COMPONENT_SIDE_GAP_PX * scaleFactor,
+  }
+
+  objects.push(
+    createAnchorMarker(screenGroupAnchorX, screenGroupAnchorY, sizes),
+  )
 
   const trimmedConnector = getTrimmedConnectorLine(
     screenGroupAnchorX,
     screenGroupAnchorY,
     screenComponentX,
     screenComponentY,
+    sizes,
   )
 
   objects.push({
@@ -108,7 +142,7 @@ export function createAnchorOffsetIndicators(
     attributes: {
       cx: screenComponentX.toString(),
       cy: screenComponentY.toString(),
-      r: COMPONENT_ANCHOR_MARKER_RADIUS_PX.toString(),
+      r: sizes.componentAnchorMarkerRadiusPx.toString(),
       fill: "#ffffff",
       opacity: "0.7",
       class: "anchor-offset-component-marker",
@@ -117,11 +151,7 @@ export function createAnchorOffsetIndicators(
     value: "",
   })
 
-  const yDistance = Math.abs(screenComponentY - screenGroupAnchorY)
-  const xDistance = Math.abs(screenComponentX - screenGroupAnchorX)
-  const totalDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance)
-
-  const componentHeightOffset = screenComponentHeight / 2 + COMPONENT_GAP_PX
+  const componentHeightOffset = screenComponentHeight / 2 + sizes.componentGapPx
   const dynamicOffset = Math.max(
     componentHeightOffset,
     Math.min(MAX_OFFSET_PX, totalDistance * DISTANCE_MULTIPLIER),
@@ -132,20 +162,21 @@ export function createAnchorOffsetIndicators(
       ? screenComponentY - dynamicOffset
       : screenComponentY + dynamicOffset
 
-  const componentWidthOffset = screenComponentWidth / 2 + COMPONENT_SIDE_GAP_PX
+  const componentWidthOffset =
+    screenComponentWidth / 2 + sizes.componentSideGapPx
   let verticalLineX =
     offsetX > 0
       ? screenComponentX + componentWidthOffset
       : screenComponentX - componentWidthOffset
 
   if (
-    isTooCloseToAnchor(horizontalLineY, screenGroupAnchorY) ||
-    isTooCloseToAnchor(horizontalLineY, screenComponentY)
+    isTooCloseToAnchor(horizontalLineY, screenGroupAnchorY, sizes) ||
+    isTooCloseToAnchor(horizontalLineY, screenComponentY, sizes)
   ) {
     const minY = Math.min(screenGroupAnchorY, screenComponentY)
     const maxY = Math.max(screenGroupAnchorY, screenComponentY)
-    const candidateAbove = minY - DIMENSION_ANCHOR_CLEARANCE_PX
-    const candidateBelow = maxY + DIMENSION_ANCHOR_CLEARANCE_PX
+    const candidateAbove = minY - sizes.dimensionAnchorClearancePx
+    const candidateBelow = maxY + sizes.dimensionAnchorClearancePx
     horizontalLineY =
       Math.abs(horizontalLineY - candidateAbove) <
       Math.abs(horizontalLineY - candidateBelow)
@@ -154,13 +185,13 @@ export function createAnchorOffsetIndicators(
   }
 
   if (
-    isTooCloseToAnchor(verticalLineX, screenGroupAnchorX) ||
-    isTooCloseToAnchor(verticalLineX, screenComponentX)
+    isTooCloseToAnchor(verticalLineX, screenGroupAnchorX, sizes) ||
+    isTooCloseToAnchor(verticalLineX, screenComponentX, sizes)
   ) {
     const minX = Math.min(screenGroupAnchorX, screenComponentX)
     const maxX = Math.max(screenGroupAnchorX, screenComponentX)
-    const candidateLeft = minX - DIMENSION_ANCHOR_CLEARANCE_PX
-    const candidateRight = maxX + DIMENSION_ANCHOR_CLEARANCE_PX
+    const candidateLeft = minX - sizes.dimensionAnchorClearancePx
+    const candidateRight = maxX + sizes.dimensionAnchorClearancePx
     verticalLineX =
       Math.abs(verticalLineX - candidateLeft) <
       Math.abs(verticalLineX - candidateRight)
@@ -177,6 +208,7 @@ export function createAnchorOffsetIndicators(
         offsetMm: offsetX,
         offsetY: offsetY,
         displayOffset: displayXOffset,
+        sizes,
       }),
     )
   }
@@ -190,6 +222,7 @@ export function createAnchorOffsetIndicators(
         offsetMm: offsetY,
         offsetX: offsetX,
         displayOffset: displayYOffset,
+        sizes,
       }),
     )
   }
@@ -202,11 +235,15 @@ function getTrimmedConnectorLine(
   y1: number,
   x2: number,
   y2: number,
+  sizes: {
+    connectorGroupGapPx: number
+    connectorComponentGapPx: number
+  },
 ): { x1: number; y1: number; x2: number; y2: number } {
   const dx = x2 - x1
   const dy = y2 - y1
   const distance = Math.hypot(dx, dy)
-  const totalTrim = CONNECTOR_GROUP_GAP_PX + CONNECTOR_COMPONENT_GAP_PX
+  const totalTrim = sizes.connectorGroupGapPx + sizes.connectorComponentGapPx
 
   if (!(distance > totalTrim)) return { x1, y1, x2, y2 }
 
@@ -214,18 +251,26 @@ function getTrimmedConnectorLine(
   const uy = dy / distance
 
   return {
-    x1: x1 + ux * CONNECTOR_GROUP_GAP_PX,
-    y1: y1 + uy * CONNECTOR_GROUP_GAP_PX,
-    x2: x2 - ux * CONNECTOR_COMPONENT_GAP_PX,
-    y2: y2 - uy * CONNECTOR_COMPONENT_GAP_PX,
+    x1: x1 + ux * sizes.connectorGroupGapPx,
+    y1: y1 + uy * sizes.connectorGroupGapPx,
+    x2: x2 - ux * sizes.connectorComponentGapPx,
+    y2: y2 - uy * sizes.connectorComponentGapPx,
   }
 }
 
-function isTooCloseToAnchor(value: number, anchorValue: number): boolean {
-  return Math.abs(value - anchorValue) < DIMENSION_ANCHOR_CLEARANCE_PX
+function isTooCloseToAnchor(
+  value: number,
+  anchorValue: number,
+  sizes: { dimensionAnchorClearancePx: number },
+): boolean {
+  return Math.abs(value - anchorValue) < sizes.dimensionAnchorClearancePx
 }
 
-function createAnchorMarker(x: number, y: number): SvgObject {
+function createAnchorMarker(
+  x: number,
+  y: number,
+  sizes: { anchorMarkerSizePx: number; anchorMarkerStrokeWidthPx: number },
+): SvgObject {
   return {
     name: "g",
     type: "element",
@@ -239,11 +284,11 @@ function createAnchorMarker(x: number, y: number): SvgObject {
         type: "element",
         attributes: {
           x1: x.toString(),
-          y1: (y - ANCHOR_MARKER_SIZE_PX).toString(),
+          y1: (y - sizes.anchorMarkerSizePx).toString(),
           x2: x.toString(),
-          y2: (y + ANCHOR_MARKER_SIZE_PX).toString(),
+          y2: (y + sizes.anchorMarkerSizePx).toString(),
           stroke: "#ffffff",
-          "stroke-width": ANCHOR_MARKER_STROKE_WIDTH_PX.toString(),
+          "stroke-width": sizes.anchorMarkerStrokeWidthPx.toString(),
           "stroke-linecap": "round",
         },
         children: [],
@@ -253,12 +298,12 @@ function createAnchorMarker(x: number, y: number): SvgObject {
         name: "line",
         type: "element",
         attributes: {
-          x1: (x - ANCHOR_MARKER_SIZE_PX).toString(),
+          x1: (x - sizes.anchorMarkerSizePx).toString(),
           y1: y.toString(),
-          x2: (x + ANCHOR_MARKER_SIZE_PX).toString(),
+          x2: (x + sizes.anchorMarkerSizePx).toString(),
           y2: y.toString(),
           stroke: "#ffffff",
-          "stroke-width": ANCHOR_MARKER_STROKE_WIDTH_PX.toString(),
+          "stroke-width": sizes.anchorMarkerStrokeWidthPx.toString(),
           "stroke-linecap": "round",
         },
         children: [],
@@ -276,11 +321,17 @@ function createHorizontalDimension({
   offsetMm,
   offsetY,
   displayOffset,
+  sizes,
 }: HorizontalDimensionParams & {
   displayOffset?: number | string
+  sizes: {
+    tickSizePx: number
+    labelGapPx: number
+    labelFontSizePx: number
+    strokeWidthPx: number
+  }
 }): SvgObject[] {
   const objects: SvgObject[] = []
-
   objects.push({
     name: "line",
     type: "element",
@@ -290,7 +341,7 @@ function createHorizontalDimension({
       x2: endX.toString(),
       y2: y.toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
       class: "anchor-offset-dimension-x",
     },
     children: [],
@@ -302,11 +353,11 @@ function createHorizontalDimension({
     type: "element",
     attributes: {
       x1: startX.toString(),
-      y1: (y - TICK_SIZE_PX).toString(),
+      y1: (y - sizes.tickSizePx).toString(),
       x2: startX.toString(),
-      y2: (y + TICK_SIZE_PX).toString(),
+      y2: (y + sizes.tickSizePx).toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
     },
     children: [],
     value: "",
@@ -317,11 +368,11 @@ function createHorizontalDimension({
     type: "element",
     attributes: {
       x1: endX.toString(),
-      y1: (y - TICK_SIZE_PX).toString(),
+      y1: (y - sizes.tickSizePx).toString(),
       x2: endX.toString(),
-      y2: (y + TICK_SIZE_PX).toString(),
+      y2: (y + sizes.tickSizePx).toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
     },
     children: [],
     value: "",
@@ -330,8 +381,8 @@ function createHorizontalDimension({
   const midX = (startX + endX) / 2
   const labelY =
     offsetY > 0
-      ? y - TICK_SIZE_PX - LABEL_GAP_PX
-      : y + TICK_SIZE_PX + LABEL_GAP_PX
+      ? y - sizes.tickSizePx - sizes.labelGapPx
+      : y + sizes.tickSizePx + sizes.labelGapPx
 
   objects.push({
     name: "text",
@@ -340,7 +391,7 @@ function createHorizontalDimension({
       x: midX.toString(),
       y: labelY.toString(),
       fill: "#ffffff",
-      "font-size": LABEL_FONT_SIZE_PX.toString(),
+      "font-size": sizes.labelFontSizePx.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": "middle",
       "dominant-baseline": offsetY > 0 ? "baseline" : "hanging",
@@ -368,7 +419,15 @@ function createVerticalDimension({
   offsetMm,
   offsetX,
   displayOffset,
-}: VerticalDimensionParams & { displayOffset?: number | string }): SvgObject[] {
+  sizes,
+}: VerticalDimensionParams & {
+  displayOffset?: number | string
+  sizes: {
+    tickSizePx: number
+    labelFontSizePx: number
+    strokeWidthPx: number
+  }
+}): SvgObject[] {
   const objects: SvgObject[] = []
 
   objects.push({
@@ -380,7 +439,7 @@ function createVerticalDimension({
       x2: x.toString(),
       y2: endY.toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
       class: "anchor-offset-dimension-y",
     },
     children: [],
@@ -391,12 +450,12 @@ function createVerticalDimension({
     name: "line",
     type: "element",
     attributes: {
-      x1: (x - TICK_SIZE_PX).toString(),
+      x1: (x - sizes.tickSizePx).toString(),
       y1: startY.toString(),
-      x2: (x + TICK_SIZE_PX).toString(),
+      x2: (x + sizes.tickSizePx).toString(),
       y2: startY.toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
     },
     children: [],
     value: "",
@@ -406,19 +465,20 @@ function createVerticalDimension({
     name: "line",
     type: "element",
     attributes: {
-      x1: (x - TICK_SIZE_PX).toString(),
+      x1: (x - sizes.tickSizePx).toString(),
       y1: endY.toString(),
-      x2: (x + TICK_SIZE_PX).toString(),
+      x2: (x + sizes.tickSizePx).toString(),
       y2: endY.toString(),
       stroke: "#ffffff",
-      "stroke-width": STROKE_WIDTH_PX.toString(),
+      "stroke-width": sizes.strokeWidthPx.toString(),
     },
     children: [],
     value: "",
   })
 
   const midY = (startY + endY) / 2
-  const labelX = offsetX < 0 ? x - TICK_SIZE_PX - 4 : x + TICK_SIZE_PX + 4
+  const labelX =
+    offsetX < 0 ? x - sizes.tickSizePx - 4 : x + sizes.tickSizePx + 4
 
   objects.push({
     name: "text",
@@ -427,7 +487,7 @@ function createVerticalDimension({
       x: labelX.toString(),
       y: midY.toString(),
       fill: "#ffffff",
-      "font-size": LABEL_FONT_SIZE_PX.toString(),
+      "font-size": sizes.labelFontSizePx.toString(),
       "font-family": "Arial, sans-serif",
       "text-anchor": offsetX < 0 ? "end" : "start",
       "dominant-baseline": "middle",
