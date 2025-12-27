@@ -6,6 +6,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_panel: 5,
   pcb_board: 10,
   pcb_cutout: 15,
+  pcb_cutout_path: 15,
   pcb_keepout: 16,
   pcb_hole: 18,
   pcb_plated_hole_drill: 19,
