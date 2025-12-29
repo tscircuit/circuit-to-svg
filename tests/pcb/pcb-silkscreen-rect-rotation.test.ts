@@ -27,6 +27,17 @@ test("silkscreen rect with rotation", () => {
       stroke_width: 0.1,
       ccw_rotation: 0,
     },
+    {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      pcb_silkscreen_text_id: "text_0",
+      font: "tscircuit2024",
+      font_size: 0.5,
+      pcb_component_id: "pcb_component_1",
+      anchor_position: { x: 0, y: -0.8 },
+      anchor_alignment: "center",
+      text: "0°",
+    },
     // Add SMT pad to mark the center point for horizontal rect
     {
       type: "pcb_smtpad",
@@ -50,6 +61,17 @@ test("silkscreen rect with rotation", () => {
       height: 1,
       stroke_width: 0.1,
       ccw_rotation: 90,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      pcb_silkscreen_text_id: "text_90",
+      font: "tscircuit2024",
+      font_size: 0.5,
+      pcb_component_id: "pcb_component_2",
+      anchor_position: { x: 5, y: 1.5 },
+      anchor_alignment: "center",
+      text: "90°",
     },
     // Add SMT pad to mark the center point for vertical rect
     {
@@ -75,6 +97,17 @@ test("silkscreen rect with rotation", () => {
       stroke_width: 0.1,
       ccw_rotation: 180,
     },
+    {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      pcb_silkscreen_text_id: "text_180",
+      font: "tscircuit2024",
+      font_size: 0.5,
+      pcb_component_id: "pcb_component_3",
+      anchor_position: { x: 0, y: 5.8 },
+      anchor_alignment: "center",
+      text: "180°",
+    },
     // Add SMT pad to mark the center point for upside down rect
     {
       type: "pcb_smtpad",
@@ -98,6 +131,17 @@ test("silkscreen rect with rotation", () => {
       height: 1,
       stroke_width: 0.1,
       ccw_rotation: 45,
+    },
+    {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      pcb_silkscreen_text_id: "text_45",
+      font: "tscircuit2024",
+      font_size: 0.5,
+      pcb_component_id: "pcb_component_4",
+      anchor_position: { x: 5, y: 6.2 },
+      anchor_alignment: "center",
+      text: "45°",
     },
     // Add SMT pad to mark the center point for diagonal rect
     {
