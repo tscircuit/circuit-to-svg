@@ -45,6 +45,7 @@ import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-
 import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-objects-from-pcb-cutout-path"
 import { createSvgObjectsFromPcbKeepout } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
@@ -257,6 +258,11 @@ export function convertCircuitJsonToPcbSvg(
         }
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
+      } else if (cutout.shape === "path") {
+        const cutoutPath = cutout
+        if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
+          updateTraceBounds(cutoutPath.route)
+        }
       }
     } else if (circuitJsonElm.type === "pcb_keepout") {
       const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
@@ -594,6 +600,11 @@ export function convertCircuitJsonToPcbSvg(
         }
       } else if (cutout.shape === "polygon") {
         updateTraceBounds(cutout.points)
+      } else if (cutout.shape === "path") {
+        const cutoutPath = cutout
+        if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
+          updateTraceBounds(cutoutPath.route)
+        }
       }
     }
   }
@@ -682,6 +693,10 @@ function createSvgObjects({
     case "pcb_via":
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
+      const cutout = elm as PcbCutout
+      if (cutout.shape === "path") {
+        return createSvgObjectsFromPcbCutoutPath(cutout, ctx)
+      }
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     case "pcb_keepout":
       return createSvgObjectsFromPcbKeepout(
