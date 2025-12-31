@@ -247,6 +247,31 @@ export function convertCircuitJsonToPcbSvg(
         (circuitJsonElm as any).width,
         (circuitJsonElm as any).height,
       )
+    } else if (
+      circuitJsonElm.type === "pcb_note_dimension" ||
+      circuitJsonElm.type === "pcb_fabrication_note_dimension"
+    ) {
+      const dimension = circuitJsonElm
+      if (!dimension.from || !dimension.to) continue
+
+      const offsetDistance = dimension.offset_distance ?? 0
+      const arrowSize = dimension.arrow_size ?? 0
+      const fontSize = dimension.font_size ?? 1
+      const textLength = dimension.text?.length ?? 0
+      const textWidth = textLength * fontSize * 0.6
+
+      const padding = offsetDistance + arrowSize + textWidth + fontSize
+
+      const minPtX = Math.min(dimension.from.x, dimension.to.x)
+      const maxPtX = Math.max(dimension.from.x, dimension.to.x)
+      const minPtY = Math.min(dimension.from.y, dimension.to.y)
+      const maxPtY = Math.max(dimension.from.y, dimension.to.y)
+
+      minX = Math.min(minX, minPtX - padding)
+      maxX = Math.max(maxX, maxPtX + padding)
+      minY = Math.min(minY, minPtY - padding)
+      maxY = Math.max(maxY, maxPtY + padding)
+      hasBounds = true
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
