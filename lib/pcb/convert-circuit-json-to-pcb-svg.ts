@@ -64,6 +64,7 @@ import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getPcbBoundsFromCircuitJson } from "./get-pcb-bounds-from-circuit-json"
 
 interface PointObjectNotation {
   x: number
@@ -170,146 +171,27 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-  let hasBounds = false
-
-  // Track bounds for pcb_board specifically
-  let boardMinX = Number.POSITIVE_INFINITY
-  let boardMinY = Number.POSITIVE_INFINITY
-  let boardMaxX = Number.NEGATIVE_INFINITY
-  let boardMaxY = Number.NEGATIVE_INFINITY
-  let hasBoardBounds = false
-
-  // Process all elements to determine bounds
-  for (const circuitJsonElm of circuitJson) {
-    if (circuitJsonElm.type === "pcb_panel") {
-      const panel = circuitJsonElm as PcbPanel
-      const width = distance.parse(panel.width)
-      const height = distance.parse(panel.height)
-      if (width === undefined || height === undefined) {
-        continue
-      }
-      const center = panel.center ?? { x: width / 2, y: height / 2 }
-      updateBounds(center, width, height)
-    } else if (circuitJsonElm.type === "pcb_board") {
-      if (
-        circuitJsonElm.outline &&
-        Array.isArray(circuitJsonElm.outline) &&
-        circuitJsonElm.outline.length >= 3
-      ) {
-        updateBoundsToIncludeOutline(circuitJsonElm.outline)
-        updateBoardBoundsToIncludeOutline(circuitJsonElm.outline)
-      } else if (
-        "center" in circuitJsonElm &&
-        "width" in circuitJsonElm &&
-        "height" in circuitJsonElm
-      ) {
-        updateBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-        updateBoardBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-      }
-    } else if (circuitJsonElm.type === "pcb_smtpad") {
-      const pad = circuitJsonElm as any
-      if (
-        pad.shape === "rect" ||
-        pad.shape === "rotated_rect" ||
-        pad.shape === "pill"
-      ) {
-        updateBounds({ x: pad.x, y: pad.y }, pad.width, pad.height)
-      } else if (pad.shape === "circle") {
-        const radius = distance.parse(pad.radius)
-        if (radius !== undefined) {
-          updateBounds({ x: pad.x, y: pad.y }, radius * 2, radius * 2)
-        }
-      } else if (pad.shape === "polygon") {
-        updateTraceBounds(pad.points)
-      }
-    } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
-      updateBounds({ x: circuitJsonElm.x, y: circuitJsonElm.y }, 0, 0)
-    } else if ("route" in circuitJsonElm) {
-      updateTraceBounds(circuitJsonElm.route)
-    } else if (
-      circuitJsonElm.type === "pcb_note_rect" ||
-      circuitJsonElm.type === "pcb_fabrication_note_rect"
-    ) {
-      updateBounds(
-        (circuitJsonElm as any).center,
-        (circuitJsonElm as any).width,
-        (circuitJsonElm as any).height,
-      )
-    } else if (circuitJsonElm.type === "pcb_cutout") {
-      const cutout = circuitJsonElm as PcbCutout
-      if (cutout.shape === "rect") {
-        updateBounds(cutout.center, cutout.width, cutout.height)
-      } else if (cutout.shape === "circle") {
-        const radius = distance.parse(cutout.radius)
-        if (radius !== undefined) {
-          updateBounds(cutout.center, radius * 2, radius * 2)
-        }
-      } else if (cutout.shape === "polygon") {
-        updateTraceBounds(cutout.points)
-      } else if (cutout.shape === "path") {
-        const cutoutPath = cutout
-        if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
-          updateTraceBounds(cutoutPath.route)
-        }
-      }
-    } else if (circuitJsonElm.type === "pcb_keepout") {
-      const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
-      if (keepout.shape === "rect") {
-        updateBounds(keepout.center, keepout.width, keepout.height)
-      } else if (keepout.shape === "circle") {
-        // radius is a number, not a Distance type
-        const radius =
-          typeof keepout.radius === "number"
-            ? keepout.radius
-            : (distance.parse(keepout.radius as any) ?? 0)
-        if (radius > 0) {
-          updateBounds(keepout.center, radius * 2, radius * 2)
-        }
-      }
-    } else if (
-      circuitJsonElm.type === "pcb_silkscreen_text" ||
-      circuitJsonElm.type === "pcb_silkscreen_rect" ||
-      circuitJsonElm.type === "pcb_silkscreen_circle" ||
-      circuitJsonElm.type === "pcb_silkscreen_line" ||
-      circuitJsonElm.type === "pcb_silkscreen_oval"
-    ) {
-      updateSilkscreenBounds(circuitJsonElm)
-    } else if (circuitJsonElm.type === "pcb_copper_text") {
-      updateBounds(circuitJsonElm.anchor_position, 0, 0)
-    } else if (circuitJsonElm.type === "pcb_copper_pour") {
-      if (circuitJsonElm.shape === "rect") {
-        updateBounds(
-          circuitJsonElm.center,
-          circuitJsonElm.width,
-          circuitJsonElm.height,
-        )
-      } else if (circuitJsonElm.shape === "polygon") {
-        updateTraceBounds(circuitJsonElm.points)
-      }
-    }
-  }
+  const {
+    minX,
+    minY,
+    maxX,
+    maxY,
+    boardMinX,
+    boardMinY,
+    boardMaxX,
+    boardMaxY,
+    hasBoardBounds,
+  } = getPcbBoundsFromCircuitJson(circuitJson)
 
   const padding = drawPaddingOutsideBoard ? 1 : 0
   const boundsMinX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinX) ? minX : boardMinX
+    drawPaddingOutsideBoard || !hasBoardBounds ? minX : boardMinX
   const boundsMinY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMinY) ? minY : boardMinY
+    drawPaddingOutsideBoard || !hasBoardBounds ? minY : boardMinY
   const boundsMaxX =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxX) ? maxX : boardMaxX
+    drawPaddingOutsideBoard || !hasBoardBounds ? maxX : boardMaxX
   const boundsMaxY =
-    drawPaddingOutsideBoard || !Number.isFinite(boardMaxY) ? maxY : boardMaxY
+    drawPaddingOutsideBoard || !hasBoardBounds ? maxY : boardMaxY
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -481,132 +363,6 @@ export function convertCircuitJsonToPcbSvg(
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
     throw error
-  }
-
-  function updateBounds(center: any, width: any, height: any) {
-    if (!center) return
-    const centerX = distance.parse(center.x)
-    const centerY = distance.parse(center.y)
-    if (centerX === undefined || centerY === undefined) return
-    const numericWidth = distance.parse(width) ?? 0
-    const numericHeight = distance.parse(height) ?? 0
-    const halfWidth = numericWidth / 2
-    const halfHeight = numericHeight / 2
-    minX = Math.min(minX, centerX - halfWidth)
-    minY = Math.min(minY, centerY - halfHeight)
-    maxX = Math.max(maxX, centerX + halfWidth)
-    maxY = Math.max(maxY, centerY + halfHeight)
-    hasBounds = true
-  }
-
-  function updateBoardBounds(center: any, width: any, height: any) {
-    if (!center) return
-    const centerX = distance.parse(center.x)
-    const centerY = distance.parse(center.y)
-    if (centerX === undefined || centerY === undefined) return
-    const numericWidth = distance.parse(width) ?? 0
-    const numericHeight = distance.parse(height) ?? 0
-    const halfWidth = numericWidth / 2
-    const halfHeight = numericHeight / 2
-    boardMinX = Math.min(boardMinX, centerX - halfWidth)
-    boardMinY = Math.min(boardMinY, centerY - halfHeight)
-    boardMaxX = Math.max(boardMaxX, centerX + halfWidth)
-    boardMaxY = Math.max(boardMaxY, centerY + halfHeight)
-    hasBounds = true
-    hasBoardBounds = true
-  }
-
-  function updateBoundsToIncludeOutline(outline: Point[]) {
-    let updated = false
-    for (const point of outline) {
-      const x = distance.parse(point.x)
-      const y = distance.parse(point.y)
-      if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-      updated = true
-    }
-    if (updated) {
-      hasBounds = true
-    }
-  }
-
-  function updateBoardBoundsToIncludeOutline(outline: Point[]) {
-    let updated = false
-    for (const point of outline) {
-      const x = distance.parse(point.x)
-      const y = distance.parse(point.y)
-      if (x === undefined || y === undefined) continue
-      boardMinX = Math.min(boardMinX, x)
-      boardMinY = Math.min(boardMinY, y)
-      boardMaxX = Math.max(boardMaxX, x)
-      boardMaxY = Math.max(boardMaxY, y)
-      updated = true
-    }
-    if (updated) {
-      hasBounds = true
-      hasBoardBounds = true
-    }
-  }
-
-  function updateTraceBounds(route: any[]) {
-    let updated = false
-    for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
-      if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-      updated = true
-    }
-    if (updated) {
-      hasBounds = true
-    }
-  }
-
-  function updateSilkscreenBounds(item: AnyCircuitElement) {
-    if (item.type === "pcb_silkscreen_text") {
-      updateBounds(item.anchor_position, 0, 0)
-    } else if (item.type === "pcb_silkscreen_path") {
-      updateTraceBounds(item.route)
-    } else if (item.type === "pcb_silkscreen_rect") {
-      updateBounds(item.center, item.width, item.height)
-    } else if (item.type === "pcb_silkscreen_circle") {
-      const radius = distance.parse(item.radius)
-      if (radius !== undefined) {
-        updateBounds(item.center, radius * 2, radius * 2)
-      }
-    } else if (item.type === "pcb_silkscreen_line") {
-      updateBounds({ x: item.x1, y: item.y1 }, 0, 0)
-      updateBounds({ x: item.x2, y: item.y2 }, 0, 0)
-    } else if (item.type === "pcb_silkscreen_oval") {
-      const radiusX = distance.parse(item.radius_x)
-      const radiusY = distance.parse(item.radius_y)
-      if (radiusX !== undefined && radiusY !== undefined) {
-        updateBounds(item.center, radiusX * 2, radiusY * 2)
-      }
-    } else if (item.type === "pcb_cutout") {
-      const cutout = item as PcbCutout
-      if (cutout.shape === "rect") {
-        updateBounds(cutout.center, cutout.width, cutout.height)
-      } else if (cutout.shape === "circle") {
-        const radius = distance.parse(cutout.radius)
-        if (radius !== undefined) {
-          updateBounds(cutout.center, radius * 2, radius * 2)
-        }
-      } else if (cutout.shape === "polygon") {
-        updateTraceBounds(cutout.points)
-      } else if (cutout.shape === "path") {
-        const cutoutPath = cutout
-        if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
-          updateTraceBounds(cutoutPath.route)
-        }
-      }
-    }
   }
 }
 
