@@ -113,6 +113,126 @@ export function getPcbBoundsFromCircuitJson(
         width: circuitJsonElm.width,
         height: circuitJsonElm.height,
       })
+    } else if (
+      circuitJsonElm.type === "pcb_note_dimension" ||
+      circuitJsonElm.type === "pcb_fabrication_note_dimension"
+    ) {
+      const dimension = circuitJsonElm
+      const {
+        from,
+        to,
+        text,
+        font_size = 1,
+        arrow_size,
+        offset_distance,
+        offset_direction,
+      } = dimension
+      if (!from || !to || !arrow_size) continue
+
+      updateBounds({ center: from, width: 0, height: 0 })
+      updateBounds({ center: to, width: 0, height: 0 })
+
+      const normalize = (v: { x: number; y: number }) => {
+        const l = Math.hypot(v.x, v.y) || 1
+        return { x: v.x / l, y: v.y / l }
+      }
+
+      const direction = normalize({ x: to.x - from.x, y: to.y - from.y })
+      if (Number.isNaN(direction.x) || Number.isNaN(direction.y)) continue
+
+      const perpendicular = { x: -direction.y, y: direction.x }
+      const hasOffsetDirection =
+        offset_direction &&
+        typeof offset_direction.x === "number" &&
+        typeof offset_direction.y === "number"
+      const normalizedOffsetDirection = hasOffsetDirection
+        ? normalize(offset_direction)
+        : { x: 0, y: 0 }
+      const offsetMagnitude =
+        typeof offset_distance === "number" ? offset_distance : 0
+
+      const offsetVector = {
+        x: normalizedOffsetDirection.x * offsetMagnitude,
+        y: normalizedOffsetDirection.y * offsetMagnitude,
+      }
+
+      const fromOffset = {
+        x: from.x + offsetVector.x,
+        y: from.y + offsetVector.y,
+      }
+      const toOffset = { x: to.x + offsetVector.x, y: to.y + offsetVector.y }
+      updateBounds({ center: fromOffset, width: 0, height: 0 })
+      updateBounds({ center: toOffset, width: 0, height: 0 })
+
+      const extensionDirection =
+        hasOffsetDirection &&
+        (Math.abs(normalizedOffsetDirection.x) > Number.EPSILON ||
+          Math.abs(normalizedOffsetDirection.y) > Number.EPSILON)
+          ? normalizedOffsetDirection
+          : perpendicular
+
+      const extensionLength = offsetMagnitude + arrow_size
+      const fromExtEnd = {
+        x: from.x + extensionDirection.x * extensionLength,
+        y: from.y + extensionDirection.y * extensionLength,
+      }
+      const toExtEnd = {
+        x: to.x + extensionDirection.x * extensionLength,
+        y: to.y + extensionDirection.y * extensionLength,
+      }
+      updateBounds({ center: fromExtEnd, width: 0, height: 0 })
+      updateBounds({ center: toExtEnd, width: 0, height: 0 })
+
+      // Arrow head points
+      const arrowHalfWidth = arrow_size / 2
+      const fromBase = {
+        x: fromOffset.x + direction.x * arrow_size,
+        y: fromOffset.y + direction.y * arrow_size,
+      }
+      const toBase = {
+        x: toOffset.x - direction.x * arrow_size,
+        y: toOffset.y - direction.y * arrow_size,
+      }
+      const fromArrowP2 = {
+        x: fromBase.x + perpendicular.x * arrowHalfWidth,
+        y: fromBase.y + perpendicular.y * arrowHalfWidth,
+      }
+      const fromArrowP3 = {
+        x: fromBase.x - perpendicular.x * arrowHalfWidth,
+        y: fromBase.y - perpendicular.y * arrowHalfWidth,
+      }
+      updateBounds({ center: fromArrowP2, width: 0, height: 0 })
+      updateBounds({ center: fromArrowP3, width: 0, height: 0 })
+
+      const toArrowP2 = {
+        x: toBase.x + perpendicular.x * arrowHalfWidth,
+        y: toBase.y + perpendicular.y * arrowHalfWidth,
+      }
+      const toArrowP3 = {
+        x: toBase.x - perpendicular.x * arrowHalfWidth,
+        y: toBase.y - perpendicular.y * arrowHalfWidth,
+      }
+      updateBounds({ center: toArrowP2, width: 0, height: 0 })
+      updateBounds({ center: toArrowP3, width: 0, height: 0 })
+
+      if (text) {
+        const midPoint = {
+          x: (from.x + to.x) / 2 + offsetVector.x,
+          y: (from.y + to.y) / 2 + offsetVector.y,
+        }
+        const textOffset = arrow_size * 1.5
+        const textPoint = {
+          x: midPoint.x + perpendicular.x * textOffset,
+          y: midPoint.y + perpendicular.y * textOffset,
+        }
+        const textWidth = text.length * font_size * 0.6
+        const textHeight = font_size
+        updateBounds({
+          center: textPoint,
+          width: textWidth,
+          height: textHeight,
+        })
+      }
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
