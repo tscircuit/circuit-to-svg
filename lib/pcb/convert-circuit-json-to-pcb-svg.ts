@@ -65,6 +65,7 @@ import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getPcbBoundsFromCircuitJson } from "./get-pcb-bounds-from-circuit-json"
+import { resolveViewportBounds } from "./utils/resolve-viewport-bounds"
 
 interface PointObjectNotation {
   x: number
@@ -88,6 +89,16 @@ interface Options {
   showSolderMask?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  viewport?: {
+    minX: number
+    minY: number
+    maxX: number
+    maxY: number
+  }
+  viewportTarget?: {
+    pcb_panel_id?: string
+    pcb_board_id?: string
+  }
 }
 
 export interface PcbContext {
@@ -183,15 +194,26 @@ export function convertCircuitJsonToPcbSvg(
     hasBoardBounds,
   } = getPcbBoundsFromCircuitJson(circuitJson)
 
-  const padding = drawPaddingOutsideBoard ? 1 : 0
-  const boundsMinX =
-    drawPaddingOutsideBoard || !hasBoardBounds ? minX : boardMinX
-  const boundsMinY =
-    drawPaddingOutsideBoard || !hasBoardBounds ? minY : boardMinY
-  const boundsMaxX =
-    drawPaddingOutsideBoard || !hasBoardBounds ? maxX : boardMaxX
-  const boundsMaxY =
-    drawPaddingOutsideBoard || !hasBoardBounds ? maxY : boardMaxY
+  const { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY, padding } =
+    resolveViewportBounds({
+      circuitJson,
+      drawPaddingOutsideBoard,
+      baseBounds: {
+        minX,
+        minY,
+        maxX,
+        maxY,
+        boardMinX,
+        boardMinY,
+        boardMaxX,
+        boardMaxY,
+        hasBoardBounds,
+      },
+      viewportOptions: {
+        viewport: options?.viewport,
+        viewportTarget: options?.viewportTarget,
+      },
+    })
 
   const circuitWidth = boundsMaxX - boundsMinX + 2 * padding
   const circuitHeight = boundsMaxY - boundsMinY + 2 * padding
@@ -200,10 +222,10 @@ export function convertCircuitJsonToPcbSvg(
   let svgHeight = options?.height ?? 600
 
   if (options?.matchBoardAspectRatio) {
-    const boardWidth = boardMaxX - boardMinX
-    const boardHeight = boardMaxY - boardMinY
-    if (boardWidth > 0 && boardHeight > 0) {
-      const aspect = boardWidth / boardHeight
+    const viewportWidth = boundsMaxX - boundsMinX
+    const viewportHeight = boundsMaxY - boundsMinY
+    if (viewportWidth > 0 && viewportHeight > 0) {
+      const aspect = viewportWidth / viewportHeight
       if (options?.width && !options?.height) {
         svgHeight = options.width / aspect
       } else if (options?.height && !options?.width) {
@@ -317,7 +339,13 @@ export function convertCircuitJsonToPcbSvg(
 
   if (drawPaddingOutsideBoard) {
     children.push(
-      createSvgObjectFromPcbBoundary(transform, minX, minY, maxX, maxY),
+      createSvgObjectFromPcbBoundary({
+        transform,
+        minX,
+        minY,
+        maxX,
+        maxY,
+      }),
     )
   }
 
@@ -468,13 +496,19 @@ function createSvgObjects({
   }
 }
 
-function createSvgObjectFromPcbBoundary(
-  transform: any,
-  minX: number,
-  minY: number,
-  maxX: number,
-  maxY: number,
-): SvgObject {
+function createSvgObjectFromPcbBoundary({
+  transform,
+  minX,
+  minY,
+  maxX,
+  maxY,
+}: {
+  transform: Matrix
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}): SvgObject {
   const [x1, y1] = applyToPoint(transform, [minX, minY])
   const [x2, y2] = applyToPoint(transform, [maxX, maxY])
   const width = Math.abs(x2 - x1)
