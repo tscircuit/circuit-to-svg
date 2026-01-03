@@ -1,13 +1,17 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuit: any = [
+const circuit: AnyCircuitElement[] = [
   {
     type: "pcb_board",
     pcb_board_id: "board0",
     center: { x: 0, y: 0 },
     width: 10,
     height: 10,
+    thickness: 1.6,
+    num_layers: 2,
+    material: "fr4",
   },
   {
     type: "pcb_courtyard_polygon",
