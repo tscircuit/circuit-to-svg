@@ -1,7 +1,8 @@
 import { test, expect } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuitJson: any = [
+const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_trace",
     pcb_trace_id: "pcb_trace_0",

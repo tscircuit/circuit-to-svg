@@ -1,13 +1,17 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuitJson: any = [
+const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_board",
     pcb_board_id: "board_hole_soldermask",
     center: { x: 0, y: 0 },
     width: 30,
     height: 20,
+    thickness: 1.6,
+    num_layers: 2,
+    material: "fr4",
   },
   {
     type: "pcb_hole",
@@ -98,6 +102,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -108,6 +113,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -118,6 +124,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -128,6 +135,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -138,6 +146,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -148,6 +157,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -158,6 +168,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
 ]
 

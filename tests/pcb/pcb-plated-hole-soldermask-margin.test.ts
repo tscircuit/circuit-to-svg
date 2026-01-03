@@ -1,13 +1,17 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuitJson: any = [
+const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_board",
     pcb_board_id: "board_plated_hole_soldermask",
     center: { x: 0, y: 0 },
     width: 30,
     height: 20,
+    thickness: 1.6,
+    num_layers: 2,
+    material: "fr4",
   },
   // Circle plated hole with positive soldermask margin
   {
@@ -20,6 +24,7 @@ const circuitJson: any = [
     outer_diameter: 3,
     hole_diameter: 1.5,
     soldermask_margin: 0.3,
+    layers: ["top", "bottom"],
   },
   // Circle plated hole with negative soldermask margin
   {
@@ -32,6 +37,7 @@ const circuitJson: any = [
     outer_diameter: 3,
     hole_diameter: 1.5,
     soldermask_margin: -0.2,
+    layers: ["top", "bottom"],
   },
   // Pill plated hole with soldermask margin (horizontal)
   {
@@ -46,6 +52,8 @@ const circuitJson: any = [
     hole_width: 3,
     hole_height: 1.5,
     soldermask_margin: 0.3,
+    layers: ["top", "bottom"],
+    ccw_rotation: 0,
   },
   // Pill plated hole with soldermask margin (vertical)
   {
@@ -60,6 +68,8 @@ const circuitJson: any = [
     hole_width: 1.5,
     hole_height: 3,
     soldermask_margin: 0.25,
+    layers: ["top", "bottom"],
+    ccw_rotation: 0,
   },
   // Circular hole with rect pad and soldermask margin
   {
@@ -73,6 +83,11 @@ const circuitJson: any = [
     rect_pad_width: 3,
     rect_pad_height: 3,
     soldermask_margin: 0.35,
+    layers: ["top", "bottom"],
+    hole_shape: "circle",
+    pad_shape: "rect",
+    hole_offset_x: 0,
+    hole_offset_y: 0,
   },
   // Pill hole with rect pad and soldermask margin
   {
@@ -87,6 +102,11 @@ const circuitJson: any = [
     rect_pad_width: 4,
     rect_pad_height: 3,
     soldermask_margin: 0.3,
+    layers: ["top", "bottom"],
+    hole_shape: "pill",
+    pad_shape: "rect",
+    hole_offset_x: 0,
+    hole_offset_y: 0,
   },
 
   // Circle plated hole without soldermask margin (for comparison)
@@ -99,6 +119,7 @@ const circuitJson: any = [
     y: -5,
     outer_diameter: 3,
     hole_diameter: 1.5,
+    layers: ["top", "bottom"],
   },
 
   // Silkscreen labels showing margin values (positioned to be visible)
@@ -111,6 +132,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -121,6 +143,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -131,6 +154,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -141,6 +165,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -151,6 +176,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -161,6 +187,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
   {
     type: "pcb_silkscreen_text",
@@ -171,6 +198,7 @@ const circuitJson: any = [
     anchor_alignment: "center",
     font: "tscircuit2024",
     font_size: 0.4,
+    pcb_component_id: "pcb_component_1",
   },
 ]
 
