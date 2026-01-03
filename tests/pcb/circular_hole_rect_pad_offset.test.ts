@@ -1,13 +1,17 @@
 import { expect, test } from "bun:test"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const circuitJson: any = [
+const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_board",
     pcb_board_id: "circular_offsets_board",
     center: { x: 0, y: 0 },
     width: 28,
     height: 12,
+    thickness: 1.6,
+    num_layers: 2,
+    material: "fr4",
   },
   {
     type: "pcb_plated_hole",
@@ -21,6 +25,8 @@ const circuitJson: any = [
     rect_pad_height: 4.4,
     layers: ["top", "bottom"],
     pcb_plated_hole_id: "circle_rect_centered",
+    hole_offset_x: 0,
+    hole_offset_y: 0,
   },
   {
     type: "pcb_plated_hole",
@@ -35,6 +41,7 @@ const circuitJson: any = [
     hole_offset_x: 0.7,
     layers: ["top", "bottom"],
     pcb_plated_hole_id: "circle_rect_offset_x",
+    hole_offset_y: 0,
   },
   {
     type: "pcb_plated_hole",
@@ -49,6 +56,7 @@ const circuitJson: any = [
     hole_offset_y: -0.8,
     layers: ["top", "bottom"],
     pcb_plated_hole_id: "circle_rect_offset_y",
+    hole_offset_x: 0,
   },
   {
     type: "pcb_plated_hole",
