@@ -420,7 +420,7 @@ function createSvgObjects({
       return createSvgObjectsFromPcbCourtyardRect(elm, ctx)
     case "pcb_courtyard_polygon":
       if (!ctx.showCourtyards) return []
-      return createSvgObjectsFromPcbCourtyardPolygon(elm as any, ctx)
+      return createSvgObjectsFromPcbCourtyardPolygon(elm, ctx)
 
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
