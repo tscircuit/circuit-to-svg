@@ -305,8 +305,11 @@ export function convertCircuitJsonToPcbSvg(
   // Check if there are any keepouts and add pattern defs if needed
   const hasKeepouts = circuitJson.some((elm) => elm.type === "pcb_keepout")
   if (hasKeepouts) {
-    const keepoutColor = colorMap.keepout ?? "#FF6B6B"
-    children.push(createKeepoutPatternDefs(keepoutColor))
+    children.push(
+      createKeepoutPatternDefs(
+        colorMap.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout!,
+      ),
+    )
   }
 
   children.push({

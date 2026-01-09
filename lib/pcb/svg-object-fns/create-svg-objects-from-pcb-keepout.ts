@@ -11,7 +11,7 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 const KEEPOUT_PATTERN_ID = "pcb-keepout-pattern"
 const KEEPOUT_PATTERN_SIZE = 20
 const KEEPOUT_LINE_SPACING = 5
-const KEEPOUT_BACKGROUND_OPACITY = 0.2
+const KEEPOUT_BACKGROUND_COLOR = "rgba(255, 107, 107, 0.2)"
 
 function createKeepoutPatternLines(keepoutColor: string): SvgObject[] {
   const patternLines: SvgObject[] = []
@@ -38,9 +38,7 @@ function createKeepoutPatternLines(keepoutColor: string): SvgObject[] {
   return patternLines
 }
 
-export function createKeepoutPatternDefs(
-  keepoutColor: string = "#FF6B6B",
-): SvgObject {
+export function createKeepoutPatternDefs(keepoutColor: string): SvgObject {
   return {
     name: "defs",
     type: "element",
@@ -61,17 +59,6 @@ export function createKeepoutPatternDefs(
       },
     ],
   }
-}
-
-function hexToRgba(hex: string, opacity: number): string {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  if (!result || !result[1] || !result[2] || !result[3]) {
-    return `rgba(255, 0, 0, ${opacity})`
-  }
-  const r = parseInt(result[1], 16)
-  const g = parseInt(result[2], 16)
-  const b = parseInt(result[3], 16)
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
 function createKeepoutBaseAttributes(
@@ -129,8 +116,7 @@ export function createSvgObjectsFromPcbKeepout(
   }
 
   const svgObjects: SvgObject[] = []
-  const keepoutColor = colorMap.keepout ?? "#FF6B6B"
-  const backgroundColor = hexToRgba(keepoutColor, KEEPOUT_BACKGROUND_OPACITY)
+  const keepoutColor = colorMap.keepout
 
   // Create one SVG object for each layer
   for (const layer of keepout.layers) {
@@ -160,7 +146,7 @@ export function createSvgObjectsFromPcbKeepout(
         y: (-scaledHeight / 2).toString(),
         width: scaledWidth.toString(),
         height: scaledHeight.toString(),
-        fill: backgroundColor,
+        fill: KEEPOUT_BACKGROUND_COLOR,
         transform: baseTransform,
       }
 
@@ -212,7 +198,7 @@ export function createSvgObjectsFromPcbKeepout(
         cx: cx.toString(),
         cy: cy.toString(),
         r: scaledRadius.toString(),
-        fill: backgroundColor,
+        fill: KEEPOUT_BACKGROUND_COLOR,
       }
 
       const patternAttributes = {
