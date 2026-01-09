@@ -42,7 +42,7 @@ test("pcb keepout rect and circle", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path, "rect-and-circle")
+  expect(result).toMatchSvgSnapshot(import.meta.path + "rect-and-circle")
 })
 
 test("pcb keepout multiple layers", () => {
@@ -76,7 +76,7 @@ test("pcb keepout multiple layers", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path, "multiple-layers")
+  expect(result).toMatchSvgSnapshot(import.meta.path + "multiple-layers")
 })
 
 test("pcb keepout with layer filter", () => {
@@ -113,7 +113,7 @@ test("pcb keepout with layer filter", () => {
     { layer: "top" },
   )
 
-  expect(result).toMatchSvgSnapshot(import.meta.path, "layer-filter")
+  expect(result).toMatchSvgSnapshot(import.meta.path + "layer-filter")
 })
 
 test("pcb keepout with pcb_group_id and subcircuit_id", () => {
@@ -142,5 +142,5 @@ test("pcb keepout with pcb_group_id and subcircuit_id", () => {
     },
   ])
 
-  expect(result).toMatchSvgSnapshot(import.meta.path, "with-group-id")
+  expect(result).toMatchSvgSnapshot(import.meta.path + "with-group-id")
 })

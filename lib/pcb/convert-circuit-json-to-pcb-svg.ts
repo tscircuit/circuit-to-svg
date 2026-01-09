@@ -47,7 +47,10 @@ import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects
 import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
 import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
 import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-objects-from-pcb-cutout-path"
-import { createSvgObjectsFromPcbKeepout } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
+import {
+  createSvgObjectsFromPcbKeepout,
+  createKeepoutPatternDefs,
+} from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
   createSvgObjectsForPcbGrid,
@@ -297,6 +300,13 @@ export function convertCircuitJsonToPcbSvg(
 
   if (gridObjects.defs) {
     children.push(gridObjects.defs)
+  }
+
+  // Check if there are any keepouts and add pattern defs if needed
+  const hasKeepouts = circuitJson.some((elm) => elm.type === "pcb_keepout")
+  if (hasKeepouts) {
+    const keepoutColor = colorMap.keepout ?? "#FF6B6B"
+    children.push(createKeepoutPatternDefs(keepoutColor))
   }
 
   children.push({
