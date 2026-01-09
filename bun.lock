@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "circuit-to-svg",
@@ -31,7 +30,7 @@
         "vite-tsconfig-paths": "^5.0.1",
       },
       "peerDependencies": {
-        "@tscircuit/alphabet": "^0.0.17",
+        "@tscircuit/alphabet": "*",
       },
     },
   },
