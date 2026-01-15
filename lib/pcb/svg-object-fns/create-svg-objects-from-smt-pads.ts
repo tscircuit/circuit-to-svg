@@ -27,156 +27,10 @@ export function createSvgObjectsFromSmtPad(
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
-    const cornerRadiusValue =
-      (pad as { corner_radius?: number }).corner_radius ??
-      pad.rect_border_radius ??
-      0
+    const cornerRadiusValue = pad.corner_radius ?? pad.rect_border_radius ?? 0
     const scaledBorderRadius = cornerRadiusValue * Math.abs(transform.a)
 
-    if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
-      const padElement: SvgObject = {
-        name: "rect",
-        type: "element",
-        value: "",
-        children: [],
-        attributes: {
-          class: "pcb-pad",
-          fill: layerNameToColor(pad.layer, colorMap),
-          x: (-width / 2).toString(),
-          y: (-height / 2).toString(),
-          width: width.toString(),
-          height: height.toString(),
-          transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-          "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
-          ...(scaledBorderRadius
-            ? {
-                rx: scaledBorderRadius.toString(),
-                ry: scaledBorderRadius.toString(),
-              }
-            : {}),
-        },
-      }
-
-      if (!shouldShowSolderMask) {
-        return [padElement]
-      }
-
-      const maskWidth = width + 2 * soldermaskMargin
-      const maskHeight = height + 2 * soldermaskMargin
-      const maskBorderRadius = scaledBorderRadius
-        ? scaledBorderRadius + soldermaskMargin
-        : 0
-
-      // For negative margins, create a ring effect
-      if (soldermaskMargin < 0) {
-        const coveredPadElement: SvgObject = {
-          name: "rect",
-          type: "element",
-          value: "",
-          children: [],
-          attributes: {
-            class: "pcb-pad-covered",
-            fill: soldermaskWithCopperUnderneathColor,
-            x: (-width / 2).toString(),
-            y: (-height / 2).toString(),
-            width: width.toString(),
-            height: height.toString(),
-            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-            "data-type": "pcb_smtpad",
-            "data-pcb-layer": pad.layer,
-            ...(scaledBorderRadius
-              ? {
-                  rx: scaledBorderRadius.toString(),
-                  ry: scaledBorderRadius.toString(),
-                }
-              : {}),
-          },
-        }
-
-        const exposedOpeningElement: SvgObject = {
-          name: "rect",
-          type: "element",
-          value: "",
-          children: [],
-          attributes: {
-            class: "pcb-pad-exposed",
-            fill: layerNameToColor(pad.layer, colorMap),
-            x: (-maskWidth / 2).toString(),
-            y: (-maskHeight / 2).toString(),
-            width: maskWidth.toString(),
-            height: maskHeight.toString(),
-            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-            "data-type": "pcb_soldermask",
-            "data-pcb-layer": pad.layer,
-            ...(maskBorderRadius > 0
-              ? {
-                  rx: maskBorderRadius.toString(),
-                  ry: maskBorderRadius.toString(),
-                }
-              : {}),
-          },
-        }
-
-        return [coveredPadElement, exposedOpeningElement]
-      }
-
-      // For zero margin, pad is fully covered with soldermask
-      if (soldermaskMargin === 0) {
-        const coveredPadElement: SvgObject = {
-          name: "rect",
-          type: "element",
-          value: "",
-          children: [],
-          attributes: {
-            class: "pcb-pad-covered",
-            fill: soldermaskWithCopperUnderneathColor,
-            x: (-width / 2).toString(),
-            y: (-height / 2).toString(),
-            width: width.toString(),
-            height: height.toString(),
-            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-            "data-type": "pcb_smtpad",
-            "data-pcb-layer": pad.layer,
-            ...(scaledBorderRadius
-              ? {
-                  rx: scaledBorderRadius.toString(),
-                  ry: scaledBorderRadius.toString(),
-                }
-              : {}),
-          },
-        }
-
-        return [coveredPadElement]
-      }
-
-      // For positive margins, draw substrate cutout then pad on top
-      const substrateElement: SvgObject = {
-        name: "rect",
-        type: "element",
-        value: "",
-        children: [],
-        attributes: {
-          class: "pcb-soldermask-cutout",
-          fill: colorMap.substrate,
-          x: (-maskWidth / 2).toString(),
-          y: (-maskHeight / 2).toString(),
-          width: maskWidth.toString(),
-          height: maskHeight.toString(),
-          transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
-          ...(maskBorderRadius > 0
-            ? {
-                rx: maskBorderRadius.toString(),
-                ry: maskBorderRadius.toString(),
-              }
-            : {}),
-          "data-type": "pcb_soldermask_opening",
-          "data-pcb-layer": pad.layer,
-        },
-      }
-
-      return [substrateElement, padElement]
-    }
+    const isRotated = pad.shape === "rotated_rect" && pad.ccw_rotation
 
     const padElement: SvgObject = {
       name: "rect",
@@ -186,10 +40,13 @@ export function createSvgObjectsFromSmtPad(
       attributes: {
         class: "pcb-pad",
         fill: layerNameToColor(pad.layer, colorMap),
-        x: (x - width / 2).toString(),
-        y: (y - height / 2).toString(),
+        x: (-width / 2).toString(),
+        y: (-height / 2).toString(),
         width: width.toString(),
         height: height.toString(),
+        transform: isRotated
+          ? `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`
+          : `translate(${x} ${y})`,
         "data-type": "pcb_smtpad",
         "data-pcb-layer": pad.layer,
         ...(scaledBorderRadius
@@ -205,16 +62,56 @@ export function createSvgObjectsFromSmtPad(
       return [padElement]
     }
 
-    // Apply soldermask margin to dimensions
-    const maskWidth = width + 2 * soldermaskMargin
-    const maskHeight = height + 2 * soldermaskMargin
+    const maskWidth =
+      pad.soldermask_width !== undefined
+        ? pad.soldermask_width * Math.abs(transform.a)
+        : width + 2 * soldermaskMargin
+    const maskHeight =
+      pad.soldermask_height !== undefined
+        ? pad.soldermask_height * Math.abs(transform.d)
+        : height + 2 * soldermaskMargin
+    const msOffset = pad.soldermask_center_offset ?? { x: 0, y: 0 }
+    const [maskX, maskY] = applyToPoint(transform, [
+      pad.x + msOffset.x,
+      pad.y + msOffset.y,
+    ])
     const maskBorderRadius = scaledBorderRadius
       ? scaledBorderRadius + soldermaskMargin
       : 0
 
-    // For negative margins, create a ring effect where soldermask covers only the edges
+    // If explicit dimensions are provided, the user wants to see the soldermask color inside those dimensions
+    if (
+      pad.soldermask_width !== undefined ||
+      pad.soldermask_height !== undefined
+    ) {
+      const coveredElement: SvgObject = {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-pad-covered",
+          fill: soldermaskWithCopperUnderneathColor,
+          x: (-maskWidth / 2).toString(),
+          y: (-maskHeight / 2).toString(),
+          width: maskWidth.toString(),
+          height: maskHeight.toString(),
+          transform: `translate(${maskX} ${maskY}) ${isRotated ? `rotate(${-pad.ccw_rotation})` : ""}`,
+          "data-type": "pcb_soldermask",
+          "data-pcb-layer": pad.layer,
+          ...(maskBorderRadius > 0
+            ? {
+                rx: maskBorderRadius.toString(),
+                ry: maskBorderRadius.toString(),
+              }
+            : {}),
+        },
+      }
+      return [padElement, coveredElement]
+    }
+
+    // Default margin-based behavior
     if (soldermaskMargin < 0) {
-      // Draw the pad in soldermask color (covered)
       const coveredPadElement: SvgObject = {
         name: "rect",
         type: "element",
@@ -223,10 +120,13 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad-covered",
           fill: soldermaskWithCopperUnderneathColor,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
+          x: (-width / 2).toString(),
+          y: (-height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
+          transform: isRotated
+            ? `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`
+            : `translate(${x} ${y})`,
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
           ...(scaledBorderRadius
@@ -238,7 +138,6 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      // Draw the exposed opening in copper color
       const exposedOpeningElement: SvgObject = {
         name: "rect",
         type: "element",
@@ -247,10 +146,11 @@ export function createSvgObjectsFromSmtPad(
         attributes: {
           class: "pcb-pad-exposed",
           fill: layerNameToColor(pad.layer, colorMap),
-          x: (x - maskWidth / 2).toString(),
-          y: (y - maskHeight / 2).toString(),
+          x: (-maskWidth / 2).toString(),
+          y: (-maskHeight / 2).toString(),
           width: maskWidth.toString(),
           height: maskHeight.toString(),
+          transform: `translate(${maskX} ${maskY}) ${isRotated ? `rotate(${-pad.ccw_rotation})` : ""}`,
           "data-type": "pcb_soldermask",
           "data-pcb-layer": pad.layer,
           ...(maskBorderRadius > 0
@@ -265,35 +165,18 @@ export function createSvgObjectsFromSmtPad(
       return [coveredPadElement, exposedOpeningElement]
     }
 
-    // For zero margin, pad is fully covered with soldermask
     if (soldermaskMargin === 0) {
-      const coveredPadElement: SvgObject = {
-        name: "rect",
-        type: "element",
-        value: "",
-        children: [],
+      const coveredPadElement = {
+        ...padElement,
         attributes: {
-          class: "pcb-pad-covered",
+          ...padElement.attributes,
           fill: soldermaskWithCopperUnderneathColor,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
-          width: width.toString(),
-          height: height.toString(),
-          ...(maskBorderRadius > 0
-            ? {
-                rx: scaledBorderRadius.toString(),
-                ry: scaledBorderRadius.toString(),
-              }
-            : {}),
-          "data-type": "pcb_smtpad",
-          "data-pcb-layer": pad.layer,
+          class: "pcb-pad-covered",
         },
       }
-
       return [coveredPadElement]
     }
 
-    // For positive margins, draw substrate cutout (soldermask opening) then pad on top
     const substrateElement: SvgObject = {
       name: "rect",
       type: "element",
@@ -302,10 +185,11 @@ export function createSvgObjectsFromSmtPad(
       attributes: {
         class: "pcb-soldermask-cutout",
         fill: colorMap.substrate,
-        x: (x - maskWidth / 2).toString(),
-        y: (y - maskHeight / 2).toString(),
+        x: (-maskWidth / 2).toString(),
+        y: (-maskHeight / 2).toString(),
         width: maskWidth.toString(),
         height: maskHeight.toString(),
+        transform: `translate(${maskX} ${maskY}) ${isRotated ? `rotate(${-pad.ccw_rotation})` : ""}`,
         ...(maskBorderRadius > 0
           ? {
               rx: maskBorderRadius.toString(),
