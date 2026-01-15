@@ -170,6 +170,10 @@ export function getSchematicBoundsFromCircuitJson(
         { width: item.radius * 2, height: item.radius * 2 },
         0,
       )
+    } else if (item.type === "schematic_path") {
+      for (const point of item.points) {
+        updateBounds(point, { width: 0.02, height: 0.02 }, 0)
+      }
     }
   }
 

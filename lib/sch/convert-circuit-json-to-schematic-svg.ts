@@ -30,6 +30,7 @@ import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
 import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
 import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
+import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 
 export type ColorOverrides = {
@@ -164,6 +165,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schCircleSvgs: SvgObject[] = []
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
+  const schPathSvgs: SvgObject[] = []
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -270,6 +272,14 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
+    } else if (elm.type === "schematic_path") {
+      schPathSvgs.push(
+        ...createSvgObjectsFromSchematicPath({
+          schPath: elm,
+          transform,
+          colorMap,
+        }),
+      )
     }
   }
 
@@ -290,6 +300,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schCircleSvgs,
     ...schRectSvgs,
     ...schArcSvgs,
+    ...schPathSvgs,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schNetLabel,
