@@ -7,7 +7,6 @@ import {
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPinoutBoard } from "./svg-object-fns/create-svg-objects-from-pinout-board"
-import { createSvgObjectsFromPinoutComponent } from "./svg-object-fns/create-svg-objects-from-pinout-component"
 import { createSvgObjectsFromPinoutHole } from "./svg-object-fns/create-svg-objects-from-pinout-hole"
 import { createSvgObjectsFromPinoutPlatedHole } from "./svg-object-fns/create-svg-objects-from-pinout-plated-hole"
 import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-objects-from-pinout-smt-pad"
@@ -50,6 +49,7 @@ export interface PinoutLabel {
   pcb_port: PcbPort
   aliases: string[]
   edge: "left" | "right" | "top" | "bottom"
+  highlightColor?: string
 }
 
 export interface PinoutSvgContext {
@@ -119,11 +119,15 @@ export function convertCircuitJsonToPinoutSvg(
     if (!label_info) continue
 
     const edge = getClosestEdge({ x: pcb_port.x, y: pcb_port.y }, board_bounds)
+    const highlightColor = (pcb_port as any).highlight_color as
+      | string
+      | undefined
 
     pinout_labels.push({
       pcb_port,
       aliases: [label_info.text, ...label_info.aliases],
       edge,
+      highlightColor,
     })
   }
 
@@ -339,8 +343,9 @@ function createSvgObjects(
     case "pcb_board":
       return createSvgObjectsFromPinoutBoard(elm, ctx)
 
+    // Skip pcb_component rendering - the gray boxes are not useful in pinout diagrams
     case "pcb_component":
-      return createSvgObjectsFromPinoutComponent(elm, ctx)
+      return []
     case "pcb_smtpad":
       return createSvgObjectsFromPinoutSmtPad(elm, ctx)
     case "pcb_hole":
