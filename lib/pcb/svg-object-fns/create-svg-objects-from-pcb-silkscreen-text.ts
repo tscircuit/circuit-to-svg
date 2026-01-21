@@ -9,12 +9,15 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { distance } from "circuit-json"
+
+let silkscreenMaskIdCounter = 0
 
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap, circuitJson } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,
     text,
@@ -22,6 +25,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
+    is_knockout = false,
+    knockout_padding,
+    is_mirrored = false,
   } = pcbSilkscreenText
 
   if (layerFilter && layer !== layerFilter) return []
@@ -40,8 +46,166 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.y,
   ])
 
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const scaleFactor = Math.abs(transform.a)
+  const transformedFontSize = font_size * scaleFactor
 
+  const color =
+    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+
+  const isBottom = layer === "bottom"
+  const applyMirror = isBottom ? true : is_mirrored === true
+
+  // Handle knockout silkscreen text
+  if (is_knockout) {
+    // Parse padding values
+    const defaultPadding = font_size * 0.3
+    const padLeft = knockout_padding?.left
+      ? distance.parse(knockout_padding.left)
+      : defaultPadding
+    const padRight = knockout_padding?.right
+      ? distance.parse(knockout_padding.right)
+      : defaultPadding
+    const padTop = knockout_padding?.top
+      ? distance.parse(knockout_padding.top)
+      : defaultPadding
+    const padBottom = knockout_padding?.bottom
+      ? distance.parse(knockout_padding.bottom)
+      : defaultPadding
+
+    // Calculate text dimensions (approximate)
+    const lines = text.split("\n")
+    const maxLineLength = Math.max(...lines.map((l) => l.length))
+    const textWidth = maxLineLength * font_size * 0.6
+    const lineHeight = font_size * 1.2
+    const textHeight = lines.length * lineHeight
+
+    // Calculate rect dimensions with padding
+    const rectW = (textWidth + padLeft + padRight) * scaleFactor
+    const rectH = (textHeight + padTop + padBottom) * scaleFactor
+
+    const knockoutTransform = matrixToString(
+      compose(
+        translate(transformedX, transformedY),
+        rotate((-ccw_rotation * Math.PI) / 180),
+        ...(applyMirror ? [scale(-1, 1)] : []),
+      ),
+    )
+
+    const maskId = `silkscreen-knockout-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}-${silkscreenMaskIdCounter++}`
+
+    // Build text children for mask
+    const textChildren: SvgObject[] =
+      lines.length === 1
+        ? [
+            {
+              type: "text",
+              value: text,
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ]
+        : lines.map((line, idx) => ({
+            type: "element",
+            name: "tspan",
+            value: "",
+            attributes: {
+              x: "0",
+              dy: idx === 0 ? "0" : (lineHeight * scaleFactor).toString(),
+            },
+            children: [
+              {
+                type: "text",
+                value: line,
+                name: "",
+                attributes: {},
+                children: [],
+              },
+            ],
+          }))
+
+    // Calculate text offset based on anchor alignment
+    let textOffsetY = 0
+    if (anchor_alignment.includes("top")) {
+      textOffsetY = -rectH / 2 + (padTop * scaleFactor) + (transformedFontSize * 0.8)
+    } else if (anchor_alignment.includes("bottom")) {
+      textOffsetY = rectH / 2 - (padBottom * scaleFactor) - (textHeight * scaleFactor - transformedFontSize * 0.8)
+    } else {
+      // center
+      textOffsetY = transformedFontSize * 0.3
+    }
+
+    return [
+      {
+        name: "defs",
+        type: "element",
+        value: "",
+        children: [
+          {
+            name: "mask",
+            type: "element",
+            value: "",
+            attributes: {
+              id: maskId,
+            },
+            children: [
+              {
+                name: "rect",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: (-rectW / 2).toString(),
+                  y: (-rectH / 2).toString(),
+                  width: rectW.toString(),
+                  height: rectH.toString(),
+                  fill: "white",
+                },
+                children: [],
+              },
+              {
+                name: "text",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: "0",
+                  y: textOffsetY.toString(),
+                  fill: "black",
+                  "font-family": "Arial, sans-serif",
+                  "font-size": transformedFontSize.toString(),
+                  "text-anchor": "middle",
+                  "dominant-baseline": "central",
+                },
+                children: textChildren,
+              },
+            ],
+          },
+        ],
+        attributes: {},
+      },
+      {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          x: (-rectW / 2).toString(),
+          y: (-rectH / 2).toString(),
+          width: rectW.toString(),
+          height: rectH.toString(),
+          fill: color,
+          mask: `url(#${maskId})`,
+          transform: knockoutTransform,
+          class: `pcb-silkscreen-text pcb-silkscreen-knockout pcb-silkscreen-${layer}`,
+          "data-type": "pcb_silkscreen_text",
+          "data-pcb-silkscreen-text-id":
+            pcbSilkscreenText.pcb_silkscreen_text_id,
+          "data-pcb-layer": layer,
+        },
+      },
+    ]
+  }
+
+  // Regular (non-knockout) silkscreen text rendering
   // Set text-anchor and dominant-baseline based on alignment
   let textAnchor = "middle"
   let dominantBaseline = "central"
@@ -93,9 +257,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
     rotate((-ccw_rotation * Math.PI) / 180), // Negate to make counter-clockwise
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
-
-  const color =
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
   const lines = text.split("\n")
 
