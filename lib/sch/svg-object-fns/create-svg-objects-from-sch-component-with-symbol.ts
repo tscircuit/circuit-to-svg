@@ -81,7 +81,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     schematic_component_id: schComponent.schematic_component_id,
   }) as SchematicPort[]
 
-  const srcComponent = su(circuitJson as any).source_component.get(
+  const srcComponent = su(circuitJson).source_component.get(
     schComponent.source_component_id!,
   )
   // Match schPorts to symbol ports using angle from schematic component center
@@ -241,6 +241,41 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         },
       ],
     })
+
+    if (isReferenceText && srcComponent?.display_name) {
+      svgObjects.push({
+        name: "text",
+        type: "element",
+        attributes: {
+          x: screenTextPos.x.toString(),
+          y: (
+            screenTextPos.y +
+            verticalOffset -
+            getSchScreenFontSize(
+              realToScreenTransform,
+              "reference_designator",
+            ) *
+              1.2
+          ).toString(),
+          fill: colorMap.schematic.label_local, // Using a distinct color or same? usually same as REF or LABEL?
+          // Using label_local for now as it makes sense for a display name
+          "font-family": "sans-serif",
+          "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
+          "dominant-baseline": dominantBaseline,
+          "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
+        },
+        value: "",
+        children: [
+          {
+            type: "text",
+            value: srcComponent.display_name,
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+      })
+    }
   }
 
   // Draw Boxes
