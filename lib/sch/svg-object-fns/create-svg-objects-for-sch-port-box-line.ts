@@ -93,7 +93,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const label =
     schPort.display_pin_label ??
-    (schComponent as any).port_labels?.[`${schPort.pin_number}`]
+    schComponent.port_labels?.[`${schPort.pin_number}`]
   const isInverter = label?.includes("INV_")
   const BUBBLE_RADIUS_MM = 0.06
 
