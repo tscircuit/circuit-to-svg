@@ -46,8 +46,23 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   if (!label) return []
 
-  const isNegated = label.startsWith("N_")
-  const displayLabel = isNegated ? label.slice(2) : label
+  let displayLabel = label
+  let isInverter = false
+  let isNegated = false
+
+  while (true) {
+    if (displayLabel.startsWith("INV_")) {
+      isInverter = true
+      displayLabel = displayLabel.slice(4)
+      continue
+    }
+    if (displayLabel.startsWith("N_")) {
+      isNegated = true
+      displayLabel = displayLabel.slice(2)
+      continue
+    }
+    break
+  }
 
   let fontSizePx = getSchScreenFontSize(
     transform,

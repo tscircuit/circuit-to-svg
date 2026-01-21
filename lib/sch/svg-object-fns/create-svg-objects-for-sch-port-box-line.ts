@@ -91,6 +91,12 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
 
+  const label =
+    schPort.display_pin_label ??
+    (schComponent as any).port_labels?.[`${schPort.pin_number}`]
+  const isInverter = label?.includes("INV_")
+  const BUBBLE_RADIUS_MM = 0.06
+
   // For connected pins, line goes to center. For unconnected pins, stop short by circle radius
   const realLineEnd = { ...schPort.center }
 
@@ -113,6 +119,46 @@ export const createSvgObjectsForSchPortBoxLine = ({
   }
 
   const screenLineEnd = applyToPoint(transform, realLineEnd)
+
+  if (isInverter) {
+    const bubbleRadiusPx = Math.abs(transform.a) * BUBBLE_RADIUS_MM
+    const bubbleCenter = { ...screenRealEdgePos }
+
+    switch (schPort.side_of_component) {
+      case "left":
+        bubbleCenter.x -= bubbleRadiusPx
+        screenRealEdgePos.x -= bubbleRadiusPx * 2
+        break
+      case "right":
+        bubbleCenter.x += bubbleRadiusPx
+        screenRealEdgePos.x += bubbleRadiusPx * 2
+        break
+      case "top":
+        bubbleCenter.y -= bubbleRadiusPx
+        screenRealEdgePos.y -= bubbleRadiusPx * 2
+        break
+      case "bottom":
+        bubbleCenter.y += bubbleRadiusPx
+        screenRealEdgePos.y += bubbleRadiusPx * 2
+        break
+    }
+
+    svgObjects.push({
+      name: "circle",
+      type: "element",
+      attributes: {
+        class: "component-pin",
+        cx: bubbleCenter.x.toString(),
+        cy: bubbleCenter.y.toString(),
+        r: bubbleRadiusPx.toString(),
+        fill: "white",
+        stroke: colorMap.schematic.component_outline,
+        "stroke-width": `${getSchStrokeSize(transform)}px`,
+      },
+      value: "",
+      children: [],
+    })
+  }
 
   // Add port line
   svgObjects.push({
