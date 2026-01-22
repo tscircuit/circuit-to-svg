@@ -140,7 +140,7 @@ export const createSvgObjectsForSchReferenceDesignators = ({
         textPoint,
       )
 
-      const textValue = srcComponent?.name ?? ""
+      const textValue = srcComponent?.display_name ?? srcComponent?.name ?? ""
       if (!textValue) continue
 
       const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
