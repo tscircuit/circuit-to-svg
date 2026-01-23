@@ -9,6 +9,9 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { distance } from "circuit-json"
+
+let maskIdCounter = 0
 
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
@@ -22,6 +25,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
+    is_knockout = false,
+    knockout_padding,
   } = pcbSilkscreenText
 
   if (layerFilter && layer !== layerFilter) return []
@@ -99,6 +104,162 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const lines = text.split("\n")
 
+  // Handle knockout silkscreen text
+  if (is_knockout) {
+    // Parse knockout padding
+    const defaultPadding = transformedFontSize * 0.2
+    let padLeft = defaultPadding
+    let padRight = defaultPadding
+    let padTop = defaultPadding
+    let padBottom = defaultPadding
+
+    if (knockout_padding) {
+      padLeft = distance.parse(knockout_padding.left) ?? defaultPadding
+      padRight = distance.parse(knockout_padding.right) ?? defaultPadding
+      padTop = distance.parse(knockout_padding.top) ?? defaultPadding
+      padBottom = distance.parse(knockout_padding.bottom) ?? defaultPadding
+
+      // Scale padding by transform
+      padLeft *= Math.abs(transform.a)
+      padRight *= Math.abs(transform.a)
+      padTop *= Math.abs(transform.a)
+      padBottom *= Math.abs(transform.a)
+    }
+
+    // Estimate text dimensions
+    const avgCharWidth = transformedFontSize * 0.6
+    const maxLineLength = Math.max(...lines.map((l) => l.length))
+    const estimatedWidth = maxLineLength * avgCharWidth
+    const estimatedHeight = lines.length * transformedFontSize
+
+    // Calculate rect dimensions based on alignment
+    let rectX = -padLeft
+    let rectY = -padTop
+    const rectWidth = estimatedWidth + padLeft + padRight
+    const rectHeight = estimatedHeight + padTop + padBottom
+
+    // Adjust rect position based on text-anchor
+    if (textAnchor === "middle") {
+      rectX = -estimatedWidth / 2 - padLeft
+    } else if (textAnchor === "end") {
+      rectX = -estimatedWidth - padLeft
+    }
+
+    // Adjust rect position based on dominant-baseline
+    if (dominantBaseline === "central") {
+      rectY = -estimatedHeight / 2 - padTop
+    } else if (
+      dominantBaseline === "text-after-edge" ||
+      dominantBaseline === "alphabetic"
+    ) {
+      rectY = -estimatedHeight - padTop
+    }
+
+    const maskId = `silkscreen-knockout-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}-${maskIdCounter++}`
+
+    const textChildren: SvgObject[] =
+      lines.length === 1
+        ? [
+            {
+              type: "text",
+              value: text,
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ]
+        : lines.map((line, idx) => ({
+            type: "element",
+            name: "tspan",
+            value: "",
+            attributes: {
+              x: "0",
+              ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
+            },
+            children: [
+              {
+                type: "text",
+                value: line,
+                name: "",
+                attributes: {},
+                children: [],
+              },
+            ],
+          }))
+
+    return [
+      {
+        name: "defs",
+        type: "element",
+        value: "",
+        children: [
+          {
+            name: "mask",
+            type: "element",
+            value: "",
+            attributes: {
+              id: maskId,
+            },
+            children: [
+              {
+                name: "rect",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: rectX.toString(),
+                  y: rectY.toString(),
+                  width: rectWidth.toString(),
+                  height: rectHeight.toString(),
+                  fill: "white",
+                },
+                children: [],
+              },
+              {
+                name: "text",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: "0",
+                  y: "0",
+                  dx: dx.toString(),
+                  dy: dy.toString(),
+                  fill: "black",
+                  "font-family": "Arial, sans-serif",
+                  "font-size": transformedFontSize.toString(),
+                  "text-anchor": textAnchor,
+                  "dominant-baseline": dominantBaseline,
+                  stroke: "none",
+                },
+                children: textChildren,
+              },
+            ],
+          },
+        ],
+        attributes: {},
+      },
+      {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          x: rectX.toString(),
+          y: rectY.toString(),
+          width: rectWidth.toString(),
+          height: rectHeight.toString(),
+          fill: color,
+          mask: `url(#${maskId})`,
+          transform: matrixToString(textTransform),
+          class: `pcb-silkscreen-text-knockout pcb-silkscreen-${layer}`,
+          "data-type": "pcb_silkscreen_text",
+          "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_silkscreen_text_id,
+          "data-pcb-layer": layer,
+        },
+      },
+    ]
+  }
+
+  // Regular (non-knockout) silkscreen text
   const children: SvgObject[] =
     lines.length === 1
       ? [
