@@ -94,7 +94,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const label =
     schPort.display_pin_label ??
     schComponent.port_labels?.[`${schPort.pin_number}`]
-  const isInverter = label?.includes("INV_")
+  const isInverter = schPort.is_drawn_with_inversion_circle ?? false
   const BUBBLE_RADIUS_MM = 0.06
 
   // For connected pins, line goes to center. For unconnected pins, stop short by circle radius
