@@ -187,7 +187,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
     let textValue = ""
     if (text.text === "{REF}") {
-      textValue = srcComponent?.name ?? ""
+      textValue = srcComponent?.display_name ?? srcComponent?.name ?? ""
     } else if (text.text === "{VAL}") {
       textValue = schComponent.symbol_display_value ?? ""
     }
