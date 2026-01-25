@@ -94,7 +94,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const label =
     schPort.display_pin_label ??
     schComponent.port_labels?.[`${schPort.pin_number}`]
-  const isInverter = schPort.is_drawn_with_inversion_circle ?? false
+  const is_drawn_with_inversion_circle = schPort.is_drawn_with_inversion_circle ?? false
   const BUBBLE_RADIUS_MM = 0.06
 
   // For connected pins, line goes to center. For unconnected pins, stop short by circle radius
@@ -120,7 +120,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const screenLineEnd = applyToPoint(transform, realLineEnd)
 
-  if (isInverter) {
+  if (is_drawn_with_inversion_circle) {
     const bubbleRadiusPx = Math.abs(transform.a) * BUBBLE_RADIUS_MM
     const bubbleCenter = { ...screenRealEdgePos }
 
