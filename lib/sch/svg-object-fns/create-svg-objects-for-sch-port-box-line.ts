@@ -91,9 +91,6 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
 
-  const label =
-    schPort.display_pin_label ??
-    schComponent.port_labels?.[`${schPort.pin_number}`]
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
   const BUBBLE_RADIUS_MM = 0.06
