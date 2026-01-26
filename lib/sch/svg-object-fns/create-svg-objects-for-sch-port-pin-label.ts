@@ -48,10 +48,14 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
+  const is_drawn_with_inversion_circle =
+    schPort.is_drawn_with_inversion_circle ?? false
 
   let fontSizePx = getSchScreenFontSize(
     transform,
-    isNegated ? "negated_pin_number" : "pin_number",
+    isNegated || is_drawn_with_inversion_circle
+      ? "negated_pin_number"
+      : "pin_number",
   )
 
   svgObjects.push({

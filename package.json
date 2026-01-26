@@ -24,7 +24,7 @@
     "@vitejs/plugin-react": "5.0.0",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
-    "circuit-json": "^0.0.357",
+    "circuit-json": "^0.0.359",
     "esbuild": "^0.20.2",
     "performance-now": "^2.1.0",
     "react": "19.1.0",
