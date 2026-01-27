@@ -28,7 +28,9 @@ export function createSvgObjectsFromSchematicPath({
 
   const strokeColor = colorMap.schematic.component_outline
   const fillColor = schPath.fill_color ?? "none"
-  const strokeWidth = Math.abs(transform.a) * 0.02
+  const strokeWidth = schPath.stroke_width
+    ? Math.abs(transform.a) * schPath.stroke_width
+    : Math.abs(transform.a) * 0.02
 
   return [
     {

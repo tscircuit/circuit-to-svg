@@ -14,6 +14,7 @@ test("schematic path", () => {
         { x: 0, y: 1 },
       ],
       is_filled: false,
+      stroke_width: 0.05
     },
     {
       type: "schematic_path",
@@ -25,6 +26,7 @@ test("schematic path", () => {
       ],
       is_filled: true,
       fill_color: "blue",
+      stroke_width: 0.05
     },
   ]
 
