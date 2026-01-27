@@ -13,7 +13,8 @@ export function createSvgObjectsFromSchematicPath({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
-  const strokeColor = schPath.stroke_color ?? colorMap.schematic.component_outline
+  const strokeColor =
+    schPath.stroke_color ?? colorMap.schematic.component_outline
   const fillColor = schPath.fill_color ?? "none"
   const strokeWidth = schPath.stroke_width
     ? Math.abs(transform.a) * schPath.stroke_width
