@@ -18,7 +18,7 @@
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
         "bun-match-svg": "^0.0.12",
-        "circuit-json": "^0.0.362",
+        "circuit-json": "^0.0.363",
         "esbuild": "^0.20.2",
         "performance-now": "^2.1.0",
         "react": "19.1.0",
@@ -442,7 +442,7 @@
 
     "chownr": ["chownr@1.1.4", "", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
 
-    "circuit-json": ["circuit-json@0.0.362", "", {}, "sha512-aV8Xpu9YaIauysbxWxlWS9OQPF2h53DQRkeSTyCYMFvvFzxKcjPGgTqqrFrIu5d8DcIzGj+xLfhMneXS4IyA4g=="],
+    "circuit-json": ["circuit-json@0.0.363", "", {}, "sha512-P2l3fBjNLPIll3YlJKEEk9UgwL6r7ubTWs7sD2OLJBizHhNJB2oC1RWX7e4uEVnG8CezrBsrM84Rm4vC8xXWXA=="],
 
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 
