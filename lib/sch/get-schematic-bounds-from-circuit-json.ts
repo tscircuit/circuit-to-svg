@@ -171,8 +171,27 @@ export function getSchematicBoundsFromCircuitJson(
         0,
       )
     } else if (item.type === "schematic_path") {
-      for (const point of item.points) {
-        updateBounds(point, { width: 0.02, height: 0.02 }, 0)
+      if (item.points && item.points.length > 0) {
+        for (const point of item.points) {
+          updateBounds(point, { width: 0.02, height: 0.02 }, 0)
+        }
+      } else if (item.svg_path) {
+        // Extract coordinate pairs from SVG path string
+        // This handles common path commands (M, L, C, Q, S, T, A, etc.)
+        const numbers = item.svg_path.match(/-?[\d.]+/g)
+        if (numbers) {
+          for (let i = 0; i < numbers.length - 1; i += 2) {
+            const xStr = numbers[i]
+            const yStr = numbers[i + 1]
+            if (xStr !== undefined && yStr !== undefined) {
+              const x = parseFloat(xStr)
+              const y = parseFloat(yStr)
+              if (!isNaN(x) && !isNaN(y)) {
+                updateBounds({ x, y }, { width: 0.02, height: 0.02 }, 0)
+              }
+            }
+          }
+        }
       }
     }
   }
