@@ -75,15 +75,27 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     children: [],
   })
 
-  const schTexts = su(circuitJson as any).schematic_text.list()
+  const schTexts = su(circuitJson).schematic_text.list()
+
+  const srcComponent = su(circuitJson).source_component.get(
+    schComponent.source_component_id!,
+  )
 
   for (const schText of schTexts) {
     if (
       schText.schematic_component_id === schComponent.schematic_component_id
     ) {
+      let text = schText.text
+      if (text === "{REF}" || text === srcComponent?.name) {
+        text = srcComponent?.display_name ?? srcComponent?.name ?? text
+      }
+
       svgObjects.push(
         createSvgSchText({
-          elm: schText,
+          elm: {
+            ...schText,
+            text,
+          },
           transform,
           colorMap,
         }),
