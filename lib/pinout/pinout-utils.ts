@@ -4,7 +4,7 @@ import { su } from "@tscircuit/circuit-json-util"
 export function getPortLabelInfo(
   port: PcbPort,
   soup: AnyCircuitElement[],
-): { text: string; aliases: string[] } | null {
+): { text: string; aliases: string[]; color?: string } | null {
   const source_port = su(soup).source_port.get(port.source_port_id)
   if (!source_port) return null
 
@@ -21,7 +21,10 @@ export function getPortLabelInfo(
 
   const aliases = eligible_hints.filter((h) => h !== label)
 
-  return { text: label, aliases }
+  // Get color from source_port if available (from pinAttributes)
+  const color = (source_port as any).pinout_color ?? undefined
+
+  return { text: label, aliases, color }
 }
 
 export function getClosestEdge(
