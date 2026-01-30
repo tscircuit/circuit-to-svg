@@ -246,10 +246,10 @@ function calculateVerticalEdgeLabels(
 
     // Calculate additional offset based on pin's distance from board edge
     // This prevents line overlaps for internal pins
-    const pin_edge_x =
-      edge === "left" ? board_bounds.minX : board_bounds.maxX
+    const pin_edge_x = edge === "left" ? board_bounds.minX : board_bounds.maxX
     const distance_from_edge_mm = Math.abs(pcb_port.x - pin_edge_x)
-    const distance_offset = distance_from_edge_mm * DISTANCE_OFFSET_FACTOR * pxPerMm
+    const distance_offset =
+      distance_from_edge_mm * DISTANCE_OFFSET_FACTOR * pxPerMm
 
     const stagger_offset =
       stagger_offset_base +
