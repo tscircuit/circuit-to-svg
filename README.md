@@ -144,9 +144,17 @@ const pinoutSvg = convertCircuitJsonToPinoutSvg(circuitJson)
 
 ### Options
 
-- `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
+- `width` and `height` – dimensions of the output SVG. Defaults to `1200x768`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
+- `showComponentBoxes` – if `true`, show gray component boxes inside the board.
+  Defaults to `false`.
+- `showErrorsInTextOverlay` – if `true`, display errors as text overlay.
+
+### Pin Colors
+
+Pins can be colored by setting `pinout_color` on source ports in your circuit JSON.
+The color will be used as the background color for the pin label.
 
 ## convertCircuitJsonToSchematicSimulationSvg
 
