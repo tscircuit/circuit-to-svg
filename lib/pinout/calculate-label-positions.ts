@@ -10,6 +10,9 @@ import {
   LABEL_RECT_HEIGHT_BASE_MM,
 } from "./constants"
 
+// Additional offset per mm of distance from edge (to prevent line overlaps)
+const DISTANCE_OFFSET_FACTOR = 0.25
+
 export type LabelPosition = {
   text: string
   aliases: string[]
@@ -160,9 +163,19 @@ function calculateVerticalEdgeLabels(
     styleScale *
     pxPerMm
 
+  // Calculate maximum distance from edge among all pins to include in aligned offset
+  const pin_edge_x = edge === "left" ? board_bounds.minX : board_bounds.maxX
+  const max_distance_from_edge_mm = Math.max(
+    0,
+    ...pinout_labels.map((l) => Math.abs(l.pcb_port.x - pin_edge_x)),
+  )
+  const max_distance_offset =
+    max_distance_from_edge_mm * DISTANCE_OFFSET_FACTOR * pxPerMm
+
   const max_stagger_offset =
     stagger_offset_base +
-    geometric_middle_index * (STAGGER_OFFSET_STEP * styleScale * pxPerMm)
+    geometric_middle_index * (STAGGER_OFFSET_STEP * styleScale * pxPerMm) +
+    max_distance_offset
   const aligned_label_offset =
     max_stagger_offset + ALIGNED_OFFSET_MARGIN * styleScale * pxPerMm
 
@@ -230,9 +243,18 @@ function calculateVerticalEdgeLabels(
       const dist_from_middle = Math.abs(i - geometric_middle_index)
       stagger_rank = geometric_middle_index - dist_from_middle
     }
+
+    // Calculate additional offset based on pin's distance from board edge
+    // This prevents line overlaps for internal pins
+    const pin_edge_x =
+      edge === "left" ? board_bounds.minX : board_bounds.maxX
+    const distance_from_edge_mm = Math.abs(pcb_port.x - pin_edge_x)
+    const distance_offset = distance_from_edge_mm * DISTANCE_OFFSET_FACTOR * pxPerMm
+
     const stagger_offset =
       stagger_offset_base +
-      stagger_rank * (STAGGER_OFFSET_STEP * styleScale * pxPerMm)
+      stagger_rank * (STAGGER_OFFSET_STEP * styleScale * pxPerMm) +
+      distance_offset
     const sign = edge === "left" ? -1 : 1
 
     const is_main_group_pin = main_group_indices.includes(i)
