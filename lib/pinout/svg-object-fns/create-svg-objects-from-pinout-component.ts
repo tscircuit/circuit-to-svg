@@ -11,6 +11,11 @@ export function createSvgObjectsFromPinoutComponent(
   elm: PcbComponent,
   ctx: PinoutSvgContext,
 ): SvgObject[] {
+  // By default, don't show component boxes in pinout diagrams
+  if (!ctx.showComponentBoxes) {
+    return []
+  }
+
   const { transform, soup } = ctx
   const { center, width, height, rotation = 0, source_component_id } = elm
   const sourceComponent = su(soup).source_component.get(source_component_id)
