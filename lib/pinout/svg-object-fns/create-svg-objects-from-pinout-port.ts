@@ -64,14 +64,16 @@ export function createSvgObjectsFromPinoutPort(
   )
 
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
-  // If a custom color is provided via pinAttributes, use it for the label background
+  // If a custom color is provided via pinAttributes, use it for the label background (takes priority)
   const numberMatch = /^pin(\d+)$/i.exec(label)
   const customBg = labelColor ?? LABEL_BACKGROUND
+  // Custom color takes priority over default pin number styling
+  const pinNumberBg = labelColor ?? PIN_NUMBER_BACKGROUND
   const tokensWithStyle = [
     {
       text: numberMatch ? numberMatch[1] : label,
-      bg: numberMatch ? PIN_NUMBER_BACKGROUND : customBg,
-      color: numberMatch ? PIN_NUMBER_COLOR : LABEL_COLOR,
+      bg: numberMatch ? pinNumberBg : customBg,
+      color: numberMatch && !labelColor ? PIN_NUMBER_COLOR : LABEL_COLOR,
     },
     ...aliases.map((t) => ({
       text: t,
