@@ -9,12 +9,96 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { lineAlphabet } from "@tscircuit/alphabet"
+
+const CHAR_WIDTH = 1.0
+const CHAR_SPACING = 0.2
+const LINE_HEIGHT = 1.4
+const FONT_SCALE = 0.53
+
+type AlphabetKey = keyof typeof lineAlphabet
+
+let silkscreenMaskIdCounter = 0
+
+function linesToPathData(
+  lines: Array<{ x1: number; y1: number; x2: number; y2: number }>,
+  offsetX: number,
+  offsetY: number,
+  charScale: number,
+): string {
+  return lines
+    .map((line) => {
+      const x1 = offsetX + line.x1 * charScale
+      const y1 = offsetY + (1 - line.y1) * charScale
+      const x2 = offsetX + line.x2 * charScale
+      const y2 = offsetY + (1 - line.y2) * charScale
+      return `M${x1} ${y1}L${x2} ${y2}`
+    })
+    .join(" ")
+}
+
+function textToCenteredAlphabetPaths(
+  text: string,
+  fontSize: number,
+): { pathData: string; width: number; height: number } {
+  const textLines = text.split("\n")
+  const lineHeight = fontSize * LINE_HEIGHT
+  const totalHeight = textLines.length * lineHeight
+  const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
+
+  const lineWidths: number[] = []
+  let maxWidth = 0
+
+  for (const line of textLines) {
+    let width = 0
+    for (const char of line) {
+      if (char === " ") {
+        width += charAdvance * 0.6
+      } else {
+        width += charAdvance
+      }
+    }
+    width = width > 0 ? width - CHAR_SPACING * fontSize : 0
+    lineWidths.push(width)
+    if (width > maxWidth) maxWidth = width
+  }
+
+  const paths: string[] = []
+  let y = -totalHeight / 2
+
+  for (let i = 0; i < textLines.length; i++) {
+    const line = textLines[i]!
+    const lineWidth = lineWidths[i]!
+    let x = -lineWidth / 2
+
+    for (const char of line) {
+      if (char === " ") {
+        x += charAdvance * 0.6
+        continue
+      }
+
+      const charLines = lineAlphabet[char as AlphabetKey]
+      if (charLines) {
+        paths.push(linesToPathData(charLines, x, y, fontSize))
+      }
+      x += charAdvance
+    }
+
+    y += lineHeight
+  }
+
+  return {
+    pathData: paths.join(" "),
+    width: maxWidth,
+    height: totalHeight,
+  }
+}
 
 export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap, circuitJson } = ctx
+  const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,
     text,
@@ -22,6 +106,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
+    is_knockout = false,
+    knockout_padding,
+    is_mirrored = false,
   } = pcbSilkscreenText
 
   if (layerFilter && layer !== layerFilter) return []
@@ -40,7 +127,110 @@ export function createSvgObjectsFromPcbSilkscreenText(
     anchor_position.y,
   ])
 
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const scaleFactor = Math.abs(transform.a)
+  const silkscreenColor =
+    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+
+  const isBottom = layer === "bottom"
+  const applyMirror = isBottom ? true : is_mirrored === true
+
+  // Handle knockout rendering
+  if (is_knockout) {
+    const scaledFontSize = font_size * FONT_SCALE
+    const { pathData, width, height } = textToCenteredAlphabetPaths(
+      text,
+      scaledFontSize,
+    )
+
+    const padX = knockout_padding?.left ?? scaledFontSize * 0.5
+    const padY = knockout_padding?.top ?? scaledFontSize * 0.3
+
+    const rectW = width + padX * 2
+    const rectH = height + padY * 2
+    const strokeWidth = scaledFontSize * 0.15
+
+    const knockoutTransform = matrixToString(
+      compose(
+        translate(transformedX, transformedY),
+        rotate((-ccw_rotation * Math.PI) / 180),
+        ...(applyMirror ? [scale(-1, 1)] : []),
+        scale(scaleFactor, scaleFactor),
+      ),
+    )
+
+    const maskId = `silkscreen-knockout-mask-${pcbSilkscreenText.pcb_silkscreen_text_id}-${silkscreenMaskIdCounter++}`
+
+    return [
+      {
+        name: "defs",
+        type: "element",
+        value: "",
+        children: [
+          {
+            name: "mask",
+            type: "element",
+            value: "",
+            attributes: {
+              id: maskId,
+            },
+            children: [
+              {
+                name: "rect",
+                type: "element",
+                value: "",
+                attributes: {
+                  x: (-rectW / 2).toString(),
+                  y: (-rectH / 2).toString(),
+                  width: rectW.toString(),
+                  height: rectH.toString(),
+                  fill: "white",
+                },
+                children: [],
+              },
+              {
+                name: "path",
+                type: "element",
+                value: "",
+                attributes: {
+                  d: pathData,
+                  fill: "none",
+                  stroke: "black",
+                  "stroke-width": strokeWidth.toString(),
+                  "stroke-linecap": "round",
+                  "stroke-linejoin": "round",
+                },
+                children: [],
+              },
+            ],
+          },
+        ],
+        attributes: {},
+      },
+      {
+        name: "rect",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          x: (-rectW / 2).toString(),
+          y: (-rectH / 2).toString(),
+          width: rectW.toString(),
+          height: rectH.toString(),
+          fill: silkscreenColor,
+          mask: `url(#${maskId})`,
+          transform: knockoutTransform,
+          class: `pcb-silkscreen-text-knockout pcb-silkscreen-${layer}`,
+          "data-type": "pcb_silkscreen_text",
+          "data-pcb-silkscreen-text-id":
+            pcbSilkscreenText.pcb_silkscreen_text_id,
+          "data-pcb-layer": layer,
+        },
+      },
+    ]
+  }
+
+  // Regular (non-knockout) rendering
+  const transformedFontSize = font_size * scaleFactor
 
   // Set text-anchor and dominant-baseline based on alignment
   let textAnchor = "middle"
@@ -90,12 +280,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate((-ccw_rotation * Math.PI) / 180), // Negate to make counter-clockwise
+    rotate((-ccw_rotation * Math.PI) / 180),
     ...(layer === "bottom" ? [scale(-1, 1)] : []),
   )
-
-  const color =
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
   const lines = text.split("\n")
 
@@ -137,7 +324,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       y: "0",
       dx: dx.toString(),
       dy: dy.toString(),
-      fill: color,
+      fill: silkscreenColor,
       "font-family": "Arial, sans-serif",
       "font-size": transformedFontSize.toString(),
       "text-anchor": textAnchor,
