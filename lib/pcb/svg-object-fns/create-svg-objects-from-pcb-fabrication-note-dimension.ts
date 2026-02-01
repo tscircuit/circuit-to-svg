@@ -48,10 +48,9 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
   if (layerFilter && layer && layer !== layerFilter) return []
 
   if (!from || !to || typeof from !== "object" || typeof to !== "object") {
-    console.error("Invalid pcb_fabrication_note_dimension endpoints", {
-      from,
-      to,
-    })
+    console.error(
+      `[pcb_fabrication_note_dimension] Invalid endpoints for "${pcb_fabrication_note_dimension_id}": expected {from: {x, y}, to: {x, y}}, got from=${JSON.stringify(from)}, to=${JSON.stringify(to)}`,
+    )
     return []
   }
 
@@ -61,10 +60,9 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     typeof (to as Point2D).x !== "number" ||
     typeof (to as Point2D).y !== "number"
   ) {
-    console.error("Invalid pcb_fabrication_note_dimension point values", {
-      from,
-      to,
-    })
+    console.error(
+      `[pcb_fabrication_note_dimension] Invalid point values for "${pcb_fabrication_note_dimension_id}": x and y must be numbers, got from=${JSON.stringify(from)}, to=${JSON.stringify(to)}`,
+    )
     return []
   }
 
@@ -77,8 +75,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     numericArrowSize <= 0
   ) {
     console.error(
-      "Invalid pcb_fabrication_note_dimension arrow_size",
-      arrow_size,
+      `[pcb_fabrication_note_dimension] Invalid arrow_size for "${pcb_fabrication_note_dimension_id}": expected positive number, got ${JSON.stringify(arrow_size)}`,
     )
     return []
   }

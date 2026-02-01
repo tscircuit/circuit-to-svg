@@ -40,12 +40,16 @@ export function createSvgObjectsFromPcbNoteDimension(
   } = dimension
 
   if (!from || !to) {
-    console.error("Invalid pcb_note_dimension endpoints", { from, to })
+    console.error(
+      `[pcb_note_dimension] Invalid endpoints for "${dimension.pcb_note_dimension_id}": expected {from: {x, y}, to: {x, y}}, got from=${JSON.stringify(from)}, to=${JSON.stringify(to)}`,
+    )
     return []
   }
 
   if (!Number.isFinite(arrow_size) || arrow_size <= 0) {
-    console.error("Invalid pcb_note_dimension arrow_size", arrow_size)
+    console.error(
+      `[pcb_note_dimension] Invalid arrow_size for "${dimension.pcb_note_dimension_id}": expected positive number, got ${JSON.stringify(arrow_size)}`,
+    )
     return []
   }
 

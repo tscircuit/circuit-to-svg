@@ -18,9 +18,9 @@ export function createSvgObjectsFromPcbCourtyardPolygon(
   if (layerFilter && layer !== layerFilter) return []
 
   if (!points || points.length === 0) {
-    console.error("Invalid courtyard polygon data: no points", {
-      pcb_courtyard_polygon_id,
-    })
+    console.error(
+      `[pcb_courtyard_polygon] Invalid data for "${pcb_courtyard_polygon_id}": expected non-empty array of points, got ${JSON.stringify(points)}`,
+    )
     return []
   }
 

@@ -26,7 +26,9 @@ export function createSvgObjectsFromPcbSilkscreenLine(
     typeof x2 !== "number" ||
     typeof y2 !== "number"
   ) {
-    console.error("Invalid coordinates:", { x1, y1, x2, y2 })
+    console.error(
+      `[pcb_silkscreen_line] Invalid coordinates for "${pcb_silkscreen_line_id}": expected x1, y1, x2, y2 as numbers, got x1=${JSON.stringify(x1)}, y1=${JSON.stringify(y1)}, x2=${JSON.stringify(x2)}, y2=${JSON.stringify(y2)}`,
+    )
     return []
   }
 

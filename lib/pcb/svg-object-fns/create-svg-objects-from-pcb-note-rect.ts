@@ -31,7 +31,9 @@ export function createSvgObjectsFromPcbNoteRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error("Invalid pcb_note_rect data", { center, width, height })
+    console.error(
+      `[pcb_note_rect] Invalid data for "${noteRect.pcb_note_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
+    )
     return []
   }
 

@@ -24,12 +24,16 @@ export function createSvgObjectsFromPcbNoteText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error("Invalid pcb_note_text anchor_position", anchor_position)
+    console.error(
+      `[pcb_note_text] Invalid anchor_position for "${note.pcb_note_text_id}": expected {x: number, y: number}, got ${JSON.stringify(anchor_position)}`,
+    )
     return []
   }
 
   if (typeof text !== "string" || text.length === 0) {
-    console.error("Invalid pcb_note_text text", text)
+    console.error(
+      `[pcb_note_text] Invalid text for "${note.pcb_note_text_id}": expected non-empty string, got ${JSON.stringify(text)}`,
+    )
     return []
   }
 

@@ -26,11 +26,9 @@ export function createSvgObjectsFromPcbSilkscreenOval(
     typeof radius_x !== "number" ||
     typeof radius_y !== "number"
   ) {
-    console.error("Invalid PCB Silkscreen Oval data:", {
-      center,
-      radius_x,
-      radius_y,
-    })
+    console.error(
+      `[pcb_silkscreen_oval] Invalid data for "${pcb_silkscreen_oval_id}": expected center {x: number, y: number}, radius_x: number, radius_y: number, got center=${JSON.stringify(center)}, radius_x=${JSON.stringify(radius_x)}, radius_y=${JSON.stringify(radius_y)}`,
+    )
     return []
   }
 

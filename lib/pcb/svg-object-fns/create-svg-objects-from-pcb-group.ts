@@ -100,7 +100,9 @@ export function createSvgObjectsFromPcbGroup(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error("Invalid pcb_group data", { center, width, height })
+    console.error(
+      `[pcb_group] Invalid data for "${pcbGroup.pcb_group_id}"${pcbGroup.name ? ` (name: "${pcbGroup.name}")` : ""}: expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
+    )
     return svgObjects
   }
 

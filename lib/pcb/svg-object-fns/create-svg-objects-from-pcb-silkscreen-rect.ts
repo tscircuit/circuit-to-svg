@@ -31,7 +31,9 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error("Invalid rectangle data:", { center, width, height })
+    console.error(
+      `[pcb_silkscreen_rect] Invalid data for "${pcb_silkscreen_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
+    )
     return []
   }
 
