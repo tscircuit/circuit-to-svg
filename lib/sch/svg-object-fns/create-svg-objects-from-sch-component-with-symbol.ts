@@ -52,6 +52,11 @@ const ninePointAnchorToDominantBaseline: Record<
   middle_bottom: "ideographic",
 }
 
+const DEFAULT_TEXT_OFFSET_FACTOR = 0.2
+const REFERENCE_TEXT_OFFSET_FACTOR = 0.12
+const REFERENCE_FONT_OFFSET_MULTIPLIER = 0.3
+const VALUE_BOTTOM_OFFSET_MULTIPLIER = 0.6
+
 export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   component: schComponent,
   transform: realToScreenTransform,
@@ -179,6 +184,10 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     })
   }
 
+  const symbolToScreenScale = Math.abs(
+    compose(realToScreenTransform, transformFromSymbolToReal).a,
+  )
+
   for (const text of texts) {
     const screenTextPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
@@ -186,23 +195,52 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     )
 
     let textValue = ""
-    if (text.text === "{REF}") {
+    const isReferenceText = text.text === "{REF}"
+    const isValueText = text.text === "{VAL}"
+
+    if (isReferenceText) {
       textValue = srcComponent?.display_name ?? srcComponent?.name ?? ""
-    } else if (text.text === "{VAL}") {
+    } else if (isValueText) {
       textValue = schComponent.symbol_display_value ?? ""
     }
 
     const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
-    const offsetFactor = 0.1
-    const baseOffset = symbolHeight * offsetFactor
-    const transformScale = Math.abs(transformFromSymbolToReal.a)
+    const symbolWidth = Math.abs(bounds.maxX - bounds.minX)
+    const offsetFactor = isReferenceText
+      ? REFERENCE_TEXT_OFFSET_FACTOR
+      : DEFAULT_TEXT_OFFSET_FACTOR
+    const baseOffsetPx = symbolHeight * offsetFactor * symbolToScreenScale
+    const fontSizePx = getSchScreenFontSize(
+      realToScreenTransform,
+      "reference_designator",
+    )
+
+    const textY = "y" in text && typeof text.y === "number" ? text.y : 0
+    const textX = "x" in text && typeof text.x === "number" ? text.x : 0
+    const topThreshold = bounds.minY + symbolHeight * 0.05
+    const bottomThreshold = bounds.maxY - symbolHeight * 0.05
+    let treatAsTop = text.anchor.includes("top") || textY <= topThreshold
+    let treatAsBottom =
+      text.anchor.includes("bottom") || textY >= bottomThreshold
+
+    if (isReferenceText) {
+      treatAsTop = true
+      treatAsBottom = false
+    } else if (isValueText) {
+      treatAsBottom = true
+      treatAsTop = false
+    }
 
     let verticalOffset = 0
 
-    if (text.anchor.includes("bottom")) {
-      verticalOffset = baseOffset * transformScale
-    } else if (text.anchor.includes("top")) {
-      verticalOffset = -baseOffset * transformScale
+    if (treatAsBottom && !treatAsTop) {
+      verticalOffset =
+        baseOffsetPx * (isValueText ? VALUE_BOTTOM_OFFSET_MULTIPLIER : 1)
+    } else if (treatAsTop && !treatAsBottom) {
+      verticalOffset = -baseOffsetPx
+      if (isReferenceText) {
+        verticalOffset -= fontSizePx * REFERENCE_FONT_OFFSET_MULTIPLIER
+      }
     }
 
     const dominantBaseline = text.anchor.includes("bottom")
@@ -210,7 +248,6 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       : text.anchor.includes("top")
         ? "hanging"
         : "middle"
-    const isReferenceText = text.text === "{REF}"
     svgObjects.push({
       name: "text",
       type: "element",
@@ -228,7 +265,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
         "font-family": "sans-serif",
         "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
         "dominant-baseline": dominantBaseline,
-        "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
+        "font-size": `${fontSizePx}px`,
       },
       value: "",
       children: [
