@@ -1,4 +1,5 @@
 import type { PcbFabricationNoteText } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
 import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
@@ -25,7 +26,9 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error("Invalid anchor_position:", anchor_position)
+    debugPcb(
+      `[pcb_fabrication_note_text] Invalid anchor_position for "${pcbFabNoteText.pcb_fabrication_note_text_id}": expected {x: number, y: number}, got ${JSON.stringify(anchor_position)}`,
+    )
     return []
   }
 

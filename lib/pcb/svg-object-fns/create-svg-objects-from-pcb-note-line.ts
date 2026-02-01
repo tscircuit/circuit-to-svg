@@ -1,4 +1,5 @@
 import type { PcbNoteLine } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -19,12 +20,9 @@ export function createSvgObjectsFromPcbNoteLine(
     typeof x2 !== "number" ||
     typeof y2 !== "number"
   ) {
-    console.error("Invalid pcb_note_line coordinates", {
-      x1,
-      y1,
-      x2,
-      y2,
-    })
+    debugPcb(
+      `[pcb_note_line] Invalid coordinates for "${noteLine.pcb_note_line_id}": expected x1, y1, x2, y2 as numbers, got x1=${JSON.stringify(x1)}, y1=${JSON.stringify(y1)}, x2=${JSON.stringify(x2)}, y2=${JSON.stringify(y2)}`,
+    )
     return []
   }
 

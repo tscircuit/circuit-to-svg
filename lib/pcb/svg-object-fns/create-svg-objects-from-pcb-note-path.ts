@@ -1,4 +1,5 @@
 import type { PcbNotePath } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -13,13 +14,17 @@ export function createSvgObjectsFromPcbNotePath(
   const { transform } = ctx
 
   if (!Array.isArray(notePath.route) || notePath.route.length === 0) {
-    console.error("Invalid pcb_note_path route", notePath.route)
+    debugPcb(
+      `[pcb_note_path] Invalid route for "${notePath.pcb_note_path_id}": expected non-empty array of points, got ${JSON.stringify(notePath.route)}`,
+    )
     return []
   }
 
   for (const point of notePath.route) {
     if (typeof point.x !== "number" || typeof point.y !== "number") {
-      console.error("Invalid point in pcb_note_path", point)
+      debugPcb(
+        `[pcb_note_path] Invalid point in route for "${notePath.pcb_note_path_id}": expected {x: number, y: number}, got ${JSON.stringify(point)}`,
+      )
       return []
     }
   }
