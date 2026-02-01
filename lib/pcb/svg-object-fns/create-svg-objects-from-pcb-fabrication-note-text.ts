@@ -11,7 +11,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
   const { transform, layer: layerFilter } = ctx
   const {
     anchor_position,
-    anchor_alignment,
+    anchor_alignment = "center",
     text,
     font_size = 1,
     layer = "top",
@@ -35,11 +35,33 @@ export function createSvgObjectsFromPcbFabricationNoteText(
   ])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Remove ${} from text value and handle undefined text
+  // Set text-anchor and dominant-baseline based on anchor_alignment
+  let textAnchor = "middle"
+  let dominantBaseline = "central"
+
+  switch (anchor_alignment) {
+    case "top_left":
+      textAnchor = "start"
+      dominantBaseline = "text-before-edge"
+      break
+    case "top_right":
+      textAnchor = "end"
+      dominantBaseline = "text-before-edge"
+      break
+    case "bottom_left":
+      textAnchor = "start"
+      dominantBaseline = "text-after-edge"
+      break
+    case "bottom_right":
+      textAnchor = "end"
+      dominantBaseline = "text-after-edge"
+      break
+    // "center" is handled by the default values set above
+  }
 
   // Create a composite transformation
   const textTransform = compose(
-    translate(transformedX, transformedY), // TODO do anchor_alignment
+    translate(transformedX, transformedY),
     rotate(Math.PI / 180), // Convert degrees to radians
   )
 
@@ -51,8 +73,8 @@ export function createSvgObjectsFromPcbFabricationNoteText(
       y: "0",
       "font-family": "Arial, sans-serif",
       "font-size": transformedFontSize.toString(),
-      "text-anchor": "middle",
-      "dominant-baseline": "central",
+      "text-anchor": textAnchor,
+      "dominant-baseline": dominantBaseline,
       transform: matrixToString(textTransform),
       class: "pcb-fabrication-note-text",
       fill: color || "rgba(255,255,255,0.5)",
