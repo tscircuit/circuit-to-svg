@@ -2,17 +2,19 @@ import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { Circuit } from "@tscircuit/core"
 
-test("panel with four boards and anchor offsets", () => {
+test("panel with four boards and anchor offsets", async () => {
   const circuit = new Circuit()
 
   circuit.add(
-    <panel pcbX={0} pcbY={0} panelizationMethod="tab-routing">
+    <panel layoutMode="grid" pcbX={0} pcbY={0} panelizationMethod="tab-routing">
       <board width="10mm" height="10mm" />
       <board width="10mm" height="10mm" />
       <board width="10mm" height="10mm" />
       <board width="10mm" height="10mm" />
     </panel>,
   )
+
+  await circuit.renderUntilSettled()
 
   const circuitJson = circuit.getCircuitJson()
 
