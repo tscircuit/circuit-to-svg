@@ -1,4 +1,5 @@
 import type { PcbSilkscreenText } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
@@ -31,7 +32,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error(
+    debugPcb(
       `[pcb_silkscreen_text] Invalid anchor_position for "${pcbSilkscreenText.pcb_silkscreen_text_id}": expected {x: number, y: number}, got ${JSON.stringify(anchor_position)}`,
     )
     return []

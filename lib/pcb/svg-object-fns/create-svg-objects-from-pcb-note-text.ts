@@ -1,5 +1,6 @@
 import type { PcbNoteText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { colorMap } from "lib/utils/colors"
@@ -24,14 +25,14 @@ export function createSvgObjectsFromPcbNoteText(
     typeof anchor_position.x !== "number" ||
     typeof anchor_position.y !== "number"
   ) {
-    console.error(
+    debugPcb(
       `[pcb_note_text] Invalid anchor_position for "${note.pcb_note_text_id}": expected {x: number, y: number}, got ${JSON.stringify(anchor_position)}`,
     )
     return []
   }
 
   if (typeof text !== "string" || text.length === 0) {
-    console.error(
+    debugPcb(
       `[pcb_note_text] Invalid text for "${note.pcb_note_text_id}": expected non-empty string, got ${JSON.stringify(text)}`,
     )
     return []

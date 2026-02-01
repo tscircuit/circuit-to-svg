@@ -1,4 +1,5 @@
 import type { PcbSilkscreenRect } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, toString as matrixToString } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -31,7 +32,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error(
+    debugPcb(
       `[pcb_silkscreen_rect] Invalid data for "${pcb_silkscreen_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
     )
     return []

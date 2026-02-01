@@ -1,4 +1,5 @@
 import type { PcbNoteDimension } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -40,14 +41,14 @@ export function createSvgObjectsFromPcbNoteDimension(
   } = dimension
 
   if (!from || !to) {
-    console.error(
+    debugPcb(
       `[pcb_note_dimension] Invalid endpoints for "${dimension.pcb_note_dimension_id}": expected {from: {x, y}, to: {x, y}}, got from=${JSON.stringify(from)}, to=${JSON.stringify(to)}`,
     )
     return []
   }
 
   if (!Number.isFinite(arrow_size) || arrow_size <= 0) {
-    console.error(
+    debugPcb(
       `[pcb_note_dimension] Invalid arrow_size for "${dimension.pcb_note_dimension_id}": expected positive number, got ${JSON.stringify(arrow_size)}`,
     )
     return []

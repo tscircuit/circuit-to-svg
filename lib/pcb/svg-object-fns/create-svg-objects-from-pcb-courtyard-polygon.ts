@@ -1,4 +1,5 @@
 import type { Point, PcbCourtyardPolygon } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -18,7 +19,7 @@ export function createSvgObjectsFromPcbCourtyardPolygon(
   if (layerFilter && layer !== layerFilter) return []
 
   if (!points || points.length === 0) {
-    console.error(
+    debugPcb(
       `[pcb_courtyard_polygon] Invalid data for "${pcb_courtyard_polygon_id}": expected non-empty array of points, got ${JSON.stringify(points)}`,
     )
     return []

@@ -1,4 +1,5 @@
 import type { PcbFabricationNoteRect } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -35,7 +36,7 @@ export function createSvgObjectsFromPcbFabricationNoteRect(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error(
+    debugPcb(
       `[pcb_fabrication_note_rect] Invalid data for "${pcb_fabrication_note_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
     )
     return []

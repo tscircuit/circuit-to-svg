@@ -1,4 +1,5 @@
 import type { AnyCircuitElement, PcbBoard, PcbGroup, Point } from "circuit-json"
+import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -100,7 +101,7 @@ export function createSvgObjectsFromPcbGroup(
     typeof width !== "number" ||
     typeof height !== "number"
   ) {
-    console.error(
+    debugPcb(
       `[pcb_group] Invalid data for "${pcbGroup.pcb_group_id}"${pcbGroup.name ? ` (name: "${pcbGroup.name}")` : ""}: expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
     )
     return svgObjects
