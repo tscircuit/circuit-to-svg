@@ -10,7 +10,7 @@ import {
 } from "lib/utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { estimateTextWidth } from "./estimate-text-width"
-import { extractPointsFromSvgPath } from "lib/utils/extract-points-from-svg-path"
+
 interface Bounds {
   minX: number
   minY: number
@@ -174,13 +174,6 @@ export function getSchematicBoundsFromCircuitJson(
     } else if (item.type === "schematic_path") {
       if (item.points && item.points.length > 0) {
         for (const point of item.points) {
-          updateBounds(point, { width: 0.02, height: 0.02 }, 0)
-        }
-      } else if (item.svg_path) {
-        // Extract coordinate points from SVG path string using proper parsing
-        // Handles all SVG path commands (M, L, H, V, C, S, Q, T, A, Z)
-        const points = extractPointsFromSvgPath(item.svg_path)
-        for (const point of points) {
           updateBounds(point, { width: 0.02, height: 0.02 }, 0)
         }
       }

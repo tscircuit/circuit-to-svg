@@ -15,6 +15,7 @@ test("schematic path", () => {
       ],
       is_filled: false,
       stroke_width: 0.05,
+      schematic_path_id: "schematic_path_id_1",
     },
     {
       type: "schematic_path",
@@ -27,6 +28,7 @@ test("schematic path", () => {
       is_filled: true,
       fill_color: "blue",
       stroke_width: 0.05,
+      schematic_path_id: "schematic_path_id_2",
     },
   ]
 
