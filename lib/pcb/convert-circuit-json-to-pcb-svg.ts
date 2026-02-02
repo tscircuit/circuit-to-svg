@@ -38,6 +38,7 @@ import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
 import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
 import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-polygon"
+import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
@@ -455,7 +456,9 @@ function createSvgObjects({
     case "pcb_courtyard_polygon":
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardPolygon(elm, ctx)
-
+    case "pcb_courtyard_circle":
+      if (!ctx.showCourtyards) return []
+      return createSvgObjectsFromPcbCourtyardCircle(elm, ctx)
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
