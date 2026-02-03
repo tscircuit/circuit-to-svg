@@ -16,6 +16,7 @@ export type LabelPosition = {
   elbow_end: { x: number; y: number }
   label_pos: { x: number; y: number }
   edge: "left" | "right" | "top" | "bottom"
+  highlight_color?: string
 }
 
 function calculateVerticalEdgeLabels(
@@ -64,6 +65,7 @@ function calculateVerticalEdgeLabels(
         pinout_label.pcb_port.y,
       ])[1],
       aliases: pinout_label.aliases,
+      highlight_color: pinout_label.highlight_color,
     })
 
     // Sort by y-descending in real-world coordinates
@@ -98,6 +100,7 @@ function calculateVerticalEdgeLabels(
           pinout_label.pcb_port.y,
         ])[1],
         aliases: pinout_label.aliases,
+        highlight_color: pinout_label.highlight_color,
       }))
       .sort((a, b) => a.y - b.y)
   }
@@ -205,7 +208,7 @@ function calculateVerticalEdgeLabels(
 
   const is_all_main_group = main_group_indices.length === num_labels
 
-  edge_ports.forEach(({ pcb_port, aliases }, i) => {
+  edge_ports.forEach(({ pcb_port, aliases, highlight_color }, i) => {
     let stagger_rank: number
     if (main_group_indices.length > 0) {
       if (main_group_indices.includes(i)) {
@@ -255,6 +258,7 @@ function calculateVerticalEdgeLabels(
       elbow_end,
       label_pos,
       edge,
+      highlight_color,
     })
 
     if (!(main_group_indices.length > 0 && is_main_group_pin)) {
