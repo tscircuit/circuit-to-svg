@@ -35,7 +35,10 @@ test("Pinout with highlightColor", () => {
     } as AnyCircuitElement)
 
     // Create pcb_port with optional highlight_color
-    const pcb_port: PcbPort & { is_board_pinout: boolean; highlight_color?: string } = {
+    const pcb_port: PcbPort & {
+      is_board_pinout: boolean
+      highlight_color?: string
+    } = {
       type: "pcb_port",
       pcb_port_id,
       source_port_id,

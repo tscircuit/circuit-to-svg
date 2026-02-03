@@ -121,9 +121,10 @@ export function convertCircuitJsonToPinoutSvg(
 
     const edge = getClosestEdge({ x: pcb_port.x, y: pcb_port.y }, board_bounds)
     // Extract highlight_color from pcb_port if present (extended property)
-    const highlight_color = "highlight_color" in pcb_port
-      ? (pcb_port as PcbPort & { highlight_color?: string }).highlight_color
-      : undefined
+    const highlight_color =
+      "highlight_color" in pcb_port
+        ? (pcb_port as PcbPort & { highlight_color?: string }).highlight_color
+        : undefined
 
     pinout_labels.push({
       pcb_port,

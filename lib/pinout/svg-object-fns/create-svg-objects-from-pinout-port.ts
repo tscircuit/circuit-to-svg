@@ -20,7 +20,14 @@ export function createSvgObjectsFromPinoutPort(
   const label_info = ctx.label_positions.get(pcb_port.pcb_port_id)
   if (!label_info) return []
 
-  const { text: label, aliases, elbow_end, label_pos, edge, highlight_color } = label_info
+  const {
+    text: label,
+    aliases,
+    elbow_end,
+    label_pos,
+    edge,
+    highlight_color,
+  } = label_info
 
   const [port_x, port_y] = applyToPoint(ctx.transform, [pcb_port.x, pcb_port.y])
 
