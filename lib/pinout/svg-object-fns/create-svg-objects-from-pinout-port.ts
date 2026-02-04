@@ -20,7 +20,14 @@ export function createSvgObjectsFromPinoutPort(
   const label_info = ctx.label_positions.get(pcb_port.pcb_port_id)
   if (!label_info) return []
 
-  const { text: label, aliases, elbow_end, label_pos, edge } = label_info
+  const {
+    text: label,
+    aliases,
+    elbow_end,
+    label_pos,
+    edge,
+    highlight_color,
+  } = label_info
 
   const [port_x, port_y] = applyToPoint(ctx.transform, [pcb_port.x, pcb_port.y])
 
@@ -57,16 +64,18 @@ export function createSvgObjectsFromPinoutPort(
   )
 
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
+  // If highlight_color is provided, use it as background for non-pin-number tokens
   const numberMatch = /^pin(\d+)$/i.exec(label)
+  const labelBg = highlight_color ?? LABEL_BACKGROUND
   const tokensWithStyle = [
     {
       text: numberMatch ? numberMatch[1] : label,
-      bg: numberMatch ? PIN_NUMBER_BACKGROUND : LABEL_BACKGROUND,
+      bg: numberMatch ? PIN_NUMBER_BACKGROUND : labelBg,
       color: numberMatch ? PIN_NUMBER_COLOR : LABEL_COLOR,
     },
     ...aliases.map((t) => ({
       text: t,
-      bg: LABEL_BACKGROUND,
+      bg: labelBg,
       color: LABEL_COLOR,
     })),
   ]

@@ -7,7 +7,6 @@ import {
   translate,
 } from "transformation-matrix"
 import { createSvgObjectsFromPinoutBoard } from "./svg-object-fns/create-svg-objects-from-pinout-board"
-import { createSvgObjectsFromPinoutComponent } from "./svg-object-fns/create-svg-objects-from-pinout-component"
 import { createSvgObjectsFromPinoutHole } from "./svg-object-fns/create-svg-objects-from-pinout-hole"
 import { createSvgObjectsFromPinoutPlatedHole } from "./svg-object-fns/create-svg-objects-from-pinout-plated-hole"
 import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-objects-from-pinout-smt-pad"
@@ -46,10 +45,17 @@ interface Options {
   showErrorsInTextOverlay?: boolean
 }
 
+/** Extended PcbPort with optional properties for pinout diagrams */
+type PcbPortWithHighlight = PcbPort & {
+  is_board_pinout?: boolean
+  highlight_color?: string
+}
+
 export interface PinoutLabel {
   pcb_port: PcbPort
   aliases: string[]
   edge: "left" | "right" | "top" | "bottom"
+  highlight_color?: string
 }
 
 export interface PinoutSvgContext {
@@ -109,8 +115,10 @@ export function convertCircuitJsonToPinoutSvg(
 
   const board_bounds = { minX, minY, maxX, maxY }
   const pinout_ports = soup.filter(
-    (elm): elm is PcbPort =>
-      elm.type === "pcb_port" && (elm as any).is_board_pinout,
+    (elm): elm is PcbPortWithHighlight =>
+      elm.type === "pcb_port" &&
+      "is_board_pinout" in elm &&
+      Boolean(elm.is_board_pinout),
   )
 
   const pinout_labels: PinoutLabel[] = []
@@ -124,6 +132,7 @@ export function convertCircuitJsonToPinoutSvg(
       pcb_port,
       aliases: [label_info.text, ...label_info.aliases],
       edge,
+      highlight_color: pcb_port.highlight_color,
     })
   }
 
@@ -339,8 +348,9 @@ function createSvgObjects(
     case "pcb_board":
       return createSvgObjectsFromPinoutBoard(elm, ctx)
 
+    // Skip pcb_component rendering - the gray boxes are not useful in pinout diagrams
     case "pcb_component":
-      return createSvgObjectsFromPinoutComponent(elm, ctx)
+      return []
     case "pcb_smtpad":
       return createSvgObjectsFromPinoutSmtPad(elm, ctx)
     case "pcb_hole":
@@ -348,7 +358,7 @@ function createSvgObjects(
     case "pcb_plated_hole":
       return createSvgObjectsFromPinoutPlatedHole(elm, ctx)
     case "pcb_port":
-      if ((elm as any).is_board_pinout) {
+      if ("is_board_pinout" in elm && elm.is_board_pinout) {
         return createSvgObjectsFromPinoutPort(elm, ctx)
       }
       return []
