@@ -31,7 +31,9 @@ export function createSvgObjectsFromPcbCourtyardPolygon(
   const pointsString = transformedPoints.map((p) => `${p[0]},${p[1]}`).join(" ")
 
   const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
-  const strokeColor = color ?? colorMap.courtyard
+  const strokeColor =
+    color ??
+    (layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top)
 
   const attributes: { [key: string]: string } = {
     points: pointsString,
