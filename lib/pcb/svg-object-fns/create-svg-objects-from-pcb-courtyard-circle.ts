@@ -37,7 +37,8 @@ export function createSvgObjectsFromPcbCourtyardCircle(
   const transformedRadius = radius * Math.abs(transform.a)
   const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
 
-  const color = colorMap.courtyard
+  const color =
+    layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top
 
   const attributes: { [key: string]: string } = {
     cx: transformedX.toString(),

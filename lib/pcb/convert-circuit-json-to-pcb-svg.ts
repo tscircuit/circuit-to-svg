@@ -174,7 +174,13 @@ export function convertCircuitJsonToPcbSvg(
         DEFAULT_PCB_COLOR_MAP.soldermaskWithCopperUnderneath.bottom,
     },
     substrate: colorOverrides?.substrate ?? DEFAULT_PCB_COLOR_MAP.substrate,
-    courtyard: colorOverrides?.courtyard ?? DEFAULT_PCB_COLOR_MAP.courtyard,
+    courtyard: {
+      top:
+        colorOverrides?.courtyard?.top ?? DEFAULT_PCB_COLOR_MAP.courtyard.top,
+      bottom:
+        colorOverrides?.courtyard?.bottom ??
+        DEFAULT_PCB_COLOR_MAP.courtyard.bottom,
+    },
     keepout: colorOverrides?.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout,
     debugComponent: {
       fill:

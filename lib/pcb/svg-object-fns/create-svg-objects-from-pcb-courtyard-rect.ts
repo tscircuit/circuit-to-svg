@@ -41,7 +41,8 @@ export function createSvgObjectsFromPcbCourtyardRect(
   const transformedHeight = height * Math.abs(transform.d)
   const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
 
-  const color = colorMap.courtyard
+  const color =
+    layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top
 
   const attributes: { [key: string]: string } = {
     x: (transformedX - transformedWidth / 2).toString(),
