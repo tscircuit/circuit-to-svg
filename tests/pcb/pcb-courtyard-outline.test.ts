@@ -22,7 +22,9 @@ test("pcb_courtyard_outline", () => {
       outline: [
         { x: 0, y: 0 },
         { x: 10, y: 0 },
-        { x: 10, y: 10 },
+        { x: 10, y: 5 },
+        { x: 5, y: 5 },
+        { x: 5, y: 10 },
         { x: 0, y: 10 },
       ],
     },
@@ -34,8 +36,7 @@ test("pcb_courtyard_outline", () => {
       outline: [
         { x: 1, y: 1 },
         { x: 9, y: 1 },
-        { x: 9, y: 9 },
-        { x: 1, y: 9 },
+        { x: 5, y: 9 },
       ],
     },
   ]
