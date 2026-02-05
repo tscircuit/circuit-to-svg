@@ -1,21 +1,19 @@
-import type { PcbCourtyardRect } from "circuit-json"
-import { debugPcb } from "lib/utils/debug"
+import type { PcbCourtyardCircle } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
-export function createSvgObjectsFromPcbCourtyardRect(
-  pcbCourtyardRect: PcbCourtyardRect,
+export function createSvgObjectsFromPcbCourtyardCircle(
+  pcbCourtyardCircle: PcbCourtyardCircle,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
   const {
     center,
-    width,
-    height,
+    radius,
     layer = "top",
-    pcb_courtyard_rect_id,
-  } = pcbCourtyardRect
+    pcb_courtyard_circle_id,
+  } = pcbCourtyardCircle
 
   if (layerFilter && layer !== layerFilter) return []
 
@@ -23,11 +21,10 @@ export function createSvgObjectsFromPcbCourtyardRect(
     !center ||
     typeof center.x !== "number" ||
     typeof center.y !== "number" ||
-    typeof width !== "number" ||
-    typeof height !== "number"
+    typeof radius !== "number"
   ) {
-    debugPcb(
-      `[pcb_courtyard_rect] Invalid data for "${pcb_courtyard_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
+    console.error(
+      `[pcb_courtyard_circle] Invalid data for "${pcb_courtyard_circle_id}": expected center {x: number, y: number}, radius: number, got center=${JSON.stringify(center)}, radius=${JSON.stringify(radius)}`,
     )
     return []
   }
@@ -37,21 +34,19 @@ export function createSvgObjectsFromPcbCourtyardRect(
     center.y,
   ])
 
-  const transformedWidth = width * Math.abs(transform.a)
-  const transformedHeight = height * Math.abs(transform.d)
+  const transformedRadius = radius * Math.abs(transform.a)
   const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top
 
   const attributes: { [key: string]: string } = {
-    x: (transformedX - transformedWidth / 2).toString(),
-    y: (transformedY - transformedHeight / 2).toString(),
-    width: transformedWidth.toString(),
-    height: transformedHeight.toString(),
-    class: `pcb-courtyard-rect pcb-courtyard-${layer}`,
-    "data-pcb-courtyard-rect-id": pcb_courtyard_rect_id,
-    "data-type": "pcb_courtyard_rect",
+    cx: transformedX.toString(),
+    cy: transformedY.toString(),
+    r: transformedRadius.toString(),
+    class: `pcb-courtyard-circle pcb-courtyard-${layer}`,
+    "data-pcb-courtyard-circle-id": pcb_courtyard_circle_id,
+    "data-type": "pcb_courtyard_circle",
     "data-pcb-layer": layer,
   }
 
@@ -60,7 +55,7 @@ export function createSvgObjectsFromPcbCourtyardRect(
   attributes["stroke-width"] = transformedStrokeWidth.toString()
 
   const svgObject: SvgObject = {
-    name: "rect",
+    name: "circle",
     type: "element",
     attributes,
     value: "",

@@ -38,6 +38,8 @@ import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
 import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
 import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-polygon"
+import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
+import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
@@ -173,7 +175,13 @@ export function convertCircuitJsonToPcbSvg(
         DEFAULT_PCB_COLOR_MAP.soldermaskWithCopperUnderneath.bottom,
     },
     substrate: colorOverrides?.substrate ?? DEFAULT_PCB_COLOR_MAP.substrate,
-    courtyard: colorOverrides?.courtyard ?? DEFAULT_PCB_COLOR_MAP.courtyard,
+    courtyard: {
+      top:
+        colorOverrides?.courtyard?.top ?? DEFAULT_PCB_COLOR_MAP.courtyard.top,
+      bottom:
+        colorOverrides?.courtyard?.bottom ??
+        DEFAULT_PCB_COLOR_MAP.courtyard.bottom,
+    },
     keepout: colorOverrides?.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout,
     debugComponent: {
       fill:
@@ -455,7 +463,12 @@ function createSvgObjects({
     case "pcb_courtyard_polygon":
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardPolygon(elm, ctx)
-
+    case "pcb_courtyard_circle":
+      if (!ctx.showCourtyards) return []
+      return createSvgObjectsFromPcbCourtyardCircle(elm, ctx)
+    case "pcb_courtyard_outline":
+      if (!ctx.showCourtyards) return []
+      return createSvgObjectsFromPcbCourtyardOutline(elm, ctx)
     case "pcb_fabrication_note_path":
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
