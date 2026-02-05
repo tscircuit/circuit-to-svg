@@ -34,6 +34,8 @@ test("pcb_courtyard_outline", () => {
       outline: [
         { x: 1, y: 1 },
         { x: 9, y: 1 },
+        { x: 9, y: 9 },
+        { x: 1, y: 9 },
       ],
     },
   ]
