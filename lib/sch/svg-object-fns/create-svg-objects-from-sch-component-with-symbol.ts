@@ -186,37 +186,21 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     )
 
     let textValue = ""
-    if (text.text === "{REF}") {
+    const isReferenceText = text.text === "{REF}"
+
+    if (isReferenceText) {
       textValue = srcComponent?.display_name ?? srcComponent?.name ?? ""
     } else if (text.text === "{VAL}") {
       textValue = schComponent.symbol_display_value ?? ""
     }
 
-    const symbolHeight = Math.abs(bounds.maxY - bounds.minY)
-    const offsetFactor = 0.1
-    const baseOffset = symbolHeight * offsetFactor
-    const transformScale = Math.abs(transformFromSymbolToReal.a)
-
-    let verticalOffset = 0
-
-    if (text.anchor.includes("bottom")) {
-      verticalOffset = baseOffset * transformScale
-    } else if (text.anchor.includes("top")) {
-      verticalOffset = -baseOffset * transformScale
-    }
-
-    const dominantBaseline = text.anchor.includes("bottom")
-      ? "auto"
-      : text.anchor.includes("top")
-        ? "hanging"
-        : "middle"
-    const isReferenceText = text.text === "{REF}"
+    const dominantBaseline = ninePointAnchorToDominantBaseline[text.anchor]
     svgObjects.push({
       name: "text",
       type: "element",
       attributes: {
         x: screenTextPos.x.toString(),
-        y: (screenTextPos.y + verticalOffset).toString(),
+        y: screenTextPos.y.toString(),
         ...(isReferenceText
           ? {
               stroke: colorMap.schematic.background,
