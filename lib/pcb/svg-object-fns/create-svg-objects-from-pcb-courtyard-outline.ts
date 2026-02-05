@@ -9,8 +9,7 @@ export function createSvgObjectsFromPcbCourtyardOutline(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
-  const { layer, pcb_courtyard_outline_id, outline, color } =
-    pcbCourtyardOutline
+  const { layer, pcb_courtyard_outline_id, outline } = pcbCourtyardOutline
 
   if (layerFilter && layer !== layerFilter) return []
 
@@ -29,8 +28,7 @@ export function createSvgObjectsFromPcbCourtyardOutline(
   const transformedStrokeWidth = 0.05 * Math.abs(transform.a)
 
   const strokeColor =
-    color ??
-    (layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top)
+    layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top
 
   const attributes: { [key: string]: string } = {
     points: pointsString,
