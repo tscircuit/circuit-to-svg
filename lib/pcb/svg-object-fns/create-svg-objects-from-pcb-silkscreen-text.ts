@@ -12,6 +12,8 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { lineAlphabet } from "@tscircuit/alphabet"
 
+// Sourced from pcb_copper_text knockout implementation to keep
+// line-alphabet rendering consistent across knockout text types
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
@@ -145,11 +147,15 @@ export function createSvgObjectsFromPcbSilkscreenText(
       scaledFontSize,
     )
 
-    const padX = knockout_padding?.left ?? scaledFontSize * 0.5
-    const padY = knockout_padding?.top ?? scaledFontSize * 0.3
+    const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
+    const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
+    const padTop = knockout_padding?.top ?? scaledFontSize * 0.3
+    const padBottom = knockout_padding?.bottom ?? scaledFontSize * 0.3
 
-    const rectW = width + padX * 2
-    const rectH = height + padY * 2
+    const rectX = -width / 2 - padLeft
+    const rectY = -height / 2 - padTop
+    const rectW = width + padLeft + padRight
+    const rectH = height + padTop + padBottom
     const strokeWidth = scaledFontSize * 0.15
 
     const knockoutTransform = matrixToString(
@@ -182,8 +188,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
                 type: "element",
                 value: "",
                 attributes: {
-                  x: (-rectW / 2).toString(),
-                  y: (-rectH / 2).toString(),
+                  x: rectX.toString(),
+                  y: rectY.toString(),
                   width: rectW.toString(),
                   height: rectH.toString(),
                   fill: "white",
@@ -215,8 +221,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
         value: "",
         children: [],
         attributes: {
-          x: (-rectW / 2).toString(),
-          y: (-rectH / 2).toString(),
+          x: rectX.toString(),
+          y: rectY.toString(),
           width: rectW.toString(),
           height: rectH.toString(),
           fill: silkscreenColor,
