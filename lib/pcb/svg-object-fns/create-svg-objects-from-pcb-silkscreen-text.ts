@@ -34,6 +34,11 @@ const alphabetBounds = (() => {
   return { width: maxX, height: maxY - minY }
 })()
 
+/** Inter-character spacing as a fraction of cell width (20% gap between chars) */
+const INTER_CHAR_SPACING_RATIO = 0.2
+/** Line-height multiplier for multi-line text (10% extra vertical space) */
+const LINE_HEIGHT_MULTIPLIER = 1.1
+
 let silkscreenMaskIdCounter = 0
 
 function linesToPathData(
@@ -58,8 +63,8 @@ function textToCenteredAlphabetPaths(
   fontSize: number,
 ): { pathData: string; width: number; height: number } {
   const textLines = text.split("\n")
-  const charSpacing = alphabetBounds.width * 0.2
-  const lineHeight = fontSize * alphabetBounds.height * 1.1
+  const charSpacing = alphabetBounds.width * INTER_CHAR_SPACING_RATIO
+  const lineHeight = fontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER
   const totalHeight = textLines.length * lineHeight
   const charAdvance = (alphabetBounds.width + charSpacing) * fontSize
 
