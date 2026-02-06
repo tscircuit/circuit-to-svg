@@ -12,14 +12,27 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { lineAlphabet } from "@tscircuit/alphabet"
 
-// Sourced from pcb_copper_text knockout implementation to keep
-// line-alphabet rendering consistent across knockout text types
-const CHAR_WIDTH = 1.0
-const CHAR_SPACING = 0.2
-const LINE_HEIGHT = 1.4
-const FONT_SCALE = 0.53
-
 type AlphabetKey = keyof typeof lineAlphabet
+
+// Derive character cell dimensions from lineAlphabet glyph bounding boxes
+const alphabetBounds = (() => {
+  let maxX = 0
+  let minY = Infinity
+  let maxY = -Infinity
+  for (const segments of Object.values(lineAlphabet)) {
+    for (const seg of segments as Array<{
+      x1: number
+      y1: number
+      x2: number
+      y2: number
+    }>) {
+      maxX = Math.max(maxX, seg.x1, seg.x2)
+      minY = Math.min(minY, seg.y1, seg.y2)
+      maxY = Math.max(maxY, seg.y1, seg.y2)
+    }
+  }
+  return { width: maxX, height: maxY - minY }
+})()
 
 let silkscreenMaskIdCounter = 0
 
@@ -45,9 +58,10 @@ function textToCenteredAlphabetPaths(
   fontSize: number,
 ): { pathData: string; width: number; height: number } {
   const textLines = text.split("\n")
-  const lineHeight = fontSize * LINE_HEIGHT
+  const charSpacing = alphabetBounds.width * 0.2
+  const lineHeight = fontSize * alphabetBounds.height * 1.1
   const totalHeight = textLines.length * lineHeight
-  const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
+  const charAdvance = (alphabetBounds.width + charSpacing) * fontSize
 
   const lineWidths: number[] = []
   let maxWidth = 0
@@ -61,7 +75,7 @@ function textToCenteredAlphabetPaths(
         width += charAdvance
       }
     }
-    width = width > 0 ? width - CHAR_SPACING * fontSize : 0
+    width = width > 0 ? width - charSpacing * fontSize : 0
     lineWidths.push(width)
     if (width > maxWidth) maxWidth = width
   }
@@ -141,7 +155,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Handle knockout rendering
   if (is_knockout) {
-    const scaledFontSize = font_size * FONT_SCALE
+    const scaledFontSize = (font_size * (2 / 3)) / alphabetBounds.height
     const { pathData, width, height } = textToCenteredAlphabetPaths(
       text,
       scaledFontSize,
