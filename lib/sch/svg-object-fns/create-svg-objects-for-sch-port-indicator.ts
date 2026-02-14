@@ -1,7 +1,6 @@
 import type { AnyCircuitElement, SchematicPort, SourcePort } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
-import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 
@@ -22,8 +21,6 @@ export const createSvgObjectsForSchPortIndicator = ({
   circuitJson: AnyCircuitElement[]
   colorMap: ColorMap
 }): SvgObject[] => {
-  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
-
   const svgObjects: SvgObject[] = []
 
   const radiusPx = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM
@@ -31,24 +28,22 @@ export const createSvgObjectsForSchPortIndicator = ({
   const screenPos = applyToPoint(transform, schPort.center)
 
   // Only draw port circle if not connected (same as schematic box behavior)
-  if (!isConnected) {
-    svgObjects.push({
-      name: "circle",
-      type: "element",
-      value: "",
-      attributes: {
-        class: "component-pin",
-        cx: screenPos.x.toString(),
-        cy: screenPos.y.toString(),
-        r: radiusPx.toString(),
-        fill: "none",
-        stroke: colorMap.schematic.component_outline,
-        "stroke-width": strokeWidth.toString(),
-        "data-schematic-port-id": schPort.schematic_port_id,
-      },
-      children: [],
-    })
-  }
+  svgObjects.push({
+    name: "circle",
+    type: "element",
+    value: "",
+    attributes: {
+      class: "component-pin",
+      cx: screenPos.x.toString(),
+      cy: screenPos.y.toString(),
+      r: radiusPx.toString(),
+      fill: "none",
+      stroke: colorMap.schematic.component_outline,
+      "stroke-width": strokeWidth.toString(),
+      "data-schematic-port-id": schPort.schematic_port_id,
+    },
+    children: [],
+  })
 
   // Get port label from display_pin_label or source_port name
   const sourcePort = circuitJson.find(
@@ -61,7 +56,7 @@ export const createSvgObjectsForSchPortIndicator = ({
     // Position label at center of stem line (midpoint between port center and component edge)
     // with offset perpendicular to the line to avoid overlap
     const labelPos = { ...schPort.center }
-    const stemLength = schPort.distance_from_component_edge ?? 0
+    const distanceFromComponentEdge = schPort.distance_from_component_edge ?? 0
     const labelOffset = 0.05 // Offset perpendicular to stem line
     let textAnchor = "middle"
     let rotation = ""
@@ -70,24 +65,24 @@ export const createSvgObjectsForSchPortIndicator = ({
     // Text anchor and rotation follow schematic box pin label conventions
     switch (schPort.facing_direction) {
       case "left":
-        labelPos.x += stemLength / 2
+        labelPos.x += distanceFromComponentEdge / 2
         labelPos.y += labelOffset // Offset below
         textAnchor = "start"
         break
       case "right":
-        labelPos.x -= stemLength / 2
+        labelPos.x -= distanceFromComponentEdge / 2
         labelPos.y += labelOffset // Offset below
         textAnchor = "end"
         break
       case "up":
-        labelPos.y -= stemLength / 2
+        labelPos.y -= distanceFromComponentEdge / 2
         labelPos.x -= labelOffset // Offset to the left
-        textAnchor = "middle" // Centered on stem midpoint
+        textAnchor = "middle"
         break
       case "down":
-        labelPos.y += stemLength / 2
+        labelPos.y += distanceFromComponentEdge / 2
         labelPos.x -= labelOffset // Offset to the left
-        textAnchor = "middle" // Centered on stem midpoint
+        textAnchor = "middle"
         break
     }
 
