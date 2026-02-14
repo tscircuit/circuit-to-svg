@@ -32,6 +32,7 @@ import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
 import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
+import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -45,6 +46,7 @@ interface Options {
   labeledPoints?: Array<{ x: number; y: number; label: string }>
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
+  drawPorts?: boolean
 }
 
 // Build CSS rules to highlight all traces sharing a connectivity key
@@ -161,6 +163,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schBoxSvgs: SvgObject[] = []
   const schTableSvgs: SvgObject[] = []
   const schPortHoverSvgs: SvgObject[] = []
+  const schPortIndicatorSvgs: SvgObject[] = []
   const schLineSvgs: SvgObject[] = []
   const schCircleSvgs: SvgObject[] = []
   const schRectSvgs: SvgObject[] = []
@@ -280,6 +283,15 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
+    } else if (elm.type === "schematic_port" && options?.drawPorts) {
+      schPortIndicatorSvgs.push(
+        ...createSvgObjectsForSchPortIndicator({
+          schPort: elm,
+          transform,
+          circuitJson,
+          colorMap,
+        }),
+      )
     }
   }
 
@@ -303,6 +315,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schPathSvgs,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
+    ...schPortIndicatorSvgs,
     ...schNetLabel,
     ...schText,
     ...schBoxSvgs,
