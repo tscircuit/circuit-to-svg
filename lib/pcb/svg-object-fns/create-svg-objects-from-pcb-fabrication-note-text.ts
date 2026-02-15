@@ -68,6 +68,38 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     rotate(Math.PI / 180), // Convert degrees to radians
   )
 
+  const lines = text.split("\n")
+
+  const children: SvgObject[] =
+    lines.length === 1
+      ? [
+          {
+            type: "text",
+            value: text,
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ]
+      : lines.map((line, idx) => ({
+          type: "element",
+          name: "tspan",
+          value: "",
+          attributes: {
+            x: "0",
+            ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
+          },
+          children: [
+            {
+              type: "text",
+              value: line,
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ],
+        }))
+
   const svgObject: SvgObject = {
     name: "text",
     type: "element",
@@ -84,15 +116,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
       "data-type": "pcb_fabrication_note_text",
       "data-pcb-layer": "overlay",
     },
-    children: [
-      {
-        type: "text",
-        value: text,
-        name: "",
-        attributes: {},
-        children: [],
-      },
-    ],
+    children,
     value: "",
   }
 
