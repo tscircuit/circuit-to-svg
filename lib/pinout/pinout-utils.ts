@@ -21,7 +21,12 @@ export function getPortLabelInfo(
 
   const aliases = eligible_hints.filter((h) => h !== label)
 
-  return { text: label, aliases }
+  // Split underscore-delimited labels into separate tokens for multi-label display
+  // e.g. "GP0_SPI0RX_I2C0SDA_UART0TX" → ["GP0", "SPI0RX", "I2C0SDA", "UART0TX"]
+  const splitToken = (t: string) => (t.includes("_") ? t.split("_") : [t])
+  const allTokens = [...splitToken(label), ...aliases.flatMap(splitToken)]
+
+  return { text: allTokens[0]!, aliases: allTokens.slice(1) }
 }
 
 export function getClosestEdge(

@@ -56,17 +56,23 @@ export function createSvgObjectsFromPinoutPort(
     {},
   )
 
+  // Use highlight_color from pcb_port if available (for pin coloring support)
+  const highlightColor = (pcb_port as any).highlight_color as
+    | string
+    | undefined
+  const labelBg = highlightColor || LABEL_BACKGROUND
+
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
   const numberMatch = /^pin(\d+)$/i.exec(label)
   const tokensWithStyle = [
     {
       text: numberMatch ? numberMatch[1] : label,
-      bg: numberMatch ? PIN_NUMBER_BACKGROUND : LABEL_BACKGROUND,
+      bg: numberMatch ? PIN_NUMBER_BACKGROUND : labelBg,
       color: numberMatch ? PIN_NUMBER_COLOR : LABEL_COLOR,
     },
     ...aliases.map((t) => ({
       text: t,
-      bg: LABEL_BACKGROUND,
+      bg: labelBg,
       color: LABEL_COLOR,
     })),
   ]

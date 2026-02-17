@@ -15,6 +15,10 @@ export function createSvgObjectsFromPinoutComponent(
   const { center, width, height, rotation = 0, source_component_id } = elm
   const sourceComponent = su(soup).source_component.get(source_component_id)
 
+  // Hide component boxes in pinout diagrams — they add visual clutter
+  // without providing useful information (e.g. "U1" gray box)
+  return []
+
   if (
     !center ||
     typeof width !== "number" ||

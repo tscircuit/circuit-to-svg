@@ -211,16 +211,20 @@ function calculateVerticalEdgeLabels(
       if (main_group_indices.includes(i)) {
         stagger_rank = geometric_middle_index // max stagger for main group
       } else {
-        const min_lg_idx = Math.min(...main_group_indices)
-        const max_lg_idx = Math.max(...main_group_indices)
-        let dist_from_main_group: number
-        if (i < min_lg_idx) {
-          dist_from_main_group = min_lg_idx - i
-        } else {
-          // i > max_lg_idx
-          dist_from_main_group = i - max_lg_idx
-        }
-        stagger_rank = geometric_middle_index - dist_from_main_group
+        // Give each non-primary pin a unique incremental stagger to avoid
+        // line overlaps. Pins further from the main group get less stagger,
+        // creating a clean fan-out pattern.
+        const non_primary_indices = edge_ports
+          .map((_, idx) => idx)
+          .filter((idx) => !main_group_indices.includes(idx))
+        const rank_in_others = non_primary_indices.indexOf(i)
+        const total_others = non_primary_indices.length
+        // Spread non-primary pins evenly across 0..geometric_middle_index-1
+        stagger_rank =
+          total_others > 1
+            ? (rank_in_others / (total_others - 1)) *
+              (geometric_middle_index - 1)
+            : geometric_middle_index / 2
       }
     } else {
       // Standard V-shape for all pins
