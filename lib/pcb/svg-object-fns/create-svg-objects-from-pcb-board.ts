@@ -1,9 +1,9 @@
 import type { PcbBoard, PcbPanel, Point } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
-import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { applyToPoint } from "transformation-matrix"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
 import { getPointFromElm } from "../../utils/get-point-from-elm"
+import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbBoard(
   pcbBoard: PcbBoard,

@@ -1,11 +1,11 @@
 import type {
-  Point,
   AnyCircuitElement,
-  pcb_cutout,
+  PCBKeepoutCircle,
+  PCBKeepoutRect,
   PcbCutout,
   PcbPanel,
-  PCBKeepoutRect,
-  PCBKeepoutCircle,
+  Point,
+  pcb_cutout,
 } from "circuit-json"
 import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
@@ -16,62 +16,62 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
-import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
-import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
-import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
-import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
-import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
-import { createSvgObjectsFromPcbFabricationNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-dimension"
-import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
-import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
-import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
-import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
-import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
-import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
-import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
-import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
-import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
-import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
-import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
-import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
-import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-pill"
-import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
-import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
-import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-polygon"
-import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
-import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
-import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
-import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
-import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
-import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
-import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
-import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
-import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
-import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
-import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-objects-from-pcb-cutout-path"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import { getViewportBounds } from "../utils/get-viewport-bounds"
 import {
-  createSvgObjectsFromPcbKeepout,
-  createKeepoutPatternDefs,
-} from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
-import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
-import {
-  createSvgObjectsForPcbGrid,
-  type PcbGridOptions,
-} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
-import {
-  DEFAULT_PCB_COLOR_MAP,
   type CopperColorMap,
+  DEFAULT_PCB_COLOR_MAP,
   type PcbColorMap,
   type PcbColorOverrides,
 } from "./colors"
-import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
-import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getPcbBoundsFromCircuitJson } from "./get-pcb-bounds-from-circuit-json"
-import { getViewportBounds } from "../utils/get-viewport-bounds"
+import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import {
+  type PcbGridOptions,
+  createSvgObjectsForPcbGrid,
+} from "./svg-object-fns/create-svg-objects-for-pcb-grid"
+import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
+import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
+import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
+import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
+import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
+import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-polygon"
+import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
+import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-objects-from-pcb-cutout-path"
+import { createSvgObjectsFromPcbFabricationNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-dimension"
+import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
+import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
+import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
+import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
+import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
+import { createSvgObjectsFromPcbHole } from "./svg-object-fns/create-svg-objects-from-pcb-hole"
+import {
+  createKeepoutPatternDefs,
+  createSvgObjectsFromPcbKeepout,
+} from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
+import { createSvgObjectsFromPcbNoteDimension } from "./svg-object-fns/create-svg-objects-from-pcb-note-dimension"
+import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
+import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
+import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
+import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-note-text"
+import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
+import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
+import { createSvgObjectsForRatsNest } from "./svg-object-fns/create-svg-objects-from-pcb-rats-nests"
+import { createSvgObjectsFromPcbSilkscreenCircle } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-circle"
+import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-line"
+import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
+import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-pill"
+import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
+import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
+import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
+import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
+import { createSvgObjectsFromPcbVia } from "./svg-object-fns/create-svg-objects-from-pcb-via"
+import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 interface PointObjectNotation {
   x: number
   y: number
