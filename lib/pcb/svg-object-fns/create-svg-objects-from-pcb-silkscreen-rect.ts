@@ -1,3 +1,4 @@
+
 import type { PcbSilkscreenRect } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
@@ -66,11 +67,9 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     "data-pcb-layer": layer,
   }
 
-  // Add transform for rotation if ccw_rotation is provided
   if (typeof ccw_rotation === "number" && ccw_rotation !== 0) {
     attributes.transform = `translate(${transformedX} ${transformedY}) rotate(${-ccw_rotation})`
   } else {
-    // No rotation, just translate to center position
     attributes.x = (transformedX - transformedWidth / 2).toString()
     attributes.y = (transformedY - transformedHeight / 2).toString()
   }
@@ -82,7 +81,14 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     attributes.ry = transformedCornerRadiusY.toString()
   }
 
-  attributes.fill = is_filled ? color : "none"
+  // MODIFICATION: Check for texture
+  // @ts-ignore - pcbStyle is not on the type yet but we're adding it
+  if (pcbSilkscreenRect.pcbStyle?.texture) {
+    const textureId = `texture-pcb_silkscreen_rect-${pcb_silkscreen_rect_id}-pattern`
+    attributes.fill = `url(#${textureId})`
+  } else {
+    attributes.fill = is_filled ? color : "none"
+  }
 
   let actualHasStroke: boolean
   if (has_stroke === undefined) {
@@ -95,8 +101,8 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     attributes.stroke = color
     attributes["stroke-width"] = transformedStrokeWidth.toString()
     if (is_stroke_dashed) {
-      const dashLength = 0.1 * Math.abs(transform.a) // 0.1mm dash
-      const gapLength = 0.05 * Math.abs(transform.a) // 0.05mm gap
+      const dashLength = 0.1 * Math.abs(transform.a)
+      const gapLength = 0.05 * Math.abs(transform.a)
       attributes["stroke-dasharray"] = `${dashLength} ${gapLength}`
     }
   } else {

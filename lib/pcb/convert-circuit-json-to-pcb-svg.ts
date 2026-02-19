@@ -341,6 +341,9 @@ export function convertCircuitJsonToPcbSvg(
     )
   }
 
+  // ADDED: Create texture defs
+  children.push(...createTexturePatternDefs(circuitJson))
+
   children.push({
     name: "rect",
     type: "element",
