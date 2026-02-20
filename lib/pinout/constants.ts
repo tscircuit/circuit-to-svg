@@ -8,11 +8,11 @@ export const LABEL_RECT_HEIGHT_BASE_MM = 1.6 // base height for label pill/rect 
 export const FONT_HEIGHT_RATIO = 11 / 21
 export const CHAR_WIDTH_FACTOR = 0.6
 
-// Stagger geometry
-export const STAGGER_OFFSET_MIN = 0.1 // mm
-export const STAGGER_OFFSET_PER_PIN = 0.1 // mm
-export const STAGGER_OFFSET_STEP = 3 // mm
-export const ALIGNED_OFFSET_MARGIN = 0.1 // mm
+// Stagger geometry - increased to reduce line overlap
+export const STAGGER_OFFSET_MIN = 0.15 // mm (was 0.1)
+export const STAGGER_OFFSET_PER_PIN = 0.15 // mm (was 0.1)
+export const STAGGER_OFFSET_STEP = 4 // mm (was 3) - more stagger distance
+export const ALIGNED_OFFSET_MARGIN = 0.2 // mm (was 0.1)
 
 // Vertical gap between primary and non-primary label stacks
-export const GROUP_SEPARATION_MM = 0.8 // mm
+export const GROUP_SEPARATION_MM = 1.2 // mm (was 0.8) - more separation to avoid overlap
