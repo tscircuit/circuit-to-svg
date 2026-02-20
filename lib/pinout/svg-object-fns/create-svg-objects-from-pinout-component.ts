@@ -24,6 +24,13 @@ export function createSvgObjectsFromPinoutComponent(
   ) {
     return []
   }
+
+  // Check if component box should be shown (default: hidden for pinout diagrams)
+  const showComponentBox = (ctx as any).show_component_box ?? false
+  if (!showComponentBox) {
+    return []
+  }
+
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
