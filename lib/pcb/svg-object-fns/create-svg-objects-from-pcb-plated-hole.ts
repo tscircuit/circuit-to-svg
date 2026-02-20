@@ -394,6 +394,18 @@ export function createSvgObjectsFromPcbPlatedHole(
       ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
     const rectCcwRotation = (hole as any).rect_ccw_rotation ?? 0
 
+    const rotation = h.rect_ccw_rotation ?? 0
+    const rectTransform = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : undefined
+
+    const xStr = rotation
+      ? (-scaledRectPadWidth / 2).toString()
+      : (x - scaledRectPadWidth / 2).toString()
+    const yStr = rotation
+      ? (-scaledRectPadHeight / 2).toString()
+      : (y - scaledRectPadHeight / 2).toString()
+
     const holeRadius = scaledHoleDiameter / 2
     const [holeCx, holeCy] = applyToPoint(transform, [
       h.x + (h.hole_offset_x ?? 0),
@@ -420,6 +432,7 @@ export function createSvgObjectsFromPcbPlatedHole(
               }),
           width: scaledRectPadWidth.toString(),
           height: scaledRectPadHeight.toString(),
+          ...(rectTransform ? { transform: rectTransform } : {}),
           ...(scaledRectBorderRadius
             ? {
                 rx: scaledRectBorderRadius.toString(),
@@ -479,6 +492,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }),
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
+              ...(rectTransform ? { transform: rectTransform } : {}),
               ...(scaledRectBorderRadius
                 ? {
                     rx: scaledRectBorderRadius.toString(),
@@ -510,6 +524,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                   }),
               width: maskWidth.toString(),
               height: maskHeight.toString(),
+              ...(rectTransform ? { transform: rectTransform } : {}),
               ...(maskBorderRadius > 0
                 ? {
                     rx: maskBorderRadius.toString(),
@@ -545,6 +560,7 @@ export function createSvgObjectsFromPcbPlatedHole(
                 }),
             width: maskWidth.toString(),
             height: maskHeight.toString(),
+            ...(rectTransform ? { transform: rectTransform } : {}),
             ...(scaledRectBorderRadius
               ? {
                   rx: maskBorderRadius.toString(),
