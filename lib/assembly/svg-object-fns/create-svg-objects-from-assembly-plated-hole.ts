@@ -137,6 +137,7 @@ export function createSvgObjectsFromAssemblyPlatedHole(
       circularHole.rect_pad_height * Math.abs(transform.a)
     const scaledRectBorderRadius =
       (circularHole.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const rectCcwRotation = circularHole.rect_ccw_rotation ?? 0
 
     const holeRadius = scaledHoleDiameter / 2
     const [holeCx, holeCy] = applyToPoint(transform, [
@@ -156,8 +157,16 @@ export function createSvgObjectsFromAssemblyPlatedHole(
             attributes: {
               class: "assembly-hole-outer-pad",
               fill: PAD_COLOR,
-              x: (x - scaledRectPadWidth / 2).toString(),
-              y: (y - scaledRectPadHeight / 2).toString(),
+              ...(rectCcwRotation
+                ? {
+                    x: (-scaledRectPadWidth / 2).toString(),
+                    y: (-scaledRectPadHeight / 2).toString(),
+                    transform: `translate(${x} ${y}) rotate(${-rectCcwRotation})`,
+                  }
+                : {
+                    x: (x - scaledRectPadWidth / 2).toString(),
+                    y: (y - scaledRectPadHeight / 2).toString(),
+                  }),
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
               ...(scaledRectBorderRadius
