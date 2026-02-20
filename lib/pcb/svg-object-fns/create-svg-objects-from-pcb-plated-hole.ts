@@ -393,6 +393,18 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledRectBorderRadius =
       ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
 
+    const rotation = h.rect_ccw_rotation ?? 0
+    const rectTransform = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : undefined
+
+    const xStr = rotation
+      ? (-scaledRectPadWidth / 2).toString()
+      : (x - scaledRectPadWidth / 2).toString()
+    const yStr = rotation
+      ? (-scaledRectPadHeight / 2).toString()
+      : (y - scaledRectPadHeight / 2).toString()
+
     const holeRadius = scaledHoleDiameter / 2
     const [holeCx, holeCy] = applyToPoint(transform, [
       h.x + (h.hole_offset_x ?? 0),
@@ -407,10 +419,11 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           class: "pcb-hole-outer-pad",
           fill: colorMap.copper.top,
-          x: (x - scaledRectPadWidth / 2).toString(),
-          y: (y - scaledRectPadHeight / 2).toString(),
+          x: xStr,
+          y: yStr,
           width: scaledRectPadWidth.toString(),
           height: scaledRectPadHeight.toString(),
+          ...(rectTransform ? { transform: rectTransform } : {}),
           ...(scaledRectBorderRadius
             ? {
                 rx: scaledRectBorderRadius.toString(),
@@ -458,10 +471,11 @@ export function createSvgObjectsFromPcbPlatedHole(
             attributes: {
               class: "pcb-hole-outer-covered",
               fill: solderMaskColor,
-              x: (x - scaledRectPadWidth / 2).toString(),
-              y: (y - scaledRectPadHeight / 2).toString(),
+              x: xStr,
+              y: yStr,
               width: scaledRectPadWidth.toString(),
               height: scaledRectPadHeight.toString(),
+              ...(rectTransform ? { transform: rectTransform } : {}),
               ...(scaledRectBorderRadius
                 ? {
                     rx: scaledRectBorderRadius.toString(),
@@ -481,10 +495,15 @@ export function createSvgObjectsFromPcbPlatedHole(
             attributes: {
               class: "pcb-hole-outer-exposed",
               fill: colorMap.copper.top,
-              x: (x - maskWidth / 2).toString(),
-              y: (y - maskHeight / 2).toString(),
+              x: rotation
+                ? (-maskWidth / 2).toString()
+                : (x - maskWidth / 2).toString(),
+              y: rotation
+                ? (-maskHeight / 2).toString()
+                : (y - maskHeight / 2).toString(),
               width: maskWidth.toString(),
               height: maskHeight.toString(),
+              ...(rectTransform ? { transform: rectTransform } : {}),
               ...(maskBorderRadius > 0
                 ? {
                     rx: maskBorderRadius.toString(),
@@ -508,10 +527,15 @@ export function createSvgObjectsFromPcbPlatedHole(
           attributes: {
             class: "pcb-soldermask-cutout",
             fill: colorMap.substrate,
-            x: (x - maskWidth / 2).toString(),
-            y: (y - maskHeight / 2).toString(),
+            x: rotation
+              ? (-maskWidth / 2).toString()
+              : (x - maskWidth / 2).toString(),
+            y: rotation
+              ? (-maskHeight / 2).toString()
+              : (y - maskHeight / 2).toString(),
             width: maskWidth.toString(),
             height: maskHeight.toString(),
+            ...(rectTransform ? { transform: rectTransform } : {}),
             ...(scaledRectBorderRadius
               ? {
                   rx: maskBorderRadius.toString(),
