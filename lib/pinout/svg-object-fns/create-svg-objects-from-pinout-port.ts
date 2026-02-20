@@ -26,11 +26,23 @@ const PIN_TYPE_COLORS: Record<string, { bg: string; color: string }> = {
 // Detect pin type from label text
 function detectPinType(label: string): string | null {
   const labelLower = label.toLowerCase()
-  if (labelLower.includes("vcc") || labelLower.includes("vsys") || labelLower.includes("3v3") || labelLower.includes("vbus") || labelLower.includes("adc_vref")) return "power"
+  if (
+    labelLower.includes("vcc") ||
+    labelLower.includes("vsys") ||
+    labelLower.includes("3v3") ||
+    labelLower.includes("vbus") ||
+    labelLower.includes("adc_vref")
+  )
+    return "power"
   if (labelLower.includes("gnd") || labelLower.includes("agnd")) return "ground"
   if (labelLower.includes("spi")) return "spi"
   if (labelLower.includes("i2c")) return "i2c"
-  if (labelLower.includes("uart") || labelLower.includes("tx") || labelLower.includes("rx")) return "uart"
+  if (
+    labelLower.includes("uart") ||
+    labelLower.includes("tx") ||
+    labelLower.includes("rx")
+  )
+    return "uart"
   if (labelLower.includes("adc")) return "adc"
   if (labelLower.includes("usb")) return "usb"
   if (labelLower.match(/gp\d+/) || labelLower.includes("gpio")) return "gpio"
@@ -40,12 +52,12 @@ function detectPinType(label: string): string | null {
 // Format long label with underscores into shorter segments
 function formatMultiLabel(text: string, maxLen: number = 12): string[] {
   if (text.length <= maxLen) return [text]
-  
+
   // Split by underscores and try to create meaningful segments
   const parts = text.split("_")
   const segments: string[] = []
   let current = ""
-  
+
   for (const part of parts) {
     if ((current + "_" + part).length <= maxLen && current) {
       current = current + "_" + part
@@ -57,7 +69,7 @@ function formatMultiLabel(text: string, maxLen: number = 12): string[] {
     }
   }
   if (current) segments.push(current)
-  
+
   return segments
 }
 
@@ -108,15 +120,15 @@ export function createSvgObjectsFromPinoutPort(
 
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
   const numberMatch = /^pin(\d+)$/i.exec(label)
-  
+
   // Get custom color from port attributes if available
   const portColor = (pcb_port as any).pin_color as string | undefined
   const portBg = (pcb_port as any).pin_background as string | undefined
-  
+
   // Detect pin type for automatic coloring
   const pinType = detectPinType(label)
   const typeColors = pinType ? PIN_TYPE_COLORS[pinType] : null
-  
+
   // Determine colors: custom > type-based > default
   const getColors = (text: string, isPinNumber: boolean) => {
     if (isPinNumber) {
@@ -130,11 +142,11 @@ export function createSvgObjectsFromPinoutPort(
     }
     return { bg: LABEL_BACKGROUND, color: LABEL_COLOR }
   }
-  
+
   // Format main label into multiple segments if it's long
   const mainLabelText = numberMatch ? numberMatch[1]! : label
   const mainLabelSegments = formatMultiLabel(mainLabelText)
-  
+
   const tokensWithStyle = [
     ...mainLabelSegments.map((segment, idx) => {
       const isPinNumber = !!(numberMatch && idx === 0)
