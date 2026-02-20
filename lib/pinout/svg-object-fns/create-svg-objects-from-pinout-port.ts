@@ -132,12 +132,12 @@ export function createSvgObjectsFromPinoutPort(
   }
   
   // Format main label into multiple segments if it's long
-  const mainLabelText = numberMatch ? numberMatch[1] : label
+  const mainLabelText = numberMatch ? numberMatch[1]! : label
   const mainLabelSegments = formatMultiLabel(mainLabelText)
   
   const tokensWithStyle = [
     ...mainLabelSegments.map((segment, idx) => {
-      const isPinNumber = numberMatch && idx === 0
+      const isPinNumber = !!(numberMatch && idx === 0)
       const colors = getColors(segment, isPinNumber)
       return {
         text: segment,
