@@ -1,6 +1,7 @@
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPinoutSvg } from "../../lib/index"
 
-const soup: any[] = [
+const circuitJson: AnyCircuitElement[] = [
   // Board
   {
     type: "pcb_board",
@@ -333,7 +334,7 @@ const soup: any[] = [
 ]
 
 const Component = () => {
-  const result = convertCircuitJsonToPinoutSvg(soup)
+  const result = convertCircuitJsonToPinoutSvg(circuitJson)
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }
 
