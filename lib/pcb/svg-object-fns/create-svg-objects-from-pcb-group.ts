@@ -6,7 +6,16 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
 import { getPointFromElm } from "../../utils/get-point-from-elm"
 
-const DEFAULT_GROUP_COLOR = "rgba(100, 200, 255, 0.6)"
+const GROUP_COLOR_PALETTE = [
+  "rgba(100, 200, 255, 0.6)", // light blue
+  "rgba(255, 150, 100, 0.6)", // orange
+  "rgba(100, 255, 150, 0.6)", // green
+  "rgba(200, 100, 255, 0.6)", // purple
+  "rgba(255, 220, 100, 0.6)", // yellow
+  "rgba(255, 100, 200, 0.6)", // pink
+  "rgba(100, 255, 255, 0.6)", // cyan
+  "rgba(180, 255, 100, 0.6)", // lime
+]
 const DEFAULT_STROKE_WIDTH = 0.1 // 0.1mm default stroke width
 
 export function createSvgObjectsFromPcbGroup(
@@ -54,7 +63,7 @@ export function createSvgObjectsFromPcbGroup(
   const baseAttributes: Record<string, string> = {
     class: "pcb-group",
     fill: "none",
-    stroke: DEFAULT_GROUP_COLOR,
+    stroke: getGroupColor(pcbGroup.pcb_group_id),
     "stroke-width": transformedStrokeWidth.toString(),
     "stroke-dasharray": `${dashLength} ${gapLength}`,
     "data-type": "pcb_group",
@@ -140,6 +149,12 @@ export function createSvgObjectsFromPcbGroup(
 
   svgObjects.push(svgObject)
   return svgObjects
+}
+
+function getGroupColor(pcbGroupId: string): string {
+  const match = pcbGroupId.match(/(\d+)$/)
+  const index = match ? Number.parseInt(match[1]!, 10) : 0
+  return GROUP_COLOR_PALETTE[index % GROUP_COLOR_PALETTE.length]!
 }
 
 function getParentAnchorPosition(
