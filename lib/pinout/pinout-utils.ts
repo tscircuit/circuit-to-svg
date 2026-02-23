@@ -21,8 +21,11 @@ export function getPortLabelInfo(
 
   const aliases = eligible_hints.filter((h) => h !== label)
 
-  // Get color from source_port if available (from pinAttributes)
-  const color = (source_port).pinout_color ?? undefined
+  // Get color from source_port if available (pinout_color is a proposed extension)
+  const color =
+    "pinout_color" in source_port
+      ? (source_port.pinout_color as string)
+      : undefined
 
   return { text: label, aliases, color }
 }

@@ -1,7 +1,9 @@
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPinoutSvg } from "../../lib/index"
 
-const circuitJson: AnyCircuitElement[] = [
+// Demo data uses pinout_color which is a proposed extension to circuit-json,
+// so we type the array broadly and cast when passing to the function
+const circuitJson: Record<string, unknown>[] = [
   // Board
   {
     type: "pcb_board",
@@ -334,7 +336,9 @@ const circuitJson: AnyCircuitElement[] = [
 ]
 
 const Component = () => {
-  const result = convertCircuitJsonToPinoutSvg(circuitJson)
+  const result = convertCircuitJsonToPinoutSvg(
+    circuitJson as AnyCircuitElement[],
+  )
   return <div dangerouslySetInnerHTML={{ __html: result }} />
 }
 
