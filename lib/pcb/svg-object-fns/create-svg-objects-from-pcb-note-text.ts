@@ -69,6 +69,38 @@ export function createSvgObjectsFromPcbNoteText(
       break
   }
 
+  const lines = text.split("\n")
+
+  const children: SvgObject[] =
+    lines.length === 1
+      ? [
+          {
+            type: "text",
+            name: "",
+            value: text,
+            attributes: {},
+            children: [],
+          },
+        ]
+      : lines.map((line, index) => ({
+          type: "element",
+          name: "tspan",
+          value: "",
+          attributes: {
+            x: x.toString(),
+            ...(index > 0 ? { dy: "1em" } : {}),
+          },
+          children: [
+            {
+              type: "text",
+              name: "",
+              value: line,
+              attributes: {},
+              children: [],
+            },
+          ],
+        }))
+
   const svgObject: SvgObject = {
     name: "text",
     type: "element",
@@ -86,15 +118,7 @@ export function createSvgObjectsFromPcbNoteText(
       "data-pcb-note-text-id": note.pcb_note_text_id,
       "data-pcb-layer": "overlay",
     },
-    children: [
-      {
-        type: "text",
-        name: "",
-        value: text,
-        attributes: {},
-        children: [],
-      },
-    ],
+    children,
   }
 
   return [svgObject]
