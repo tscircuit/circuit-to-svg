@@ -44,12 +44,20 @@ interface Options {
   height?: number
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
+  /**
+   * Whether to show the component boxes inside the board (default: false)
+   */
+  showComponentBoxes?: boolean
 }
 
 export interface PinoutLabel {
   pcb_port: PcbPort
   aliases: string[]
   edge: "left" | "right" | "top" | "bottom"
+  /**
+   * Optional color for the pin label (e.g., "red", "#ff0000", "rgb(255,0,0)")
+   */
+  color?: string
 }
 
 export interface PinoutSvgContext {
@@ -60,6 +68,7 @@ export interface PinoutSvgContext {
   label_positions: Map<string, LabelPosition>
   svgWidth: number
   svgHeight: number
+  showComponentBoxes: boolean
 }
 
 export function convertCircuitJsonToPinoutSvg(
@@ -124,6 +133,7 @@ export function convertCircuitJsonToPinoutSvg(
       pcb_port,
       aliases: [label_info.text, ...label_info.aliases],
       edge,
+      color: label_info.color,
     })
   }
 
@@ -272,6 +282,7 @@ export function convertCircuitJsonToPinoutSvg(
     label_positions,
     svgWidth,
     svgHeight,
+    showComponentBoxes: options?.showComponentBoxes ?? false,
   }
 
   const svgObjects = soup
