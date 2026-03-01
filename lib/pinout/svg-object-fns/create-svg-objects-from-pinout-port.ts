@@ -11,6 +11,68 @@ const LINE_COLOR = "rgba(0, 0, 0, 0.6)"
 const PIN_NUMBER_BACKGROUND = "rgb(200, 200, 200)"
 const PIN_NUMBER_COLOR = "rgb(0, 0, 0)"
 
+// Color mapping for different pin types
+const PIN_TYPE_COLORS: Record<string, { bg: string; color: string }> = {
+  power: { bg: "rgb(200, 50, 50)", color: "rgb(255, 255, 255)" },
+  ground: { bg: "rgb(50, 50, 50)", color: "rgb(255, 255, 255)" },
+  gpio: { bg: "rgb(50, 150, 50)", color: "rgb(255, 255, 255)" },
+  spi: { bg: "rgb(50, 50, 200)", color: "rgb(255, 255, 255)" },
+  i2c: { bg: "rgb(200, 100, 50)", color: "rgb(255, 255, 255)" },
+  uart: { bg: "rgb(150, 50, 150)", color: "rgb(255, 255, 255)" },
+  adc: { bg: "rgb(50, 150, 150)", color: "rgb(255, 255, 255)" },
+  usb: { bg: "rgb(200, 150, 50)", color: "rgb(0, 0, 0)" },
+}
+
+// Detect pin type from label text
+function detectPinType(label: string): string | null {
+  const labelLower = label.toLowerCase()
+  if (
+    labelLower.includes("vcc") ||
+    labelLower.includes("vsys") ||
+    labelLower.includes("3v3") ||
+    labelLower.includes("vbus") ||
+    labelLower.includes("adc_vref")
+  )
+    return "power"
+  if (labelLower.includes("gnd") || labelLower.includes("agnd")) return "ground"
+  if (labelLower.includes("spi")) return "spi"
+  if (labelLower.includes("i2c")) return "i2c"
+  if (
+    labelLower.includes("uart") ||
+    labelLower.includes("tx") ||
+    labelLower.includes("rx")
+  )
+    return "uart"
+  if (labelLower.includes("adc")) return "adc"
+  if (labelLower.includes("usb")) return "usb"
+  if (labelLower.match(/gp\d+/) || labelLower.includes("gpio")) return "gpio"
+  return null
+}
+
+// Format long label with underscores into shorter segments
+function formatMultiLabel(text: string, maxLen: number = 12): string[] {
+  if (text.length <= maxLen) return [text]
+
+  // Split by underscores and try to create meaningful segments
+  const parts = text.split("_")
+  const segments: string[] = []
+  let current = ""
+
+  for (const part of parts) {
+    if ((current + "_" + part).length <= maxLen && current) {
+      current = current + "_" + part
+    } else if (current) {
+      segments.push(current)
+      current = part
+    } else {
+      current = part
+    }
+  }
+  if (current) segments.push(current)
+
+  return segments
+}
+
 export type FacingDirection = "x-" | "x+" | "y-" | "y+"
 
 export function createSvgObjectsFromPinoutPort(
@@ -58,17 +120,54 @@ export function createSvgObjectsFromPinoutPort(
 
   // Build tokens with style; if first token is "pin{number}", show number with gray bg and black text
   const numberMatch = /^pin(\d+)$/i.exec(label)
+
+  // Get custom color from port attributes if available
+  const portColor = (pcb_port as any).pin_color as string | undefined
+  const portBg = (pcb_port as any).pin_background as string | undefined
+
+  // Detect pin type for automatic coloring
+  const pinType = detectPinType(label)
+  const typeColors = pinType ? PIN_TYPE_COLORS[pinType] : null
+
+  // Determine colors: custom > type-based > default
+  const getColors = (text: string, isPinNumber: boolean) => {
+    if (isPinNumber) {
+      return { bg: PIN_NUMBER_BACKGROUND, color: PIN_NUMBER_COLOR }
+    }
+    if (portBg && portColor) {
+      return { bg: portBg, color: portColor }
+    }
+    if (typeColors) {
+      return typeColors
+    }
+    return { bg: LABEL_BACKGROUND, color: LABEL_COLOR }
+  }
+
+  // Format main label into multiple segments if it's long
+  const mainLabelText = numberMatch ? numberMatch[1]! : label
+  const mainLabelSegments = formatMultiLabel(mainLabelText)
+
   const tokensWithStyle = [
-    {
-      text: numberMatch ? numberMatch[1] : label,
-      bg: numberMatch ? PIN_NUMBER_BACKGROUND : LABEL_BACKGROUND,
-      color: numberMatch ? PIN_NUMBER_COLOR : LABEL_COLOR,
-    },
-    ...aliases.map((t) => ({
-      text: t,
-      bg: LABEL_BACKGROUND,
-      color: LABEL_COLOR,
-    })),
+    ...mainLabelSegments.map((segment, idx) => {
+      const isPinNumber = !!(numberMatch && idx === 0)
+      const colors = getColors(segment, isPinNumber)
+      return {
+        text: segment,
+        bg: colors.bg,
+        color: colors.color,
+      }
+    }),
+    ...aliases.flatMap((alias) => {
+      const segments = formatMultiLabel(alias)
+      return segments.map((segment) => {
+        const colors = getColors(segment, false)
+        return {
+          text: segment,
+          bg: colors.bg,
+          color: colors.color,
+        }
+      })
+    }),
   ]
 
   const pxPerMm = Math.abs(ctx.transform.a) // px per mm from transform matrix
