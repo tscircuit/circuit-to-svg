@@ -25,11 +25,13 @@ test("pcb_component_outside_board_error shown in pcb snapshot", () => {
       x: 8,
       y: 0,
     },
+    // Intentionally only outside-board sliver; renderer should prefer pcb_component bounds
+    // so the rectangle encloses the whole component (including inside-board area).
     component_bounds: {
-      min_x: 6,
+      min_x: 10.5,
       max_x: 12,
-      min_y: -2,
-      max_y: 2,
+      min_y: -1,
+      max_y: 1,
     },
   })
 
@@ -39,5 +41,11 @@ test("pcb_component_outside_board_error shown in pcb snapshot", () => {
 
   expect(svg).toContain('data-type="pcb_component_outside_board_error"')
   expect(svg).toContain("Component P1 extends outside board boundaries")
+  const errorRectMatch = svg.match(
+    /<rect(?=[^>]*data-type="pcb_component_outside_board_error")(?=[^>]*\swidth="([0-9.]+)")[^>]*>/,
+  )
+  expect(errorRectMatch).not.toBeNull()
+  const errorRectWidth = Number(errorRectMatch?.[1])
+  expect(errorRectWidth).toBeGreaterThan(100)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

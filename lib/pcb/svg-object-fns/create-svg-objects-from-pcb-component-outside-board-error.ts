@@ -15,15 +15,38 @@ function annotateError(objects: SvgObject[]): SvgObject[] {
   }))
 }
 
+function getComponentBounds(
+  error: AnyCircuitElement,
+  circuitJson: AnyCircuitElement[],
+): { min_x: number; min_y: number; max_x: number; max_y: number } | null {
+  const pcbComponentId = (error as any).pcb_component_id
+  if (!pcbComponentId) return ((error as any).component_bounds ?? null) as any
+
+  const pcbComponent = circuitJson.find(
+    (elm) => elm.type === "pcb_component" && (elm as any).pcb_component_id === pcbComponentId,
+  ) as any
+
+  if (pcbComponent?.center && pcbComponent?.width && pcbComponent?.height) {
+    return {
+      min_x: pcbComponent.center.x - pcbComponent.width / 2,
+      max_x: pcbComponent.center.x + pcbComponent.width / 2,
+      min_y: pcbComponent.center.y - pcbComponent.height / 2,
+      max_y: pcbComponent.center.y + pcbComponent.height / 2,
+    }
+  }
+
+  return ((error as any).component_bounds ?? null) as any
+}
+
 export function createSvgObjectsFromPcbComponentOutsideBoardError(
   error: AnyCircuitElement,
-  _circuitJson: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   ctx: PcbContext,
 ): SvgObject[] {
   const { shouldDrawErrors, transform } = ctx
   if (!shouldDrawErrors) return []
 
-  const bounds = (error as any).component_bounds
+  const bounds = getComponentBounds(error, circuitJson)
   if (!bounds) return []
 
   const topLeft = applyToPoint(transform, { x: bounds.min_x, y: bounds.min_y })
