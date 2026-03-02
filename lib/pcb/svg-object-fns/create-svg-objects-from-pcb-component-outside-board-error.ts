@@ -23,7 +23,9 @@ function getComponentBounds(
   if (!pcbComponentId) return ((error as any).component_bounds ?? null) as any
 
   const pcbComponent = circuitJson.find(
-    (elm) => elm.type === "pcb_component" && (elm as any).pcb_component_id === pcbComponentId,
+    (elm) =>
+      elm.type === "pcb_component" &&
+      (elm as any).pcb_component_id === pcbComponentId,
   ) as any
 
   if (pcbComponent?.center && pcbComponent?.width && pcbComponent?.height) {
