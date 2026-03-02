@@ -37,6 +37,8 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_note_path: 70,
   pcb_note_line: 70,
   pcb_trace_error: 80,
+  pcb_footprint_overlap_error: 80,
+  pcb_component_outside_board_error: 80,
   pcb_rats_nest: 85,
 }
 
