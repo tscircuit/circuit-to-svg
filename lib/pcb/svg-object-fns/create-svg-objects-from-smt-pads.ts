@@ -11,7 +11,10 @@ export function createSvgObjectsFromSmtPad(
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
-  const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
+  const isCoveredWithSolderMask = Boolean(
+    (pad as PcbSmtPad & { covered_with_solder_mask?: boolean })
+      .covered_with_solder_mask ?? pad.is_covered_with_solder_mask,
+  )
   const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
 
   const soldermaskWithCopperUnderneathColor =
