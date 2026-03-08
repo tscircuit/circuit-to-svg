@@ -11,8 +11,12 @@ export function createSvgObjectsFromSmtPad(
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
 
-  // circuit-json uses `is_covered_with_solder_mask` on PcbSmtPad
-  const isCoveredWithSolderMask = Boolean(pad.is_covered_with_solder_mask)
+  // Support both legacy (`covered_with_solder_mask`) and current (`is_covered_with_solder_mask`) field names.
+  const isCoveredWithSolderMask = Boolean(
+    pad.is_covered_with_solder_mask ??
+      (pad as PcbSmtPad & { covered_with_solder_mask?: boolean })
+        .covered_with_solder_mask,
+  )
   const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
 
   const soldermaskWithCopperUnderneathColor =
