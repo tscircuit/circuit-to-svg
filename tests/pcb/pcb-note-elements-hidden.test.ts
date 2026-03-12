@@ -63,12 +63,14 @@ const notePath = {
 
 const circuitWithPcbNotes = [board, noteText, noteRect, noteLine, notePath]
 
-test("pcb note primitives render by default and when showPcbNotes is true", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuitWithPcbNotes)
+test("showPcbNotes false hides pcb note primitives", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitWithPcbNotes, {
+    showPcbNotes: false,
+  })
 
-  expect(svg).toContain('data-type="pcb_note_text"')
-  expect(svg).toContain('data-type="pcb_note_rect"')
-  expect(svg).toContain('data-type="pcb_note_line"')
-  expect(svg).toContain('data-type="pcb_note_path"')
+  expect(svg).not.toContain('data-type="pcb_note_text"')
+  expect(svg).not.toContain('data-type="pcb_note_rect"')
+  expect(svg).not.toContain('data-type="pcb_note_line"')
+  expect(svg).not.toContain('data-type="pcb_note_path"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

@@ -79,7 +79,7 @@ interface PointObjectNotation {
   y: number
 }
 
-interface Options {
+export interface PcbSvgOptions {
   colorOverrides?: PcbColorOverrides
   width?: number
   height?: number
@@ -94,6 +94,7 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   showSolderMask?: boolean
+  showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
   viewport?: {
@@ -117,13 +118,14 @@ export interface PcbContext {
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   showSolderMask?: boolean
+  showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
 }
 
 export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
-  options?: Options,
+  options?: PcbSvgOptions,
 ): string {
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
@@ -281,6 +283,7 @@ export function convertCircuitJsonToPcbSvg(
     drawPaddingOutsideBoard,
     colorMap,
     showSolderMask: options?.showSolderMask,
+    showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
   }
@@ -494,13 +497,13 @@ function createSvgObjects({
     case "pcb_note_dimension":
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
     case "pcb_note_text":
-      return createSvgObjectsFromPcbNoteText(elm, ctx)
+      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteText(elm, ctx) : []
     case "pcb_note_rect":
-      return createSvgObjectsFromPcbNoteRect(elm, ctx)
+      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteRect(elm, ctx) : []
     case "pcb_note_path":
-      return createSvgObjectsFromPcbNotePath(elm, ctx)
+      return ctx.showPcbNotes ? createSvgObjectsFromPcbNotePath(elm, ctx) : []
     case "pcb_note_line":
-      return createSvgObjectsFromPcbNoteLine(elm, ctx)
+      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteLine(elm, ctx) : []
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_panel":
