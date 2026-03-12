@@ -100,7 +100,9 @@ export function createSvgObjectsFromPcbCourtyardOverlapError(
   }
 
   if (componentCenters.length === 2) {
-    const [s1, s2] = componentCenters.map((c) => applyToPoint(transform, c))
+    const mapped = componentCenters.map((c) => applyToPoint(transform, c))
+    const s1 = mapped[0]!
+    const s2 = mapped[1]!
     svgObjects.push({
       name: "line",
       type: "element",
