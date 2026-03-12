@@ -18,6 +18,7 @@ import {
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-objects-from-pcb-trace-error"
 import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
+import { createSvgObjectsFromPcbCourtyardOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-overlap-error"
 import { createSvgObjectsFromPcbComponentOutsideBoardError } from "./svg-object-fns/create-svg-objects-from-pcb-component-outside-board-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
@@ -428,6 +429,12 @@ function createSvgObjects({
       )
     case "pcb_footprint_overlap_error":
       return createSvgObjectsFromPcbFootprintOverlapError(
+        elm as any,
+        circuitJson,
+        ctx,
+      ).filter(Boolean)
+    case "pcb_courtyard_overlap_error":
+      return createSvgObjectsFromPcbCourtyardOverlapError(
         elm as any,
         circuitJson,
         ctx,

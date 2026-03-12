@@ -22,6 +22,7 @@ const pcbGroup = {
   center: { x: 5, y: 3 },
   pcb_component_ids: ["comp_1", "comp_2"],
   name: "Test Group",
+  anchor_alignment: "center" as const,
 } as AnyCircuitElement
 
 const pcbGroupWithOutline = {
