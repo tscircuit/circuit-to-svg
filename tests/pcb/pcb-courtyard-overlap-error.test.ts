@@ -2,7 +2,7 @@ import { test, expect } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const soup: AnyCircuitElement[] = [
+const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_board",
     pcb_board_id: "board1",
@@ -121,7 +121,7 @@ const soup: AnyCircuitElement[] = [
 ]
 
 test("pcb_courtyard_overlap_error with shouldDrawErrors", () => {
-  const svg = convertCircuitJsonToPcbSvg(soup, {
+  const svg = convertCircuitJsonToPcbSvg(circuitJson, {
     shouldDrawErrors: true,
     showCourtyards: true,
   })
