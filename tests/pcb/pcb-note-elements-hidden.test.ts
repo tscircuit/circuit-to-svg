@@ -61,14 +61,41 @@ const notePath = {
   color: "rgba(180, 255, 180, 0.9)",
 }
 
-const circuitWithPcbNotes = [board, noteText, noteRect, noteLine, notePath]
+const noteDimension = {
+  type: "pcb_note_dimension" as const,
+  pcb_note_dimension_id: "note_dimension_1",
+  from: { x: 0, y: 0 },
+  to: { x: 12, y: 0 },
+  text: "12.00 mm",
+  font: "tscircuit2024" as const,
+  font_size: 1.2,
+  arrow_size: 0.8,
+  offset_distance: 1,
+  offset_direction: { x: 0, y: 1 },
+}
 
-test("pcb note primitives render by default and when showPcbNotes is true", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuitWithPcbNotes)
+const circuitWithPcbNotes = [
+  board,
+  noteText,
+  noteRect,
+  noteLine,
+  notePath,
+  noteDimension,
+]
 
-  expect(svg).toContain('data-type="pcb_note_text"')
-  expect(svg).toContain('data-type="pcb_note_rect"')
-  expect(svg).toContain('data-type="pcb_note_line"')
-  expect(svg).toContain('data-type="pcb_note_path"')
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
+test("showPcbNotes false hides pcb note primitives", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitWithPcbNotes, {
+    showPcbNotes: false,
+  })
+
+  expect(svg).not.toContain('data-type="pcb_note_text"')
+  expect(svg).not.toContain('data-type="pcb_note_rect"')
+  expect(svg).not.toContain('data-type="pcb_note_line"')
+  expect(svg).not.toContain('data-type="pcb_note_path"')
+  expect(svg).not.toContain('data-type="pcb_note_dimension"')
+  expect(svg).not.toContain("pcb-note-text")
+  expect(svg).not.toContain("pcb-note-rect")
+  expect(svg).not.toContain("pcb-note-line")
+  expect(svg).not.toContain("pcb-note-path")
+  expect(svg).not.toContain("pcb-note-dimension")
 })

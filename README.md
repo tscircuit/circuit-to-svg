@@ -102,6 +102,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   `"#000"`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
+- `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
+  time. Defaults to `true`.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
   - `pcb_trace_error` – errors related to PCB traces
   - `pcb_footprint_overlap_error` – errors for overlapping pads, plated holes, and holes (displays error indicators at each affected element with connecting lines)
@@ -219,4 +221,3 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
-

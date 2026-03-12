@@ -79,7 +79,7 @@ interface PointObjectNotation {
   y: number
 }
 
-interface Options {
+export interface PcbSvgOptions {
   colorOverrides?: PcbColorOverrides
   width?: number
   height?: number
@@ -94,6 +94,7 @@ interface Options {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   showSolderMask?: boolean
+  showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
   viewport?: {
@@ -117,13 +118,14 @@ export interface PcbContext {
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   showSolderMask?: boolean
+  showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
 }
 
 export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
-  options?: Options,
+  options?: PcbSvgOptions,
 ): string {
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
@@ -281,6 +283,7 @@ export function convertCircuitJsonToPcbSvg(
     drawPaddingOutsideBoard,
     colorMap,
     showSolderMask: options?.showSolderMask,
+    showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
   }
@@ -492,14 +495,19 @@ function createSvgObjects({
     case "pcb_fabrication_note_dimension":
       return createSvgObjectsFromPcbFabricationNoteDimension(elm, ctx)
     case "pcb_note_dimension":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
     case "pcb_note_text":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteText(elm, ctx)
     case "pcb_note_rect":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteRect(elm, ctx)
     case "pcb_note_path":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNotePath(elm, ctx)
     case "pcb_note_line":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
