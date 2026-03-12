@@ -17,6 +17,13 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
 
   for (const [start, end] of segments) {
+    if (
+      start.is_inside_copper_pour === true &&
+      end.is_inside_copper_pour === true
+    ) {
+      continue
+    }
+
     const startPoint = applyToPoint(transform, [start.x, start.y])
     const endPoint = applyToPoint(transform, [end.x, end.y])
 
