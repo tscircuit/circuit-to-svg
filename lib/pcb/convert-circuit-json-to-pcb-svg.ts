@@ -495,15 +495,20 @@ function createSvgObjects({
     case "pcb_fabrication_note_dimension":
       return createSvgObjectsFromPcbFabricationNoteDimension(elm, ctx)
     case "pcb_note_dimension":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteDimension(elm, ctx)
     case "pcb_note_text":
-      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteText(elm, ctx) : []
+      if (!ctx.showPcbNotes) return []
+      return createSvgObjectsFromPcbNoteText(elm, ctx)
     case "pcb_note_rect":
-      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteRect(elm, ctx) : []
+      if (!ctx.showPcbNotes) return []
+      return createSvgObjectsFromPcbNoteRect(elm, ctx)
     case "pcb_note_path":
-      return ctx.showPcbNotes ? createSvgObjectsFromPcbNotePath(elm, ctx) : []
+      if (!ctx.showPcbNotes) return []
+      return createSvgObjectsFromPcbNotePath(elm, ctx)
     case "pcb_note_line":
-      return ctx.showPcbNotes ? createSvgObjectsFromPcbNoteLine(elm, ctx) : []
+      if (!ctx.showPcbNotes) return []
+      return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_panel":
