@@ -15,6 +15,7 @@ export function createSvgObjectsFromPcbCourtyardRect(
     height,
     layer = "top",
     pcb_courtyard_rect_id,
+    ccw_rotation = 0,
   } = pcbCourtyardRect
 
   if (layerFilter && layer !== layerFilter) return []
@@ -45,14 +46,22 @@ export function createSvgObjectsFromPcbCourtyardRect(
     layer === "bottom" ? colorMap.courtyard.bottom : colorMap.courtyard.top
 
   const attributes: { [key: string]: string } = {
-    x: (transformedX - transformedWidth / 2).toString(),
-    y: (transformedY - transformedHeight / 2).toString(),
+    x: (-transformedWidth / 2).toString(),
+    y: (-transformedHeight / 2).toString(),
     width: transformedWidth.toString(),
     height: transformedHeight.toString(),
     class: `pcb-courtyard-rect pcb-courtyard-${layer}`,
     "data-pcb-courtyard-rect-id": pcb_courtyard_rect_id,
     "data-type": "pcb_courtyard_rect",
     "data-pcb-layer": layer,
+  }
+
+  // Apply rotation if ccw_rotation is set (SVG rotates CW, so negate)
+  if (typeof ccw_rotation === "number" && ccw_rotation !== 0) {
+    attributes.transform = `translate(${transformedX} ${transformedY}) rotate(${-ccw_rotation})`
+  } else {
+    attributes.x = (transformedX - transformedWidth / 2).toString()
+    attributes.y = (transformedY - transformedHeight / 2).toString()
   }
 
   attributes.fill = "none"
