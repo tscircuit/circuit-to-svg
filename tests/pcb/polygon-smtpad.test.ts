@@ -30,3 +30,4 @@ test("polygon smtpad shape", () => {
   ])
   expect(result).toMatchSvgSnapshot(import.meta.path)
 })
+
