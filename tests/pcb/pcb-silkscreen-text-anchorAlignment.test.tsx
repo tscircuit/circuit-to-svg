@@ -9,7 +9,7 @@ test("silkscreen text anchor alignment", () => {
     <board width={20} height={20}>
       <group pcbX={0} pcbY={0}>
         <silkscreencircle radius="0.25mm" />
-        <silkscreentext text="Anchor Top Center" anchorAlignment="top_center" />
+        <silkscreentext text="Anchor Top Center" anchorAlignment="center" />
       </group>
 
       <group pcbX={0} pcbY={0}>
@@ -21,7 +21,7 @@ test("silkscreen text anchor alignment", () => {
         <silkscreencircle radius="0.25mm" />
         <silkscreentext
           text="Anchor Bottom Center"
-          anchorAlignment="bottom_center"
+          anchorAlignment="center"
         />
       </group>
     </board>,
