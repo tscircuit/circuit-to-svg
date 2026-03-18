@@ -46,6 +46,16 @@ test("convert PCB elements to SVG with silkscreen circles and text", () => {
       radius: 2,
       stroke_width: 0.1,
     },
+    {
+      type: "pcb_silkscreen_circle",
+      layer: "top",
+      pcb_component_id: "pcb_component_3",
+      pcb_silkscreen_circle_id: "circle_3_filled",
+      center: { x: 0, y: 0 },
+      radius: 0.25,
+      stroke_width: 0.1,
+      is_filled: true,
+    },
   ])
 
   // Validate that the result matches the expected SVG structure

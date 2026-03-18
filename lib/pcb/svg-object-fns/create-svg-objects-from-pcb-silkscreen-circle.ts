@@ -14,6 +14,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     layer = "top",
     pcb_silkscreen_circle_id,
     stroke_width = 1,
+    is_filled,
   } = pcbSilkscreenCircle
 
   if (layerFilter && layer !== layerFilter) return []
@@ -48,6 +49,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       cy: transformedY.toString(),
       r: transformedRadius.toString(),
       class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
+      fill: is_filled ? color : "none",
       stroke: color,
       "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
