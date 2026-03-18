@@ -17,8 +17,8 @@ type AlphabetKey = keyof typeof lineAlphabet
 // Derive character cell dimensions from lineAlphabet glyph bounding boxes
 const alphabetBounds = (() => {
   let maxX = 0
-  let minY = Infinity
-  let maxY = -Infinity
+  let minY = Number.POSITIVE_INFINITY
+  let maxY = Number.NEGATIVE_INFINITY
   for (const segments of Object.values(lineAlphabet)) {
     for (const seg of segments as Array<{
       x1: number
@@ -299,7 +299,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       textAnchor = "end"
       dominantBaseline = "text-after-edge"
       break
-    case "center":
     default:
       textAnchor = "middle"
       dominantBaseline = "central"
