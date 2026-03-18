@@ -1,6 +1,6 @@
 import type { PcbSilkscreenCircle } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import { applyToPoint, toString as matrixToString } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbSilkscreenCircle(
@@ -14,6 +14,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     layer = "top",
     pcb_silkscreen_circle_id,
     stroke_width = 1,
+    is_filled,
   } = pcbSilkscreenCircle
 
   if (layerFilter && layer !== layerFilter) return []
@@ -48,6 +49,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
       cy: transformedY.toString(),
       r: transformedRadius.toString(),
       class: `pcb-silkscreen-circle pcb-silkscreen-${layer}`,
+      fill: is_filled ? color : "none",
       stroke: color,
       "stroke-width": transformedStrokeWidth.toString(),
       "data-pcb-silkscreen-circle-id": pcb_silkscreen_circle_id,
