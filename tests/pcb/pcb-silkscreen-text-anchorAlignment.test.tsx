@@ -19,7 +19,10 @@ test("silkscreen text anchor alignment", () => {
 
       <group pcbX={0} pcbY={0}>
         <silkscreencircle radius="0.25mm" />
-        <silkscreentext text="Anchor Bottom Center" anchorAlignment="bottom_center" />
+        <silkscreentext
+          text="Anchor Bottom Center"
+          anchorAlignment="bottom_center"
+        />
       </group>
     </board>,
   )
@@ -31,7 +34,6 @@ test("silkscreen text anchor alignment", () => {
   const silkscreenText = circuitJson.filter(
     (element) => element.type === "pcb_silkscreen_text",
   )
-  console.log(silkscreenText)
 
   expect(convertCircuitJsonToPcbSvg(circuitJson)).toMatchSvgSnapshot(
     import.meta.path,
