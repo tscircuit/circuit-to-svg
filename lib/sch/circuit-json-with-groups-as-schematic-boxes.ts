@@ -48,8 +48,6 @@ function createSchematicBoxFromGroup(
     !Number.isFinite(x) ||
     !Number.isFinite(y) ||
     !Number.isFinite(width) ||
-    !Number.isFinite(height) ||
-    !Number.isFinite(width) ||
     !Number.isFinite(height)
   ) {
     return null
