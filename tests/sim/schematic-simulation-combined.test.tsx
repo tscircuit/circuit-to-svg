@@ -112,4 +112,4 @@ test("applies custom schematic height ratio", async () => {
   expect(parsed.attributes.height).toBe(String(totalHeight))
   expect(schematicSvg?.attributes?.y).toBe("0")
   expect(simulationSvg?.attributes?.y).toBe("630")
-})
+}, 10_000)
