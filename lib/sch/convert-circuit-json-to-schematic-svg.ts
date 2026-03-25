@@ -1,38 +1,34 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicBox,
+  SchematicComponent,
+  SchematicGroup,
+} from "circuit-json"
+import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
+import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
+import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  scale,
-  translate,
-  fromTriangles,
-  type Matrix,
-  fromTwoMovingPoints,
-  toSVG,
-} from "transformation-matrix"
+import { fromTriangles, toSVG } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
-import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
-import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
-import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
-import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
-import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
-import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
-import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
-import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
-import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-objects-from-sch-line"
-import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
-import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
-import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
-import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
-import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
+import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
+import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
+import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
+import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
+import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
+import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-objects-from-sch-line"
+import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
+import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
+import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
+import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -47,6 +43,130 @@ interface Options {
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
   drawPorts?: boolean
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value)
+}
+
+function hasGroupAsSchematicBox(circuitJson: AnyCircuitElement[]): boolean {
+  return circuitJson.some(
+    (elm): elm is SchematicGroup =>
+      elm.type === "schematic_group" && elm.show_as_schematic_box === true,
+  )
+}
+
+function createSchematicBoxFromGroup(
+  group: SchematicGroup,
+  groupedComponents: SchematicComponent[],
+): SchematicBox | null {
+  let x: number | undefined
+  let y: number | undefined
+  let width: number | undefined
+  let height: number | undefined
+
+  if (
+    group.center &&
+    isFiniteNumber(group.center.x) &&
+    isFiniteNumber(group.center.y) &&
+    isFiniteNumber(group.width) &&
+    isFiniteNumber(group.height) &&
+    group.width > 0 &&
+    group.height > 0
+  ) {
+    width = group.width
+    height = group.height
+    x = group.center.x - width / 2
+    y = group.center.y - height / 2
+  } else if (groupedComponents.length > 0) {
+    const bounds = getSchematicBoundsFromCircuitJson(groupedComponents, 0)
+    if (
+      isFiniteNumber(bounds.minX) &&
+      isFiniteNumber(bounds.minY) &&
+      isFiniteNumber(bounds.maxX) &&
+      isFiniteNumber(bounds.maxY)
+    ) {
+      const padding = 0.3
+      x = bounds.minX - padding
+      y = bounds.minY - padding
+      width = bounds.maxX - bounds.minX + padding * 2
+      height = bounds.maxY - bounds.minY + padding * 2
+    }
+  }
+
+  if (
+    !isFiniteNumber(x) ||
+    !isFiniteNumber(y) ||
+    !isFiniteNumber(width) ||
+    !isFiniteNumber(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return null
+  }
+
+  return {
+    type: "schematic_box",
+    x,
+    y,
+    width,
+    height,
+    is_dashed: false,
+  }
+}
+
+function prepareCircuitJsonForGroupSchematicBoxes(
+  circuitJson: AnyCircuitElement[],
+): AnyCircuitElement[] {
+  const boxedGroupsById = new Map<string, SchematicGroup>()
+
+  for (const elm of circuitJson) {
+    if (elm.type !== "schematic_group" || elm.show_as_schematic_box !== true) {
+      continue
+    }
+    boxedGroupsById.set(elm.schematic_group_id, elm)
+  }
+
+  if (boxedGroupsById.size === 0) {
+    return circuitJson
+  }
+
+  const componentsByGroupId = new Map<string, SchematicComponent[]>()
+  const hiddenComponentIds = new Set<string>()
+
+  for (const elm of circuitJson) {
+    if (elm.type !== "schematic_component") continue
+    const groupId = elm.schematic_group_id
+    if (!groupId || !boxedGroupsById.has(groupId)) continue
+
+    hiddenComponentIds.add(elm.schematic_component_id)
+
+    const components = componentsByGroupId.get(groupId)
+    if (components) {
+      components.push(elm)
+    } else {
+      componentsByGroupId.set(groupId, [elm])
+    }
+  }
+
+  const generatedBoxes: SchematicBox[] = []
+
+  for (const group of boxedGroupsById.values()) {
+    const groupComponents =
+      componentsByGroupId.get(group.schematic_group_id) ?? []
+    const schematicBox = createSchematicBoxFromGroup(group, groupComponents)
+    if (schematicBox) {
+      generatedBoxes.push(schematicBox)
+    }
+  }
+
+  return [
+    ...circuitJson.filter((elm) => {
+      if (elm.type !== "schematic_component") return true
+      return !hiddenComponentIds.has(elm.schematic_component_id)
+    }),
+    ...generatedBoxes,
+  ]
 }
 
 // Build CSS rules to highlight all traces sharing a connectivity key
@@ -75,8 +195,12 @@ export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
+  const displayCircuitJson = hasGroupAsSchematicBox(circuitJson)
+    ? prepareCircuitJsonForGroupSchematicBoxes(circuitJson)
+    : circuitJson
+
   // Get bounds with padding
-  const realBounds = getSchematicBoundsFromCircuitJson(circuitJson)
+  const realBounds = getSchematicBoundsFromCircuitJson(displayCircuitJson)
   const realWidth = realBounds.maxX - realBounds.minX
   const realHeight = realBounds.maxY - realBounds.minY
 
@@ -169,7 +293,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
-  for (const elm of circuitJson) {
+  for (const elm of displayCircuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
         ...createSvgObjectsFromSchDebugObject({
@@ -182,7 +306,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsFromSchematicComponent({
           component: elm,
           transform,
-          circuitJson,
+          circuitJson: displayCircuitJson,
           colorMap,
         }),
       )
@@ -190,7 +314,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsForSchComponentPortHovers({
           component: elm,
           transform,
-          circuitJson,
+          circuitJson: displayCircuitJson,
         }),
       )
     } else if (elm.type === "schematic_box") {
@@ -240,7 +364,7 @@ export function convertCircuitJsonToSchematicSvg(
           schematicTable: elm,
           transform,
           colorMap,
-          circuitJson,
+          circuitJson: displayCircuitJson,
         }),
       )
     } else if (elm.type === "schematic_line") {
@@ -288,7 +412,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsForSchPortIndicator({
           schPort: elm,
           transform,
-          circuitJson,
+          circuitJson: displayCircuitJson,
           colorMap,
         }),
       )
