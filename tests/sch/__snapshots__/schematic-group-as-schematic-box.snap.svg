@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(148.923628414,0,0,-148.923628414,600,148.0978990177)"><style>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(129.1862995303,0,0,-129.1862995303,600,128.4700067146)"><style>
               .boundary { fill: rgb(245, 241, 237); }
               .schematic-boundary { fill: none; stroke: #fff; }
               .component { fill: none; stroke: rgb(132, 0, 0); }
@@ -22,4 +22,4 @@
               .pin-number { fill: rgb(169, 0, 0); }
               .port-label { fill: rgb(0, 100, 100); }
               .component-name { fill: rgb(0, 100, 100); }
-            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><rect class="schematic-box" x="473.4149158481" y="74.4618142069857" width="253.17016830379998" height="451.0763715859885" stroke-width="2.9784725682800004px" stroke="rgb(132, 0, 0)" fill="transparent"/></svg>
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><text x="600" y="516.0289053055001" fill="#000000" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="38.75588985909px" transform="rotate(0, 600, 516.0289053055001)">Schematic Box</text><rect class="schematic-box" x="490.191645399245" y="64.59314976514068" width="219.61670920151005" height="391.2937649407305" stroke-width="2.583725990606px" stroke="rgb(132, 0, 0)" fill="transparent"/></svg>

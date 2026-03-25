@@ -7,6 +7,7 @@ test("should render a schematic group as a schematic box", () => {
 
   circuit.add(
     <board>
+      <schematictext text="Schematic Box" schY={-3} fontSize={0.3} />
       <group showAsSchematicBox>
         <resistor name="R1" resistance="1k" footprint={"0402"} />
         <capacitor name="C1" capacitance="1uF" footprint={"0402"} />
