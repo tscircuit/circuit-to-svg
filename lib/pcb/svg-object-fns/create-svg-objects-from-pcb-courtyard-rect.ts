@@ -67,6 +67,8 @@ export function createSvgObjectsFromPcbCourtyardRect(
   attributes.fill = "none"
   attributes.stroke = color
   attributes["stroke-width"] = transformedStrokeWidth.toString()
+  attributes["stroke-linecap"] = "round"
+  attributes["stroke-linejoin"] = "round"
 
   const svgObject: SvgObject = {
     name: "rect",

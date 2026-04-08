@@ -44,6 +44,8 @@ export function createSvgObjectsFromPcbCourtyardPolygon(
     fill: "none",
     stroke: strokeColor,
     "stroke-width": transformedStrokeWidth.toString(),
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
   }
 
   const svgObject: SvgObject = {
