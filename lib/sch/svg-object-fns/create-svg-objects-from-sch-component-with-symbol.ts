@@ -6,8 +6,14 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { symbols, type SchSymbol } from "schematic-symbols"
-import { applyToPoint, compose, type Matrix } from "transformation-matrix"
+import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
+import { parseSync } from "svgson"
+import {
+  applyToPoint,
+  compose,
+  translate,
+  type Matrix,
+} from "transformation-matrix"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
@@ -292,6 +298,5 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       children: [],
     })
   }
-
   return svgObjects
 }
