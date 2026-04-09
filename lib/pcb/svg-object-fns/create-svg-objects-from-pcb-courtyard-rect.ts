@@ -54,6 +54,7 @@ export function createSvgObjectsFromPcbCourtyardRect(
     "data-pcb-courtyard-rect-id": pcb_courtyard_rect_id,
     "data-type": "pcb_courtyard_rect",
     "data-pcb-layer": layer,
+    "stroke-linejoin": "round",
   }
 
   // Apply rotation if ccw_rotation is set (SVG rotates CW, so negate)
