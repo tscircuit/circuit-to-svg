@@ -33,6 +33,7 @@ import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-ob
 import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
+import { moveComponentOwnedPrimitivesToComponentGroups } from "./move-component-owned-primitives-to-component-groups"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -169,22 +170,6 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
-  const renderedSchematicComponentIds = new Set(
-    circuitJson.flatMap((elm) => {
-      if (elm.type !== "schematic_component") return []
-      if (elm.is_box_with_pins === false) return []
-      if (!elm.schematic_component_id) return []
-      return [elm.schematic_component_id]
-    }),
-  )
-
-  const shouldRenderPrimitiveInGlobalPass = (elm: {
-    schematic_component_id?: string
-  }) => {
-    const schematicComponentId = elm.schematic_component_id
-    if (!schematicComponentId) return true
-    return !renderedSchematicComponentIds.has(schematicComponentId)
-  }
 
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
@@ -260,10 +245,7 @@ export function convertCircuitJsonToSchematicSvg(
           circuitJson,
         }),
       )
-    } else if (
-      elm.type === "schematic_line" &&
-      shouldRenderPrimitiveInGlobalPass(elm)
-    ) {
+    } else if (elm.type === "schematic_line") {
       schLineSvgs.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
@@ -271,10 +253,7 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_circle" &&
-      shouldRenderPrimitiveInGlobalPass(elm)
-    ) {
+    } else if (elm.type === "schematic_circle") {
       schCircleSvgs.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
@@ -282,10 +261,7 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_rect" &&
-      shouldRenderPrimitiveInGlobalPass(elm)
-    ) {
+    } else if (elm.type === "schematic_rect") {
       schRectSvgs.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
@@ -293,10 +269,7 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_arc" &&
-      shouldRenderPrimitiveInGlobalPass(elm)
-    ) {
+    } else if (elm.type === "schematic_arc") {
       schArcSvgs.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
@@ -304,10 +277,7 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_path" &&
-      shouldRenderPrimitiveInGlobalPass(elm)
-    ) {
+    } else if (elm.type === "schematic_path") {
       schPathSvgs.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,
@@ -327,6 +297,27 @@ export function convertCircuitJsonToSchematicSvg(
     }
   }
 
+  const schLineSvgsSorted = moveComponentOwnedPrimitivesToComponentGroups(
+    schComponentSvgs,
+    schLineSvgs,
+  )
+  const schCircleSvgsSorted = moveComponentOwnedPrimitivesToComponentGroups(
+    schComponentSvgs,
+    schCircleSvgs,
+  )
+  const schRectSvgsSorted = moveComponentOwnedPrimitivesToComponentGroups(
+    schComponentSvgs,
+    schRectSvgs,
+  )
+  const schArcSvgsSorted = moveComponentOwnedPrimitivesToComponentGroups(
+    schComponentSvgs,
+    schArcSvgs,
+  )
+  const schPathSvgsSorted = moveComponentOwnedPrimitivesToComponentGroups(
+    schComponentSvgs,
+    schPathSvgs,
+  )
+
   // Split traces into base vs overlays, ensure overlays render on top of all base wires
   const schTraceBaseSvgs = schTraceSvgs.filter(
     (o) => (o.attributes as any)?.["data-layer"] !== "overlay",
@@ -340,11 +331,11 @@ export function convertCircuitJsonToSchematicSvg(
     ...schDebugObjectSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
-    ...schLineSvgs,
-    ...schCircleSvgs,
-    ...schRectSvgs,
-    ...schArcSvgs,
-    ...schPathSvgs,
+    ...schLineSvgsSorted,
+    ...schCircleSvgsSorted,
+    ...schRectSvgsSorted,
+    ...schArcSvgsSorted,
+    ...schPathSvgsSorted,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schPortIndicatorSvgs,

@@ -10,7 +10,6 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { createSvgSchText } from "./create-svg-objects-for-sch-text"
-import { createSvgObjectsFromSchematicPrimitivesForComponent } from "./create-svg-objects-from-sch-component-primitives"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -55,15 +54,6 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     },
     children: [],
   })
-
-  svgObjects.push(
-    ...createSvgObjectsFromSchematicPrimitivesForComponent({
-      circuitJson,
-      schematicComponentId: schComponent.schematic_component_id,
-      transform,
-      colorMap,
-    }),
-  )
 
   svgObjects.push({
     name: "rect",
