@@ -6,14 +6,8 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { getSvg, symbols, type SchSymbol } from "schematic-symbols"
-import { parseSync } from "svgson"
-import {
-  applyToPoint,
-  compose,
-  translate,
-  type Matrix,
-} from "transformation-matrix"
+import { symbols, type SchSymbol } from "schematic-symbols"
+import { applyToPoint, compose, type Matrix } from "transformation-matrix"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
 import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
@@ -21,6 +15,7 @@ import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import { createSvgObjectsFromSchematicPrimitivesForComponent } from "./create-svg-objects-from-sch-component-primitives"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -298,5 +293,15 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       children: [],
     })
   }
+
+  svgObjects.push(
+    ...createSvgObjectsFromSchematicPrimitivesForComponent({
+      circuitJson,
+      schematicComponentId: schComponent.schematic_component_id,
+      transform: realToScreenTransform,
+      colorMap,
+    }),
+  )
+
   return svgObjects
 }

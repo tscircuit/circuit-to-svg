@@ -169,6 +169,23 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
+  const renderedSchematicComponentIds = new Set(
+    circuitJson.flatMap((elm) => {
+      if (elm.type !== "schematic_component") return []
+      if (elm.is_box_with_pins === false) return []
+      if (!elm.schematic_component_id) return []
+      return [elm.schematic_component_id]
+    }),
+  )
+
+  const shouldRenderPrimitiveInGlobalPass = (elm: {
+    schematic_component_id?: string
+  }) => {
+    const schematicComponentId = elm.schematic_component_id
+    if (!schematicComponentId) return true
+    return !renderedSchematicComponentIds.has(schematicComponentId)
+  }
+
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -243,7 +260,10 @@ export function convertCircuitJsonToSchematicSvg(
           circuitJson,
         }),
       )
-    } else if (elm.type === "schematic_line") {
+    } else if (
+      elm.type === "schematic_line" &&
+      shouldRenderPrimitiveInGlobalPass(elm)
+    ) {
       schLineSvgs.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
@@ -251,7 +271,10 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (elm.type === "schematic_circle") {
+    } else if (
+      elm.type === "schematic_circle" &&
+      shouldRenderPrimitiveInGlobalPass(elm)
+    ) {
       schCircleSvgs.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
@@ -259,7 +282,10 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (elm.type === "schematic_rect") {
+    } else if (
+      elm.type === "schematic_rect" &&
+      shouldRenderPrimitiveInGlobalPass(elm)
+    ) {
       schRectSvgs.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
@@ -267,7 +293,10 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (elm.type === "schematic_arc") {
+    } else if (
+      elm.type === "schematic_arc" &&
+      shouldRenderPrimitiveInGlobalPass(elm)
+    ) {
       schArcSvgs.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
@@ -275,7 +304,10 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (elm.type === "schematic_path") {
+    } else if (
+      elm.type === "schematic_path" &&
+      shouldRenderPrimitiveInGlobalPass(elm)
+    ) {
       schPathSvgs.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,
