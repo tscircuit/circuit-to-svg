@@ -39,6 +39,7 @@ export function createSvgObjectsFromPcbCourtyardOutline(
     fill: "none",
     stroke: strokeColor,
     "stroke-width": transformedStrokeWidth.toString(),
+    "stroke-linejoin": "round",
   }
 
   const svgObject: SvgObject = {
