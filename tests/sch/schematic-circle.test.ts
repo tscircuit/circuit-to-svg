@@ -7,7 +7,7 @@ test("schematic circle", () => {
     {
       type: "schematic_circle",
       schematic_circle_id: "schematic_circle_1",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 1, y: 1 },
       radius: 0.5,
       stroke_width: 0.1,
@@ -19,7 +19,7 @@ test("schematic circle", () => {
     {
       type: "schematic_circle",
       schematic_circle_id: "schematic_circle_2",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 3, y: 1 },
       radius: 0.3,
       stroke_width: 0.05,

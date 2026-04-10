@@ -7,7 +7,7 @@ test("schematic arc", () => {
     {
       type: "schematic_arc",
       schematic_arc_id: "schematic_arc_1",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 1, y: 1 },
       radius: 0.5,
       start_angle_degrees: 0,
@@ -21,7 +21,7 @@ test("schematic arc", () => {
     {
       type: "schematic_arc",
       schematic_arc_id: "schematic_arc_2",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 3, y: 1 },
       radius: 0.4,
       start_angle_degrees: 45,
