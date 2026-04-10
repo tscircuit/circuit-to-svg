@@ -169,6 +169,17 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
+  const schematicComponentIdsWithGroupRendering = new Set<string>()
+
+  for (const elm of circuitJson) {
+    if (elm.type === "schematic_component") {
+      if (elm.is_box_with_pins === false) {
+        continue
+      }
+      schematicComponentIdsWithGroupRendering.add(elm.schematic_component_id)
+    }
+  }
+
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -244,6 +255,12 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_line") {
+      if (
+        elm.schematic_component_id &&
+        schematicComponentIdsWithGroupRendering.has(elm.schematic_component_id)
+      ) {
+        continue
+      }
       schLineSvgs.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
@@ -252,6 +269,12 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_circle") {
+      if (
+        elm.schematic_component_id &&
+        schematicComponentIdsWithGroupRendering.has(elm.schematic_component_id)
+      ) {
+        continue
+      }
       schCircleSvgs.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
@@ -260,6 +283,12 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_rect") {
+      if (
+        elm.schematic_component_id &&
+        schematicComponentIdsWithGroupRendering.has(elm.schematic_component_id)
+      ) {
+        continue
+      }
       schRectSvgs.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
@@ -268,6 +297,12 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_arc") {
+      if (
+        elm.schematic_component_id &&
+        schematicComponentIdsWithGroupRendering.has(elm.schematic_component_id)
+      ) {
+        continue
+      }
       schArcSvgs.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
@@ -276,6 +311,12 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_path") {
+      if (
+        elm.schematic_component_id &&
+        schematicComponentIdsWithGroupRendering.has(elm.schematic_component_id)
+      ) {
+        continue
+      }
       schPathSvgs.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,

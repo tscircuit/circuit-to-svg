@@ -21,6 +21,7 @@ import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { TextPrimitive } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 import { isSourcePortConnected } from "lib/utils/is-source-port-connected"
+import { createSvgObjectsFromSchematicComponentOwnedPrimitives } from "./create-svg-objects-from-sch-component-owned-primitives"
 
 const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
@@ -153,6 +154,16 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     },
     children: [],
   })
+
+  svgObjects.push(
+    ...createSvgObjectsFromSchematicComponentOwnedPrimitives({
+      schematicComponentId: schComponent.schematic_component_id,
+      circuitJson,
+      transform: realToScreenTransform,
+      colorMap,
+    }),
+  )
+
   for (const path of paths) {
     const { points, color, closed, fill } = path
     svgObjects.push({

@@ -15,6 +15,7 @@ import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { createSvgSchText } from "./create-svg-objects-for-sch-text"
+import { createSvgObjectsFromSchematicComponentOwnedPrimitives } from "./create-svg-objects-from-sch-component-owned-primitives"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -59,6 +60,15 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     },
     children: [],
   })
+
+  svgObjects.push(
+    ...createSvgObjectsFromSchematicComponentOwnedPrimitives({
+      schematicComponentId: schComponent.schematic_component_id,
+      circuitJson,
+      transform,
+      colorMap,
+    }),
+  )
 
   svgObjects.push({
     name: "rect",
