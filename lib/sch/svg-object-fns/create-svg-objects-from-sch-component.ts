@@ -3,6 +3,7 @@ import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchematicComponentWithBox } from "./create-svg-objects-from-sch-component-with-box"
+import { createSvgObjectsFromSchematicComponentWithPrimitives } from "./create-svg-objects-from-sch-component-with-primitives"
 import type { Matrix } from "transformation-matrix"
 
 export function createSvgObjectsFromSchematicComponent(params: {
@@ -13,13 +14,18 @@ export function createSvgObjectsFromSchematicComponent(params: {
 }): SvgObject[] {
   const { component } = params
 
-  if (component.is_box_with_pins === false) {
-    return []
-  }
+  const boxOrSymbolElements =
+    component.is_box_with_pins === false
+      ? []
+      : component.symbol_name
+        ? createSvgObjectsFromSchematicComponentWithSymbol(params)
+        : createSvgObjectsFromSchematicComponentWithBox(params)
 
-  const innerElements = component.symbol_name
-    ? createSvgObjectsFromSchematicComponentWithSymbol(params)
-    : createSvgObjectsFromSchematicComponentWithBox(params)
+  // Owned primitives render after box/symbol so they appear on top
+  const primitiveElements =
+    createSvgObjectsFromSchematicComponentWithPrimitives(params)
+
+  const innerElements = [...boxOrSymbolElements, ...primitiveElements]
 
   return [
     {
