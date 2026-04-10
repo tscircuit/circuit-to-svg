@@ -7,7 +7,7 @@ test("schematic rect", () => {
     {
       type: "schematic_rect",
       schematic_rect_id: "schematic_rect_1",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 1, y: 1 },
       width: 1.0,
       height: 0.5,
@@ -21,7 +21,7 @@ test("schematic rect", () => {
     {
       type: "schematic_rect",
       schematic_rect_id: "schematic_rect_2",
-      schematic_component_id: "simple_resistor_1",
+
       center: { x: 3, y: 1 },
       width: 0.8,
       height: 0.6,

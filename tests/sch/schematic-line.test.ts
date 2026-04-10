@@ -7,7 +7,7 @@ test("schematic line", () => {
     {
       type: "schematic_line",
       schematic_line_id: "schematic_line_1",
-      schematic_component_id: "simple_resistor_1",
+
       x1: 0,
       y1: 0,
       x2: 2,
@@ -20,7 +20,7 @@ test("schematic line", () => {
     {
       type: "schematic_line",
       schematic_line_id: "schematic_line_2",
-      schematic_component_id: "simple_resistor_1",
+
       x1: 2,
       y1: 1,
       x2: 4,

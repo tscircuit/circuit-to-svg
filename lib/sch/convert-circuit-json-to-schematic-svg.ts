@@ -169,15 +169,6 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
-  // Collect IDs of all schematic components so their owned primitives
-  // are rendered inside the component's <g> wrapper, not at the top level
-  const schematicComponentIds = new Set<string>()
-  for (const elm of circuitJson) {
-    if (elm.type === "schematic_component") {
-      schematicComponentIds.add(elm.schematic_component_id)
-    }
-  }
-
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -253,11 +244,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_line") {
-      if (
-        elm.schematic_component_id &&
-        schematicComponentIds.has(elm.schematic_component_id)
-      )
-        continue
+      if (elm.schematic_component_id) continue
       schLineSvgs.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
@@ -266,11 +253,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_circle") {
-      if (
-        elm.schematic_component_id &&
-        schematicComponentIds.has(elm.schematic_component_id)
-      )
-        continue
+      if (elm.schematic_component_id) continue
       schCircleSvgs.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
@@ -279,11 +262,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_rect") {
-      if (
-        elm.schematic_component_id &&
-        schematicComponentIds.has(elm.schematic_component_id)
-      )
-        continue
+      if (elm.schematic_component_id) continue
       schRectSvgs.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
@@ -292,11 +271,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_arc") {
-      if (
-        elm.schematic_component_id &&
-        schematicComponentIds.has(elm.schematic_component_id)
-      )
-        continue
+      if (elm.schematic_component_id) continue
       schArcSvgs.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
@@ -305,11 +280,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_path") {
-      if (
-        elm.schematic_component_id &&
-        schematicComponentIds.has(elm.schematic_component_id)
-      )
-        continue
+      if (elm.schematic_component_id) continue
       schPathSvgs.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,

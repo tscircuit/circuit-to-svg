@@ -20,12 +20,16 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
   colorMap: ColorMap
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
+  const compId = schComponent.schematic_component_id
 
   for (const elm of circuitJson) {
     if (
-      elm.type === "schematic_line" &&
-      elm.schematic_component_id === schComponent.schematic_component_id
-    ) {
+      !("schematic_component_id" in elm) ||
+      elm.schematic_component_id !== compId
+    )
+      continue
+
+    if (elm.type === "schematic_line") {
       svgObjects.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
@@ -33,10 +37,7 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_circle" &&
-      elm.schematic_component_id === schComponent.schematic_component_id
-    ) {
+    } else if (elm.type === "schematic_circle") {
       svgObjects.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
@@ -44,10 +45,7 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_rect" &&
-      elm.schematic_component_id === schComponent.schematic_component_id
-    ) {
+    } else if (elm.type === "schematic_rect") {
       svgObjects.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
@@ -55,10 +53,7 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_arc" &&
-      elm.schematic_component_id === schComponent.schematic_component_id
-    ) {
+    } else if (elm.type === "schematic_arc") {
       svgObjects.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
@@ -66,10 +61,7 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
           colorMap,
         }),
       )
-    } else if (
-      elm.type === "schematic_path" &&
-      elm.schematic_component_id === schComponent.schematic_component_id
-    ) {
+    } else if (elm.type === "schematic_path") {
       svgObjects.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,

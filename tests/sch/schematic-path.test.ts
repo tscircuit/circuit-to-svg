@@ -6,7 +6,7 @@ test("schematic path", () => {
   const circuitJson: SchematicPath[] = [
     {
       type: "schematic_path",
-      schematic_component_id: "simple_chip_1",
+
       points: [
         { x: 0, y: 0 },
         { x: 2, y: 0 },
@@ -19,7 +19,7 @@ test("schematic path", () => {
     },
     {
       type: "schematic_path",
-      schematic_component_id: "simple_chip_1",
+
       points: [
         { x: 3, y: 0 },
         { x: 4, y: 1.5 },
