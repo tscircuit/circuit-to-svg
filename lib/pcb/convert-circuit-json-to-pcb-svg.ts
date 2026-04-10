@@ -83,6 +83,7 @@ export interface PcbSvgOptions {
   colorOverrides?: PcbColorOverrides
   width?: number
   height?: number
+  hidePours?: boolean
   shouldDrawErrors?: boolean
   showErrorsInTextOverlay?: boolean
   shouldDrawRatsNest?: boolean
@@ -112,6 +113,7 @@ export interface PcbSvgOptions {
 export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
+  hidePours?: boolean
   shouldDrawErrors?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
@@ -277,6 +279,7 @@ export function convertCircuitJsonToPcbSvg(
   const ctx: PcbContext = {
     transform,
     layer,
+    hidePours: options?.hidePours,
     shouldDrawErrors: options?.shouldDrawErrors,
     showCourtyards: options?.showCourtyards,
     showPcbGroups: options?.showPcbGroups,
@@ -453,6 +456,7 @@ function createSvgObjects({
     case "pcb_trace":
       return createSvgObjectsFromPcbTrace(elm, ctx)
     case "pcb_copper_pour":
+      if (ctx.hidePours) return []
       return createSvgObjectsFromPcbCopperPour(elm as any, ctx)
     case "pcb_plated_hole":
       return createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean)

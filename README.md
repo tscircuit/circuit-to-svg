@@ -100,6 +100,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   resulting aspect ratio matches the `pcb_board` found in the circuit JSON.
 - `backgroundColor` – fill color for the SVG background rectangle. Defaults to
   `"#000"`.
+- `hidePours` – if `true`, hide all `pcb_copper_pour` render output. Defaults
+  to `false`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
 - `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
