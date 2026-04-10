@@ -14,12 +14,16 @@ export function createSvgObjectsFromSchematicComponent(params: {
 }): SvgObject[] {
   const { component } = params
 
-  const boxOrSymbolElements =
-    component.is_box_with_pins === false
-      ? []
-      : component.symbol_name
-        ? createSvgObjectsFromSchematicComponentWithSymbol(params)
-        : createSvgObjectsFromSchematicComponentWithBox(params)
+  let boxOrSymbolElements: SvgObject[] = []
+  if (component.is_box_with_pins !== false) {
+    if (component.symbol_name) {
+      boxOrSymbolElements =
+        createSvgObjectsFromSchematicComponentWithSymbol(params)
+    } else {
+      boxOrSymbolElements =
+        createSvgObjectsFromSchematicComponentWithBox(params)
+    }
+  }
 
   // Owned primitives render after box/symbol so they appear on top
   const primitiveElements =
