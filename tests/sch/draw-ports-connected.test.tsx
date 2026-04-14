@@ -85,7 +85,7 @@ test("drawPorts option does not render circles for connected ports", async () =>
     </board>,
   )
 
-  await circuit.renderUntilSettled()
+  await circuit.render()
 
   expect(
     convertCircuitJsonToSchematicSvg(circuit.getCircuitJson(), {
