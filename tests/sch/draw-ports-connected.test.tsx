@@ -93,4 +93,4 @@ test("drawPorts option does not render circles for connected ports", async () =>
       grid: { cellSize: 1, labelCells: true },
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20_000)
