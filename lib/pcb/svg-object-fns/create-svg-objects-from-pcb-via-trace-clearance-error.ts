@@ -28,7 +28,7 @@ export function createSvgObjectsFromPcbViaTraceClearanceError(
     return []
   }
 
-  const screenCenter = applyToPoint(transform, center)
+  const screenCenter = applyToPoint(transform, center) as PointObjectNotation
 
   const actualClearance = (error as any).actual_clearance
   const minimumClearance = (error as any).minimum_clearance
