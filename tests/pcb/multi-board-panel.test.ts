@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("pcb panel with multiple boards", () => {
@@ -8,6 +8,7 @@ test("pcb panel with multiple boards", () => {
       pcb_panel_id: "pcb_panel_0",
       width: 200,
       height: 200,
+      thickness: 1.6,
       center: { x: 0, y: 0 },
       covered_with_solder_mask: false,
     },

@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToPcbSvg } from "lib"
 import type { AnyCircuitElement } from "circuit-json"
+import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("pcb_note_dimension outside of board should be included in SVG bounds", () => {
   const circuit: AnyCircuitElement[] = [
@@ -17,6 +17,7 @@ test("pcb_note_dimension outside of board should be included in SVG bounds", () 
     {
       type: "pcb_note_dimension",
       pcb_note_dimension_id: "dim1",
+      layer: "top",
       from: { x: -20, y: 15 },
       to: { x: 20, y: 15 },
       text: "40mm",

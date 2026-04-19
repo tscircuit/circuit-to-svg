@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 test("viewportTarget panel option sets bounds to panel", () => {
@@ -10,6 +10,7 @@ test("viewportTarget panel option sets bounds to panel", () => {
         width: 80,
         center: { x: 40, y: 30 },
         height: 60,
+        thickness: 1.6,
         covered_with_solder_mask: true,
       },
       {
