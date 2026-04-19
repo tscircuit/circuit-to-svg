@@ -20,6 +20,7 @@ import { createSvgObjectsFromPcbTraceError } from "./svg-object-fns/create-svg-o
 import { createSvgObjectsFromPcbFootprintOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-footprint-overlap-error"
 import { createSvgObjectsFromPcbCourtyardOverlapError } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-overlap-error"
 import { createSvgObjectsFromPcbComponentOutsideBoardError } from "./svg-object-fns/create-svg-objects-from-pcb-component-outside-board-error"
+import { createSvgObjectsFromPcbViaTraceClearanceError } from "./svg-object-fns/create-svg-objects-from-pcb-via-trace-clearance-error"
 import { createSvgObjectsFromPcbFabricationNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-path"
 import { createSvgObjectsFromPcbFabricationNoteText } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-text"
 import { createSvgObjectsFromPcbFabricationNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-fabrication-note-rect"
@@ -444,6 +445,12 @@ function createSvgObjects({
       ).filter(Boolean)
     case "pcb_component_outside_board_error":
       return createSvgObjectsFromPcbComponentOutsideBoardError(
+        elm as any,
+        circuitJson,
+        ctx,
+      ).filter(Boolean)
+    case "pcb_via_trace_clearance_error":
+      return createSvgObjectsFromPcbViaTraceClearanceError(
         elm as any,
         circuitJson,
         ctx,

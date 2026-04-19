@@ -4,6 +4,7 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 const dimension = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_1",
+  layer: "top" as const,
   from: { x: 0, y: 0 },
   to: { x: 12, y: 0 },
   text: "12.00 mm",
@@ -17,6 +18,7 @@ const dimension = {
 const angledDimension = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_2",
+  layer: "top" as const,
   from: { x: 2, y: 2 },
   to: { x: 6, y: 6 },
   text: "5.66 mm",
@@ -31,6 +33,7 @@ const angledDimension = {
 const rotatedDimension90 = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_3",
+  layer: "top" as const,
   from: { x: 0, y: -8 },
   to: { x: 10, y: -8 },
   text: "10.00 mm",
@@ -45,6 +48,7 @@ const rotatedDimension90 = {
 const rotatedDimension45 = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_4",
+  layer: "top" as const,
   from: { x: -10, y: 0 },
   to: { x: -2, y: 0 },
   text: "8.00 mm",
@@ -59,6 +63,7 @@ const rotatedDimension45 = {
 const rotatedDimension30 = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_7",
+  layer: "top" as const,
   from: { x: -10, y: -8 },
   to: { x: -4, y: -8 },
   text: "6.00 mm",

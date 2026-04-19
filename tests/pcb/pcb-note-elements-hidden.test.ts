@@ -15,6 +15,7 @@ const board = {
 const noteText = {
   type: "pcb_note_text" as const,
   pcb_note_text_id: "note_text_1",
+  layer: "top" as const,
   text: "Assembly\nNote",
   font: "tscircuit2024" as const,
   font_size: 1.2,
@@ -26,6 +27,7 @@ const noteText = {
 const noteRect = {
   type: "pcb_note_rect" as const,
   pcb_note_rect_id: "note_rect_1",
+  layer: "top" as const,
   center: { x: 6, y: 2 },
   width: 6,
   height: 4,
@@ -39,6 +41,7 @@ const noteRect = {
 const noteLine = {
   type: "pcb_note_line" as const,
   pcb_note_line_id: "note_line_1",
+  layer: "top" as const,
   x1: -8,
   y1: -4,
   x2: 8,
@@ -51,6 +54,7 @@ const noteLine = {
 const notePath = {
   type: "pcb_note_path" as const,
   pcb_note_path_id: "note_path_1",
+  layer: "top" as const,
   route: [
     { x: -10, y: -2 },
     { x: -6, y: -1 },
@@ -64,6 +68,7 @@ const notePath = {
 const noteDimension = {
   type: "pcb_note_dimension" as const,
   pcb_note_dimension_id: "note_dimension_1",
+  layer: "top" as const,
   from: { x: 0, y: 0 },
   to: { x: 12, y: 0 },
   text: "12.00 mm",
