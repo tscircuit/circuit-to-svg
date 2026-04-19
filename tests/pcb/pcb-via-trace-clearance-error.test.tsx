@@ -6,9 +6,9 @@ test("pcb_via_trace_clearance_error shown in pcb snapshot", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
-    <board width="10mm" height="6mm">
-      <resistor name="R1" resistance="1k" pcbX={3} pcbY={0} />
-      <resistor name="R2" resistance="1k" pcbX={7} pcbY={0} />
+    <board>
+      <resistor name="R1" resistance="1k" footprint="0402" />
+      <resistor name="R2" resistance="1k" footprint="0402" />
       <trace from=".R1 > .pin2" to=".R2 > .pin1" />
     </board>,
   )
@@ -23,8 +23,8 @@ test("pcb_via_trace_clearance_error shown in pcb snapshot", () => {
     minimum_clearance: "0.2mm",
     actual_clearance: "0.1mm",
     center: {
-      x: 4.2,
-      y: 1.5,
+      x: 1.25,
+      y: 0,
     },
   })
 
