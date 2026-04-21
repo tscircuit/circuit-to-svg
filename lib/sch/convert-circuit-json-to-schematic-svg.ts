@@ -33,6 +33,7 @@ import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-ob
 import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
+import { computeNetGroupsFromSourceTraces } from "./compute-net-groups-from-source-traces"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -153,6 +154,10 @@ export function convertCircuitJsonToSchematicSvg(
     )
   }
 
+  // Fallback connectivity keys for top-level circuits whose schematic_traces
+  // lack subcircuit_connectivity_map_key (assigned only inside subcircuits).
+  const netGroupMap = computeNetGroupsFromSourceTraces(circuitJson)
+
   const schDebugObjectSvgs: SvgObject[] = []
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
@@ -202,14 +207,23 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_trace") {
+      const connectivityKey =
+        elm.subcircuit_connectivity_map_key ??
+        netGroupMap.get(elm.schematic_trace_id)
+      const traceWithKey =
+        connectivityKey && !elm.subcircuit_connectivity_map_key
+          ? { ...elm, subcircuit_connectivity_map_key: connectivityKey }
+          : elm
       schTraceSvgs.push(
         ...createSchematicTrace({
-          trace: elm,
+          trace: traceWithKey,
           transform,
           colorMap,
         }),
       )
-      connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
+      if (connectivityKey) {
+        connectivityKeys.add(connectivityKey)
+      }
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
