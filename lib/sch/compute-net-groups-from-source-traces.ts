@@ -74,7 +74,7 @@ export function computeNetGroupsFromSourceTraces(
   // source ports via schematic_port.center coordinates (rounded to 4 dp).
   const pointToSourcePort = new Map<string, string>()
   for (const elm of circuitJson) {
-    if (elm.type !== "schematic_port") continue
+    if (elm.type !== "schematic_port" || !elm.center) continue
     const k = `${Math.round(elm.center.x * 1e4)}_${Math.round(elm.center.y * 1e4)}`
     pointToSourcePort.set(k, elm.source_port_id)
   }
