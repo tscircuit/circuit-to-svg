@@ -169,7 +169,11 @@ function prepareSimulationGraphs(
   graphs: SimulationTransientVoltageGraph[],
   circuitJson: CircuitJsonWithSimulation[],
 ): PreparedSimulationGraph[] {
-  const palette = Array.isArray(colorMap.palette) ? colorMap.palette : []
+  const palette = Array.isArray(colorMap.simulation_palette)
+    ? colorMap.simulation_palette
+    : Array.isArray(colorMap.palette)
+      ? colorMap.palette
+      : []
 
   const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
   const sourceComponentIdToProbeName = new Map<string, string>()
