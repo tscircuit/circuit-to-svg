@@ -169,6 +169,12 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
+  const simulationPalette = Array.isArray(colorMap.simulation_palette)
+    ? colorMap.simulation_palette
+    : Array.isArray(colorMap.palette)
+      ? colorMap.palette
+      : []
+  let schematicVoltageProbeIndex = 0
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
@@ -227,11 +233,19 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_voltage_probe") {
+      const fallbackColor =
+        simulationPalette.length > 0
+          ? simulationPalette[
+              schematicVoltageProbeIndex % simulationPalette.length
+            ]
+          : undefined
+      schematicVoltageProbeIndex += 1
       voltageProbeSvgs.push(
         ...createSvgObjectsFromSchVoltageProbe({
           probe: elm,
           transform,
           colorMap,
+          fallbackColor,
         }),
       )
     } else if (elm.type === "schematic_table") {
