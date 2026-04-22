@@ -4,7 +4,7 @@ import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test(
   "drawPorts option renders port indicator circles for unconnected ports",
-  async () => {
+  () => {
     const { circuit } = getTestFixture()
 
     circuit.add(
@@ -52,7 +52,7 @@ test(
       </board>,
     )
 
-    await circuit.renderUntilSettled()
+    circuit.render()
 
     expect(
       convertCircuitJsonToSchematicSvg(circuit.getCircuitJson(), {
