@@ -176,6 +176,18 @@ export const colorMap = {
     name: "KiCad 2020",
     version: 2,
   },
+  simulation_palette: [
+    "#1f77b4",
+    "#d62728",
+    "#2ca02c",
+    "#ff7f0e",
+    "#9467bd",
+    "#17becf",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+  ],
   palette: [
     "rgb(132, 0, 0)",
     "rgb(194, 194, 0)",

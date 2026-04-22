@@ -9,17 +9,20 @@ export function createSvgObjectsFromSchVoltageProbe({
   probe,
   transform,
   colorMap,
+  fallbackColor,
 }: {
   probe: SchematicVoltageProbe
   transform: Matrix
   colorMap: ColorMap
+  fallbackColor?: string
 }): SvgObject[] {
   const [screenX, screenY] = applyToPoint(transform, [
     probe.position.x,
     probe.position.y,
   ])
 
-  const probeColor = probe.color ?? colorMap.schematic.reference
+  const probeColor =
+    probe.color ?? fallbackColor ?? colorMap.schematic.reference
 
   const arrowLength = Math.abs(transform.a) * 0.6
   const arrowWidth = Math.abs(transform.a) * 0.28
