@@ -185,6 +185,9 @@ export function createSchematicTrace({
           "data-subcircuit-connectivity-map-key":
             trace.subcircuit_connectivity_map_key,
         }),
+        ...(trace.source_trace_id && {
+          "data-source-trace-id": trace.source_trace_id,
+        }),
       },
       children: baseObjects,
     },
@@ -200,6 +203,9 @@ export function createSchematicTrace({
         ...(trace.subcircuit_connectivity_map_key && {
           "data-subcircuit-connectivity-map-key":
             trace.subcircuit_connectivity_map_key,
+        }),
+        ...(trace.source_trace_id && {
+          "data-source-trace-id": trace.source_trace_id,
         }),
       },
       children: overlayObjects,
