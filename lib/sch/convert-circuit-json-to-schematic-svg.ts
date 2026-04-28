@@ -71,6 +71,26 @@ function buildNetHoverStyles(connectivityKeys: Set<string>): string {
   return rules.join("\n")
 }
 
+// Build CSS rules to highlight all traces sharing a source_trace_id
+// when any trace segment with the same source_trace_id is hovered.
+function buildSourceTraceHoverStyles(sourceTraceIds: Set<string>): string {
+  const rules: string[] = []
+  const esc = (v: string) => String(v).replace(/"/g, '\\"')
+  for (const id of sourceTraceIds) {
+    const k = esc(id)
+    const keyAttr = `[data-source-trace-id="${k}"]`
+    const baseSel = `g.trace${keyAttr}`
+    const overlaySel = `g.trace-overlays${keyAttr}`
+    const hovered = `:is(${baseSel}, ${overlaySel}):hover`
+    const target = `:is(${baseSel}, ${overlaySel})`
+    rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
+    rules.push(
+      `svg:has(${hovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
+    )
+  }
+  return rules.join("\n")
+}
+
 export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
@@ -157,6 +177,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
   const connectivityKeys = new Set<string>()
+  const sourceTraceIds = new Set<string>()
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
@@ -216,6 +237,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
       connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
+      if (elm.source_trace_id) sourceTraceIds.add(elm.source_trace_id)
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
@@ -409,6 +431,8 @@ export function convertCircuitJsonToSchematicSvg(
                  invert color for all traces (base + overlays) sharing the same
                  subcircuit connectivity key. Also hide crossing outline during hover. */
               ${buildNetHoverStyles(connectivityKeys)}
+              /* Source trace hover: fallback highlighting by source_trace_id */
+              ${buildSourceTraceHoverStyles(sourceTraceIds)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
