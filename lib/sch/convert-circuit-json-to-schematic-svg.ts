@@ -61,9 +61,28 @@ function buildNetHoverStyles(connectivityKeys: Set<string>): string {
     const overlaySel = `g.trace-overlays${keyAttr}`
     const hovered = `:is(${baseSel}, ${overlaySel}):hover`
     const target = `:is(${baseSel}, ${overlaySel})`
-    // Invert color for all segments in the net when any is hovered
     rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
-    // Hide crossing outline for the hovered net
+    rules.push(
+      `svg:has(${hovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
+    )
+  }
+  return rules.join("\n")
+}
+
+// Build CSS rules to highlight all traces sharing a source_trace_id
+// when any corresponding trace (base or overlays) is hovered.
+// This is a fallback for circuits where subcircuit_connectivity_map_key is absent.
+function buildSourceTraceHoverStyles(sourceTraceIds: Set<string>): string {
+  const rules: string[] = []
+  const esc = (v: string) => String(v).replace(/"/g, '\\"')
+  for (const id of sourceTraceIds) {
+    const k = esc(id)
+    const idAttr = `[data-source-trace-id="${k}"]`
+    const baseSel = `g.trace${idAttr}`
+    const overlaySel = `g.trace-overlays${idAttr}`
+    const hovered = `:is(${baseSel}, ${overlaySel}):hover`
+    const target = `:is(${baseSel}, ${overlaySel})`
+    rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
     rules.push(
       `svg:has(${hovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
     )
@@ -75,7 +94,6 @@ export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
-  // Get bounds with padding
   const realBounds = getSchematicBoundsFromCircuitJson(circuitJson)
   const realWidth = realBounds.maxX - realBounds.minX
   const realHeight = realBounds.maxY - realBounds.minY
@@ -92,30 +110,18 @@ export function convertCircuitJsonToSchematicSvg(
     },
   }
 
-  // Compute the padding such that we maintain the same aspect ratio
   const circuitAspectRatio = realWidth / realHeight
   const containerAspectRatio = svgWidth / svgHeight
 
   let screenPaddingPx: { x: number; y: number }
   if (circuitAspectRatio > containerAspectRatio) {
-    // Circuit is wider than container - fit to width
     const newHeight = svgWidth / circuitAspectRatio
-    screenPaddingPx = {
-      x: 0,
-      y: (svgHeight - newHeight) / 2,
-    }
+    screenPaddingPx = { x: 0, y: (svgHeight - newHeight) / 2 }
   } else {
-    // Circuit is taller than container - fit to height
     const newWidth = svgHeight * circuitAspectRatio
-    screenPaddingPx = {
-      x: (svgWidth - newWidth) / 2,
-      y: 0,
-    }
+    screenPaddingPx = { x: (svgWidth - newWidth) / 2, y: 0 }
   }
 
-  // Calculate projection using REAL points and SCREEN points
-  // We're saying to map the real bounds to the screen bounds by giving 3 points
-  // for each coordinate space
   const transform = fromTriangles(
     [
       { x: realBounds.minX, y: realBounds.maxY },
@@ -130,7 +136,6 @@ export function convertCircuitJsonToSchematicSvg(
   )
   const svgChildren: SvgObject[] = []
 
-  // Add background rectangle
   svgChildren.push({
     name: "rect",
     type: "element",
@@ -145,7 +150,6 @@ export function convertCircuitJsonToSchematicSvg(
     value: "",
   })
 
-  // Add grid if enabled
   if (options?.grid) {
     const gridConfig = typeof options.grid === "object" ? options.grid : {}
     svgChildren.push(
@@ -157,6 +161,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
   const connectivityKeys = new Set<string>()
+  const sourceTraceIds = new Set<string>()
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
@@ -178,10 +183,7 @@ export function convertCircuitJsonToSchematicSvg(
   for (const elm of circuitJson) {
     if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
-        ...createSvgObjectsFromSchDebugObject({
-          debugObject: elm,
-          transform,
-        }),
+        ...createSvgObjectsFromSchDebugObject({ debugObject: elm, transform }),
       )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
@@ -209,13 +211,14 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_trace") {
       schTraceSvgs.push(
-        ...createSchematicTrace({
-          trace: elm,
-          transform,
-          colorMap,
-        }),
+        ...createSchematicTrace({ trace: elm, transform, colorMap }),
       )
-      connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
+      if (elm.subcircuit_connectivity_map_key) {
+        connectivityKeys.add(elm.subcircuit_connectivity_map_key)
+      }
+      if (elm.source_trace_id) {
+        sourceTraceIds.add(elm.source_trace_id)
+      }
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
@@ -225,13 +228,7 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
-      schText.push(
-        createSvgSchText({
-          elm,
-          transform,
-          colorMap,
-        }),
-      )
+      schText.push(createSvgSchText({ elm, transform, colorMap }))
     } else if (elm.type === "schematic_voltage_probe") {
       const fallbackColor =
         simulationPalette.length > 0
@@ -314,7 +311,6 @@ export function convertCircuitJsonToSchematicSvg(
     }
   }
 
-  // Split traces into base vs overlays, ensure overlays render on top of all base wires
   const schTraceBaseSvgs = schTraceSvgs.filter(
     (o) => (o.attributes as any)?.["data-layer"] !== "overlay",
   )
@@ -322,7 +318,6 @@ export function convertCircuitJsonToSchematicSvg(
     (o) => (o.attributes as any)?.["data-layer"] === "overlay",
   )
 
-  // Add elements in correct order
   svgChildren.push(
     ...schDebugObjectSvgs,
     ...schTraceBaseSvgs,
@@ -342,13 +337,9 @@ export function convertCircuitJsonToSchematicSvg(
     ...schTableSvgs,
   )
 
-  // Add labeled points if provided
   if (options?.labeledPoints) {
     svgChildren.push(
-      drawSchematicLabeledPoints({
-        points: options.labeledPoints,
-        transform,
-      }),
+      drawSchematicLabeledPoints({ points: options.labeledPoints, transform }),
     )
   }
 
@@ -379,14 +370,12 @@ export function convertCircuitJsonToSchematicSvg(
       }),
     },
     children: [
-      // Add styles
       {
         name: "style",
         type: "element",
         children: [
           {
             type: "text",
-
             // DO NOT USE THESE CLASSES!!!!
             // PUT STYLES IN THE SVG OBJECTS THEMSELVES
             value: `
@@ -409,6 +398,10 @@ export function convertCircuitJsonToSchematicSvg(
                  invert color for all traces (base + overlays) sharing the same
                  subcircuit connectivity key. Also hide crossing outline during hover. */
               ${buildNetHoverStyles(connectivityKeys)}
+              /* Source-trace-id fallback hover highlighting: for circuits where
+                 subcircuit_connectivity_map_key is not set, group by source_trace_id
+                 so all segments of a net highlight together on hover. */
+              ${buildSourceTraceHoverStyles(sourceTraceIds)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
