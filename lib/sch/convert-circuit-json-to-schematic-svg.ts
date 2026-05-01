@@ -187,14 +187,27 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_component") {
       schComponentSvgs.push(
-        ...createSvgObjectsFromSchematicComponent({ component: elm, transform, circuitJson, colorMap }),
+        ...createSvgObjectsFromSchematicComponent({
+          component: elm,
+          transform,
+          circuitJson,
+          colorMap,
+        }),
       )
       schPortHoverSvgs.push(
-        ...createSvgObjectsForSchComponentPortHovers({ component: elm, transform, circuitJson }),
+        ...createSvgObjectsForSchComponentPortHovers({
+          component: elm,
+          transform,
+          circuitJson,
+        }),
       )
     } else if (elm.type === "schematic_box") {
       schBoxSvgs.push(
-        ...createSvgObjectsFromSchematicBox({ schematicBox: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicBox({
+          schematicBox: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_trace") {
       schTraceSvgs.push(
@@ -208,51 +221,92 @@ export function convertCircuitJsonToSchematicSvg(
       }
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
-        ...createSvgObjectsForSchNetLabel({ schNetLabel: elm, realToScreenTransform: transform, colorMap }),
+        ...createSvgObjectsForSchNetLabel({
+          schNetLabel: elm,
+          realToScreenTransform: transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(createSvgSchText({ elm, transform, colorMap }))
     } else if (elm.type === "schematic_voltage_probe") {
       const fallbackColor =
         simulationPalette.length > 0
-          ? simulationPalette[schematicVoltageProbeIndex % simulationPalette.length]
+          ? simulationPalette[
+              schematicVoltageProbeIndex % simulationPalette.length
+            ]
           : undefined
       schematicVoltageProbeIndex += 1
       voltageProbeSvgs.push(
-        ...createSvgObjectsFromSchVoltageProbe({ probe: elm, transform, colorMap, fallbackColor }),
+        ...createSvgObjectsFromSchVoltageProbe({
+          probe: elm,
+          transform,
+          colorMap,
+          fallbackColor,
+        }),
       )
     } else if (elm.type === "schematic_table") {
       schTableSvgs.push(
-        ...createSvgObjectsFromSchematicTable({ schematicTable: elm, transform, colorMap, circuitJson }),
+        ...createSvgObjectsFromSchematicTable({
+          schematicTable: elm,
+          transform,
+          colorMap,
+          circuitJson,
+        }),
       )
     } else if (elm.type === "schematic_line") {
       if (elm.schematic_component_id) continue
       schLineSvgs.push(
-        ...createSvgObjectsFromSchematicLine({ schLine: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicLine({
+          schLine: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_circle") {
       if (elm.schematic_component_id) continue
       schCircleSvgs.push(
-        ...createSvgObjectsFromSchematicCircle({ schCircle: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicCircle({
+          schCircle: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_rect") {
       if (elm.schematic_component_id) continue
       schRectSvgs.push(
-        ...createSvgObjectsFromSchematicRect({ schRect: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicRect({
+          schRect: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_arc") {
       if (elm.schematic_component_id) continue
       schArcSvgs.push(
-        ...createSvgObjectsFromSchematicArc({ schArc: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicArc({
+          schArc: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_path") {
       if (elm.schematic_component_id) continue
       schPathSvgs.push(
-        ...createSvgObjectsFromSchematicPath({ schPath: elm, transform, colorMap }),
+        ...createSvgObjectsFromSchematicPath({
+          schPath: elm,
+          transform,
+          colorMap,
+        }),
       )
     } else if (elm.type === "schematic_port" && options?.drawPorts) {
       schPortIndicatorSvgs.push(
-        ...createSvgObjectsForSchPortIndicator({ schPort: elm, transform, circuitJson, colorMap }),
+        ...createSvgObjectsForSchPortIndicator({
+          schPort: elm,
+          transform,
+          circuitJson,
+          colorMap,
+        }),
       )
     }
   }
@@ -308,8 +362,12 @@ export function convertCircuitJsonToSchematicSvg(
       height: svgHeight.toString(),
       style: `background-color: ${colorMap.schematic.background}`,
       "data-real-to-screen-transform": toSVG(transform),
-      ...(softwareUsedString && { "data-software-used-string": softwareUsedString }),
-      ...(options?.includeVersion && { "data-circuit-to-svg-version": version }),
+      ...(softwareUsedString && {
+        "data-software-used-string": softwareUsedString,
+      }),
+      ...(options?.includeVersion && {
+        "data-circuit-to-svg-version": version,
+      }),
     },
     children: [
       {
