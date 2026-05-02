@@ -40,9 +40,27 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   // Transform the pin position from local to global coordinates
   const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
 
-  const label =
+  // Try various key formats that might be used in port_labels:
+  // - pin_number as-is (e.g., 1)
+  // - "pin" + pin_number (e.g., "pin1")
+  // - numeric string (e.g., "1")
+  let label =
     schPort.display_pin_label ??
-    schComponent.port_labels?.[`${schPort.pin_number}`]
+    schComponent.port_labels?.[`${schPort.pin_number}`] ??
+    schComponent.port_labels?.[`pin${schPort.pin_number}`]
+
+
+  // If still not found, search by matching key prefix
+  // (for cases where pin names are non-numeric like "A1", "B4" used as keys)
+  if (!label && schComponent.port_labels) {
+    const pinNum = schPort.pin_number
+    if (pinNum !== undefined) {
+      const key = `pin${pinNum}`
+      if (schComponent.port_labels[key]) {
+        label = schComponent.port_labels[key]
+      }
+    }
+  }
 
   if (!label) return []
 
