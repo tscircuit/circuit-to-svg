@@ -49,7 +49,6 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     schComponent.port_labels?.[`${schPort.pin_number}`] ??
     schComponent.port_labels?.[`pin${schPort.pin_number}`]
 
-
   // If still not found, search by matching key prefix
   // (for cases where pin names are non-numeric like "A1", "B4" used as keys)
   if (!label && schComponent.port_labels) {
