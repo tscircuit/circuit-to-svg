@@ -5,6 +5,29 @@ import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
+// Most route entries (wire, via) carry coordinates at the top level
+// as `{ x, y }`. `through_obstacle` entries instead nest them as
+// `{ start: { x, y }, end: { x, y } }`, where `start` is the entry
+// point of the obstacle and `end` is the exit point.
+//
+// For a segment between consecutive route entries A → B:
+//   - the segment's START point is A's "exit" coord
+//     (A.end?.{x,y} for through_obstacle, otherwise A.{x,y})
+//   - the segment's END point is B's "entry" coord
+//     (B.start?.{x,y} for through_obstacle, otherwise B.{x,y})
+const exitCoord = (p: any): [number, number] | null => {
+  if (typeof p?.end?.x === "number" && typeof p?.end?.y === "number")
+    return [p.end.x, p.end.y]
+  if (typeof p?.x === "number" && typeof p?.y === "number") return [p.x, p.y]
+  return null
+}
+const entryCoord = (p: any): [number, number] | null => {
+  if (typeof p?.start?.x === "number" && typeof p?.start?.y === "number")
+    return [p.start.x, p.start.y]
+  if (typeof p?.x === "number" && typeof p?.y === "number") return [p.x, p.y]
+  return null
+}
+
 export function createSvgObjectsFromPcbTrace(
   trace: PCBTrace,
   ctx: PcbContext,
@@ -24,8 +47,12 @@ export function createSvgObjectsFromPcbTrace(
       continue
     }
 
-    const startPoint = applyToPoint(transform, [start.x, start.y])
-    const endPoint = applyToPoint(transform, [end.x, end.y])
+    const startCoord = exitCoord(start)
+    const endCoord = entryCoord(end)
+    if (!startCoord || !endCoord) continue
+
+    const startPoint = applyToPoint(transform, startCoord)
+    const endPoint = applyToPoint(transform, endCoord)
 
     const layer =
       "layer" in start ? start.layer : "layer" in end ? end.layer : null
