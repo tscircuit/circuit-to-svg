@@ -264,7 +264,8 @@ export function convertCircuitJsonToSchematicSvg(
       )
       connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
       if (elm.source_trace_id) sourceTraceIds.add(elm.source_trace_id)
-      if ((elm as any).source_net_id) sourceNetIds.add((elm as any).source_net_id)
+      if ((elm as any).source_net_id)
+        sourceNetIds.add((elm as any).source_net_id)
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
@@ -273,7 +274,8 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-      if ((elm as any).source_net_id) sourceNetIds.add((elm as any).source_net_id)
+      if ((elm as any).source_net_id)
+        sourceNetIds.add((elm as any).source_net_id)
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(
         createSvgSchText({
