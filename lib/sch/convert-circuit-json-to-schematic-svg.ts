@@ -91,6 +91,30 @@ function buildSourceTraceHoverStyles(sourceTraceIds: Set<string>): string {
   return rules.join("\n")
 }
 
+// Build CSS rules to highlight all traces AND net labels sharing a source_net_id
+// when any corresponding trace is hovered.
+function buildSourceNetHoverStyles(sourceNetIds: Set<string>): string {
+  const rules: string[] = []
+  const esc = (v: string) => String(v).replace(/"/g, '\\"')
+  for (const netId of sourceNetIds) {
+    const k = esc(netId)
+    const netAttr = `[data-source-net-id="${k}"]`
+    // When any trace with this source_net_id is hovered, highlight all traces AND net labels
+    const traceSel = `g.trace${netAttr}`
+    const traceOverlaySel = `g.trace-overlays${netAttr}`
+    const netLabelSel = `.net-label${netAttr}`
+    const hoveredTrace = `:is(${traceSel}, ${traceOverlaySel}):hover`
+    // Highlight all traces and net labels with the same source_net_id
+    rules.push(
+      `svg:has(${hoveredTrace}) ${traceSel}, svg:has(${hoveredTrace}) ${traceOverlaySel}, svg:has(${hoveredTrace}) ${netLabelSel} { filter: invert(1); }`,
+    )
+    rules.push(
+      `svg:has(${hoveredTrace}) ${traceOverlaySel} .trace-crossing-outline { opacity: 0; }`,
+    )
+  }
+  return rules.join("\n")
+}
+
 export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
@@ -179,6 +203,8 @@ export function convertCircuitJsonToSchematicSvg(
   const connectivityKeys = new Set<string>()
   const sourceTraceIds = new Set<string>()
   const schNetLabel: SvgObject[] = []
+  const sourceNetIds = new Set<string>()
+  const schematicNetLabels: any[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
   const schBoxSvgs: SvgObject[] = []
@@ -238,6 +264,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
       connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
       if (elm.source_trace_id) sourceTraceIds.add(elm.source_trace_id)
+      if ((elm as any).source_net_id) sourceNetIds.add((elm as any).source_net_id)
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
@@ -246,6 +273,7 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
+      if ((elm as any).source_net_id) sourceNetIds.add((elm as any).source_net_id)
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(
         createSvgSchText({
@@ -433,6 +461,8 @@ export function convertCircuitJsonToSchematicSvg(
               ${buildNetHoverStyles(connectivityKeys)}
               /* Source trace hover: fallback highlighting by source_trace_id */
               ${buildSourceTraceHoverStyles(sourceTraceIds)}
+              /* Source net hover: highlight all traces and net labels sharing the same source_net_id */
+              ${buildSourceNetHoverStyles(sourceNetIds)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }

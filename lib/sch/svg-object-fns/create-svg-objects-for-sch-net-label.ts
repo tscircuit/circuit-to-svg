@@ -156,6 +156,9 @@ export const createSvgObjectsForSchNetLabel = ({
     type: "element",
     attributes: {
       class: "net-label",
+      ...(schNetLabel.source_net_id && {
+        "data-source-net-id": schNetLabel.source_net_id,
+      }),
       d: pathD,
       fill: colorMap.schematic.label_background,
       stroke: colorMap.schematic.label_global,
