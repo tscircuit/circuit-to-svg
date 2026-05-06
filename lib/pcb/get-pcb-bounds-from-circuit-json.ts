@@ -406,15 +406,27 @@ export function getPcbBoundsFromCircuitJson(
 
   function updateTraceBounds(route: Point[]) {
     let updated = false
-    for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
-      if (x === undefined || y === undefined) continue
+    const tryUpdate = (px: unknown, py: unknown) => {
+      // distance.parse throws on undefined/null; guard before parsing
+      // so a single missing-coords route entry doesn't crash bounds
+      // computation for the entire circuit JSON.
+      if (px == null || py == null) return
+      const x = distance.parse(px)
+      const y = distance.parse(py)
+      if (x === undefined || y === undefined) return
       minX = Math.min(minX, x)
       minY = Math.min(minY, y)
       maxX = Math.max(maxX, x)
       maxY = Math.max(maxY, y)
       updated = true
+    }
+    for (const point of route) {
+      // Most route entries (wire, via) have top-level x/y. Some
+      // entries (e.g. through_obstacle) nest coordinates inside
+      // start/end objects instead — handle both.
+      tryUpdate((point as any)?.x, (point as any)?.y)
+      tryUpdate((point as any)?.start?.x, (point as any)?.start?.y)
+      tryUpdate((point as any)?.end?.x, (point as any)?.end?.y)
     }
     if (updated) {
       hasBounds = true
