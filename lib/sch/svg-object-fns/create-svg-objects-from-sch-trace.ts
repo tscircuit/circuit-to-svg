@@ -188,8 +188,8 @@ export function createSchematicTrace({
         ...(trace.source_trace_id && {
           "data-source-trace-id": trace.source_trace_id,
         }),
-        ...(trace.source_net_id && {
-          "data-source-net-id": trace.source_net_id,
+        ...((trace as any).source_net_id && {
+          "data-source-net-id": (trace as any).source_net_id,
         }),
       },
       children: baseObjects,
@@ -210,8 +210,8 @@ export function createSchematicTrace({
         ...(trace.source_trace_id && {
           "data-source-trace-id": trace.source_trace_id,
         }),
-        ...(trace.source_net_id && {
-          "data-source-net-id": trace.source_net_id,
+        ...((trace as any).source_net_id && {
+          "data-source-net-id": (trace as any).source_net_id,
         }),
       },
       children: overlayObjects,
