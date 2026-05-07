@@ -58,13 +58,9 @@ test(
     )
     circuit.render()
 
-    const svg = convertCircuitJsonToSchematicSvg(
-      circuit.getCircuitJson(),
-      {
-        drawPorts: true,
-      },
-      { timeout: 15000 },
-    )
+    const svg = convertCircuitJsonToSchematicSvg(circuit.getCircuitJson(), {
+      drawPorts: true,
+    })
 
     expect(svg).toMatchSvgSnapshot(import.meta.path)
   },
