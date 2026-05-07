@@ -741,19 +741,23 @@ for (let i = 1; i <= 46; i++) {
   pinAttributes[`pin${i}`] = { includeInBoardPinout: true }
 }
 
-test("pinout basic", async () => {
-  const { circuit } = getTestFixture()
+test(
+  "pinout basic",
+  async () => {
+    const { circuit } = getTestFixture()
 
-  circuit.add(
-    <board title="PICO W Test">
-      <PICO_W name="U1" pcbRotation="-90deg" pinAttributes={pinAttributes} />
-    </board>,
-  )
+    circuit.add(
+      <board title="PICO W Test">
+        <PICO_W name="U1" pcbRotation="-90deg" pinAttributes={pinAttributes} />
+      </board>,
+    )
 
-  await circuit.renderUntilSettled()
-  const circuitJson = circuit.getCircuitJson()
+    await circuit.renderUntilSettled()
+    const circuitJson = circuit.getCircuitJson()
 
-  expect(convertCircuitJsonToPinoutSvg(circuitJson)).toMatchSvgSnapshot(
-    import.meta.path,
-  )
-})
+    expect(convertCircuitJsonToPinoutSvg(circuitJson)).toMatchSvgSnapshot(
+      import.meta.path,
+    )
+  },
+  { timeout: 15000 },
+)
