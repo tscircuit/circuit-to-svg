@@ -204,7 +204,6 @@ export function convertCircuitJsonToSchematicSvg(
   const sourceTraceIds = new Set<string>()
   const schNetLabel: SvgObject[] = []
   const sourceNetIds = new Set<string>()
-  const schematicNetLabels: any[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
   const schBoxSvgs: SvgObject[] = []

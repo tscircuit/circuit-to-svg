@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(493.4210526316,0,0,-493.4210526316,353.2894736842,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              /* Basic per-trace hover fallback */
+              .trace:hover {
+                filter: invert(1);
+              }
+              .trace:hover .trace-crossing-outline {
+                opacity: 0;
+              }
+              .trace:hover .trace-junction {
+                filter: invert(1);
+              }
+              /* Net-hover highlighting: when a trace or its overlays are hovered,
+                 invert color for all traces (base + overlays) sharing the same
+                 subcircuit connectivity key. Also hide crossing outline during hover. */
+              svg:has(:is(g.trace[data-subcircuit-connectivity-map-key="undefined"], g.trace-overlays[data-subcircuit-connectivity-map-key="undefined"]):hover) :is(g.trace[data-subcircuit-connectivity-map-key="undefined"], g.trace-overlays[data-subcircuit-connectivity-map-key="undefined"]) { filter: invert(1); }
+svg:has(:is(g.trace[data-subcircuit-connectivity-map-key="undefined"], g.trace-overlays[data-subcircuit-connectivity-map-key="undefined"]):hover) g.trace-overlays[data-subcircuit-connectivity-map-key="undefined"] .trace-crossing-outline { opacity: 0; }
+              /* Source trace hover: fallback highlighting by source_trace_id */
+              svg:has(:is(g.trace[data-source-trace-id="source_trace_1"], g.trace-overlays[data-source-trace-id="source_trace_1"]):hover) :is(g.trace[data-source-trace-id="source_trace_1"], g.trace-overlays[data-source-trace-id="source_trace_1"]) { filter: invert(1); }
+svg:has(:is(g.trace[data-source-trace-id="source_trace_1"], g.trace-overlays[data-source-trace-id="source_trace_1"]):hover) g.trace-overlays[data-source-trace-id="source_trace_1"] .trace-crossing-outline { opacity: 0; }
+              /* Source net hover: highlight all traces and net labels sharing the same source_net_id */
+              svg:has(:is(g.trace[data-source-net-id="net_1"], g.trace-overlays[data-source-net-id="net_1"]):hover) g.trace[data-source-net-id="net_1"], svg:has(:is(g.trace[data-source-net-id="net_1"], g.trace-overlays[data-source-net-id="net_1"]):hover) g.trace-overlays[data-source-net-id="net_1"], svg:has(:is(g.trace[data-source-net-id="net_1"], g.trace-overlays[data-source-net-id="net_1"]):hover) .net-label[data-source-net-id="net_1"] { filter: invert(1); }
+svg:has(:is(g.trace[data-source-net-id="net_1"], g.trace-overlays[data-source-net-id="net_1"]):hover) g.trace-overlays[data-source-net-id="net_1"] .trace-crossing-outline { opacity: 0; }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g class="trace" data-layer="base" data-circuit-json-type="schematic_trace" data-schematic-trace-id="schematic_trace_1" data-source-trace-id="source_trace_1"><path d="M 353.2894736842 300 L 846.7105263158 300" class="trace-invisible-hover-outline" stroke="rgb(0, 150, 0)" fill="none" stroke-width="78.947368421056px" stroke-linecap="round" opacity="0" stroke-linejoin="round"/><path d="M 353.2894736842 300 L 846.7105263158 300" stroke="rgb(0, 150, 0)" fill="none" stroke-width="9.868421052632px" stroke-linecap="round" stroke-linejoin="round"/></g><g class="trace-overlays" data-layer="overlay" data-circuit-json-type="schematic_trace" data-schematic-trace-id="schematic_trace_1" data-source-trace-id="source_trace_1"/><path class="net-label" data-source-net-id="net_1" d="
+    M 846.7105263158,300
+    L 820.0657894736936,353.2894736842128
+    L 576.4473684210517,353.2894736842128
+    L 576.4473684210517,246.71052631578715
+    L 820.0657894736937,246.7105263157872
+    Z
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="9.868421052632px"/><text class="net-label-text" x="802.302631578956" y="300" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="88.815789473688px" transform="">GND</text></svg>
