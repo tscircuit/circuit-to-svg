@@ -409,9 +409,7 @@ export function getPcbBoundsFromCircuitJson(
     let updated = false
     for (const point of route) {
       const pointsToCheck =
-        point.route_type === "through_pad"
-          ? [point.start, point.end]
-          : [point]
+        point.route_type === "through_pad" ? [point.start, point.end] : [point]
 
       for (const candidate of pointsToCheck) {
         const x = distance.parse(candidate?.x)
