@@ -1,4 +1,4 @@
-import type { PCBTrace } from "circuit-json"
+import type { PcbTrace } from "circuit-json"
 import { pairs } from "lib/utils/pairs"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
@@ -6,7 +6,7 @@ import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbTrace(
-  trace: PCBTrace,
+  trace: PcbTrace,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
@@ -16,19 +16,42 @@ export function createSvgObjectsFromPcbTrace(
   const segments = pairs(trace.route)
   const svgObjects: SvgObject[] = []
 
+  const getSegmentPoint = (
+    point: PcbTrace["route"][number],
+    side: "start" | "end",
+  ) => {
+    if (point.route_type === "through_pad") {
+      return side === "start" ? point.start : point.end
+    }
+    return point
+  }
+
   for (const [start, end] of segments) {
     if (
+      "is_inside_copper_pour" in start &&
+      "is_inside_copper_pour" in end &&
       start.is_inside_copper_pour === true &&
       end.is_inside_copper_pour === true
     ) {
       continue
     }
 
-    const startPoint = applyToPoint(transform, [start.x, start.y])
-    const endPoint = applyToPoint(transform, [end.x, end.y])
+    const startCoords = getSegmentPoint(start, "start")
+    const endCoords = getSegmentPoint(end, "end")
+
+    const startPoint = applyToPoint(transform, [startCoords.x, startCoords.y])
+    const endPoint = applyToPoint(transform, [endCoords.x, endCoords.y])
 
     const layer =
-      "layer" in start ? start.layer : "layer" in end ? end.layer : null
+      "layer" in start
+        ? start.layer
+        : "layer" in end
+          ? end.layer
+          : start.route_type === "through_pad"
+            ? start.start_layer
+            : end.route_type === "through_pad"
+              ? end.end_layer
+              : null
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
     // Trace soldermask strokes live on the same copper layer (top/bottom/etc.)

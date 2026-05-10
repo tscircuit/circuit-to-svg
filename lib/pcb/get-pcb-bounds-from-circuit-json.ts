@@ -95,7 +95,7 @@ export function getPcbBoundsFromCircuitJson(
           })
         }
       } else if (pad.shape === "polygon") {
-        updateTraceBounds(pad.points)
+        updatePointBounds(pad.points)
       }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({
@@ -104,7 +104,11 @@ export function getPcbBoundsFromCircuitJson(
         height: 0,
       })
     } else if ("route" in circuitJsonElm) {
-      updateTraceBounds(circuitJsonElm.route)
+      if (circuitJsonElm.type === "pcb_trace") {
+        updateTraceBounds(circuitJsonElm.route)
+      } else {
+        updatePointBounds(circuitJsonElm.route)
+      }
     } else if (
       circuitJsonElm.type === "pcb_note_rect" ||
       circuitJsonElm.type === "pcb_fabrication_note_rect"
@@ -252,11 +256,11 @@ export function getPcbBoundsFromCircuitJson(
           })
         }
       } else if (cutout.shape === "polygon") {
-        updateTraceBounds(cutout.points)
+        updatePointBounds(cutout.points)
       } else if (cutout.shape === "path") {
         const cutoutPath = cutout
         if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
-          updateTraceBounds(cutoutPath.route)
+          updatePointBounds(cutoutPath.route)
         }
       }
     } else if (circuitJsonElm.type === "pcb_keepout") {
@@ -303,7 +307,7 @@ export function getPcbBoundsFromCircuitJson(
           height: circuitJsonElm.height,
         })
       } else if (circuitJsonElm.shape === "polygon") {
-        updateTraceBounds(circuitJsonElm.points)
+        updatePointBounds(circuitJsonElm.points)
       }
     }
   }
@@ -405,15 +409,36 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 
+  function updatePointBounds(points: Point[]) {
+    let updated = false
+    for (const point of points) {
+      const x = distance.parse(point.x)
+      const y = distance.parse(point.y)
+      if (x === undefined || y === undefined) continue
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x)
+      maxY = Math.max(maxY, y)
+      updated = true
+    }
+    if (updated) {
+      hasBounds = true
+    }
+  }
+
+  function getTraceRoutePoints(point: PcbTraceRoutePoint): Point[] {
+    if (point.route_type === "through_pad") {
+      return [point.start, point.end]
+    }
+    return [point]
+  }
+
   function updateTraceBounds(route: PcbTraceRoutePoint[]) {
     let updated = false
-    for (const point of route) {
-      const pointsToCheck =
-        point.route_type === "through_pad" ? [point.start, point.end] : [point]
-
-      for (const candidate of pointsToCheck) {
-        const x = distance.parse(candidate?.x)
-        const y = distance.parse(candidate?.y)
+    for (const routePoint of route) {
+      for (const point of getTraceRoutePoints(routePoint)) {
+        const x = distance.parse(point.x)
+        const y = distance.parse(point.y)
         if (x === undefined || y === undefined) continue
         minX = Math.min(minX, x)
         minY = Math.min(minY, y)
@@ -431,7 +456,7 @@ export function getPcbBoundsFromCircuitJson(
     if (item.type === "pcb_silkscreen_text") {
       updateBounds({ center: item.anchor_position, width: 0, height: 0 })
     } else if (item.type === "pcb_silkscreen_path") {
-      updateTraceBounds(item.route)
+      updatePointBounds(item.route)
     } else if (item.type === "pcb_silkscreen_rect") {
       updateBounds({
         center: item.center,
@@ -478,11 +503,11 @@ export function getPcbBoundsFromCircuitJson(
           })
         }
       } else if (cutout.shape === "polygon") {
-        updateTraceBounds(cutout.points)
+        updatePointBounds(cutout.points)
       } else if (cutout.shape === "path") {
         const cutoutPath = cutout
         if (cutoutPath.route && Array.isArray(cutoutPath.route)) {
-          updateTraceBounds(cutoutPath.route)
+          updatePointBounds(cutoutPath.route)
         }
       }
     }
