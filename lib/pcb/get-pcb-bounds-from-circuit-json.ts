@@ -4,6 +4,7 @@ import type {
   PCBKeepoutRect,
   PcbCutout,
   PcbPanel,
+  PcbTraceRoutePoint,
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
@@ -404,17 +405,24 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 
-  function updateTraceBounds(route: Point[]) {
+  function updateTraceBounds(route: PcbTraceRoutePoint[]) {
     let updated = false
     for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
-      if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-      updated = true
+      const pointsToCheck =
+        point.route_type === "through_pad"
+          ? [point.start, point.end]
+          : [point]
+
+      for (const candidate of pointsToCheck) {
+        const x = distance.parse(candidate?.x)
+        const y = distance.parse(candidate?.y)
+        if (x === undefined || y === undefined) continue
+        minX = Math.min(minX, x)
+        minY = Math.min(minY, y)
+        maxX = Math.max(maxX, x)
+        maxY = Math.max(maxY, y)
+        updated = true
+      }
     }
     if (updated) {
       hasBounds = true
