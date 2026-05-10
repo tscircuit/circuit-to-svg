@@ -407,14 +407,29 @@ export function getPcbBoundsFromCircuitJson(
   function updateTraceBounds(route: Point[]) {
     let updated = false
     for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
+      // "through_obstacle" route points store coordinates in start/end
+      // instead of top-level x/y — extract them so bounds are correct
+      const p = point as any
+      const x = distance.safeParse(p?.x ?? p?.start?.x ?? p?.end?.x).data
+      const y = distance.safeParse(p?.y ?? p?.start?.y ?? p?.end?.y).data
       if (x === undefined || y === undefined) continue
       minX = Math.min(minX, x)
       minY = Math.min(minY, y)
       maxX = Math.max(maxX, x)
       maxY = Math.max(maxY, y)
       updated = true
+
+      // For through_obstacle, also check the end point
+      if (p?.end?.x !== undefined && p?.end?.y !== undefined) {
+        const ex = distance.safeParse(p.end.x).data
+        const ey = distance.safeParse(p.end.y).data
+        if (ex !== undefined && ey !== undefined) {
+          minX = Math.min(minX, ex)
+          minY = Math.min(minY, ey)
+          maxX = Math.max(maxX, ex)
+          maxY = Math.max(maxY, ey)
+        }
+      }
     }
     if (updated) {
       hasBounds = true
