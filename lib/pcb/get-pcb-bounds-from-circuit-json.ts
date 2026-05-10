@@ -7,7 +7,10 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
-import { getPcbTracePoints, type PcbTraceRoutePoint } from "./get-pcb-trace-segments"
+import {
+  getPcbTracePoints,
+  type PcbTraceRoutePoint,
+} from "./get-pcb-trace-segments"
 
 export interface PcbBounds {
   minX: number

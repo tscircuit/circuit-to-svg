@@ -20,7 +20,10 @@ export function createSvgObjectsFromPcbTrace(
       continue
     }
 
-    const startPoint = applyToPoint(transform, [segment.start.x, segment.start.y])
+    const startPoint = applyToPoint(transform, [
+      segment.start.x,
+      segment.start.y,
+    ])
     const endPoint = applyToPoint(transform, [segment.end.x, segment.end.y])
     const layer = segment.layer
     if (!layer) continue

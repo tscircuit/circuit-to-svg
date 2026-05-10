@@ -19,7 +19,9 @@ export function getPcbTracePoints(point: PcbTraceRoutePoint): readonly Point[] {
   }
 }
 
-export function getPcbTraceSegments(route: PcbTrace["route"]): PcbTraceSegment[] {
+export function getPcbTraceSegments(
+  route: PcbTrace["route"],
+): PcbTraceSegment[] {
   const segments: PcbTraceSegment[] = []
 
   for (let i = 0; i < route.length - 1; i++) {
@@ -27,8 +29,7 @@ export function getPcbTraceSegments(route: PcbTrace["route"]): PcbTraceSegment[]
     const end = route[i + 1]
     if (!start || !end) continue
 
-    const startAnchor =
-      start.route_type === "through_pad" ? start.end : start
+    const startAnchor = start.route_type === "through_pad" ? start.end : start
     const endAnchor = end.route_type === "through_pad" ? end.start : end
 
     const layer =
@@ -71,5 +72,7 @@ export function getPcbTraceSegments(route: PcbTrace["route"]): PcbTraceSegment[]
 }
 
 function isInsideCopperPour(point: PcbTraceRoutePoint): boolean {
-  return "is_inside_copper_pour" in point && point.is_inside_copper_pour === true
+  return (
+    "is_inside_copper_pour" in point && point.is_inside_copper_pour === true
+  )
 }
