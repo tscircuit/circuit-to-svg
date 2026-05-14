@@ -1,5 +1,18 @@
 import { test, expect } from "bun:test"
+import type { NinePointAnchor } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
+
+const alignments: NinePointAnchor[] = [
+  "top_left",
+  "top_center",
+  "top_right",
+  "center_left",
+  "center",
+  "center_right",
+  "bottom_left",
+  "bottom_center",
+  "bottom_right",
+]
 
 const createAnchorMarker = (id: string, x: number, y: number) => [
   {
@@ -36,110 +49,42 @@ const createAnchorMarker = (id: string, x: number, y: number) => [
   },
 ]
 
-test("copper knockout text honors anchor alignment", () => {
-  const svg = convertCircuitJsonToPcbSvg([
-    {
-      type: "pcb_board",
-      pcb_board_id: "pcb_board_0",
-      width: 28,
-      height: 20,
-      center: { x: 0, y: 0 },
-      num_layers: 2,
-      material: "fr4",
-      thickness: 1.2,
-    },
+const createBoard = () => ({
+  type: "pcb_board" as const,
+  pcb_board_id: "pcb_board_0",
+  width: 12,
+  height: 12,
+  center: { x: 0, y: 0 },
+  num_layers: 2,
+  material: "fr4" as const,
+  thickness: 1.2,
+})
 
+const createCopperKnockoutSvg = (alignment: NinePointAnchor) =>
+  convertCircuitJsonToPcbSvg([
+    createBoard(),
     {
       type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_top_left",
+      pcb_copper_text_id: `pcb_copper_text_${alignment}`,
       pcb_component_id: "pcb_generic_component_0",
       font: "tscircuit2024",
       font_size: 1,
-      text: "TL",
-      layer: "top",
-      anchor_position: { x: -7, y: 5 },
-      anchor_alignment: "top_left",
-      is_knockout: true,
-    },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_bottom_right",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "BR",
-      layer: "top",
-      anchor_position: { x: -7, y: 5 },
-      anchor_alignment: "bottom_right",
-      is_knockout: true,
-    },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_top_right",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "TR",
+      text: "TXT",
       layer: "top",
       anchor_position: { x: 0, y: 0 },
-      anchor_alignment: "top_right",
+      anchor_alignment: alignment,
       is_knockout: true,
     },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_bottom_left",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "BL",
-      layer: "top",
-      anchor_position: { x: 0, y: 0 },
-      anchor_alignment: "bottom_left",
-      is_knockout: true,
-    },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_top_center",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "TC",
-      layer: "top",
-      anchor_position: { x: 7, y: -6 },
-      anchor_alignment: "top_center",
-      is_knockout: true,
-    },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_bottom_center",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "BC",
-      layer: "top",
-      anchor_position: { x: 7, y: -4 },
-      anchor_alignment: "bottom_center",
-      is_knockout: true,
-    },
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: "pcb_copper_text_center",
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: "C",
-      layer: "top",
-      anchor_position: { x: 7, y: -5 },
-      anchor_alignment: "center",
-      is_knockout: true,
-    },
-    ...createAnchorMarker("top_left_bottom_right", -7, 5),
-    ...createAnchorMarker("top_right_bottom_left", 0, 0),
-    ...createAnchorMarker("top_center_bottom_center_center", 7, -5),
+    ...createAnchorMarker(alignment, 0, 0),
   ])
 
-  expect(svg).toMatchSvgSnapshot(
-    import.meta.path,
-    "copper-knockout-anchor-alignment",
-  )
+test("copper knockout text honors anchor alignment", () => {
+  for (const alignment of alignments) {
+    const svg = createCopperKnockoutSvg(alignment)
+
+    expect(svg).toMatchSvgSnapshot(
+      import.meta.path,
+      `copper-knockout-anchor-alignment_${alignment}`,
+    )
+  }
 })
