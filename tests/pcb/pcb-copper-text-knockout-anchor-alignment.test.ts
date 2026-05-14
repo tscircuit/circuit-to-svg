@@ -14,6 +14,18 @@ const alignments: NinePointAnchor[] = [
   "bottom_right",
 ]
 
+const alignmentLabelMap: Record<NinePointAnchor, string> = {
+  top_left: "TL",
+  top_center: "TC",
+  top_right: "TR",
+  center_left: "CL",
+  center: "C",
+  center_right: "CR",
+  bottom_left: "BL",
+  bottom_center: "BC",
+  bottom_right: "BR",
+}
+
 const createAnchorMarker = (id: string, x: number, y: number) => [
   {
     type: "pcb_silkscreen_line" as const,
@@ -69,7 +81,7 @@ const createCopperKnockoutSvg = (alignment: NinePointAnchor) =>
       pcb_component_id: "pcb_generic_component_0",
       font: "tscircuit2024",
       font_size: 1,
-      text: "TXT",
+      text: alignmentLabelMap[alignment],
       layer: "top",
       anchor_position: { x: 0, y: 0 },
       anchor_alignment: alignment,
