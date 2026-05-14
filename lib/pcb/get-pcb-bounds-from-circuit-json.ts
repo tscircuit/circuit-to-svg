@@ -7,6 +7,10 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
+import {
+  getPcbTracePoints,
+  type PcbTraceRoutePoint,
+} from "./get-pcb-trace-segments"
 
 export interface PcbBounds {
   minX: number
@@ -404,21 +408,27 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 
-  function updateTraceBounds(route: Point[]) {
+  function updateTraceBounds(route: Array<Point | PcbTraceRoutePoint>) {
     let updated = false
     for (const point of route) {
-      const x = distance.parse(point?.x)
-      const y = distance.parse(point?.y)
-      if (x === undefined || y === undefined) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-      updated = true
+      for (const anchor of getTracePoints(point)) {
+        const x = distance.parse(anchor.x)
+        const y = distance.parse(anchor.y)
+        if (x === undefined || y === undefined) continue
+        minX = Math.min(minX, x)
+        minY = Math.min(minY, y)
+        maxX = Math.max(maxX, x)
+        maxY = Math.max(maxY, y)
+        updated = true
+      }
     }
     if (updated) {
       hasBounds = true
     }
+  }
+
+  function getTracePoints(point: Point | PcbTraceRoutePoint): readonly Point[] {
+    return "route_type" in point ? getPcbTracePoints(point) : [point]
   }
 
   function updateSilkscreenBounds(item: AnyCircuitElement) {

@@ -1,38 +1,33 @@
-import type { PCBTrace } from "circuit-json"
-import { pairs } from "lib/utils/pairs"
+import type { PcbTrace } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getPcbTraceSegments } from "../get-pcb-trace-segments"
 
 export function createSvgObjectsFromPcbTrace(
-  trace: PCBTrace,
+  trace: PcbTrace,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
     return []
 
-  const segments = pairs(trace.route)
   const svgObjects: SvgObject[] = []
 
-  for (const [start, end] of segments) {
-    if (
-      start.is_inside_copper_pour === true &&
-      end.is_inside_copper_pour === true
-    ) {
+  for (const segment of getPcbTraceSegments(trace.route)) {
+    if (segment.isInsideCopperPour) {
       continue
     }
 
-    const startPoint = applyToPoint(transform, [start.x, start.y])
-    const endPoint = applyToPoint(transform, [end.x, end.y])
-
-    const layer =
-      "layer" in start ? start.layer : "layer" in end ? end.layer : null
+    const startPoint = applyToPoint(transform, [
+      segment.start.x,
+      segment.start.y,
+    ])
+    const endPoint = applyToPoint(transform, [segment.end.x, segment.end.y])
+    const layer = segment.layer
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
-    // Trace soldermask strokes live on the same copper layer (top/bottom/etc.)
-    const maskLayer = layer
 
     const copperColor = layerNameToColor(layer, colorMap)
     const maskColor =
@@ -40,11 +35,8 @@ export function createSvgObjectsFromPcbTrace(
         layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
       ]
 
-    const traceWidth =
-      "width" in start ? start.width : "width" in end ? end.width : null
-
-    const width = traceWidth
-      ? (traceWidth * Math.abs(transform.a)).toString()
+    const width = segment.width
+      ? (segment.width * Math.abs(transform.a)).toString()
       : "0.3"
 
     if (showSolderMask) {
