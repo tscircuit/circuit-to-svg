@@ -188,8 +188,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
         translate(transformedX, transformedY),
         rotate((-ccw_rotation * Math.PI) / 180),
         ...(applyMirror ? [scale(-1, 1)] : []),
-        translate(offsetX, offsetY),
         scale(scaleFactor, scaleFactor),
+        translate(offsetX, offsetY),
       ),
     )
 
