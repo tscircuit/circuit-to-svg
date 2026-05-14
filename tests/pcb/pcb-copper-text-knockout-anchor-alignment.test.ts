@@ -1,6 +1,41 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
+const createAnchorMarker = (id: string, x: number, y: number) => [
+  {
+    type: "pcb_silkscreen_line" as const,
+    layer: "top" as const,
+    pcb_component_id: "pcb_anchor_marker",
+    pcb_silkscreen_line_id: `anchor_marker_h_${id}`,
+    x1: x - 0.45,
+    y1: y,
+    x2: x + 0.45,
+    y2: y,
+    stroke_width: 0.1,
+  },
+  {
+    type: "pcb_silkscreen_line" as const,
+    layer: "top" as const,
+    pcb_component_id: "pcb_anchor_marker",
+    pcb_silkscreen_line_id: `anchor_marker_v_${id}`,
+    x1: x,
+    y1: y - 0.45,
+    x2: x,
+    y2: y + 0.45,
+    stroke_width: 0.1,
+  },
+  {
+    type: "pcb_silkscreen_circle" as const,
+    layer: "top" as const,
+    pcb_component_id: "pcb_anchor_marker",
+    pcb_silkscreen_circle_id: `anchor_marker_dot_${id}`,
+    center: { x, y },
+    radius: 0.14,
+    stroke_width: 0.08,
+    is_filled: true,
+  },
+]
+
 test("copper knockout text honors anchor alignment", () => {
   const svg = convertCircuitJsonToPcbSvg([
     {
@@ -98,6 +133,9 @@ test("copper knockout text honors anchor alignment", () => {
       anchor_alignment: "center",
       is_knockout: true,
     },
+    ...createAnchorMarker("top_left_bottom_right", -7, 5),
+    ...createAnchorMarker("top_right_bottom_left", 0, 0),
+    ...createAnchorMarker("top_center_bottom_center_center", 7, -5),
   ])
 
   expect(svg).toMatchSvgSnapshot(
