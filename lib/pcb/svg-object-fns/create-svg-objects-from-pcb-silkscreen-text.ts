@@ -11,6 +11,7 @@ import {
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { lineAlphabet } from "@tscircuit/alphabet"
+import { getCenteredTextAnchorOffset } from "./get-centered-text-anchor-offset"
 
 type AlphabetKey = keyof typeof lineAlphabet
 
@@ -165,6 +166,11 @@ export function createSvgObjectsFromPcbSilkscreenText(
       text,
       scaledFontSize,
     )
+    const { offsetX, offsetY } = getCenteredTextAnchorOffset(
+      anchor_alignment,
+      width,
+      height,
+    )
 
     const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
     const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
@@ -182,6 +188,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         translate(transformedX, transformedY),
         rotate((-ccw_rotation * Math.PI) / 180),
         ...(applyMirror ? [scale(-1, 1)] : []),
+        translate(offsetX, offsetY),
         scale(scaleFactor, scaleFactor),
       ),
     )
