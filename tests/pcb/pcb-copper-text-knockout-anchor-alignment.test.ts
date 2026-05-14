@@ -1,17 +1,6 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const createAnchorMarker = (id: string, x: number, y: number) => ({
-  type: "pcb_silkscreen_circle" as const,
-  layer: "top" as const,
-  pcb_component_id: "pcb_anchor_marker",
-  pcb_silkscreen_circle_id: `anchor_marker_${id}`,
-  center: { x, y },
-  radius: 0.18,
-  stroke_width: 0.1,
-  is_filled: true,
-})
-
 test("copper knockout text honors anchor alignment", () => {
   const svg = convertCircuitJsonToPcbSvg([
     {
@@ -24,9 +13,7 @@ test("copper knockout text honors anchor alignment", () => {
       material: "fr4",
       thickness: 1.2,
     },
-    createAnchorMarker("top_left_bottom_right", -7, 5),
-    createAnchorMarker("top_right_bottom_left", 0, 0),
-    createAnchorMarker("top_center_bottom_center_center", 7, -5),
+
     {
       type: "pcb_copper_text",
       pcb_copper_text_id: "pcb_copper_text_top_left",
@@ -83,7 +70,7 @@ test("copper knockout text honors anchor alignment", () => {
       font_size: 1,
       text: "TC",
       layer: "top",
-      anchor_position: { x: 7, y: -5 },
+      anchor_position: { x: 7, y: -6 },
       anchor_alignment: "top_center",
       is_knockout: true,
     },
@@ -95,7 +82,7 @@ test("copper knockout text honors anchor alignment", () => {
       font_size: 1,
       text: "BC",
       layer: "top",
-      anchor_position: { x: 7, y: -5 },
+      anchor_position: { x: 7, y: -4 },
       anchor_alignment: "bottom_center",
       is_knockout: true,
     },

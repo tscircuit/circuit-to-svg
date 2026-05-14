@@ -1,22 +1,6 @@
 import { test, expect } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const createAnchorMarker = (
-  id: string,
-  x: number,
-  y: number,
-  layer: "top" | "bottom" = "top",
-) => ({
-  type: "pcb_silkscreen_circle" as const,
-  layer,
-  pcb_component_id: "pcb_anchor_marker",
-  pcb_silkscreen_circle_id: `anchor_marker_${id}`,
-  center: { x, y },
-  radius: 0.18,
-  stroke_width: 0.1,
-  is_filled: true,
-})
-
 test("silkscreen knockout text honors anchor alignment", () => {
   const svg = convertCircuitJsonToPcbSvg([
     {
@@ -29,9 +13,6 @@ test("silkscreen knockout text honors anchor alignment", () => {
       material: "fr4",
       thickness: 1.2,
     },
-    createAnchorMarker("top_left_bottom_right", -7, 5),
-    createAnchorMarker("top_right_bottom_left", 0, 0),
-    createAnchorMarker("top_center_bottom_center_center", 7, -5),
     {
       type: "pcb_silkscreen_text",
       layer: "top",
@@ -87,7 +68,7 @@ test("silkscreen knockout text honors anchor alignment", () => {
       font: "tscircuit2024",
       font_size: 1,
       pcb_component_id: "pcb_generic_component_0",
-      anchor_position: { x: 7, y: -5 },
+      anchor_position: { x: 7, y: -6 },
       anchor_alignment: "top_center",
       text: "TC",
       is_knockout: true,
@@ -99,7 +80,7 @@ test("silkscreen knockout text honors anchor alignment", () => {
       font: "tscircuit2024",
       font_size: 1,
       pcb_component_id: "pcb_generic_component_0",
-      anchor_position: { x: 7, y: -5 },
+      anchor_position: { x: 7, y: -4 },
       anchor_alignment: "bottom_center",
       text: "BC",
       is_knockout: true,
