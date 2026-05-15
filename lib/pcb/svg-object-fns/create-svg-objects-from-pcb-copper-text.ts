@@ -12,6 +12,7 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
 import { lineAlphabet } from "@tscircuit/alphabet"
+import { getCenteredTextAnchorOffset } from "./get-centered-text-anchor-offset"
 
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
@@ -155,6 +156,11 @@ export function createSvgObjectsFromPcbCopperText(
       text,
       scaledFontSize,
     )
+    const { offsetX, offsetY } = getCenteredTextAnchorOffset(
+      anchor_alignment,
+      width,
+      height,
+    )
 
     const padX = knockout_padding?.left ?? scaledFontSize * 0.5
     const padY = knockout_padding?.top ?? scaledFontSize * 0.3
@@ -169,6 +175,7 @@ export function createSvgObjectsFromPcbCopperText(
         rotate((-ccw_rotation * Math.PI) / 180),
         ...(applyMirror ? [scale(-1, 1)] : []),
         scale(scaleFactor, scaleFactor),
+        translate(offsetX, offsetY),
       ),
     )
 
@@ -246,47 +253,19 @@ export function createSvgObjectsFromPcbCopperText(
     scaledFontSize,
   )
 
-  let offsetX = 0
-  let offsetY = 0
-
-  switch (anchor_alignment) {
-    case "top_left":
-      offsetX = width / 2
-      offsetY = height / 2
-      break
-    case "top_center":
-      offsetY = height / 2
-      break
-    case "top_right":
-      offsetX = -width / 2
-      offsetY = height / 2
-      break
-    case "center_left":
-      offsetX = width / 2
-      break
-    case "center_right":
-      offsetX = -width / 2
-      break
-    case "bottom_left":
-      offsetX = width / 2
-      offsetY = -height / 2
-      break
-    case "bottom_center":
-      offsetY = -height / 2
-      break
-    case "bottom_right":
-      offsetX = -width / 2
-      offsetY = -height / 2
-      break
-  }
+  const { offsetX, offsetY } = getCenteredTextAnchorOffset(
+    anchor_alignment,
+    width,
+    height,
+  )
 
   const textTransform = matrixToString(
     compose(
       translate(ax, ay),
       rotate((-ccw_rotation * Math.PI) / 180),
       ...(applyMirror ? [scale(-1, 1)] : []),
-      translate(offsetX, offsetY),
       scale(scaleFactor, scaleFactor),
+      translate(offsetX, offsetY),
     ),
   )
 
