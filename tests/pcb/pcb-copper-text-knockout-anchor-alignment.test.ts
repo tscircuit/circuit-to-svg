@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import type { NinePointAnchor } from "circuit-json"
+import type { AnyCircuitElement, NinePointAnchor } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 const alignmentLabelMap: Record<NinePointAnchor, string> = {
@@ -77,14 +77,14 @@ const createBoard = () => ({
 })
 
 test("copper knockout text honors anchor alignment", () => {
-  const circuitJson = [
+  const circuitJson: AnyCircuitElement[] = [
     createBoard(),
     ...gridEntries.flatMap(({ alignment, x, y }) => [
       {
         type: "pcb_copper_text" as const,
         pcb_copper_text_id: `pcb_copper_text_${alignment}`,
         pcb_component_id: "pcb_generic_component_0",
-        font: "tscircuit2024",
+        font: "tscircuit2024" as const,
         font_size: 1,
         text: alignmentLabelMap[alignment],
         layer: "top" as const,
