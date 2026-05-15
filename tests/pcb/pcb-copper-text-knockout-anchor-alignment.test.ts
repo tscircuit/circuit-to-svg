@@ -2,18 +2,6 @@ import { test, expect } from "bun:test"
 import type { NinePointAnchor } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-const alignments: NinePointAnchor[] = [
-  "top_left",
-  "top_center",
-  "top_right",
-  "center_left",
-  "center",
-  "center_right",
-  "bottom_left",
-  "bottom_center",
-  "bottom_right",
-]
-
 const alignmentLabelMap: Record<NinePointAnchor, string> = {
   top_left: "TL",
   top_center: "TC",
@@ -25,6 +13,22 @@ const alignmentLabelMap: Record<NinePointAnchor, string> = {
   bottom_center: "BC",
   bottom_right: "BR",
 }
+
+const gridEntries: Array<{
+  alignment: NinePointAnchor
+  x: number
+  y: number
+}> = [
+  { alignment: "top_left", x: -6, y: 6 },
+  { alignment: "top_center", x: 0, y: 6 },
+  { alignment: "top_right", x: 6, y: 6 },
+  { alignment: "center_left", x: -6, y: 0 },
+  { alignment: "center", x: 0, y: 0 },
+  { alignment: "center_right", x: 6, y: 0 },
+  { alignment: "bottom_left", x: -6, y: -6 },
+  { alignment: "bottom_center", x: 0, y: -6 },
+  { alignment: "bottom_right", x: 6, y: -6 },
+]
 
 const createAnchorMarker = (id: string, x: number, y: number) => [
   {
@@ -64,39 +68,38 @@ const createAnchorMarker = (id: string, x: number, y: number) => [
 const createBoard = () => ({
   type: "pcb_board" as const,
   pcb_board_id: "pcb_board_0",
-  width: 12,
-  height: 12,
+  width: 18,
+  height: 18,
   center: { x: 0, y: 0 },
   num_layers: 2,
   material: "fr4" as const,
   thickness: 1.2,
 })
 
-const createCopperKnockoutSvg = (alignment: NinePointAnchor) =>
-  convertCircuitJsonToPcbSvg([
-    createBoard(),
-    {
-      type: "pcb_copper_text",
-      pcb_copper_text_id: `pcb_copper_text_${alignment}`,
-      pcb_component_id: "pcb_generic_component_0",
-      font: "tscircuit2024",
-      font_size: 1,
-      text: alignmentLabelMap[alignment],
-      layer: "top",
-      anchor_position: { x: 0, y: 0 },
-      anchor_alignment: alignment,
-      is_knockout: true,
-    },
-    ...createAnchorMarker(alignment, 0, 0),
-  ])
-
 test("copper knockout text honors anchor alignment", () => {
-  for (const alignment of alignments) {
-    const svg = createCopperKnockoutSvg(alignment)
+  const circuitJson = [
+    createBoard(),
+    ...gridEntries.flatMap(({ alignment, x, y }) => [
+      {
+        type: "pcb_copper_text" as const,
+        pcb_copper_text_id: `pcb_copper_text_${alignment}`,
+        pcb_component_id: "pcb_generic_component_0",
+        font: "tscircuit2024",
+        font_size: 1,
+        text: alignmentLabelMap[alignment],
+        layer: "top" as const,
+        anchor_position: { x, y },
+        anchor_alignment: alignment,
+        is_knockout: true,
+      },
+      ...createAnchorMarker(alignment, x, y),
+    ]),
+  ]
 
-    expect(svg).toMatchSvgSnapshot(
-      import.meta.path,
-      `copper-knockout-anchor-alignment_${alignment}`,
-    )
-  }
+  const svg = convertCircuitJsonToPcbSvg(circuitJson)
+
+  expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "copper-knockout-anchor-alignment",
+  )
 })
