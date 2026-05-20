@@ -92,8 +92,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       anchorAlignment: anchor_alignment,
       fontSize: scaledFontSize,
       charAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize,
-      spaceAdvance:
-        (alphabetBounds.width + charSpacing) * scaledFontSize * 0.6,
+      spaceAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize * 0.6,
       trailingSpacing: charSpacing * scaledFontSize,
       lineHeight:
         scaledFontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER,
@@ -298,8 +297,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         "dominant-baseline": dominantBaseline,
         transform: matrixToString(textTransform),
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
-        "data-pcb-silkscreen-text-id":
-          pcbSilkscreenText.pcb_silkscreen_text_id,
+        "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_silkscreen_text_id,
         stroke: "none",
         "data-type": "pcb_silkscreen_text",
         "data-pcb-layer": layer,

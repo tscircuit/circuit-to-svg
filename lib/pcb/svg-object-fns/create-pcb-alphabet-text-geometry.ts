@@ -226,6 +226,8 @@ function translateBounds(
 
 function segmentsToPathData(segments: PathSegment[]): string {
   return segments
-    .map((segment) => `M${segment.x1} ${segment.y1}L${segment.x2} ${segment.y2}`)
+    .map(
+      (segment) => `M${segment.x1} ${segment.y1}L${segment.x2} ${segment.y2}`,
+    )
     .join(" ")
 }
