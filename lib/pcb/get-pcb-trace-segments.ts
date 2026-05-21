@@ -1,4 +1,9 @@
-import type { LayerRef, PcbTrace, Point } from "circuit-json"
+import {
+  distance,
+  type LayerRef,
+  type PcbTrace,
+  type Point,
+} from "circuit-json"
 
 export type PcbTraceRoutePoint = PcbTrace["route"][number]
 
@@ -45,6 +50,8 @@ export function getPcbTraceSegments(
 
     if (!layer) continue
 
+    if (isSamePoint(startAnchor, endAnchor)) continue
+
     segments.push({
       start: startAnchor,
       end: endAnchor,
@@ -75,4 +82,22 @@ function isInsideCopperPour(point: PcbTraceRoutePoint): boolean {
   return (
     "is_inside_copper_pour" in point && point.is_inside_copper_pour === true
   )
+}
+
+function isSamePoint(a: Point, b: Point): boolean {
+  const ax = distance.parse(a.x)
+  const ay = distance.parse(a.y)
+  const bx = distance.parse(b.x)
+  const by = distance.parse(b.y)
+
+  if (
+    ax === undefined ||
+    ay === undefined ||
+    bx === undefined ||
+    by === undefined
+  ) {
+    return a.x === b.x && a.y === b.y
+  }
+
+  return ax === bx && ay === by
 }

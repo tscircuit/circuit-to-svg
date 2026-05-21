@@ -331,5 +331,6 @@ const soup: any = [
 ]
 
 test("bottom trace is blue", () => {
-  expect(convertCircuitJsonToPcbSvg(soup)).toMatchSvgSnapshot(import.meta.path)
+  const svg = convertCircuitJsonToPcbSvg(soup)
+  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

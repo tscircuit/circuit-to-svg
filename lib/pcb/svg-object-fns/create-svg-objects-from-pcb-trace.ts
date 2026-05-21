@@ -1,9 +1,13 @@
-import type { PcbTrace } from "circuit-json"
+import { distance, type PCBVia, type PcbTrace } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
+import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
+
+const DEFAULT_ROUTE_VIA_OUTER_DIAMETER = 0.6
+const DEFAULT_ROUTE_VIA_HOLE_DIAMETER = 0.3
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -84,5 +88,103 @@ export function createSvgObjectsFromPcbTrace(
     }
   }
 
+  for (const [index, point] of trace.route.entries()) {
+    if (point.route_type !== "via") continue
+    if (hasStandaloneViaAtRoutePoint(trace, point, ctx)) continue
+
+    svgObjects.push(
+      createSvgObjectsFromPcbVia(
+        createSyntheticViaFromRoutePoint(trace, index),
+        ctx,
+      ),
+    )
+  }
+
   return svgObjects
+}
+
+function hasStandaloneViaAtRoutePoint(
+  trace: PcbTrace,
+  point: Extract<PcbTrace["route"][number], { route_type: "via" }>,
+  ctx: PcbContext,
+): boolean {
+  return (
+    ctx.circuitJson?.some(
+      (elm): elm is PCBVia =>
+        elm.type === "pcb_via" &&
+        isSameCoordinate(elm.x, point.x) &&
+        isSameCoordinate(elm.y, point.y) &&
+        (elm.pcb_trace_id == null || elm.pcb_trace_id === trace.pcb_trace_id),
+    ) ?? false
+  )
+}
+
+function createSyntheticViaFromRoutePoint(
+  trace: PcbTrace,
+  routeIndex: number,
+): PCBVia {
+  const point = trace.route[routeIndex]
+  if (!point || point.route_type !== "via") {
+    throw new Error("Expected route_type 'via' when creating a synthetic via")
+  }
+
+  const width = getAdjacentTraceWidth(trace.route, routeIndex)
+  const holeDiameter = Math.max(DEFAULT_ROUTE_VIA_HOLE_DIAMETER, width)
+  const outerDiameter = Math.max(
+    DEFAULT_ROUTE_VIA_OUTER_DIAMETER,
+    holeDiameter * 2,
+  )
+
+  return {
+    type: "pcb_via",
+    pcb_via_id: `${trace.pcb_trace_id}_route_via_${routeIndex}`,
+    pcb_trace_id: trace.pcb_trace_id,
+    x: point.x,
+    y: point.y,
+    outer_diameter: outerDiameter,
+    hole_diameter: holeDiameter,
+    layers: [point.from_layer, point.to_layer],
+  }
+}
+
+function getAdjacentTraceWidth(
+  route: PcbTrace["route"],
+  routeIndex: number,
+): number {
+  const prevWidth = findTraceWidth(route, routeIndex, -1)
+  const nextWidth = findTraceWidth(route, routeIndex, 1)
+
+  return Math.max(prevWidth ?? 0, nextWidth ?? 0)
+}
+
+function findTraceWidth(
+  route: PcbTrace["route"],
+  startIndex: number,
+  direction: -1 | 1,
+): number | undefined {
+  for (
+    let index = startIndex + direction;
+    index >= 0 && index < route.length;
+    index += direction
+  ) {
+    const point = route[index]
+    if (!point || !("width" in point) || typeof point.width !== "number") {
+      continue
+    }
+
+    return point.width
+  }
+
+  return undefined
+}
+
+function isSameCoordinate(a: number | string, b: number | string): boolean {
+  const parsedA = distance.parse(a)
+  const parsedB = distance.parse(b)
+
+  if (parsedA === undefined || parsedB === undefined) {
+    return a === b
+  }
+
+  return parsedA === parsedB
 }
