@@ -62,7 +62,7 @@ export function getPcbTraceSegments(
   }
 
   for (const point of route) {
-    if (point.route_type !== "through_pad") continue
+    if (!point || point.route_type !== "through_pad") continue
 
     for (const layer of new Set([point.start_layer, point.end_layer])) {
       segments.push({

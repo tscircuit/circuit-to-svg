@@ -1,13 +1,16 @@
-import { distance, type PCBVia, type PcbTrace } from "circuit-json"
+import {
+  distance,
+  type PCBVia,
+  type PcbBoard,
+  type PcbTrace,
+  type Point,
+} from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
-
-const DEFAULT_ROUTE_VIA_OUTER_DIAMETER = 0.6
-const DEFAULT_ROUTE_VIA_HOLE_DIAMETER = 0.3
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -18,6 +21,7 @@ export function createSvgObjectsFromPcbTrace(
     return []
 
   const svgObjects: SvgObject[] = []
+  const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
   for (const segment of getPcbTraceSegments(trace.route)) {
     if (segment.isInsideCopperPour) {
@@ -89,12 +93,12 @@ export function createSvgObjectsFromPcbTrace(
   }
 
   for (const [index, point] of trace.route.entries()) {
-    if (point.route_type !== "via") continue
-    if (hasStandaloneViaAtRoutePoint(trace, point, ctx)) continue
+    if (!point || point.route_type !== "via") continue
+    if (standaloneViaPositionKeys.has(getPositionKey(point))) continue
 
     svgObjects.push(
       createSvgObjectsFromPcbVia(
-        createSyntheticViaFromRoutePoint(trace, index),
+        createSyntheticViaFromRoutePoint(trace, point, index, ctx),
         ctx,
       ),
     )
@@ -103,37 +107,14 @@ export function createSvgObjectsFromPcbTrace(
   return svgObjects
 }
 
-function hasStandaloneViaAtRoutePoint(
-  trace: PcbTrace,
-  point: Extract<PcbTrace["route"][number], { route_type: "via" }>,
-  ctx: PcbContext,
-): boolean {
-  return (
-    ctx.circuitJson?.some(
-      (elm): elm is PCBVia =>
-        elm.type === "pcb_via" &&
-        isSameCoordinate(elm.x, point.x) &&
-        isSameCoordinate(elm.y, point.y) &&
-        (elm.pcb_trace_id == null || elm.pcb_trace_id === trace.pcb_trace_id),
-    ) ?? false
-  )
-}
-
 function createSyntheticViaFromRoutePoint(
   trace: PcbTrace,
+  point: Extract<PcbTrace["route"][number], { route_type: "via" }>,
   routeIndex: number,
+  ctx: PcbContext,
 ): PCBVia {
-  const point = trace.route[routeIndex]
-  if (!point || point.route_type !== "via") {
-    throw new Error("Expected route_type 'via' when creating a synthetic via")
-  }
-
   const width = getAdjacentTraceWidth(trace.route, routeIndex)
-  const holeDiameter = Math.max(DEFAULT_ROUTE_VIA_HOLE_DIAMETER, width)
-  const outerDiameter = Math.max(
-    DEFAULT_ROUTE_VIA_OUTER_DIAMETER,
-    holeDiameter * 2,
-  )
+  const { holeDiameter, outerDiameter } = getRouteViaDiameters(ctx, width)
 
   return {
     type: "pcb_via",
@@ -178,13 +159,64 @@ function findTraceWidth(
   return undefined
 }
 
-function isSameCoordinate(a: number | string, b: number | string): boolean {
-  const parsedA = distance.parse(a)
-  const parsedB = distance.parse(b)
+function getRouteViaDiameters(
+  ctx: PcbContext,
+  adjacentTraceWidth: number,
+): {
+  holeDiameter: number
+  outerDiameter: number
+} {
+  const board = ctx.circuitJson?.find(
+    (elm): elm is PcbBoard => elm.type === "pcb_board",
+  )
+  const boardMinViaHoleDiameter = parseOptionalDistance(
+    board?.min_via_hole_diameter,
+  )
+  const boardMinViaPadDiameter = parseOptionalDistance(
+    board?.min_via_pad_diameter,
+  )
 
-  if (parsedA === undefined || parsedB === undefined) {
-    return a === b
+  // Older circuit-json payloads can omit board-level via DRC fields.
+  const fallbackHoleDiameter = Math.max(adjacentTraceWidth, 0.3)
+  const holeDiameter = boardMinViaHoleDiameter ?? fallbackHoleDiameter
+  const outerDiameter = Math.max(
+    boardMinViaPadDiameter ?? Math.max(fallbackHoleDiameter * 2, 0.6),
+    holeDiameter * 2,
+  )
+
+  return {
+    holeDiameter,
+    outerDiameter,
+  }
+}
+
+function getStandaloneViaPositionKeys(ctx: PcbContext): Set<string> {
+  return new Set(
+    ctx.circuitJson
+      ?.filter((elm): elm is PCBVia => elm.type === "pcb_via")
+      .map((via) => getPositionKey(via)) ?? [],
+  )
+}
+
+function getPositionKey(point: Pick<Point, "x" | "y">): string {
+  const x = parseOptionalDistance(point.x)
+  const y = parseOptionalDistance(point.y)
+
+  if (x !== undefined && y !== undefined) {
+    return `${x}:${y}`
   }
 
-  return parsedA === parsedB
+  return `${String(point.x)}:${String(point.y)}`
+}
+
+function parseOptionalDistance(
+  value: string | number | null | undefined,
+): number | undefined {
+  if (value === null || value === undefined) {
+    return undefined
+  }
+
+  const result = distance.safeParse(value)
+
+  return result.success ? result.data : undefined
 }

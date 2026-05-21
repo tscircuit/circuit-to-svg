@@ -408,9 +408,13 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 
-  function updateTraceBounds(route: Array<Point | PcbTraceRoutePoint>) {
+  function updateTraceBounds(
+    route: Array<Point | PcbTraceRoutePoint | null | undefined>,
+  ) {
     let updated = false
     for (const point of route) {
+      if (!point) continue
+
       for (const anchor of getTracePoints(point)) {
         const x = distance.parse(anchor.x)
         const y = distance.parse(anchor.y)
@@ -427,7 +431,11 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 
-  function getTracePoints(point: Point | PcbTraceRoutePoint): readonly Point[] {
+  function getTracePoints(
+    point: Point | PcbTraceRoutePoint | null | undefined,
+  ): readonly Point[] {
+    if (!point) return []
+
     return "route_type" in point ? getPcbTracePoints(point) : [point]
   }
 
