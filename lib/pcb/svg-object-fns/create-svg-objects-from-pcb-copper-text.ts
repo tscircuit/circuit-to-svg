@@ -11,110 +11,14 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
-import { lineAlphabet } from "@tscircuit/alphabet"
-import { getCenteredTextAnchorOffset } from "./get-centered-text-anchor-offset"
+import { createPcbAlphabetTextGeometry } from "./create-pcb-alphabet-text-geometry"
 
 const CHAR_WIDTH = 1.0
 const CHAR_SPACING = 0.2
 const LINE_HEIGHT = 1.4
 const FONT_SCALE = 0.53
-const BASELINE_Y = 0.241
-
-type AlphabetKey = keyof typeof lineAlphabet
-
-function linesToPathData(
-  lines: Array<{ x1: number; y1: number; x2: number; y2: number }>,
-  offsetX: number,
-  offsetY: number,
-  charScale: number,
-  baselineAdjust: number = 0,
-): string {
-  return lines
-    .map((line) => {
-      const x1 = offsetX + line.x1 * charScale
-      const y1 = offsetY + (1 - line.y1 + baselineAdjust) * charScale
-      const x2 = offsetX + line.x2 * charScale
-      const y2 = offsetY + (1 - line.y2 + baselineAdjust) * charScale
-      return `M${x1} ${y1}L${x2} ${y2}`
-    })
-    .join(" ")
-}
-
-function textToAlphabetPath(
-  text: string,
-  fontSize: number,
-): { pathData: string; width: number } {
-  const paths: string[] = []
-  const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
-  let x = 0
-
-  for (const char of text) {
-    if (char === " ") {
-      x += charAdvance * 0.6
-      continue
-    }
-
-    const lines = lineAlphabet[char as AlphabetKey]
-    if (lines) {
-      paths.push(linesToPathData(lines, x, 0, fontSize))
-    }
-    x += charAdvance
-  }
-
-  const width = x > 0 ? x - CHAR_SPACING * fontSize : 0
-  return { pathData: paths.join(" "), width }
-}
 
 let maskIdCounter = 0
-
-function textToCenteredAlphabetPaths(
-  text: string,
-  fontSize: number,
-): { pathData: string; width: number; height: number } {
-  const textLines = text.split("\n")
-  const lineHeight = fontSize * LINE_HEIGHT
-  const totalHeight = textLines.length * lineHeight
-
-  const lineWidths: number[] = []
-  let maxWidth = 0
-
-  for (const line of textLines) {
-    const { width } = textToAlphabetPath(line, fontSize)
-    lineWidths.push(width)
-    if (width > maxWidth) maxWidth = width
-  }
-
-  const paths: string[] = []
-  let y = -totalHeight / 2
-
-  for (let i = 0; i < textLines.length; i++) {
-    const line = textLines[i]!
-    const lineWidth = lineWidths[i]!
-    const charAdvance = (CHAR_WIDTH + CHAR_SPACING) * fontSize
-    let x = -lineWidth / 2
-
-    for (const char of line) {
-      if (char === " ") {
-        x += charAdvance * 0.6
-        continue
-      }
-
-      const charLines = lineAlphabet[char as AlphabetKey]
-      if (charLines) {
-        paths.push(linesToPathData(charLines, x, y, fontSize))
-      }
-      x += charAdvance
-    }
-
-    y += lineHeight
-  }
-
-  return {
-    pathData: paths.join(" "),
-    width: maxWidth,
-    height: totalHeight,
-  }
-}
 
 export function createSvgObjectsFromPcbCopperText(
   pcbCopperText: PcbCopperText,
@@ -137,6 +41,7 @@ export function createSvgObjectsFromPcbCopperText(
 
   if (filterLayer && filterLayer !== layerName) return []
   if (!anchor_position) return []
+  if (!text) return []
 
   const [ax, ay] = applyToPoint(transform, [
     anchor_position.x,
@@ -152,21 +57,34 @@ export function createSvgObjectsFromPcbCopperText(
 
   if (is_knockout) {
     const scaledFontSize = fontSizeNum * FONT_SCALE
-    const { pathData, width, height } = textToCenteredAlphabetPaths(
+    const geometry = createPcbAlphabetTextGeometry({
       text,
-      scaledFontSize,
-    )
-    const { offsetX, offsetY } = getCenteredTextAnchorOffset(
-      anchor_alignment,
-      width,
-      height,
-    )
+      anchorAlignment: anchor_alignment,
+      fontSize: scaledFontSize,
+      charAdvance: (CHAR_WIDTH + CHAR_SPACING) * scaledFontSize,
+      spaceAdvance: (CHAR_WIDTH + CHAR_SPACING) * scaledFontSize * 0.6,
+      trailingSpacing: CHAR_SPACING * scaledFontSize,
+      lineHeight: scaledFontSize * LINE_HEIGHT,
+      mapSegment: (segment, offsetX, offsetY, fontSize) => ({
+        x1: offsetX + segment.x1 * fontSize,
+        y1: offsetY + (1 - segment.y1) * fontSize,
+        x2: offsetX + segment.x2 * fontSize,
+        y2: offsetY + (1 - segment.y2) * fontSize,
+      }),
+    })
+    if (!geometry.bounds || !geometry.pathData) return []
 
-    const padX = knockout_padding?.left ?? scaledFontSize * 0.5
-    const padY = knockout_padding?.top ?? scaledFontSize * 0.3
+    const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
+    const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
+    const padTop = knockout_padding?.top ?? scaledFontSize * 0.3
+    const padBottom = knockout_padding?.bottom ?? scaledFontSize * 0.3
 
-    const rectW = width + padX * 2
-    const rectH = height + padY * 2
+    const rectX = geometry.bounds.minX - padLeft
+    const rectY = geometry.bounds.minY - padTop
+    const rectW =
+      geometry.bounds.maxX - geometry.bounds.minX + padLeft + padRight
+    const rectH =
+      geometry.bounds.maxY - geometry.bounds.minY + padTop + padBottom
     const strokeWidth = scaledFontSize * 0.15
 
     const knockoutTransform = matrixToString(
@@ -175,7 +93,6 @@ export function createSvgObjectsFromPcbCopperText(
         rotate((-ccw_rotation * Math.PI) / 180),
         ...(applyMirror ? [scale(-1, 1)] : []),
         scale(scaleFactor, scaleFactor),
-        translate(offsetX, offsetY),
       ),
     )
 
@@ -199,8 +116,8 @@ export function createSvgObjectsFromPcbCopperText(
                 type: "element",
                 value: "",
                 attributes: {
-                  x: (-rectW / 2).toString(),
-                  y: (-rectH / 2).toString(),
+                  x: rectX.toString(),
+                  y: rectY.toString(),
                   width: rectW.toString(),
                   height: rectH.toString(),
                   fill: "white",
@@ -212,7 +129,7 @@ export function createSvgObjectsFromPcbCopperText(
                 type: "element",
                 value: "",
                 attributes: {
-                  d: pathData,
+                  d: geometry.pathData,
                   fill: "none",
                   stroke: "black",
                   "stroke-width": strokeWidth.toString(),
@@ -232,8 +149,8 @@ export function createSvgObjectsFromPcbCopperText(
         value: "",
         children: [],
         attributes: {
-          x: (-rectW / 2).toString(),
-          y: (-rectH / 2).toString(),
+          x: rectX.toString(),
+          y: rectY.toString(),
           width: rectW.toString(),
           height: rectH.toString(),
           fill: copperColor,
@@ -248,16 +165,22 @@ export function createSvgObjectsFromPcbCopperText(
   }
 
   const scaledFontSize = fontSizeNum * FONT_SCALE
-  const { pathData, width, height } = textToCenteredAlphabetPaths(
+  const geometry = createPcbAlphabetTextGeometry({
     text,
-    scaledFontSize,
-  )
-
-  const { offsetX, offsetY } = getCenteredTextAnchorOffset(
-    anchor_alignment,
-    width,
-    height,
-  )
+    anchorAlignment: anchor_alignment,
+    fontSize: scaledFontSize,
+    charAdvance: (CHAR_WIDTH + CHAR_SPACING) * scaledFontSize,
+    spaceAdvance: (CHAR_WIDTH + CHAR_SPACING) * scaledFontSize * 0.6,
+    trailingSpacing: CHAR_SPACING * scaledFontSize,
+    lineHeight: scaledFontSize * LINE_HEIGHT,
+    mapSegment: (segment, offsetX, offsetY, fontSize) => ({
+      x1: offsetX + segment.x1 * fontSize,
+      y1: offsetY + (1 - segment.y1) * fontSize,
+      x2: offsetX + segment.x2 * fontSize,
+      y2: offsetY + (1 - segment.y2) * fontSize,
+    }),
+  })
+  if (!geometry.pathData) return []
 
   const textTransform = matrixToString(
     compose(
@@ -265,7 +188,6 @@ export function createSvgObjectsFromPcbCopperText(
       rotate((-ccw_rotation * Math.PI) / 180),
       ...(applyMirror ? [scale(-1, 1)] : []),
       scale(scaleFactor, scaleFactor),
-      translate(offsetX, offsetY),
     ),
   )
 
@@ -276,7 +198,7 @@ export function createSvgObjectsFromPcbCopperText(
       name: "path",
       type: "element",
       attributes: {
-        d: pathData,
+        d: geometry.pathData,
         fill: "none",
         stroke: copperColor,
         "stroke-width": strokeWidth.toString(),
