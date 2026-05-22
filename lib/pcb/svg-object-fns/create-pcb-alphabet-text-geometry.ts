@@ -97,7 +97,7 @@ export function createPcbAlphabetTextGeometry(
     return { pathData: "", bounds: null }
   }
 
-  const anchorOffset = getAnchorOffset(anchorAlignment, baseBounds)
+  const anchorOffset = getAnchorOffsetForBounds(anchorAlignment, baseBounds)
   const anchoredSegments = translateSegments(baseSegments, anchorOffset)
   const anchoredBounds = translateBounds(baseBounds, anchorOffset)
 
@@ -140,7 +140,7 @@ function getSegmentBounds(segments: PathSegment[]): AlphabetTextBounds | null {
   return { minX, minY, maxX, maxY }
 }
 
-function getAnchorOffset(
+export function getAnchorOffsetForBounds(
   anchorAlignment: NinePointAnchor,
   bounds: AlphabetTextBounds,
 ): { x: number; y: number } {
