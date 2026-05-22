@@ -11,7 +11,10 @@ import {
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { lineAlphabet } from "@tscircuit/alphabet"
-import { createPcbAlphabetTextGeometry } from "./create-pcb-alphabet-text-geometry"
+import {
+  createPcbAlphabetTextGeometry,
+  getAnchorOffsetForBounds,
+} from "./create-pcb-alphabet-text-geometry"
 
 // Derive character cell dimensions from lineAlphabet glyph bounding boxes
 const alphabetBounds = (() => {
@@ -117,6 +120,62 @@ export function createSvgObjectsFromPcbSilkscreenText(
     const rectH =
       geometry.bounds.maxY - geometry.bounds.minY + padTop + padBottom
     const strokeWidth = scaledFontSize * 0.15
+    const knockoutBounds = {
+      minX: rectX,
+      minY: rectY,
+      maxX: rectX + rectW,
+      maxY: rectY + rectH,
+    }
+    const knockoutAnchorOffset = getAnchorOffsetForBounds(
+      anchor_alignment,
+      knockoutBounds,
+    )
+    const alignedRectX = rectX + knockoutAnchorOffset.x
+    const alignedRectY = rectY + knockoutAnchorOffset.y
+    const maskCutoutChildren: SvgObject[] = [
+      {
+        name: "rect",
+        type: "element",
+        value: "",
+        attributes: {
+          x: rectX.toString(),
+          y: rectY.toString(),
+          width: rectW.toString(),
+          height: rectH.toString(),
+          fill: "white",
+        },
+        children: [],
+      },
+      {
+        name: "path",
+        type: "element",
+        value: "",
+        attributes: {
+          d: geometry.pathData,
+          fill: "none",
+          stroke: "black",
+          "stroke-width": strokeWidth.toString(),
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+        },
+        children: [],
+      },
+    ]
+    const hasKnockoutAnchorOffset =
+      knockoutAnchorOffset.x !== 0 || knockoutAnchorOffset.y !== 0
+    const maskChildren: SvgObject[] = hasKnockoutAnchorOffset
+      ? [
+          {
+            name: "g",
+            type: "element",
+            value: "",
+            attributes: {
+              transform: `translate(${knockoutAnchorOffset.x} ${knockoutAnchorOffset.y})`,
+            },
+            children: maskCutoutChildren,
+          },
+        ]
+      : maskCutoutChildren
 
     const knockoutTransform = matrixToString(
       compose(
@@ -142,35 +201,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
             attributes: {
               id: maskId,
             },
-            children: [
-              {
-                name: "rect",
-                type: "element",
-                value: "",
-                attributes: {
-                  x: rectX.toString(),
-                  y: rectY.toString(),
-                  width: rectW.toString(),
-                  height: rectH.toString(),
-                  fill: "white",
-                },
-                children: [],
-              },
-              {
-                name: "path",
-                type: "element",
-                value: "",
-                attributes: {
-                  d: geometry.pathData,
-                  fill: "none",
-                  stroke: "black",
-                  "stroke-width": strokeWidth.toString(),
-                  "stroke-linecap": "round",
-                  "stroke-linejoin": "round",
-                },
-                children: [],
-              },
-            ],
+            children: maskChildren,
           },
         ],
         attributes: {},
@@ -181,8 +212,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
         value: "",
         children: [],
         attributes: {
-          x: rectX.toString(),
-          y: rectY.toString(),
+          x: alignedRectX.toString(),
+          y: alignedRectY.toString(),
           width: rectW.toString(),
           height: rectH.toString(),
           fill: silkscreenColor,
