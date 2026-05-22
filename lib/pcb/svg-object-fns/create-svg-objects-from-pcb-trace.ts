@@ -179,10 +179,8 @@ function getRouteViaDiameters(
   // Older circuit-json payloads can omit board-level via DRC fields.
   const fallbackHoleDiameter = Math.max(adjacentTraceWidth, 0.3)
   const holeDiameter = boardMinViaHoleDiameter ?? fallbackHoleDiameter
-  const outerDiameter = Math.max(
-    boardMinViaPadDiameter ?? Math.max(fallbackHoleDiameter * 2, 0.6),
-    holeDiameter * 2,
-  )
+  const outerDiameter =
+    boardMinViaPadDiameter ?? Math.max(fallbackHoleDiameter * 2, 0.6)
 
   return {
     holeDiameter,

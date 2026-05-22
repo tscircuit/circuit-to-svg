@@ -90,14 +90,5 @@ function isSamePoint(a: Point, b: Point): boolean {
   const bx = distance.parse(b.x)
   const by = distance.parse(b.y)
 
-  if (
-    ax === undefined ||
-    ay === undefined ||
-    bx === undefined ||
-    by === undefined
-  ) {
-    return a.x === b.x && a.y === b.y
-  }
-
   return ax === bx && ay === by
 }
