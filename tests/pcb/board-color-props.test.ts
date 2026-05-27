@@ -68,7 +68,18 @@ test("bottom layer uses pcb_board soldermask color", () => {
 test("multiple boards do not inherit the first board color as a global default", () => {
   const svg = convertCircuitJsonToPcbSvg(
     [
-      circuit[0],
+      {
+        type: "pcb_board",
+        pcb_board_id: "board0",
+        center: { x: 0, y: 0 },
+        width: 10,
+        height: 10,
+        thickness: 1.6,
+        num_layers: 2,
+        material: "fr4",
+        solder_mask_color: "blue",
+        silkscreen_color: "yellow",
+      },
       {
         type: "pcb_board",
         pcb_board_id: "board1",
