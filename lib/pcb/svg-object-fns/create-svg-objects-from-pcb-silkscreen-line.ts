@@ -3,7 +3,7 @@ import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, toString as matrixToString } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
+import { resolveSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenLine(
   pcbSilkscreenLine: PcbSilkscreenLine,
@@ -39,7 +39,7 @@ export function createSvgObjectsFromPcbSilkscreenLine(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
-  const color = getRealisticSilkscreenColor(ctx, layer)
+  const color = resolveSilkscreenColor(ctx, layer)
 
   return [
     {

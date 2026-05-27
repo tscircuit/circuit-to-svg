@@ -2,7 +2,7 @@ import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 
 type BoardSide = "top" | "bottom"
 
-export function getRealisticSolderMaskColor(
+export function resolveSolderMaskColor(
   ctx: PcbContext,
   side: BoardSide,
 ): string {
@@ -12,7 +12,7 @@ export function getRealisticSolderMaskColor(
   )
 }
 
-export function getRealisticSilkscreenColor(
+export function resolveSilkscreenColor(
   ctx: PcbContext,
   side: BoardSide,
 ): string {

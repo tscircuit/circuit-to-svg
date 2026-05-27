@@ -4,7 +4,7 @@ import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
 import { getPointFromElm } from "../../utils/get-point-from-elm"
-import { getRealisticSolderMaskColor } from "../get-realistic-board-color"
+import { resolveSolderMaskColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbBoard(
   pcbBoard: PcbBoard,
@@ -68,7 +68,7 @@ export function createSvgObjectsFromPcbBoard(
     const layer = ctx.layer ?? "top"
     const maskLayer =
       layer === "bottom" ? "soldermask-bottom" : "soldermask-top"
-    const solderMaskColor = getRealisticSolderMaskColor(ctx, layer)
+    const solderMaskColor = resolveSolderMaskColor(ctx, layer)
     svgObjects.push({
       name: "path",
       type: "element",

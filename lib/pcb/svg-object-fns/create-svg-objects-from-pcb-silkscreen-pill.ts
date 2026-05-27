@@ -2,7 +2,7 @@ import type { PcbSilkscreenPill } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
+import { resolveSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenPill(
   pcbSilkscreenPill: PcbSilkscreenPill,
@@ -34,7 +34,7 @@ export function createSvgObjectsFromPcbSilkscreenPill(
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
   const silkscreenSide = layer === "bottom" ? "bottom" : "top"
-  const color = getRealisticSilkscreenColor(ctx, silkscreenSide)
+  const color = resolveSilkscreenColor(ctx, silkscreenSide)
 
   const svgObject: SvgObject = {
     name: "rect",

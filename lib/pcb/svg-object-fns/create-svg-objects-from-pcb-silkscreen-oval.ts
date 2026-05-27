@@ -3,7 +3,7 @@ import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
+import { resolveSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenOval(
   pcbSilkscreenOval: PcbSilkscreenOval,
@@ -42,7 +42,7 @@ export function createSvgObjectsFromPcbSilkscreenOval(
   const transformedRadiusX = radius_x * Math.abs(transform.a)
   const transformedRadiusY = radius_y * Math.abs(transform.d)
 
-  const color = getRealisticSilkscreenColor(ctx, layer)
+  const color = resolveSilkscreenColor(ctx, layer)
 
   const svgObject: SvgObject = {
     name: "ellipse",

@@ -2,7 +2,7 @@ import type { PcbSilkscreenCircle } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
+import { resolveSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenCircle(
   pcbSilkscreenCircle: PcbSilkscreenCircle,
@@ -39,7 +39,7 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
-  const color = getRealisticSilkscreenColor(ctx, layer)
+  const color = resolveSilkscreenColor(ctx, layer)
 
   const svgObject: SvgObject = {
     name: "circle",
