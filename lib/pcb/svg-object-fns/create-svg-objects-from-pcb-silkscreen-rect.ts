@@ -53,7 +53,8 @@ export function createSvgObjectsFromPcbSilkscreenRect(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
-  const color = getRealisticSilkscreenColor(ctx, layer)
+  const silkscreenSide = layer === "bottom" ? "bottom" : "top"
+  const color = getRealisticSilkscreenColor(ctx, silkscreenSide)
 
   const attributes: { [key: string]: string } = {
     x: (-transformedWidth / 2).toString(),

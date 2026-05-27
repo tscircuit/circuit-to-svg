@@ -33,7 +33,8 @@ export function createSvgObjectsFromPcbSilkscreenPill(
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
-  const color = getRealisticSilkscreenColor(ctx, layer)
+  const silkscreenSide = layer === "bottom" ? "bottom" : "top"
+  const color = getRealisticSilkscreenColor(ctx, silkscreenSide)
 
   const svgObject: SvgObject = {
     name: "rect",

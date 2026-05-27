@@ -81,7 +81,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
   ])
 
   const scaleFactor = Math.abs(transform.a)
-  const silkscreenColor = getRealisticSilkscreenColor(ctx, layer)
+  const silkscreenSide = layer === "bottom" ? "bottom" : "top"
+  const silkscreenColor = getRealisticSilkscreenColor(ctx, silkscreenSide)
 
   const isBottom = layer === "bottom"
   const applyMirror = isBottom ? true : is_mirrored === true
