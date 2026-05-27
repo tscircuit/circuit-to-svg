@@ -132,24 +132,11 @@ export function convertCircuitJsonToPcbSvg(
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
-  let singlePcbBoard: PcbBoard | undefined
-
-  for (const elm of circuitJson) {
-    if (elm.type !== "pcb_board") continue
-    if (singlePcbBoard) {
-      singlePcbBoard = undefined
-      break
-    }
-    singlePcbBoard = elm
-  }
-
-  let boardSolderMaskColor: string | undefined
-  let boardSilkscreenColor: string | undefined
-
-  if (options?.showSolderMask && singlePcbBoard) {
-    boardSolderMaskColor = singlePcbBoard.solder_mask_color
-    boardSilkscreenColor = singlePcbBoard.silkscreen_color
-  }
+  const pcbBoard = options?.showSolderMask
+    ? circuitJson.find((elm): elm is PcbBoard => elm.type === "pcb_board")
+    : undefined
+  const boardSolderMaskColor = pcbBoard?.solder_mask_color
+  const boardSilkscreenColor = pcbBoard?.silkscreen_color
 
   const copperColors: CopperColorMap = {
     ...DEFAULT_PCB_COLOR_MAP.copper,

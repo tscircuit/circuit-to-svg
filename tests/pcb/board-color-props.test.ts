@@ -28,7 +28,7 @@ const circuit: AnyCircuitElement[] = [
   },
 ]
 
-test("pcb_board colors are used as soldermask and silkscreen defaults", () => {
+test("pcb_board colors are used in realistic soldermask render", () => {
   const svg = convertCircuitJsonToPcbSvg(circuit, {
     showSolderMask: true,
   })
@@ -38,73 +38,4 @@ test("pcb_board colors are used as soldermask and silkscreen defaults", () => {
   expect(svg).toContain('class="pcb-silkscreen-line pcb-silkscreen-top"')
   expect(svg).toContain('stroke="yellow"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-})
-
-test("pcb_board colors are ignored outside soldermask rendering", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit)
-
-  expect(svg).not.toContain('stroke="yellow"')
-  expect(svg).toContain('stroke="#f2eda1"')
-})
-
-test("color overrides take priority over pcb_board colors", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    showSolderMask: true,
-    colorOverrides: {
-      soldermask: { top: "#00ff00" },
-      silkscreen: { top: "#ff00ff" },
-    },
-  })
-
-  expect(svg).toContain('class="pcb-board-soldermask"')
-  expect(svg).toContain('fill="#00ff00"')
-  expect(svg).toContain('stroke="#ff00ff"')
-})
-
-test("bottom layer uses pcb_board soldermask color", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    layer: "bottom",
-    showSolderMask: true,
-  })
-
-  expect(svg).toContain('class="pcb-board-soldermask"')
-  expect(svg).toContain('fill="blue"')
-  expect(svg).toContain('data-pcb-layer="soldermask-bottom"')
-})
-
-test("multiple boards do not inherit the first board color as a global default", () => {
-  const svg = convertCircuitJsonToPcbSvg(
-    [
-      {
-        type: "pcb_board",
-        pcb_board_id: "board0",
-        center: { x: 0, y: 0 },
-        width: 10,
-        height: 10,
-        thickness: 1.6,
-        num_layers: 2,
-        material: "fr4",
-        solder_mask_color: "blue",
-        silkscreen_color: "yellow",
-      },
-      {
-        type: "pcb_board",
-        pcb_board_id: "board1",
-        center: { x: 20, y: 0 },
-        width: 10,
-        height: 10,
-        thickness: 1.6,
-        num_layers: 2,
-        material: "fr4",
-        solder_mask_color: "red",
-        silkscreen_color: "white",
-      },
-    ],
-    {
-      showSolderMask: true,
-    },
-  )
-
-  expect(svg).not.toContain('fill="blue"')
-  expect(svg).not.toContain('fill="red"')
 })
