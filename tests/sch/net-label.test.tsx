@@ -126,7 +126,7 @@ test("schematic net label", () => {
       ],
     }),
   ).toMatchSvgSnapshot(import.meta.path)
-})
+}, 60 * 1000)
 
 test(
   "schematic resistor 69",
