@@ -2,6 +2,7 @@ import type {
   Point,
   AnyCircuitElement,
   pcb_cutout,
+  PcbBoard,
   PcbCutout,
   PcbPanel,
   PCBKeepoutRect,
@@ -131,7 +132,9 @@ export function convertCircuitJsonToPcbSvg(
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
-  const pcbBoard = circuitJson.find((elm) => elm.type === "pcb_board")
+  const pcbBoard = options?.showSolderMask
+    ? circuitJson.find((elm): elm is PcbBoard => elm.type === "pcb_board")
+    : undefined
   const boardSolderMaskColor = pcbBoard?.solder_mask_color
   const boardSilkscreenColor = pcbBoard?.silkscreen_color
 
