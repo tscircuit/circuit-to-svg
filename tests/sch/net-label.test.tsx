@@ -132,6 +132,7 @@ test(
   "schematic resistor 69",
   async () => {
     const { circuit } = getTestFixture()
+    circuit.setPlatform({ routingDisabled: true })
 
     circuit.add(
       <board width="10mm" height="10mm" routingDisabled>
