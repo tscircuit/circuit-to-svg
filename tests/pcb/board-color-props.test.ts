@@ -40,6 +40,13 @@ test("pcb_board colors are used as soldermask and silkscreen defaults", () => {
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
 
+test("pcb_board colors are ignored outside soldermask rendering", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuit)
+
+  expect(svg).not.toContain('stroke="yellow"')
+  expect(svg).toContain('stroke="#f2eda1"')
+})
+
 test("color overrides take priority over pcb_board colors", () => {
   const svg = convertCircuitJsonToPcbSvg(circuit, {
     showSolderMask: true,
