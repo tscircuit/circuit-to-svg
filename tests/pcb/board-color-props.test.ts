@@ -28,7 +28,11 @@ const circuit: AnyCircuitElement[] = [
   },
 ]
 
-test("pcb_board colors are used in realistic soldermask render", () => {
+test("pcb_board colors are only used in realistic soldermask render", () => {
+  const normalSvg = convertCircuitJsonToPcbSvg(circuit)
+
+  expect(normalSvg).not.toContain('stroke="yellow"')
+
   const svg = convertCircuitJsonToPcbSvg(circuit, {
     showSolderMask: true,
   })
