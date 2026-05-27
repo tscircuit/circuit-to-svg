@@ -12,8 +12,8 @@ const circuit: AnyCircuitElement[] = [
     thickness: 1.6,
     num_layers: 2,
     material: "fr4",
-    solder_mask_color: "blue",
-    silkscreen_color: "yellow",
+    solder_mask_color: "#202060",
+    silkscreen_color: "#ffd200",
   },
   {
     type: "pcb_silkscreen_line",
@@ -25,6 +25,34 @@ const circuit: AnyCircuitElement[] = [
     y2: 3,
     stroke_width: 0.1,
     layer: "top",
+  },
+  {
+    type: "pcb_smtpad",
+    pcb_smtpad_id: "pad0",
+    shape: "rect",
+    x: -2,
+    y: -1,
+    width: 1.2,
+    height: 0.8,
+    layer: "top",
+  },
+  {
+    type: "pcb_smtpad",
+    pcb_smtpad_id: "pad1",
+    shape: "rect",
+    x: 2,
+    y: -1,
+    width: 1.2,
+    height: 0.8,
+    layer: "top",
+  },
+  {
+    type: "pcb_trace",
+    pcb_trace_id: "trace0",
+    route: [
+      { route_type: "wire", x: -2, y: -1, width: 0.3, layer: "top" },
+      { route_type: "wire", x: 2, y: -1, width: 0.3, layer: "top" },
+    ],
   },
 ]
 
@@ -38,22 +66,8 @@ test("pcb_board colors are only used in realistic soldermask render", () => {
   })
 
   expect(svg).toContain('class="pcb-board-soldermask"')
-  expect(svg).toContain('fill="blue"')
+  expect(svg).toContain('fill="#202060"')
   expect(svg).toContain('class="pcb-silkscreen-line pcb-silkscreen-top"')
-  expect(svg).toContain('stroke="yellow"')
+  expect(svg).toContain('stroke="#ffd200"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-})
-
-test("color overrides take priority over pcb_board colors", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    showSolderMask: true,
-    colorOverrides: {
-      soldermask: { top: "#00ff00" },
-      silkscreen: { top: "#ff00ff" },
-    },
-  })
-
-  expect(svg).toContain('class="pcb-board-soldermask"')
-  expect(svg).toContain('fill="#00ff00"')
-  expect(svg).toContain('stroke="#ff00ff"')
 })

@@ -10,6 +10,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
 import { lineAlphabet } from "@tscircuit/alphabet"
 import {
   createPcbAlphabetTextGeometry,
@@ -47,7 +48,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter } = ctx
   const {
     anchor_position,
     text,
@@ -80,8 +81,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   ])
 
   const scaleFactor = Math.abs(transform.a)
-  const silkscreenColor =
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+  const silkscreenColor = getRealisticSilkscreenColor(ctx, layer)
 
   const isBottom = layer === "bottom"
   const applyMirror = isBottom ? true : is_mirrored === true

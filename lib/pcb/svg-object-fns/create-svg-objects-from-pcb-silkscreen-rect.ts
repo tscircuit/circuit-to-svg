@@ -3,12 +3,13 @@ import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint, toString as matrixToString } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenRect(
   pcbSilkscreenRect: PcbSilkscreenRect,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter } = ctx
   const {
     center,
     width,
@@ -52,8 +53,7 @@ export function createSvgObjectsFromPcbSilkscreenRect(
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
-  const color =
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+  const color = getRealisticSilkscreenColor(ctx, layer)
 
   const attributes: { [key: string]: string } = {
     x: (-transformedWidth / 2).toString(),

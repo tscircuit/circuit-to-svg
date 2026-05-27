@@ -3,12 +3,13 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getRealisticSilkscreenColor } from "../get-realistic-board-color"
 
 export function createSvgObjectsFromPcbSilkscreenPath(
   silkscreenPath: PcbSilkscreenPath,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter, colorMap } = ctx
+  const { transform, layer: layerFilter } = ctx
   if (!silkscreenPath.route || !Array.isArray(silkscreenPath.route)) return []
 
   let path = silkscreenPath.route
@@ -32,8 +33,7 @@ export function createSvgObjectsFromPcbSilkscreenPath(
 
   const layer = silkscreenPath.layer || "top"
   if (layerFilter && layer !== layerFilter) return []
-  const color =
-    layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+  const color = getRealisticSilkscreenColor(ctx, layer)
 
   return [
     {
