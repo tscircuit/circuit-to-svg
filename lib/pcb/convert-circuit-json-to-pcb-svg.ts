@@ -131,7 +131,8 @@ export function convertCircuitJsonToPcbSvg(
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
-  const pcbBoard = circuitJson.find((elm) => elm.type === "pcb_board")
+  const pcbBoards = circuitJson.filter((elm) => elm.type === "pcb_board")
+  const pcbBoard = pcbBoards.length === 1 ? pcbBoards[0] : undefined
   const boardSolderMaskColor = pcbBoard?.solder_mask_color
   const boardSilkscreenColor = pcbBoard?.silkscreen_color
 
