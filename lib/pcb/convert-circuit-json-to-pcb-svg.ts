@@ -131,6 +131,9 @@ export function convertCircuitJsonToPcbSvg(
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
+  const pcbBoard = circuitJson.find((elm) => elm.type === "pcb_board")
+  const boardSolderMaskColor = pcbBoard?.solder_mask_color
+  const boardSilkscreenColor = pcbBoard?.silkscreen_color
 
   const copperColors: CopperColorMap = {
     ...DEFAULT_PCB_COLOR_MAP.copper,
@@ -149,34 +152,44 @@ export function convertCircuitJsonToPcbSvg(
     drill: colorOverrides?.drill ?? DEFAULT_PCB_COLOR_MAP.drill,
     silkscreen: {
       top:
-        colorOverrides?.silkscreen?.top ?? DEFAULT_PCB_COLOR_MAP.silkscreen.top,
+        colorOverrides?.silkscreen?.top ??
+        boardSilkscreenColor ??
+        DEFAULT_PCB_COLOR_MAP.silkscreen.top,
       bottom:
         colorOverrides?.silkscreen?.bottom ??
+        boardSilkscreenColor ??
         DEFAULT_PCB_COLOR_MAP.silkscreen.bottom,
     },
     boardOutline:
       colorOverrides?.boardOutline ?? DEFAULT_PCB_COLOR_MAP.boardOutline,
     soldermask: {
       top:
-        colorOverrides?.soldermask?.top ?? DEFAULT_PCB_COLOR_MAP.soldermask.top,
+        colorOverrides?.soldermask?.top ??
+        boardSolderMaskColor ??
+        DEFAULT_PCB_COLOR_MAP.soldermask.top,
       bottom:
         colorOverrides?.soldermask?.bottom ??
+        boardSolderMaskColor ??
         DEFAULT_PCB_COLOR_MAP.soldermask.bottom,
     },
     soldermaskOverCopper: {
       top:
         colorOverrides?.soldermaskOverCopper?.top ??
+        boardSolderMaskColor ??
         DEFAULT_PCB_COLOR_MAP.soldermaskOverCopper.top,
       bottom:
         colorOverrides?.soldermaskOverCopper?.bottom ??
+        boardSolderMaskColor ??
         DEFAULT_PCB_COLOR_MAP.soldermaskOverCopper.bottom,
     },
     soldermaskWithCopperUnderneath: {
       top:
         colorOverrides?.soldermaskWithCopperUnderneath?.top ??
+        boardSolderMaskColor ??
         DEFAULT_PCB_COLOR_MAP.soldermaskWithCopperUnderneath.top,
       bottom:
         colorOverrides?.soldermaskWithCopperUnderneath?.bottom ??
+        boardSolderMaskColor ??
         DEFAULT_PCB_COLOR_MAP.soldermaskWithCopperUnderneath.bottom,
     },
     substrate: colorOverrides?.substrate ?? DEFAULT_PCB_COLOR_MAP.substrate,

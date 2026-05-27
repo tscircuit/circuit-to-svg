@@ -67,6 +67,8 @@ export function createSvgObjectsFromPcbBoard(
     const layer = ctx.layer ?? "top"
     const maskLayer =
       layer === "bottom" ? "soldermask-bottom" : "soldermask-top"
+    const solderMaskColor =
+      layer === "bottom" ? colorMap.soldermask.bottom : colorMap.soldermask.top
     svgObjects.push({
       name: "path",
       type: "element",
@@ -75,7 +77,7 @@ export function createSvgObjectsFromPcbBoard(
       attributes: {
         class: "pcb-board-soldermask",
         d: path,
-        fill: colorMap.soldermask.top,
+        fill: solderMaskColor,
         "fill-opacity": "0.8",
         stroke: "none",
         "data-type": "pcb_soldermask",
