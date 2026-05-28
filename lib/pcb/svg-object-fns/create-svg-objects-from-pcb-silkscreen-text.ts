@@ -10,31 +10,41 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { lineAlphabet } from "@tscircuit/alphabet"
+import { getFont } from "@tscircuit/alphabet"
 import {
   createPcbAlphabetTextGeometry,
   getAnchorOffsetForBounds,
 } from "./create-pcb-alphabet-text-geometry"
 
-// Derive character cell dimensions from lineAlphabet glyph bounding boxes
-const alphabetBounds = (() => {
+/**
+ * W15.P4 (EnergyCitizen fork): bounds derivation moved INSIDE the
+ * render function so it picks per-text font. Each pcb_silkscreen_text
+ * with font="ubuntu" gets Ubuntu glyph metrics; default font keeps
+ * tscircuit2024 metrics. Bounds cached per-font for performance.
+ */
+const alphabetBoundsCache = new Map<
+  string,
+  { width: number; height: number }
+>()
+
+const getAlphabetBounds = (fontName: string) => {
+  const cached = alphabetBoundsCache.get(fontName)
+  if (cached) return cached
+  const { lineAlphabet } = getFont(fontName)
   let maxX = 0
   let minY = Infinity
   let maxY = -Infinity
   for (const segments of Object.values(lineAlphabet)) {
-    for (const seg of segments as Array<{
-      x1: number
-      y1: number
-      x2: number
-      y2: number
-    }>) {
+    for (const seg of segments) {
       maxX = Math.max(maxX, seg.x1, seg.x2)
       minY = Math.min(minY, seg.y1, seg.y2)
       maxY = Math.max(maxY, seg.y1, seg.y2)
     }
   }
-  return { width: maxX, height: maxY - minY }
-})()
+  const result = { width: maxX, height: maxY - minY }
+  alphabetBoundsCache.set(fontName, result)
+  return result
+}
 
 /** Inter-character spacing as a fraction of cell width (20% gap between chars) */
 const INTER_CHAR_SPACING_RATIO = 0.2
@@ -51,6 +61,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const {
     anchor_position,
     text,
+    font = "tscircuit2024",
     font_size = 1,
     layer = "top",
     ccw_rotation = 0,
@@ -59,6 +70,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
     knockout_padding,
     is_mirrored = false,
   } = pcbSilkscreenText
+
+  /** W15.P4: per-text font dispatch via getFont(font). */
+  const alphabetBounds = getAlphabetBounds(font)
+  const { lineAlphabet: fontLineAlphabet } = getFont(font)
 
   if (layerFilter && layer !== layerFilter) return []
 
@@ -99,6 +114,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
       trailingSpacing: charSpacing * scaledFontSize,
       lineHeight:
         scaledFontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER,
+      lineAlphabet: fontLineAlphabet,
       mapSegment: (segment, offsetX, offsetY, fontSize) => ({
         x1: offsetX + segment.x1 * fontSize,
         y1: offsetY + (1 - segment.y1) * fontSize,

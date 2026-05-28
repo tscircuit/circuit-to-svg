@@ -1,7 +1,16 @@
-import { lineAlphabet } from "@tscircuit/alphabet"
+import { lineAlphabet as defaultLineAlphabet } from "@tscircuit/alphabet"
 import type { NinePointAnchor } from "circuit-json"
 
-type AlphabetKey = keyof typeof lineAlphabet
+/**
+ * W15.P4 (EnergyCitizen fork): accept an optional `lineAlphabet`
+ * argument so callers can supply a non-default font (e.g. Ubuntu
+ * lineAlphabet via getFont("ubuntu")). Default kept as the
+ * tscircuit2024 alphabet for backward compatibility.
+ */
+type FontLineAlphabet = Record<
+  string,
+  Array<{ x1: number; y1: number; x2: number; y2: number }>
+>
 
 interface AlphabetLineSegment {
   x1: number
@@ -37,6 +46,8 @@ export interface CreatePcbAlphabetTextGeometryParams {
   spaceAdvance: number
   trailingSpacing: number
   lineHeight: number
+  /** Glyph stroke lookup. Defaults to tscircuit2024. */
+  lineAlphabet?: FontLineAlphabet
   mapSegment: (
     segment: AlphabetLineSegment,
     offsetX: number,
@@ -56,6 +67,7 @@ export function createPcbAlphabetTextGeometry(
     spaceAdvance,
     trailingSpacing,
     lineHeight,
+    lineAlphabet = defaultLineAlphabet,
     mapSegment,
   } = params
 
@@ -79,7 +91,7 @@ export function createPcbAlphabetTextGeometry(
         continue
       }
 
-      const charLines = lineAlphabet[char as AlphabetKey]
+      const charLines = lineAlphabet[char]
       if (charLines) {
         for (const segment of charLines) {
           baseSegments.push(mapSegment(segment, x, y, fontSize))

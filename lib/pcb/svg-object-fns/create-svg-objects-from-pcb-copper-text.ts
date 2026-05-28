@@ -11,6 +11,7 @@ import {
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { layerNameToColor } from "../layer-name-to-color"
 import { distance } from "circuit-json"
+import { getFont } from "@tscircuit/alphabet"
 import {
   createPcbAlphabetTextGeometry,
   getAnchorOffsetForBounds,
@@ -31,6 +32,7 @@ export function createSvgObjectsFromPcbCopperText(
   const {
     anchor_position,
     text,
+    font = "tscircuit2024",
     font_size = "0.2mm",
     layer,
     ccw_rotation = 0,
@@ -39,6 +41,9 @@ export function createSvgObjectsFromPcbCopperText(
     knockout_padding,
     is_mirrored = false,
   } = pcbCopperText
+
+  /** W15.P4: per-text font dispatch via getFont(font). */
+  const { lineAlphabet: fontLineAlphabet } = getFont(font)
 
   const layerName = layer ?? "top"
 
@@ -68,6 +73,7 @@ export function createSvgObjectsFromPcbCopperText(
       spaceAdvance: (CHAR_WIDTH + CHAR_SPACING) * scaledFontSize * 0.6,
       trailingSpacing: CHAR_SPACING * scaledFontSize,
       lineHeight: scaledFontSize * LINE_HEIGHT,
+      lineAlphabet: fontLineAlphabet,
       mapSegment: (segment, offsetX, offsetY, fontSize) => ({
         x1: offsetX + segment.x1 * fontSize,
         y1: offsetY + (1 - segment.y1) * fontSize,
