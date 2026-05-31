@@ -28,6 +28,8 @@ test("schematic line", () => {
       stroke_width: 0.05,
       color: "#ff0000",
       is_dashed: true,
+      dash_length: 0.2,
+      dash_gap: 0.1,
       subcircuit_id: "simple_circuit",
     },
   ]

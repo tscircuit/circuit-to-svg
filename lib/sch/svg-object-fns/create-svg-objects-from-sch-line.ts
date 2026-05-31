@@ -3,6 +3,7 @@ import type { Matrix } from "transformation-matrix"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { getSchematicStrokeDasharray } from "./get-schematic-stroke-dasharray"
 
 export function createSvgObjectsFromSchematicLine({
   schLine,
@@ -18,6 +19,13 @@ export function createSvgObjectsFromSchematicLine({
 
   const strokeWidth = schLine.stroke_width ?? 0.02
   const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
+  const strokeDasharray = getSchematicStrokeDasharray({
+    isDashed: schLine.is_dashed,
+    dashLength: schLine.dash_length,
+    dashGap: schLine.dash_gap,
+    strokeWidth,
+    transform,
+  })
 
   return [
     {
@@ -30,8 +38,8 @@ export function createSvgObjectsFromSchematicLine({
         y2: p2.y.toString(),
         stroke: schLine.color,
         "stroke-width": transformedStrokeWidth.toString(),
-        ...(schLine.is_dashed && {
-          "stroke-dasharray": (transformedStrokeWidth * 3).toString(),
+        ...(strokeDasharray && {
+          "stroke-dasharray": strokeDasharray,
         }),
         "data-schematic-line-id": schLine.schematic_line_id,
         ...(schLine.schematic_component_id && {
