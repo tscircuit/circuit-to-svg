@@ -13,7 +13,6 @@ test("schematic path", () => {
         { x: 2, y: 1 },
         { x: 0, y: 1 },
       ],
-      is_dashed: false,
       is_filled: false,
       is_dashed: true,
       dash_length: 0.15,
