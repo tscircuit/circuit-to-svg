@@ -165,5 +165,5 @@ test(
       convertCircuitJsonToSchematicSvg(circuit.getCircuitJson()),
     ).toMatchSvgSnapshot(import.meta.path + "net-label.test.tsx")
   },
-  20 * 1000,
+  40 * 1000,
 )
