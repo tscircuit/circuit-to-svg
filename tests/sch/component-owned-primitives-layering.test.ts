@@ -20,6 +20,7 @@ test("component-owned primitives render inside schematic component group", () =>
         { x: -0.4, y: 0 },
         { x: 0.4, y: 0 },
       ],
+      is_dashed: false,
       stroke_width: 0.05,
       is_filled: false,
     },
