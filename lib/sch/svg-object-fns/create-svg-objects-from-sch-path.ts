@@ -3,6 +3,7 @@ import type { Matrix } from "transformation-matrix"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { getSchematicStrokeDasharray } from "./get-schematic-stroke-dasharray"
 
 export function createSvgObjectsFromSchematicPath({
   schPath,
@@ -16,9 +17,15 @@ export function createSvgObjectsFromSchematicPath({
   const strokeColor =
     schPath.stroke_color ?? colorMap.schematic.component_outline
   const fillColor = schPath.fill_color ?? "none"
-  const strokeWidth = schPath.stroke_width
-    ? Math.abs(transform.a) * schPath.stroke_width
-    : Math.abs(transform.a) * 0.02
+  const strokeWidth = schPath.stroke_width ?? 0.02
+  const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
+  const strokeDasharray = getSchematicStrokeDasharray({
+    isDashed: schPath.is_dashed,
+    dashLength: schPath.dash_length,
+    dashGap: schPath.dash_gap,
+    strokeWidth,
+    transform,
+  })
 
   if (!schPath.points || schPath.points.length < 2) {
     return []
@@ -40,10 +47,13 @@ export function createSvgObjectsFromSchematicPath({
       attributes: {
         d: pathD,
         stroke: strokeColor,
-        "stroke-width": strokeWidth.toString(),
+        "stroke-width": transformedStrokeWidth.toString(),
         fill: schPath.is_filled ? fillColor : "none",
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
+        ...(strokeDasharray && {
+          "stroke-dasharray": strokeDasharray,
+        }),
         ...(schPath.schematic_component_id && {
           "data-schematic-component-id": schPath.schematic_component_id,
         }),
