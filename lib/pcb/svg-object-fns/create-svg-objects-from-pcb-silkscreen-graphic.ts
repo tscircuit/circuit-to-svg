@@ -16,13 +16,13 @@ export function createSvgObjectsFromPcbSilkscreenGraphic(
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
-  let d = ringToPathD(
+  let silkscreenGraphicPathD = ringToPathD(
     silkscreenGraphic.brep_shape.outer_ring.vertices,
     transform,
   )
 
   for (const innerRing of silkscreenGraphic.brep_shape.inner_rings ?? []) {
-    d += ` ${ringToPathD(innerRing.vertices, transform)}`
+    silkscreenGraphicPathD += ` ${ringToPathD(innerRing.vertices, transform)}`
   }
 
   return [
@@ -31,7 +31,7 @@ export function createSvgObjectsFromPcbSilkscreenGraphic(
       type: "element",
       attributes: {
         class: `pcb-silkscreen pcb-silkscreen-${layer}`,
-        d,
+        d: silkscreenGraphicPathD,
         fill: color,
         "fill-rule": "evenodd",
         stroke: "none",
