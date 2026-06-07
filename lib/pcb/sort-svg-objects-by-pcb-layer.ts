@@ -21,6 +21,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_solder_paste: 45,
   pcb_silkscreen_text: 50,
   pcb_silkscreen_path: 50,
+  pcb_silkscreen_graphic: 50,
   pcb_silkscreen_rect: 50,
   pcb_silkscreen_circle: 50,
   pcb_silkscreen_line: 50,

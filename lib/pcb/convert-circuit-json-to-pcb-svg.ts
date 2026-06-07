@@ -32,6 +32,7 @@ import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-obj
 import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
+import { createSvgObjectsFromPcbSilkscreenGraphic } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-graphic"
 import { createSvgObjectsFromPcbSilkscreenText } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-text"
 import { createSvgObjectsFromPcbSilkscreenRect } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-rect"
 import { createSvgObjectsFromPcbCopperText } from "./svg-object-fns/create-svg-objects-from-pcb-copper-text"
@@ -518,6 +519,8 @@ function createSvgObjects({
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
+    case "pcb_silkscreen_graphic":
+      return createSvgObjectsFromPcbSilkscreenGraphic(elm, ctx)
     case "pcb_panel":
       return ctx.drawPaddingOutsideBoard
         ? createSvgObjectsFromPcbPanel(elm as PcbPanel, ctx)

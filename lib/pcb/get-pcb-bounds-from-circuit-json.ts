@@ -285,6 +285,7 @@ export function getPcbBoundsFromCircuitJson(
         }
       }
     } else if (
+      circuitJsonElm.type === "pcb_silkscreen_graphic" ||
       circuitJsonElm.type === "pcb_silkscreen_text" ||
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
       circuitJsonElm.type === "pcb_silkscreen_circle" ||
@@ -434,6 +435,24 @@ export function getPcbBoundsFromCircuitJson(
   function updateSilkscreenBounds(item: AnyCircuitElement) {
     if (item.type === "pcb_silkscreen_text") {
       updateBounds({ center: item.anchor_position, width: 0, height: 0 })
+    } else if (item.type === "pcb_silkscreen_graphic") {
+      for (const vertex of item.brep_shape.outer_ring.vertices) {
+        updateBounds({
+          center: { x: vertex.x, y: vertex.y },
+          width: 0,
+          height: 0,
+        })
+      }
+
+      for (const innerRing of item.brep_shape.inner_rings ?? []) {
+        for (const vertex of innerRing.vertices) {
+          updateBounds({
+            center: { x: vertex.x, y: vertex.y },
+            width: 0,
+            height: 0,
+          })
+        }
+      }
     } else if (item.type === "pcb_silkscreen_path") {
       updateTraceBounds(item.route)
     } else if (item.type === "pcb_silkscreen_rect") {
