@@ -1,6 +1,10 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
-import { convertCircuitJsonToBlockDiagramSvg } from "lib"
+import {
+  convertCircuitJsonToBlockDiagramSvg,
+  convertCircuitJsonToSchematicSvg,
+} from "lib"
+import { stackSvgComparison } from "tests/block-diagram/stack-svg-comparison"
 
 const subcircuitCircuitJson = [
   {
@@ -125,12 +129,21 @@ const subcircuitCircuitJson = [
 ] as AnyCircuitElement[]
 
 test("subcircuits are summarized as port-aware blocks", () => {
-  expect(
-    convertCircuitJsonToBlockDiagramSvg(subcircuitCircuitJson, {
+  expectStackedSchematicAndBlockSnapshot({
+    circuitJson: addSchematicComparisonElements(subcircuitCircuitJson, {
+      U1: { x: -2.2, y: 0.8 },
+      C1: { x: -5, y: -1.4 },
+      R1: { x: -5, y: 2.5 },
+      U2: { x: 2.2, y: 0.8 },
+      C2: { x: 5, y: -1.4 },
+      R2: { x: 5, y: 2.5 },
+    }),
+    snapshotName: import.meta.path,
+    blockDiagramOptions: {
       width: 960,
       height: 640,
-    }),
-  ).toMatchSvgSnapshot(import.meta.path)
+    },
+  })
 })
 
 const twoSubcircuitsWithPassiveCircuitJson = [
@@ -217,12 +230,21 @@ const twoSubcircuitsWithPassiveCircuitJson = [
 ] as AnyCircuitElement[]
 
 test("two subcircuits keep an external passive as its own block", () => {
-  expect(
-    convertCircuitJsonToBlockDiagramSvg(twoSubcircuitsWithPassiveCircuitJson, {
+  expectStackedSchematicAndBlockSnapshot({
+    circuitJson: addSchematicComparisonElements(
+      twoSubcircuitsWithPassiveCircuitJson,
+      {
+        U1: { x: -2.4, y: 0.6 },
+        U2: { x: 2.4, y: 0.6 },
+        R1: { x: 0, y: 2.7 },
+      },
+    ),
+    snapshotName: `${import.meta.path}-two-subcircuits-passive`,
+    blockDiagramOptions: {
       width: 980,
       height: 660,
-    }),
-  ).toMatchSvgSnapshot(`${import.meta.path}-two-subcircuits-passive`)
+    },
+  })
 })
 
 const oneSubcircuitWithPassiveCircuitJson = [
@@ -276,13 +298,51 @@ const oneSubcircuitWithPassiveCircuitJson = [
 ] as AnyCircuitElement[]
 
 test("one subcircuit keeps an external passive as its own block", () => {
-  expect(
-    convertCircuitJsonToBlockDiagramSvg(oneSubcircuitWithPassiveCircuitJson, {
+  expectStackedSchematicAndBlockSnapshot({
+    circuitJson: addSchematicComparisonElements(
+      oneSubcircuitWithPassiveCircuitJson,
+      {
+        U1: { x: -1.5, y: 0.4 },
+        R1: { x: 2, y: 1.7 },
+      },
+    ),
+    snapshotName: `${import.meta.path}-one-subcircuit-passive`,
+    blockDiagramOptions: {
       width: 860,
       height: 520,
-    }),
-  ).toMatchSvgSnapshot(`${import.meta.path}-one-subcircuit-passive`)
+    },
+  })
 })
+
+function expectStackedSchematicAndBlockSnapshot({
+  circuitJson,
+  snapshotName,
+  blockDiagramOptions,
+}: {
+  circuitJson: AnyCircuitElement[]
+  snapshotName: string
+  blockDiagramOptions: { width: number; height: number }
+}) {
+  const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
+    width: 900,
+    height: 420,
+    grid: {
+      cellSize: 1,
+      labelCells: true,
+    },
+  })
+  const blockDiagramSvg = convertCircuitJsonToBlockDiagramSvg(
+    circuitJson,
+    blockDiagramOptions,
+  )
+
+  expect(
+    stackSvgComparison({
+      schematicSvg,
+      blockDiagramSvg,
+    }),
+  ).toMatchSvgSnapshot(snapshotName)
+}
 
 function createPorts(
   sourceComponentId: string,
@@ -312,4 +372,223 @@ function createTrace(
     connected_source_net_ids: connectedSourceNetIds,
     display_name: displayName,
   } as AnyCircuitElement
+}
+
+function addSchematicComparisonElements(
+  circuitJson: AnyCircuitElement[],
+  componentPositions: Record<string, { x: number; y: number }>,
+): AnyCircuitElement[] {
+  const sourceComponents = circuitJson.filter(
+    (element) => element.type === "source_component",
+  )
+  const sourcePorts = circuitJson.filter(
+    (element) => element.type === "source_port",
+  )
+  const sourceTraces = circuitJson.filter(
+    (element) => element.type === "source_trace",
+  )
+  const sourceNets = circuitJson.filter(
+    (element) => element.type === "source_net",
+  )
+  const sourceNetById = new Map(
+    sourceNets.map((sourceNet) => [sourceNet.source_net_id, sourceNet]),
+  )
+  const schematicComponents: AnyCircuitElement[] = []
+  const schematicPorts: AnyCircuitElement[] = []
+  const schematicTexts: AnyCircuitElement[] = []
+  const schematicNetLabels: AnyCircuitElement[] = []
+  const generatedSourceNets: AnyCircuitElement[] = []
+  const schematicPortsBySourcePortId = new Map<
+    string,
+    {
+      center: { x: number; y: number }
+      side: "left" | "right"
+    }
+  >()
+
+  for (const sourceComponent of sourceComponents) {
+    const componentName = "name" in sourceComponent ? sourceComponent.name : ""
+    if (!componentName || !componentPositions[componentName]) continue
+
+    const componentPorts = sourcePorts.filter(
+      (sourcePort) =>
+        "source_component_id" in sourcePort &&
+        sourcePort.source_component_id === sourceComponent.source_component_id,
+    )
+    const isChip =
+      "ftype" in sourceComponent &&
+      String(sourceComponent.ftype ?? "").includes("chip")
+    const size = isChip
+      ? { width: 2.4, height: Math.max(1.8, componentPorts.length * 0.34) }
+      : { width: 1.35, height: 0.72 }
+    const center = componentPositions[componentName]
+    const schematicComponentId = `schematic_component_${sourceComponent.source_component_id}`
+
+    schematicComponents.push({
+      type: "schematic_component",
+      schematic_component_id: schematicComponentId,
+      center,
+      size,
+      source_component_id: sourceComponent.source_component_id,
+    } as AnyCircuitElement)
+
+    schematicTexts.push({
+      type: "schematic_text",
+      schematic_text_id: `schematic_text_${sourceComponent.source_component_id}`,
+      schematic_component_id: schematicComponentId,
+      text: componentName,
+      position: {
+        x: center.x - size.width / 2,
+        y: center.y + size.height / 2 + 0.28,
+      },
+      anchor: "bottom_left",
+      font_size: 0.18,
+      rotation: 0,
+      color: "rgb(0, 100, 100)",
+    } as AnyCircuitElement)
+
+    const leftPorts = componentPorts.filter((sourcePort) =>
+      isLeftSideSchematicPort(sourcePort.name),
+    )
+    const rightPorts = componentPorts.filter(
+      (sourcePort) => !isLeftSideSchematicPort(sourcePort.name),
+    )
+
+    for (const sourcePort of componentPorts) {
+      const side = isLeftSideSchematicPort(sourcePort.name) ? "left" : "right"
+      const sidePorts = side === "left" ? leftPorts : rightPorts
+      const sidePortIndex = sidePorts.findIndex(
+        (sidePort) => sidePort.source_port_id === sourcePort.source_port_id,
+      )
+      const y = getPortY(center.y, sidePorts.length, sidePortIndex)
+      const x =
+        side === "left"
+          ? center.x - size.width / 2 - 0.42
+          : center.x + size.width / 2 + 0.42
+      const portCenter = { x, y }
+      const schematicPortId = `schematic_port_${sourcePort.source_port_id}`
+
+      schematicPorts.push({
+        type: "schematic_port",
+        schematic_port_id: schematicPortId,
+        schematic_component_id: schematicComponentId,
+        center: portCenter,
+        source_port_id: sourcePort.source_port_id,
+        side_of_component: side,
+        facing_direction: side,
+        distance_from_component_edge: 0.42,
+        display_pin_label: sourcePort.name,
+      } as AnyCircuitElement)
+      schematicPortsBySourcePortId.set(sourcePort.source_port_id, {
+        center: portCenter,
+        side,
+      })
+    }
+  }
+
+  for (const [traceIndex, sourceTrace] of sourceTraces.entries()) {
+    const connectedSourcePortIds =
+      "connected_source_port_ids" in sourceTrace
+        ? sourceTrace.connected_source_port_ids
+        : []
+    const label = getSourceTraceLabel(sourceTrace, sourceNetById)
+    if (!label) continue
+
+    const sourceNetId = getSchematicLabelSourceNetId(
+      sourceTrace,
+      label,
+      sourceNetById,
+      generatedSourceNets,
+    )
+
+    for (const [portIndex, sourcePortId] of connectedSourcePortIds.entries()) {
+      const schematicPort = schematicPortsBySourcePortId.get(sourcePortId)
+      if (!schematicPort) continue
+
+      schematicNetLabels.push({
+        type: "schematic_net_label",
+        schematic_net_label_id: `schematic_net_label_${traceIndex}_${portIndex}`,
+        source_net_id: sourceNetId,
+        source_trace_id: sourceTrace.source_trace_id,
+        center: schematicPort.center,
+        anchor_position: schematicPort.center,
+        anchor_side: schematicPort.side === "left" ? "right" : "left",
+        text: label,
+      } as AnyCircuitElement)
+    }
+  }
+
+  return [
+    ...circuitJson,
+    ...generatedSourceNets,
+    ...schematicComponents,
+    ...schematicTexts,
+    ...schematicPorts,
+    ...schematicNetLabels,
+  ]
+}
+
+function isLeftSideSchematicPort(portName: string): boolean {
+  const normalizedPortName = portName.toUpperCase()
+  return (
+    normalizedPortName.includes("VDD") ||
+    normalizedPortName.includes("VCC") ||
+    normalizedPortName.includes("GND") ||
+    normalizedPortName === "PIN1"
+  )
+}
+
+function getPortY(
+  centerY: number,
+  portCount: number,
+  portIndex: number,
+): number {
+  if (portCount <= 1) return centerY
+  return centerY + ((portCount - 1) / 2 - portIndex) * 0.42
+}
+
+function getSourceTraceLabel(
+  sourceTrace: AnyCircuitElement,
+  sourceNetById: Map<string, { name?: string }>,
+): string {
+  if ("display_name" in sourceTrace && sourceTrace.display_name) {
+    return String(sourceTrace.display_name)
+  }
+
+  if ("connected_source_net_ids" in sourceTrace) {
+    const sourceNetId = sourceTrace.connected_source_net_ids?.[0]
+    const sourceNetName = sourceNetId
+      ? sourceNetById.get(sourceNetId)?.name
+      : undefined
+    if (sourceNetName) return sourceNetName
+  }
+
+  return ""
+}
+
+function getSchematicLabelSourceNetId(
+  sourceTrace: AnyCircuitElement,
+  label: string,
+  sourceNetById: Map<string, { source_net_id: string; name?: string }>,
+  generatedSourceNets: AnyCircuitElement[],
+): string {
+  if ("connected_source_net_ids" in sourceTrace) {
+    const sourceNetId = sourceTrace.connected_source_net_ids?.[0]
+    if (sourceNetId && sourceNetById.has(sourceNetId)) return sourceNetId
+  }
+
+  const sourceTraceId =
+    "source_trace_id" in sourceTrace ? sourceTrace.source_trace_id : label
+  const generatedSourceNetId = `source_net_for_${sourceTraceId}`
+  if (!sourceNetById.has(generatedSourceNetId)) {
+    const generatedSourceNet = {
+      type: "source_net",
+      source_net_id: generatedSourceNetId,
+      name: label,
+    } as const
+    generatedSourceNets.push(generatedSourceNet as AnyCircuitElement)
+    sourceNetById.set(generatedSourceNetId, generatedSourceNet)
+  }
+
+  return generatedSourceNetId
 }

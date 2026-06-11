@@ -3,6 +3,7 @@ import {
   convertCircuitJsonToBlockDiagramSvg,
   convertCircuitJsonToSchematicSvg,
 } from "lib"
+import { stackSvgComparison } from "tests/block-diagram/stack-svg-comparison"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("simple circuit block diagram compared to schematic", async () => {
@@ -55,19 +56,24 @@ test("simple circuit block diagram compared to schematic", async () => {
 
   const circuitJson = circuit.getCircuitJson()
 
-  expect(
-    convertCircuitJsonToSchematicSvg(circuitJson as any, {
-      grid: {
-        cellSize: 1,
-        labelCells: true,
-      },
-    }),
-  ).toMatchSvgSnapshot(`${import.meta.path}-schematic`)
-
-  expect(
-    convertCircuitJsonToBlockDiagramSvg(circuitJson as any, {
+  const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson as any, {
+    grid: {
+      cellSize: 1,
+      labelCells: true,
+    },
+  })
+  const blockDiagramSvg = convertCircuitJsonToBlockDiagramSvg(
+    circuitJson as any,
+    {
       width: 900,
       height: 520,
+    },
+  )
+
+  expect(
+    stackSvgComparison({
+      schematicSvg,
+      blockDiagramSvg,
     }),
   ).toMatchSvgSnapshot(`${import.meta.path}-block`)
 })

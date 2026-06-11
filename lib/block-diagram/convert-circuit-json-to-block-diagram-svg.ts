@@ -126,6 +126,12 @@ export function convertCircuitJsonToBlockDiagramSvg(
     graph.connections,
     graph.blocks,
   )
+  const diagramBounds = getBlockDiagramSvgBounds(
+    graph.blocks,
+    routedConnections,
+    width,
+    height,
+  )
 
   const children: SvgObject[] = [
     {
@@ -157,10 +163,10 @@ export function convertCircuitJsonToBlockDiagramSvg(
     },
     rect({
       class: "block-diagram-background",
-      x: "0",
-      y: "0",
-      width: width.toString(),
-      height: height.toString(),
+      x: diagramBounds.minX.toString(),
+      y: diagramBounds.minY.toString(),
+      width: diagramBounds.width.toString(),
+      height: diagramBounds.height.toString(),
     }),
     ...routedConnections.map(createConnectionSvgObject),
     ...routedConnections.map((connection) =>
@@ -174,9 +180,9 @@ export function convertCircuitJsonToBlockDiagramSvg(
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
-      width: width.toString(),
-      height: height.toString(),
-      viewBox: `0 0 ${width} ${height}`,
+      width: diagramBounds.width.toString(),
+      height: diagramBounds.height.toString(),
+      viewBox: `${diagramBounds.minX} ${diagramBounds.minY} ${diagramBounds.width} ${diagramBounds.height}`,
     },
     value: "",
     children,
@@ -715,6 +721,64 @@ function createConnectionLabelSvgObject(
       ),
     ],
   )
+}
+
+function getBlockDiagramSvgBounds(
+  blocks: BlockDiagramBlock[],
+  routedConnections: RoutedBlockDiagramConnection[],
+  requestedWidth: number,
+  requestedHeight: number,
+): { minX: number; minY: number; width: number; height: number } {
+  const padding = 28
+  const points: Array<{ x: number; y: number }> = [
+    { x: 0, y: 0 },
+    { x: requestedWidth, y: requestedHeight },
+  ]
+
+  for (const block of blocks) {
+    points.push(
+      { x: block.x, y: block.y },
+      { x: block.x + block.width, y: block.y + block.height },
+    )
+  }
+
+  for (const connection of routedConnections) {
+    points.push(...connection.routePoints)
+
+    for (const jumpPoint of connection.jumpPoints) {
+      points.push(
+        { x: jumpPoint.x - 10, y: jumpPoint.y - 10 },
+        { x: jumpPoint.x + 10, y: jumpPoint.y + 10 },
+      )
+    }
+
+    if (connection.labelPosition) {
+      const labelWidth = Math.max(50, connection.label.length * 7 + 16)
+      const labelHeight = 22
+      points.push(
+        {
+          x: connection.labelPosition.x - labelWidth / 2,
+          y: connection.labelPosition.y - labelHeight / 2,
+        },
+        {
+          x: connection.labelPosition.x + labelWidth / 2,
+          y: connection.labelPosition.y + labelHeight / 2,
+        },
+      )
+    }
+  }
+
+  const minX = Math.floor(Math.min(...points.map((point) => point.x)) - padding)
+  const minY = Math.floor(Math.min(...points.map((point) => point.y)) - padding)
+  const maxX = Math.ceil(Math.max(...points.map((point) => point.x)) + padding)
+  const maxY = Math.ceil(Math.max(...points.map((point) => point.y)) + padding)
+
+  return {
+    minX,
+    minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  }
 }
 
 function getConnectionLabelPosition({
