@@ -314,6 +314,168 @@ test("one subcircuit keeps an external passive as its own block", () => {
   })
 })
 
+const sampleCircuitJson = [
+  {
+    type: "source_group",
+    source_group_id: "source_group_main",
+    name: "USB Sensor Node",
+  },
+  {
+    type: "source_component",
+    source_component_id: "source_component_usb",
+    name: "USB-C",
+    ftype: "simple_power_source",
+    source_group_id: "source_group_main",
+  },
+  {
+    type: "source_component",
+    source_component_id: "source_component_mcu",
+    name: "RP2040",
+    ftype: "simple_chip",
+    source_group_id: "source_group_main",
+  },
+  {
+    type: "source_component",
+    source_component_id: "source_component_sensor",
+    name: "IMU",
+    ftype: "simple_chip",
+    source_group_id: "source_group_main",
+  },
+  {
+    type: "source_component",
+    source_component_id: "source_component_regulator",
+    name: "3V3 Regulator",
+    ftype: "simple_power_regulator",
+    source_group_id: "source_group_main",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_usb_vbus",
+    source_component_id: "source_component_usb",
+    name: "VBUS",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_regulator_vin",
+    source_component_id: "source_component_regulator",
+    name: "VIN",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_regulator_vout",
+    source_component_id: "source_component_regulator",
+    name: "3V3",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_mcu_vdd",
+    source_component_id: "source_component_mcu",
+    name: "VDD",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_sensor_vdd",
+    source_component_id: "source_component_sensor",
+    name: "VDD",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_mcu_sda",
+    source_component_id: "source_component_mcu",
+    name: "SDA",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_sensor_sda",
+    source_component_id: "source_component_sensor",
+    name: "SDA",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_mcu_scl",
+    source_component_id: "source_component_mcu",
+    name: "SCL",
+  },
+  {
+    type: "source_port",
+    source_port_id: "source_port_sensor_scl",
+    source_component_id: "source_component_sensor",
+    name: "SCL",
+  },
+  {
+    type: "source_net",
+    source_net_id: "source_net_vbus",
+    name: "VBUS",
+  },
+  {
+    type: "source_net",
+    source_net_id: "source_net_3v3",
+    name: "3V3",
+  },
+  {
+    type: "source_net",
+    source_net_id: "source_net_i2c",
+    name: "I2C",
+  },
+  {
+    type: "source_trace",
+    source_trace_id: "source_trace_vbus",
+    connected_source_port_ids: [
+      "source_port_usb_vbus",
+      "source_port_regulator_vin",
+    ],
+    connected_source_net_ids: ["source_net_vbus"],
+    display_name: "VBUS",
+  },
+  {
+    type: "source_trace",
+    source_trace_id: "source_trace_3v3",
+    connected_source_port_ids: [
+      "source_port_regulator_vout",
+      "source_port_mcu_vdd",
+      "source_port_sensor_vdd",
+    ],
+    connected_source_net_ids: ["source_net_3v3"],
+    display_name: "3V3",
+  },
+  {
+    type: "source_trace",
+    source_trace_id: "source_trace_sda",
+    connected_source_port_ids: [
+      "source_port_mcu_sda",
+      "source_port_sensor_sda",
+    ],
+    connected_source_net_ids: ["source_net_i2c"],
+    display_name: "SDA",
+  },
+  {
+    type: "source_trace",
+    source_trace_id: "source_trace_scl",
+    connected_source_port_ids: [
+      "source_port_mcu_scl",
+      "source_port_sensor_scl",
+    ],
+    connected_source_net_ids: ["source_net_i2c"],
+    display_name: "SCL",
+  },
+] as AnyCircuitElement[]
+
+test("usb sensor node block diagram keeps power and i2c overview readable", () => {
+  expectStackedSchematicAndBlockSnapshot({
+    circuitJson: addSchematicComparisonElements(sampleCircuitJson, {
+      "USB-C": { x: -4.8, y: 1.6 },
+      "3V3 Regulator": { x: -1.6, y: 1.6 },
+      RP2040: { x: 1.5, y: 0.5 },
+      IMU: { x: 4.6, y: 0.5 },
+    }),
+    snapshotName: `${import.meta.path}-usb-sensor-node`,
+    blockDiagramOptions: {
+      width: 980,
+      height: 660,
+    },
+  })
+})
+
 function expectStackedSchematicAndBlockSnapshot({
   circuitJson,
   snapshotName,

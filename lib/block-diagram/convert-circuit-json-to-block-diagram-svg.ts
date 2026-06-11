@@ -76,14 +76,9 @@ interface BlockDiagramConnection {
 
 interface RoutedBlockDiagramConnection extends BlockDiagramConnection {
   routePoints: Array<{ x: number; y: number }>
-  jumpPoints: Array<{ x: number; y: number }>
   labelPosition?: { x: number; y: number }
-}
-
-interface ConnectionAnchor {
-  x: number
-  y: number
-  side: "left" | "right" | "top" | "bottom"
+  labelText?: string
+  arrowTarget?: "block" | "label"
 }
 
 const POWER_NET_NAMES = new Set([
@@ -153,7 +148,7 @@ export function convertCircuitJsonToBlockDiagramSvg(
             .block-diagram-primary { fill: #f8fafc; }
             .block-diagram-support { fill: #fff7ed; stroke-dasharray: 5 3; }
             .block-diagram-rail { fill: #eef6ff; }
-            .block-diagram-connection { stroke: #475569; stroke-width: 1.5; fill: none; }
+            .block-diagram-connection { stroke: #1f2937; stroke-width: 1.6; fill: none; marker-end: url(#block-diagram-arrowhead); }
             .block-diagram-label-bg { fill: #fff; stroke: #cbd5e1; stroke-width: 1; rx: 4; ry: 4; }
             .block-diagram-label { fill: #0f172a; font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; dominant-baseline: middle; }
           `,
@@ -161,6 +156,7 @@ export function convertCircuitJsonToBlockDiagramSvg(
         },
       ],
     },
+    createArrowheadMarkerSvgObject(),
     rect({
       class: "block-diagram-background",
       x: diagramBounds.minX.toString(),
@@ -276,10 +272,10 @@ function deriveBlockDiagramGraph(
   const hasSupportColumn = supportComponents.length > 0
   const primaryBlockWidth = 240
   const supportBlockWidth = 170
-  const componentColumnGap = 120
+  const componentColumnGap = 170
   const primaryX = hasSupportColumn
-    ? Math.max(250, width * 0.44 - primaryBlockWidth / 2)
-    : Math.max(320, width * 0.55 - primaryBlockWidth / 2)
+    ? Math.max(330, width * 0.44 - primaryBlockWidth / 2)
+    : Math.max(360, width * 0.55 - primaryBlockWidth / 2)
   const supportX = Math.min(
     width - supportBlockWidth - 40,
     primaryX + primaryBlockWidth + componentColumnGap,
@@ -494,9 +490,9 @@ function deriveBlockDiagramGraph(
       for (const targetBlock of targetBlocks) {
         if (componentBlock.id === targetBlock.id) continue
         addConnection(connectionMap, {
-          fromBlockId: componentBlock.id,
-          toBlockId: targetBlock.id,
-          fromSourcePortId: port.source_port_id,
+          fromBlockId: targetBlock.id,
+          toBlockId: componentBlock.id,
+          toSourcePortId: port.source_port_id,
           label,
           sourceTraceId: trace.source_trace_id,
           sourceNetIds,
@@ -520,10 +516,27 @@ function deriveBlockDiagramGraph(
       height: 80,
     })
   }
+  centerRailBlocks(blocks, height)
 
   return {
     blocks,
     connections: [...connectionMap.values()],
+  }
+}
+
+function centerRailBlocks(blocks: BlockDiagramBlock[], svgHeight: number) {
+  const railBlocks = blocks.filter((block) => block.kind === "rail")
+  if (railBlocks.length === 0) return
+
+  const railGap = 54
+  const totalRailHeight =
+    railBlocks.reduce((sum, block) => sum + block.height, 0) +
+    railGap * Math.max(0, railBlocks.length - 1)
+  let y = Math.max(40, svgHeight / 2 - totalRailHeight / 2)
+
+  for (const block of railBlocks) {
+    block.y = y
+    y += block.height + railGap
   }
 }
 
@@ -650,7 +663,7 @@ function getStackedBlockY(
   blockHeights: number[],
   svgHeight: number,
 ): number {
-  const gap = 52
+  const gap = 96
   const totalHeight =
     blockHeights.reduce((sum, blockHeight) => sum + blockHeight, 0) +
     gap * Math.max(0, blockHeights.length - 1)
@@ -668,16 +681,212 @@ function getStackedBlockY(
 function createConnectionSvgObject(
   connection: RoutedBlockDiagramConnection,
 ): SvgObject {
-  return path({
-    class: "block-diagram-connection",
-    d: pointsToPathD(connection.routePoints, connection.jumpPoints),
+  const [from, to] = connection.routePoints
+  if (!from || !to) return group({}, [])
+
+  const labelText = connection.labelText ?? connection.label
+  const labelWidth = Math.max(50, labelText.length * 7 + 16)
+  const d =
+    connection.arrowTarget === "label" && connection.routePoints.length > 2
+      ? getOverviewPolylinePathD(connection.routePoints)
+      : connection.arrowTarget === "label"
+        ? getOverviewArrowToLabelPathD(
+            from,
+            connection.labelPosition,
+            labelWidth,
+          )
+        : getOverviewArrowPathD(from, to, connection.labelPosition, labelWidth)
+  const connectionAttributes = {
     ...(connection.sourceTraceId && {
       "data-source-trace-id": connection.sourceTraceId,
     }),
     ...(connection.sourceNetIds.length > 0 && {
       "data-source-net-ids": connection.sourceNetIds.join(" "),
     }),
-  })
+  }
+
+  return group(
+    {
+      class: "block-diagram-connection-group",
+      ...connectionAttributes,
+    },
+    d
+      ? [
+          path({
+            class: "block-diagram-connection",
+            d,
+          }),
+        ]
+      : [],
+  )
+}
+
+function createArrowheadMarkerSvgObject(): SvgObject {
+  return {
+    name: "defs",
+    type: "element",
+    attributes: {},
+    value: "",
+    children: [
+      {
+        name: "marker",
+        type: "element",
+        attributes: {
+          id: "block-diagram-arrowhead",
+          markerWidth: "9",
+          markerHeight: "7",
+          refX: "8",
+          refY: "3.5",
+          orient: "auto",
+          markerUnits: "strokeWidth",
+        },
+        value: "",
+        children: [
+          path({
+            d: "M 0 0 L 9 3.5 L 0 7 Z",
+            fill: "#1f2937",
+          }),
+        ],
+      },
+    ],
+  }
+}
+
+function getOverviewPolylinePathD(points: Array<{ x: number; y: number }>) {
+  const [firstPoint, secondPoint] = points
+  if (!firstPoint || !secondPoint) return ""
+
+  const firstSegmentLength = getPointDistance(firstPoint, secondPoint)
+  if (firstSegmentLength < 1) return ""
+
+  const start = movePoint(
+    firstPoint,
+    {
+      x: (secondPoint.x - firstPoint.x) / firstSegmentLength,
+      y: (secondPoint.y - firstPoint.y) / firstSegmentLength,
+    },
+    18,
+  )
+  const pathPoints = [start, ...points.slice(1)]
+
+  return pathPoints
+    .map((point, index) =>
+      index === 0 ? `M ${point.x} ${point.y}` : `L ${point.x} ${point.y}`,
+    )
+    .join(" ")
+}
+
+function getOverviewArrowPathD(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  labelPosition: { x: number; y: number } | undefined,
+  labelWidth: number,
+): string {
+  return getOverviewArrowSegments(from, to, labelPosition, labelWidth)
+    .map(
+      (segment) =>
+        `M ${segment.from.x} ${segment.from.y} L ${segment.to.x} ${segment.to.y}`,
+    )
+    .join(" ")
+}
+
+function getOverviewArrowToLabelPathD(
+  from: { x: number; y: number },
+  labelPosition: { x: number; y: number } | undefined,
+  labelWidth: number,
+): string {
+  if (!labelPosition) return ""
+
+  const totalLength = getPointDistance(from, labelPosition)
+  if (totalLength < 1) return ""
+
+  const unit = {
+    x: (labelPosition.x - from.x) / totalLength,
+    y: (labelPosition.y - from.y) / totalLength,
+  }
+  const start = movePoint(from, unit, 18)
+  const labelSpan =
+    Math.abs(unit.x) >= Math.abs(unit.y) ? labelWidth / 2 + 8 : 19
+  const end = movePoint(labelPosition, unit, -labelSpan)
+
+  if (getPointDistance(start, end) < 18) return ""
+
+  return `M ${start.x} ${start.y} L ${end.x} ${end.y}`
+}
+
+function getOverviewArrowSegments(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  labelPosition: { x: number; y: number } | undefined,
+  labelWidth: number,
+): Array<{
+  from: { x: number; y: number }
+  to: { x: number; y: number }
+}> {
+  const totalLength = getPointDistance(from, to)
+  if (totalLength < 1) return []
+
+  const blockGap = 18
+  const labelGap = 8
+  const horizontal = Math.abs(to.x - from.x) >= Math.abs(to.y - from.y)
+  const labelSpan = horizontal ? labelWidth : 22
+  const unit = {
+    x: (to.x - from.x) / totalLength,
+    y: (to.y - from.y) / totalLength,
+  }
+  const start = movePoint(from, unit, blockGap)
+  const end = movePoint(to, unit, -blockGap)
+  const usableLength = getPointDistance(start, end)
+  if (usableLength <= 10) return []
+
+  if (!labelPosition) {
+    return [{ from: start, to: end }]
+  }
+
+  const labelCenterDistance =
+    (labelPosition.x - from.x) * unit.x + (labelPosition.y - from.y) * unit.y
+  const labelHalfWidth = labelSpan / 2
+  const labelStartDistance = Math.max(
+    blockGap,
+    labelCenterDistance - labelHalfWidth - labelGap,
+  )
+  const labelEndDistance = Math.min(
+    totalLength - blockGap,
+    labelCenterDistance + labelHalfWidth + labelGap,
+  )
+  const labelStart = movePoint(from, unit, labelStartDistance)
+  const labelEnd = movePoint(from, unit, labelEndDistance)
+  const segments: Array<{
+    from: { x: number; y: number }
+    to: { x: number; y: number }
+  }> = []
+
+  if (getPointDistance(start, labelStart) >= 22) {
+    segments.push({ from: start, to: labelStart })
+  }
+  if (getPointDistance(labelEnd, end) >= 22) {
+    segments.push({ from: labelEnd, to: end })
+  }
+
+  return segments.length > 0 ? segments : [{ from: start, to: end }]
+}
+
+function movePoint(
+  point: { x: number; y: number },
+  unit: { x: number; y: number },
+  distance: number,
+): { x: number; y: number } {
+  return {
+    x: point.x + unit.x * distance,
+    y: point.y + unit.y * distance,
+  }
+}
+
+function getPointDistance(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+): number {
+  return Math.hypot(to.x - from.x, to.y - from.y)
 }
 
 function createConnectionLabelSvgObject(
@@ -690,7 +899,8 @@ function createConnectionLabelSvgObject(
   const toBlock = blocks.find((block) => block.id === connection.toBlockId)
   if (!fromBlock || !toBlock) return group({}, [])
 
-  const labelWidth = Math.max(50, connection.label.length * 7 + 16)
+  const labelText = connection.labelText ?? connection.label
+  const labelWidth = Math.max(50, labelText.length * 7 + 16)
   const labelHeight = 22
 
   return group(
@@ -717,7 +927,7 @@ function createConnectionLabelSvgObject(
           x: connection.labelPosition.x.toString(),
           y: connection.labelPosition.y.toString(),
         },
-        connection.label,
+        labelText,
       ),
     ],
   )
@@ -745,15 +955,9 @@ function getBlockDiagramSvgBounds(
   for (const connection of routedConnections) {
     points.push(...connection.routePoints)
 
-    for (const jumpPoint of connection.jumpPoints) {
-      points.push(
-        { x: jumpPoint.x - 10, y: jumpPoint.y - 10 },
-        { x: jumpPoint.x + 10, y: jumpPoint.y + 10 },
-      )
-    }
-
     if (connection.labelPosition) {
-      const labelWidth = Math.max(50, connection.label.length * 7 + 16)
+      const labelText = connection.labelText ?? connection.label
+      const labelWidth = Math.max(50, labelText.length * 7 + 16)
       const labelHeight = 22
       points.push(
         {
@@ -781,57 +985,18 @@ function getBlockDiagramSvgBounds(
   }
 }
 
-function getConnectionLabelPosition({
-  x,
-  y,
-  labelWidth,
-  labelHeight,
-  blocks,
-}: {
-  x: number
-  y: number
-  labelWidth: number
-  labelHeight: number
-  blocks: BlockDiagramBlock[]
-}): { x: number; y: number } {
-  const midpoint = { x, y }
-  const rectFor = (point: { x: number; y: number }) => ({
-    x: point.x - labelWidth / 2,
-    y: point.y - labelHeight / 2,
-    width: labelWidth,
-    height: labelHeight,
-  })
-
-  if (!blocks.some((block) => rectsOverlap(rectFor(midpoint), block))) {
-    return midpoint
-  }
-
-  const offsets = [
-    { x: 0, y: 24 },
-    { x: 0, y: -24 },
-    { x: 36, y: 0 },
-    { x: -36, y: 0 },
-  ]
-
-  for (const offset of offsets) {
-    const point = {
-      x: midpoint.x + offset.x,
-      y: midpoint.y + offset.y,
-    }
-    if (!blocks.some((block) => rectsOverlap(rectFor(point), block))) {
-      return point
-    }
-  }
-
-  return midpoint
-}
-
 function createRoutedConnections(
   connections: BlockDiagramConnection[],
   blocks: BlockDiagramBlock[],
 ): RoutedBlockDiagramConnection[] {
   const routedConnections: RoutedBlockDiagramConnection[] = []
   const laneOffsets = getParallelRouteLaneOffsets(connections, blocks)
+  const labelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }> = []
 
   for (const connection of connections) {
     const fromBlock = blocks.find(
@@ -843,153 +1008,636 @@ function createRoutedConnections(
       ...connection,
       routeLaneOffset: laneOffsets.get(connection) ?? 0,
     }
-
-    routedConnections.push({
-      ...connectionWithLane,
-      routePoints: getConnectionRoutePoints(
-        fromBlock,
-        toBlock,
-        connectionWithLane,
-        blocks,
-      ),
-      jumpPoints: [],
-    })
-  }
-
-  for (let i = 0; i < routedConnections.length; i++) {
-    for (let j = i + 1; j < routedConnections.length; j++) {
-      const a = routedConnections[i]
-      const b = routedConnections[j]
-      if (!a || !b) continue
-      if (canShareCrossingWithoutJump(a, b)) continue
-
-      const crossings = getRouteCrossings(a.routePoints, b.routePoints)
-      for (const crossing of crossings) {
-        if (crossing.horizontalRoute === "a") {
-          a.jumpPoints.push(crossing.point)
-        } else {
-          b.jumpPoints.push(crossing.point)
-        }
-      }
-    }
-  }
-
-  for (const connection of routedConnections) {
-    connection.jumpPoints = uniquePoints(connection.jumpPoints)
-  }
-
-  const allJumpPoints = routedConnections.flatMap(
-    (connection) => connection.jumpPoints,
-  )
-  const occupiedLabelRects: Array<{
-    x: number
-    y: number
-    width: number
-    height: number
-  }> = []
-  const labeledPowerNets = new Set<string>()
-  const labeledSourceTraces = new Set<string>()
-
-  for (const connection of routedConnections) {
-    const powerNetLabel = isPowerNetName(connection.label)
-      ? normalizeNetName(connection.label)
-      : undefined
-    if (powerNetLabel && labeledPowerNets.has(powerNetLabel)) continue
-    if (
-      connection.sourceTraceId &&
-      labeledSourceTraces.has(connection.sourceTraceId)
+    const routePoints = getOverviewArrowPoints(
+      fromBlock,
+      toBlock,
+      connectionWithLane,
     )
-      continue
-
-    const labelWidth = Math.max(50, connection.label.length * 7 + 16)
+    let arrowTarget: "block" | "label" = shouldPointToLabel(
+      routePoints,
+      fromBlock,
+      toBlock,
+      blocks,
+    )
+      ? "label"
+      : "block"
+    let labelText = arrowTarget === "label" ? toBlock.title : connection.label
+    const labelWidth = Math.max(50, labelText.length * 7 + 16)
     const labelHeight = 22
-    const fromBlock = blocks.find(
-      (block) => block.id === connection.fromBlockId,
-    )
-    const toBlock = blocks.find((block) => block.id === connection.toBlockId)
-    const otherRouteRects = routedConnections
-      .filter((otherConnection) => otherConnection !== connection)
-      .filter(
-        (otherConnection) =>
-          !canSharePowerLabelTrunk(connection, otherConnection),
+    const elbowRoute =
+      arrowTarget === "label" && isHorizontalRoute(routePoints)
+        ? getElbowLabelRoute(
+            fromBlock,
+            toBlock,
+            connectionWithLane.routeLaneOffset ?? 0,
+            labelWidth,
+            labelHeight,
+            labelRects,
+            blocks,
+          )
+        : undefined
+    const finalRoutePoints = elbowRoute?.routePoints ?? routePoints
+    const labelPosition =
+      elbowRoute?.labelPosition ??
+      getOverviewArrowLabelPosition(
+        routePoints,
+        connectionWithLane.routeLaneOffset ?? 0,
+        labelWidth,
+        labelHeight,
+        labelRects,
+        arrowTarget,
       )
-      .flatMap((otherConnection) =>
-        getRouteAvoidRects(otherConnection.routePoints),
-      )
-    const avoidRects = [
-      ...(fromBlock ? [fromBlock] : []),
-      ...(toBlock ? [toBlock] : []),
-      ...otherRouteRects,
-      ...allJumpPoints.map((point) => ({
-        x: point.x - 14,
-        y: point.y - 14,
-        width: 28,
-        height: 28,
-      })),
-      ...occupiedLabelRects,
-    ]
 
-    connection.labelPosition = getRouteLabelPoint(
-      connection.routePoints,
-      allJumpPoints,
-      labelWidth,
-      labelHeight,
-      avoidRects,
-    )
-    if (!connection.labelPosition) continue
+    if (elbowRoute) {
+      arrowTarget = "label"
+      labelText = toBlock.title
+    }
 
-    occupiedLabelRects.push({
-      x: connection.labelPosition.x - labelWidth / 2,
-      y: connection.labelPosition.y - labelHeight / 2,
+    labelRects.push({
+      x: labelPosition.x - labelWidth / 2,
+      y: labelPosition.y - labelHeight / 2,
       width: labelWidth,
       height: labelHeight,
     })
-    if (powerNetLabel) labeledPowerNets.add(powerNetLabel)
-    if (connection.sourceTraceId) {
-      labeledSourceTraces.add(connection.sourceTraceId)
-    }
+
+    routedConnections.push({
+      ...connectionWithLane,
+      routePoints: finalRoutePoints,
+      labelPosition,
+      labelText,
+      arrowTarget,
+    })
   }
 
   return routedConnections
 }
 
-function canSharePowerLabelTrunk(
-  connection: RoutedBlockDiagramConnection,
-  otherConnection: RoutedBlockDiagramConnection,
-): boolean {
-  if (
-    !isPowerNetName(connection.label) ||
-    !isPowerNetName(otherConnection.label)
-  )
-    return false
-
-  const sameNormalizedLabel =
-    normalizeNetName(connection.label) ===
-    normalizeNetName(otherConnection.label)
-  const sameSourceNet = connection.sourceNetIds.some((sourceNetId) =>
-    otherConnection.sourceNetIds.includes(sourceNetId),
-  )
-
-  return sameNormalizedLabel || sameSourceNet
+function isHorizontalRoute(points: Array<{ x: number; y: number }>): boolean {
+  const [from, to] = points
+  if (!from || !to) return false
+  return Math.abs(to.x - from.x) >= Math.abs(to.y - from.y)
 }
 
-function canShareCrossingWithoutJump(
-  connection: RoutedBlockDiagramConnection,
-  otherConnection: RoutedBlockDiagramConnection,
-): boolean {
-  const sameSourceTrace =
-    connection.sourceTraceId &&
-    connection.sourceTraceId === otherConnection.sourceTraceId
-  const sameSourceNet = connection.sourceNetIds.some((sourceNetId) =>
-    otherConnection.sourceNetIds.includes(sourceNetId),
+function getElbowLabelRoute(
+  fromBlock: BlockDiagramBlock,
+  toBlock: BlockDiagramBlock,
+  laneOffset: number,
+  labelWidth: number,
+  labelHeight: number,
+  occupiedLabelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }>,
+  blocks: BlockDiagramBlock[],
+): {
+  routePoints: Array<{ x: number; y: number }>
+  labelPosition: { x: number; y: number }
+} {
+  const fromCenter = getBlockCenter(fromBlock)
+  const toCenter = getBlockCenter(toBlock)
+  const destinationIsRight = toCenter.x >= fromCenter.x
+  const laneSpacing = 64 + Math.abs(laneOffset) * 0.25
+  const routeCandidates = getCompactElbowRouteYs(
+    fromBlock,
+    toBlock,
+    laneSpacing,
+    blocks,
+  ).map((routeY) =>
+    getElbowLabelRouteCandidate({
+      fromBlock,
+      toBlock,
+      routeY,
+      destinationIsRight,
+      labelWidth,
+      labelHeight,
+      occupiedLabelRects,
+      blocks,
+    }),
   )
-  const samePowerLabel =
-    isPowerNetName(connection.label) &&
-    isPowerNetName(otherConnection.label) &&
-    normalizeNetName(connection.label) ===
-      normalizeNetName(otherConnection.label)
+  const preferredRouteAbove =
+    toCenter.y < fromCenter.y ||
+    (Math.abs(toCenter.y - fromCenter.y) < 1 && laneOffset <= 0)
 
-  return Boolean(sameSourceTrace || sameSourceNet || samePowerLabel)
+  return routeCandidates.sort((a, b) => {
+    if (a.blockIntersections !== b.blockIntersections) {
+      return a.blockIntersections - b.blockIntersections
+    }
+    if (a.crowdingScore !== b.crowdingScore) {
+      return a.crowdingScore - b.crowdingScore
+    }
+    if (a.routeAbove !== b.routeAbove) {
+      if (a.routeAbove === preferredRouteAbove) return -1
+      if (b.routeAbove === preferredRouteAbove) return 1
+    }
+    return a.routeLength - b.routeLength
+  })[0]!
+}
+
+function getCompactElbowRouteYs(
+  fromBlock: BlockDiagramBlock,
+  toBlock: BlockDiagramBlock,
+  laneSpacing: number,
+  blocks: BlockDiagramBlock[],
+): number[] {
+  const yCandidates = [
+    Math.min(fromBlock.y, toBlock.y) - laneSpacing,
+    Math.min(fromBlock.y, toBlock.y) - laneSpacing * 1.65,
+    Math.max(fromBlock.y + fromBlock.height, toBlock.y + toBlock.height) +
+      laneSpacing,
+    Math.max(fromBlock.y + fromBlock.height, toBlock.y + toBlock.height) +
+      laneSpacing * 1.65,
+    fromBlock.y - laneSpacing,
+    fromBlock.y - laneSpacing * 1.65,
+    fromBlock.y + fromBlock.height + laneSpacing,
+    fromBlock.y + fromBlock.height + laneSpacing * 1.65,
+    toBlock.y - laneSpacing,
+    toBlock.y - laneSpacing * 1.65,
+    toBlock.y + toBlock.height + laneSpacing,
+    toBlock.y + toBlock.height + laneSpacing * 1.65,
+    Math.min(...blocks.map((block) => block.y)) - laneSpacing,
+    Math.min(...blocks.map((block) => block.y)) - laneSpacing * 1.65,
+    Math.max(...blocks.map((block) => block.y + block.height)) + laneSpacing,
+    Math.max(...blocks.map((block) => block.y + block.height)) +
+      laneSpacing * 1.65,
+  ]
+
+  return unique(yCandidates.map((y) => Math.round(y * 100) / 100))
+}
+
+function getElbowLabelRouteCandidate({
+  fromBlock,
+  toBlock,
+  routeY,
+  destinationIsRight,
+  labelWidth,
+  labelHeight,
+  occupiedLabelRects,
+  blocks,
+}: {
+  fromBlock: BlockDiagramBlock
+  toBlock: BlockDiagramBlock
+  routeY: number
+  destinationIsRight: boolean
+  labelWidth: number
+  labelHeight: number
+  occupiedLabelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }>
+  blocks: BlockDiagramBlock[]
+}): {
+  routeAbove: boolean
+  routePoints: Array<{ x: number; y: number }>
+  labelPosition: { x: number; y: number }
+  blockIntersections: number
+  crowdingScore: number
+  routeLength: number
+} {
+  const fromCenter = getBlockCenter(fromBlock)
+  const routeAbove = routeY < fromCenter.y
+  const fromPoint = {
+    x: fromCenter.x,
+    y: routeAbove ? fromBlock.y : fromBlock.y + fromBlock.height,
+  }
+  const minimumTurnDistance = 58
+  const adjustedRouteY = routeAbove
+    ? Math.min(routeY, fromPoint.y - minimumTurnDistance)
+    : Math.max(routeY, fromPoint.y + minimumTurnDistance)
+  const elbowLeadPoint = {
+    x: fromPoint.x,
+    y: fromPoint.y + (routeAbove ? -34 : 34),
+  }
+  const preferredLabelX = destinationIsRight
+    ? fromPoint.x + labelWidth / 2 + 92
+    : fromPoint.x - labelWidth / 2 - 92
+  const labelPosition = getClearLabelPosition(
+    { x: preferredLabelX, y: adjustedRouteY },
+    labelWidth,
+    labelHeight,
+    occupiedLabelRects,
+    destinationIsRight ? 1 : -1,
+  )
+  const labelEdgeX = destinationIsRight
+    ? labelPosition.x - labelWidth / 2 - 8
+    : labelPosition.x + labelWidth / 2 + 8
+  const routePoints = [
+    fromPoint,
+    elbowLeadPoint,
+    { x: elbowLeadPoint.x, y: adjustedRouteY },
+    { x: labelEdgeX, y: adjustedRouteY },
+  ]
+
+  return {
+    routeAbove,
+    routePoints,
+    labelPosition,
+    blockIntersections: countRouteBlockIntersections(
+      routePoints,
+      blocks.filter((block) => block !== fromBlock),
+      16,
+    ),
+    crowdingScore: getRouteCrowdingScore({
+      routePoints,
+      labelPosition,
+      labelWidth,
+      labelHeight,
+      blocks: blocks.filter((block) => block !== fromBlock),
+      occupiedLabelRects,
+    }),
+    routeLength: getPolylineLength(routePoints),
+  }
+}
+
+function getPolylineLength(points: Array<{ x: number; y: number }>): number {
+  let length = 0
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const from = points[i]
+    const to = points[i + 1]
+    if (!from || !to) continue
+    length += getPointDistance(from, to)
+  }
+
+  return length
+}
+
+function countRouteBlockIntersections(
+  routePoints: Array<{ x: number; y: number }>,
+  blocks: BlockDiagramBlock[],
+  padding: number,
+): number {
+  let intersections = 0
+
+  for (let i = 0; i < routePoints.length - 1; i++) {
+    const from = routePoints[i]
+    const to = routePoints[i + 1]
+    if (!from || !to) continue
+
+    intersections += blocks.filter((block) =>
+      segmentIntersectsBlock(from, to, block, padding),
+    ).length
+  }
+
+  return intersections
+}
+
+function getRouteCrowdingScore({
+  routePoints,
+  labelPosition,
+  labelWidth,
+  labelHeight,
+  blocks,
+  occupiedLabelRects,
+}: {
+  routePoints: Array<{ x: number; y: number }>
+  labelPosition: { x: number; y: number }
+  labelWidth: number
+  labelHeight: number
+  blocks: BlockDiagramBlock[]
+  occupiedLabelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }>
+}): number {
+  const labelRect = {
+    x: labelPosition.x - labelWidth / 2,
+    y: labelPosition.y - labelHeight / 2,
+    width: labelWidth,
+    height: labelHeight,
+  }
+  let score = countRouteBlockIntersections(routePoints, blocks, 28) * 10
+
+  score += blocks.filter((block) =>
+    rectsOverlap(labelRect, {
+      x: block.x - 10,
+      y: block.y - 10,
+      width: block.width + 20,
+      height: block.height + 20,
+    }),
+  ).length
+  score +=
+    occupiedLabelRects.filter((rect) => rectsOverlap(labelRect, rect)).length *
+    4
+
+  return score
+}
+
+function getClearLabelPosition(
+  preferredPosition: { x: number; y: number },
+  labelWidth: number,
+  labelHeight: number,
+  occupiedLabelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }>,
+  horizontalDirection: -1 | 1,
+): { x: number; y: number } {
+  const offsets = [0, 34, -34, 68, -68, 102, -102]
+
+  for (const offset of offsets) {
+    const candidate = {
+      x: preferredPosition.x + offset * horizontalDirection,
+      y: preferredPosition.y,
+    }
+    const candidateRect = {
+      x: candidate.x - labelWidth / 2,
+      y: candidate.y - labelHeight / 2,
+      width: labelWidth,
+      height: labelHeight,
+    }
+
+    if (!occupiedLabelRects.some((rect) => rectsOverlap(candidateRect, rect))) {
+      return candidate
+    }
+  }
+
+  return {
+    x: preferredPosition.x + 136 * horizontalDirection,
+    y: preferredPosition.y,
+  }
+}
+
+function getOverviewArrowPoints(
+  fromBlock: BlockDiagramBlock,
+  toBlock: BlockDiagramBlock,
+  connection: BlockDiagramConnection,
+): Array<{ x: number; y: number }> {
+  const fromCenter = getBlockCenter(fromBlock)
+  const toCenter = getBlockCenter(toBlock)
+  const horizontal =
+    Math.abs(toCenter.x - fromCenter.x) >= Math.abs(toCenter.y - fromCenter.y)
+  const laneOffset = connection.routeLaneOffset ?? 0
+
+  if (horizontal) {
+    const fromIsLeft = fromCenter.x <= toCenter.x
+    const y = getSharedSideLanePosition(
+      {
+        min: fromBlock.y,
+        max: fromBlock.y + fromBlock.height,
+      },
+      {
+        min: toBlock.y,
+        max: toBlock.y + toBlock.height,
+      },
+      fromCenter.y + (toCenter.y - fromCenter.y) / 2,
+      laneOffset,
+    )
+    return [
+      {
+        x: fromIsLeft ? fromBlock.x + fromBlock.width : fromBlock.x,
+        y,
+      },
+      {
+        x: fromIsLeft ? toBlock.x : toBlock.x + toBlock.width,
+        y,
+      },
+    ]
+  }
+
+  const fromIsAbove = fromCenter.y <= toCenter.y
+  const x = getSharedSideLanePosition(
+    {
+      min: fromBlock.x,
+      max: fromBlock.x + fromBlock.width,
+    },
+    {
+      min: toBlock.x,
+      max: toBlock.x + toBlock.width,
+    },
+    fromCenter.x + (toCenter.x - fromCenter.x) / 2,
+    laneOffset,
+  )
+  return [
+    {
+      x,
+      y: fromIsAbove ? fromBlock.y + fromBlock.height : fromBlock.y,
+    },
+    {
+      x,
+      y: fromIsAbove ? toBlock.y : toBlock.y + toBlock.height,
+    },
+  ]
+}
+
+function getSharedSideLanePosition(
+  fromSpan: { min: number; max: number },
+  toSpan: { min: number; max: number },
+  fallbackPosition: number,
+  laneOffset: number,
+): number {
+  const sidePadding = 18
+  const overlapMin = Math.max(fromSpan.min, toSpan.min) + sidePadding
+  const overlapMax = Math.min(fromSpan.max, toSpan.max) - sidePadding
+  const unclampedPosition =
+    overlapMin <= overlapMax
+      ? overlapMin + (overlapMax - overlapMin) / 2 + laneOffset
+      : fallbackPosition + laneOffset
+
+  return overlapMin <= overlapMax
+    ? clamp(unclampedPosition, overlapMin, overlapMax)
+    : unclampedPosition
+}
+
+function shouldPointToLabel(
+  points: Array<{ x: number; y: number }>,
+  fromBlock: BlockDiagramBlock,
+  toBlock: BlockDiagramBlock,
+  blocks: BlockDiagramBlock[],
+): boolean {
+  const [from, to] = points
+  if (!from || !to) return false
+
+  const routeLength = getPointDistance(from, to)
+  if (routeLength > 360) return true
+  if (!routeEndpointsAreOnBlockSides(from, to, fromBlock, toBlock)) return true
+
+  return blocks
+    .filter((block) => block !== fromBlock && block !== toBlock)
+    .some((block) => segmentIntersectsBlock(from, to, block, 10))
+}
+
+function routeEndpointsAreOnBlockSides(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  fromBlock: BlockDiagramBlock,
+  toBlock: BlockDiagramBlock,
+): boolean {
+  const tolerance = 0.001
+
+  if (Math.abs(from.y - to.y) < tolerance) {
+    return (
+      pointYIsInsideBlock(from.y, fromBlock) &&
+      pointYIsInsideBlock(to.y, toBlock)
+    )
+  }
+
+  if (Math.abs(from.x - to.x) < tolerance) {
+    return (
+      pointXIsInsideBlock(from.x, fromBlock) &&
+      pointXIsInsideBlock(to.x, toBlock)
+    )
+  }
+
+  return false
+}
+
+function pointYIsInsideBlock(y: number, block: BlockDiagramBlock): boolean {
+  return y >= block.y && y <= block.y + block.height
+}
+
+function pointXIsInsideBlock(x: number, block: BlockDiagramBlock): boolean {
+  return x >= block.x && x <= block.x + block.width
+}
+
+function segmentIntersectsBlock(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  block: BlockDiagramBlock,
+  padding: number,
+): boolean {
+  const rect = {
+    x: block.x - padding,
+    y: block.y - padding,
+    width: block.width + padding * 2,
+    height: block.height + padding * 2,
+  }
+
+  if (Math.abs(from.y - to.y) < 0.001) {
+    const minX = Math.min(from.x, to.x)
+    const maxX = Math.max(from.x, to.x)
+    return (
+      from.y >= rect.y &&
+      from.y <= rect.y + rect.height &&
+      maxX >= rect.x &&
+      minX <= rect.x + rect.width
+    )
+  }
+
+  if (Math.abs(from.x - to.x) < 0.001) {
+    const minY = Math.min(from.y, to.y)
+    const maxY = Math.max(from.y, to.y)
+    return (
+      from.x >= rect.x &&
+      from.x <= rect.x + rect.width &&
+      maxY >= rect.y &&
+      minY <= rect.y + rect.height
+    )
+  }
+
+  return false
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value))
+}
+
+function getOverviewArrowLabelPosition(
+  points: Array<{ x: number; y: number }>,
+  laneOffset: number,
+  labelWidth: number,
+  labelHeight: number,
+  occupiedLabelRects: Array<{
+    x: number
+    y: number
+    width: number
+    height: number
+  }>,
+  arrowTarget: "block" | "label",
+): { x: number; y: number } {
+  const [from, to] = points
+  if (!from || !to) return { x: 0, y: 0 }
+
+  const midpoint = {
+    x: from.x + (to.x - from.x) / 2,
+    y: from.y + (to.y - from.y) / 2,
+  }
+  const horizontal = Math.abs(to.x - from.x) >= Math.abs(to.y - from.y)
+  const routeLength = getPointDistance(from, to)
+  const shortRoute = routeLength < labelWidth + 96 || arrowTarget === "label"
+  const unit =
+    routeLength > 0
+      ? {
+          x: (to.x - from.x) / routeLength,
+          y: (to.y - from.y) / routeLength,
+        }
+      : { x: 1, y: 0 }
+  const labelAnchor = shortRoute
+    ? {
+        x: from.x + unit.x * Math.min(routeLength * 0.45, labelWidth / 2 + 64),
+        y: from.y + unit.y * Math.min(routeLength * 0.45, labelHeight / 2 + 64),
+      }
+    : midpoint
+  const offsets =
+    arrowTarget === "label"
+      ? [0, 82, 164, -82, -164]
+      : horizontal
+        ? [0, -24, 24, -44, 44]
+        : [0, -30, 30, -54, 54]
+
+  for (const offset of offsets) {
+    const candidate =
+      arrowTarget === "label"
+        ? horizontal
+          ? { x: labelAnchor.x + offset, y: labelAnchor.y }
+          : { x: labelAnchor.x, y: labelAnchor.y + offset }
+        : horizontal
+          ? { x: labelAnchor.x, y: labelAnchor.y + offset }
+          : { x: labelAnchor.x, y: labelAnchor.y + offset }
+    const candidateRect = {
+      x: candidate.x - labelWidth / 2,
+      y: candidate.y - labelHeight / 2,
+      width: labelWidth,
+      height: labelHeight,
+    }
+    if (!occupiedLabelRects.some((rect) => rectsOverlap(candidateRect, rect))) {
+      return candidate
+    }
+  }
+
+  return horizontal
+    ? {
+        x:
+          labelAnchor.x +
+          (arrowTarget === "label" ? Math.sign(laneOffset || 1) * 220 : 0),
+        y:
+          labelAnchor.y +
+          (arrowTarget === "label" ? 0 : Math.sign(laneOffset || 1) * 64),
+      }
+    : {
+        x: labelAnchor.x,
+        y:
+          labelAnchor.y +
+          (arrowTarget === "label"
+            ? Math.sign(laneOffset || 1) * 220
+            : Math.sign(laneOffset || 1) * 80),
+      }
+}
+
+function getBlockCenter(block: BlockDiagramBlock): { x: number; y: number } {
+  return {
+    x: block.x + block.width / 2,
+    y: block.y + block.height / 2,
+  }
+}
+
+function rectsOverlap(
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+): boolean {
+  return (
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y
+  )
 }
 
 function getParallelRouteLaneOffsets(
@@ -1031,7 +1679,7 @@ function getParallelRouteLaneOffsets(
   }
 
   const laneOffsets = new Map<BlockDiagramConnection, number>()
-  const nonRailLaneStep = 42
+  const nonRailLaneStep = 96
   for (const pairConnections of nonRailConnectionsByBlockPair.values()) {
     const labels = [
       ...new Set(
@@ -1066,908 +1714,6 @@ function getParallelRouteLaneOffsets(
   }
 
   return laneOffsets
-}
-
-function getRouteAvoidRects(points: Array<{ x: number; y: number }>): Array<{
-  x: number
-  y: number
-  width: number
-  height: number
-}> {
-  const routeClearance = 10
-  const cornerClearance = 16
-
-  return [
-    ...getRouteSegments(points)
-      .filter((segment) => segment.orientation !== "other")
-      .map((segment) => {
-        const minX = Math.min(segment.start.x, segment.end.x)
-        const maxX = Math.max(segment.start.x, segment.end.x)
-        const minY = Math.min(segment.start.y, segment.end.y)
-        const maxY = Math.max(segment.start.y, segment.end.y)
-
-        return {
-          x: minX - routeClearance,
-          y: minY - routeClearance,
-          width: maxX - minX + routeClearance * 2,
-          height: maxY - minY + routeClearance * 2,
-        }
-      }),
-    ...points.slice(1, -1).map((point) => ({
-      x: point.x - cornerClearance,
-      y: point.y - cornerClearance,
-      width: cornerClearance * 2,
-      height: cornerClearance * 2,
-    })),
-  ]
-}
-
-function getRouteCrossings(
-  a: Array<{ x: number; y: number }>,
-  b: Array<{ x: number; y: number }>,
-): Array<{
-  point: { x: number; y: number }
-  horizontalRoute: "a" | "b"
-}> {
-  const crossings: Array<{
-    point: { x: number; y: number }
-    horizontalRoute: "a" | "b"
-  }> = []
-
-  for (const aSegment of getRouteSegments(a)) {
-    for (const bSegment of getRouteSegments(b)) {
-      const crossing = getOrthogonalCrossing(aSegment, bSegment)
-      if (crossing) crossings.push(crossing)
-    }
-  }
-
-  return crossings
-}
-
-function getRouteSegments(points: Array<{ x: number; y: number }>): Array<{
-  start: { x: number; y: number }
-  end: { x: number; y: number }
-  orientation: "horizontal" | "vertical" | "other"
-}> {
-  return points.slice(1).map((point, index) => {
-    const start = points[index]!
-    const orientation =
-      start.y === point.y
-        ? "horizontal"
-        : start.x === point.x
-          ? "vertical"
-          : "other"
-
-    return { start, end: point, orientation }
-  })
-}
-
-function getOrthogonalCrossing(
-  a: {
-    start: { x: number; y: number }
-    end: { x: number; y: number }
-    orientation: "horizontal" | "vertical" | "other"
-  },
-  b: {
-    start: { x: number; y: number }
-    end: { x: number; y: number }
-    orientation: "horizontal" | "vertical" | "other"
-  },
-): { point: { x: number; y: number }; horizontalRoute: "a" | "b" } | undefined {
-  if (a.orientation === "other" || b.orientation === "other") return undefined
-  if (a.orientation === b.orientation) return undefined
-
-  const horizontal = a.orientation === "horizontal" ? a : b
-  const vertical = a.orientation === "vertical" ? a : b
-  const x = vertical.start.x
-  const y = horizontal.start.y
-  const padding = 8
-
-  const hMin = Math.min(horizontal.start.x, horizontal.end.x) + padding
-  const hMax = Math.max(horizontal.start.x, horizontal.end.x) - padding
-  const vMin = Math.min(vertical.start.y, vertical.end.y) + padding
-  const vMax = Math.max(vertical.start.y, vertical.end.y) - padding
-
-  if (x <= hMin || x >= hMax || y <= vMin || y >= vMax) return undefined
-
-  return {
-    point: { x, y },
-    horizontalRoute: a.orientation === "horizontal" ? "a" : "b",
-  }
-}
-
-function rectsOverlap(
-  a: { x: number; y: number; width: number; height: number },
-  b: { x: number; y: number; width: number; height: number },
-): boolean {
-  return (
-    a.x < b.x + b.width &&
-    a.x + a.width > b.x &&
-    a.y < b.y + b.height &&
-    a.y + a.height > b.y
-  )
-}
-
-function getConnectionEndpoints(
-  fromBlock: BlockDiagramBlock,
-  toBlock: BlockDiagramBlock,
-  connection: BlockDiagramConnection,
-): { x1: number; y1: number; x2: number; y2: number } {
-  const fromPortAnchor = getPortAnchor(fromBlock, connection.fromSourcePortId)
-  const toPortAnchor = getPortAnchor(toBlock, connection.toSourcePortId)
-  const fromCenterX = fromBlock.x + fromBlock.width / 2
-  const fromCenterY = fromBlock.y + fromBlock.height / 2
-  const toCenterX = toBlock.x + toBlock.width / 2
-  const toCenterY = toBlock.y + toBlock.height / 2
-  const horizontal =
-    Math.abs(toCenterX - fromCenterX) >= Math.abs(toCenterY - fromCenterY)
-
-  if (horizontal) {
-    const x1 =
-      fromPortAnchor?.x ??
-      (toCenterX > fromCenterX ? fromBlock.x + fromBlock.width : fromBlock.x)
-    const x2 =
-      toPortAnchor?.x ??
-      (toCenterX > fromCenterX ? toBlock.x : toBlock.x + toBlock.width)
-
-    return {
-      x1,
-      y1: fromPortAnchor?.y ?? fromCenterY,
-      x2,
-      y2: toPortAnchor?.y ?? toCenterY,
-    }
-  }
-
-  return {
-    x1: fromPortAnchor?.x ?? fromCenterX,
-    y1:
-      fromPortAnchor?.y ??
-      (toCenterY > fromCenterY ? fromBlock.y + fromBlock.height : fromBlock.y),
-    x2: toPortAnchor?.x ?? toCenterX,
-    y2:
-      toPortAnchor?.y ??
-      (toCenterY > fromCenterY ? toBlock.y : toBlock.y + toBlock.height),
-  }
-}
-
-function getPortAnchor(
-  block: BlockDiagramBlock,
-  sourcePortId: string | undefined,
-): ConnectionAnchor | undefined {
-  if (!sourcePortId) return undefined
-
-  const portIndex = block.ports.findIndex(
-    (port) => port.sourcePortId === sourcePortId,
-  )
-  if (portIndex === -1) return undefined
-
-  const leftColumn = portIndex < Math.ceil(block.ports.length / 2)
-  const columnIndex = leftColumn
-    ? portIndex
-    : portIndex - Math.ceil(block.ports.length / 2)
-
-  return {
-    x: leftColumn ? block.x : block.x + block.width,
-    y: block.y + 58 + columnIndex * 15,
-    side: leftColumn ? "left" : "right",
-  }
-}
-
-function getConnectionAnchor(
-  block: BlockDiagramBlock,
-  targetBlock: BlockDiagramBlock,
-  sourcePortId: string | undefined,
-): ConnectionAnchor {
-  const portAnchor = getPortAnchor(block, sourcePortId)
-  if (portAnchor) return portAnchor
-
-  if (block.kind === "rail") {
-    return {
-      x: block.x + block.width,
-      y: block.y + block.height / 2,
-      side: "right",
-    }
-  }
-
-  const blockCenterX = block.x + block.width / 2
-  const blockCenterY = block.y + block.height / 2
-  const targetCenterX = targetBlock.x + targetBlock.width / 2
-  const targetCenterY = targetBlock.y + targetBlock.height / 2
-  const horizontal =
-    Math.abs(targetCenterX - blockCenterX) >=
-    Math.abs(targetCenterY - blockCenterY)
-
-  if (horizontal) {
-    return {
-      x: targetCenterX > blockCenterX ? block.x + block.width : block.x,
-      y: blockCenterY,
-      side: targetCenterX > blockCenterX ? "right" : "left",
-    }
-  }
-
-  return {
-    x: blockCenterX,
-    y: targetCenterY > blockCenterY ? block.y + block.height : block.y,
-    side: targetCenterY > blockCenterY ? "bottom" : "top",
-  }
-}
-
-function getConnectionRoutePoints(
-  fromBlock: BlockDiagramBlock,
-  toBlock: BlockDiagramBlock,
-  connection: BlockDiagramConnection,
-  blocks: BlockDiagramBlock[],
-): Array<{ x: number; y: number }> {
-  const from = getConnectionAnchor(
-    fromBlock,
-    toBlock,
-    connection.fromSourcePortId,
-  )
-  const to = getConnectionAnchor(toBlock, fromBlock, connection.toSourcePortId)
-  const clearance = 120
-  const laneOffset = getConnectionLaneOffset(connection)
-  const railGapLaneX = getRailApproachLaneX(blocks, connection, laneOffset)
-  const componentGapLaneX = getComponentGapLaneX(blocks) + laneOffset
-  const topLaneY = Math.max(24, Math.min(fromBlock.y, toBlock.y) - clearance)
-  const bottomLaneY =
-    Math.max(fromBlock.y + fromBlock.height, toBlock.y + toBlock.height) +
-    clearance
-
-  if (
-    (from.side === "left" && toBlock.kind === "rail") ||
-    (to.side === "right" && fromBlock.kind === "rail")
-  ) {
-    const usesSupportLane =
-      fromBlock.kind === "support" || toBlock.kind === "support"
-    const laneX = usesSupportLane ? componentGapLaneX : railGapLaneX
-    const railAnchor = fromBlock.kind === "rail" ? from : to
-    return dedupePoints([
-      from,
-      { x: laneX, y: from.y },
-      { x: laneX, y: railAnchor.y },
-      to,
-    ])
-  }
-
-  if (
-    (from.side === "right" && toBlock.kind === "rail") ||
-    (to.side === "left" && fromBlock.kind === "rail")
-  ) {
-    const rightLaneX =
-      Math.max(fromBlock.x + fromBlock.width, toBlock.x + toBlock.width) +
-      clearance +
-      getRailRightLaneOffset(connection)
-    const railAnchor = fromBlock.kind === "rail" ? from : to
-    const railApproachLaneX = getRailApproachLaneX(
-      blocks,
-      connection,
-      laneOffset,
-    )
-    const railTopLaneY = getRailTopLaneY(connection, topLaneY, railAnchor)
-    return dedupePoints([
-      from,
-      { x: rightLaneX, y: from.y },
-      { x: rightLaneX, y: railTopLaneY },
-      { x: railApproachLaneX, y: railTopLaneY },
-      { x: railApproachLaneX, y: railAnchor.y },
-      to,
-    ])
-  }
-
-  if (from.side === "right" && to.side === "left" && from.x <= to.x) {
-    const midX = from.x + (to.x - from.x) / 2 + laneOffset
-    return dedupePoints([
-      from,
-      { x: midX, y: from.y },
-      { x: midX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === "left" && to.side === "right" && from.x >= to.x) {
-    const midX = to.x + (from.x - to.x) / 2 + laneOffset
-    return dedupePoints([
-      from,
-      { x: midX, y: from.y },
-      { x: midX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === to.side && from.side === "left") {
-    const laneX = Math.min(from.x, to.x) - clearance + laneOffset
-    const sideBySideRoute = getSideBySideSameSideRoutePoints(
-      fromBlock,
-      toBlock,
-      from,
-      to,
-      laneX,
-      laneOffset,
-    )
-    if (sideBySideRoute) return sideBySideRoute
-
-    return dedupePoints([
-      from,
-      { x: laneX, y: from.y },
-      { x: laneX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === to.side && from.side === "right") {
-    const laneX =
-      Math.max(from.x, to.x) +
-      52 +
-      Math.max(-20, Math.min(20, laneOffset * 0.4))
-    const sideBySideRoute = getSideBySideSameSideRoutePoints(
-      fromBlock,
-      toBlock,
-      from,
-      to,
-      laneX,
-      laneOffset,
-    )
-    if (sideBySideRoute) return sideBySideRoute
-
-    return dedupePoints([
-      from,
-      { x: laneX, y: from.y },
-      { x: laneX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === "right" && to.side === "left" && from.x > to.x) {
-    const rightLaneX = Math.max(from.x, to.x) + clearance + laneOffset
-    const leftLaneX = Math.min(from.x, to.x) - clearance + laneOffset
-    return dedupePoints([
-      from,
-      { x: rightLaneX, y: from.y },
-      { x: rightLaneX, y: bottomLaneY },
-      { x: leftLaneX, y: bottomLaneY },
-      { x: leftLaneX, y: to.y },
-      to,
-    ])
-  }
-
-  const fromExit = getExitPoint(from, clearance)
-  const toExit = getExitPoint(to, clearance)
-  const midX = fromExit.x + (toExit.x - fromExit.x) / 2 + laneOffset
-
-  return dedupePoints([
-    from,
-    fromExit,
-    { x: midX, y: fromExit.y },
-    { x: midX, y: toExit.y },
-    toExit,
-    to,
-  ])
-}
-
-function getRailGapLaneX(blocks: BlockDiagramBlock[]): number {
-  const railRight = Math.max(
-    0,
-    ...blocks
-      .filter((block) => block.kind === "rail")
-      .map((block) => block.x + block.width),
-  )
-  const leftmostComponentX = Math.min(
-    Number.POSITIVE_INFINITY,
-    ...blocks.filter((block) => block.kind !== "rail").map((block) => block.x),
-  )
-
-  if (!Number.isFinite(leftmostComponentX)) return railRight + 40
-  return railRight + (leftmostComponentX - railRight) / 2
-}
-
-function getRailApproachLaneX(
-  blocks: BlockDiagramBlock[],
-  connection: BlockDiagramConnection,
-  laneOffset: number,
-): number {
-  const railRight = Math.max(
-    0,
-    ...blocks
-      .filter((block) => block.kind === "rail")
-      .map((block) => block.x + block.width),
-  )
-  const leftmostComponentX = Math.min(
-    Number.POSITIVE_INFINITY,
-    ...blocks.filter((block) => block.kind !== "rail").map((block) => block.x),
-  )
-  const unclampedLaneX = getRailGapLaneX(blocks) + laneOffset
-  const minLaneX = railRight + getRailApproachLaneMinimumOffset(connection)
-  const maxLaneX = leftmostComponentX - 42
-
-  if (!Number.isFinite(leftmostComponentX) || minLaneX > maxLaneX) {
-    return Math.max(unclampedLaneX, minLaneX)
-  }
-
-  return Math.max(minLaneX, Math.min(maxLaneX, unclampedLaneX))
-}
-
-function getRailApproachLaneMinimumOffset(
-  connection: BlockDiagramConnection,
-): number {
-  const normalizedLabel = normalizeNetName(connection.label)
-  if (normalizedLabel.includes("VDD") || normalizedLabel.includes("VCC")) {
-    return 40
-  }
-  if (normalizedLabel.includes("GND")) return 72
-
-  return 56
-}
-
-function getComponentGapLaneX(blocks: BlockDiagramBlock[]): number {
-  const primaryRight = Math.max(
-    Number.NEGATIVE_INFINITY,
-    ...blocks
-      .filter((block) => block.kind === "primary")
-      .map((block) => block.x + block.width),
-  )
-  const supportLeft = Math.min(
-    Number.POSITIVE_INFINITY,
-    ...blocks
-      .filter((block) => block.kind === "support")
-      .map((block) => block.x),
-  )
-
-  if (!Number.isFinite(primaryRight) || !Number.isFinite(supportLeft)) {
-    return getRailGapLaneX(blocks)
-  }
-
-  return primaryRight + (supportLeft - primaryRight) / 2
-}
-
-function getConnectionLaneOffset(connection: BlockDiagramConnection): number {
-  const normalizedLabel = normalizeNetName(connection.label)
-  const routeLaneOffset = connection.routeLaneOffset ?? 0
-  if (normalizedLabel.includes("VDD") || normalizedLabel.includes("VCC")) {
-    return -48 + routeLaneOffset
-  }
-  if (normalizedLabel.includes("GND")) return -8 + routeLaneOffset
-
-  return routeLaneOffset
-}
-
-function getRailTopLaneY(
-  connection: BlockDiagramConnection,
-  topLaneY: number,
-  railAnchor: ConnectionAnchor,
-): number {
-  const normalizedLabel = normalizeNetName(connection.label)
-  if (normalizedLabel.includes("VDD") || normalizedLabel.includes("VCC")) {
-    return railAnchor.y
-  }
-  if (normalizedLabel.includes("GND")) {
-    return Math.max(topLaneY + 24, railAnchor.y - 52)
-  }
-
-  return topLaneY
-}
-
-function getRailRightLaneOffset(connection: BlockDiagramConnection): number {
-  const normalizedLabel = normalizeNetName(connection.label)
-  if (normalizedLabel.includes("VDD") || normalizedLabel.includes("VCC")) {
-    return -24
-  }
-  if (normalizedLabel.includes("GND")) return 16
-
-  return 0
-}
-
-function getSideBySideSameSideRoutePoints(
-  fromBlock: BlockDiagramBlock,
-  toBlock: BlockDiagramBlock,
-  from: ConnectionAnchor,
-  to: ConnectionAnchor,
-  outsideLaneX: number,
-  laneOffset: number,
-): Array<{ x: number; y: number }> | undefined {
-  const fromIsLeftOfTo = fromBlock.x + fromBlock.width < toBlock.x
-  const toIsLeftOfFrom = toBlock.x + toBlock.width < fromBlock.x
-  if (!fromIsLeftOfTo && !toIsLeftOfFrom) return undefined
-  if (
-    !sameSideRouteCrossesBlockInterior(
-      fromBlock,
-      toBlock,
-      from,
-      to,
-      outsideLaneX,
-    )
-  ) {
-    return undefined
-  }
-
-  const leftBlock = fromIsLeftOfTo ? fromBlock : toBlock
-  const rightBlock = fromIsLeftOfTo ? toBlock : fromBlock
-  const openLaneX =
-    leftBlock.x +
-    leftBlock.width +
-    (rightBlock.x - (leftBlock.x + leftBlock.width)) / 2
-  const detourY =
-    Math.max(fromBlock.y + fromBlock.height, toBlock.y + toBlock.height) +
-    36 +
-    Math.abs(laneOffset) * 0.15
-
-  if (from.side === "left" && fromIsLeftOfTo) {
-    return dedupePoints([
-      from,
-      { x: outsideLaneX, y: from.y },
-      { x: outsideLaneX, y: detourY },
-      { x: openLaneX, y: detourY },
-      { x: openLaneX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === "left" && toIsLeftOfFrom) {
-    return dedupePoints([
-      from,
-      { x: openLaneX, y: from.y },
-      { x: openLaneX, y: detourY },
-      { x: outsideLaneX, y: detourY },
-      { x: outsideLaneX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === "right" && fromIsLeftOfTo) {
-    return dedupePoints([
-      from,
-      { x: openLaneX, y: from.y },
-      { x: openLaneX, y: detourY },
-      { x: outsideLaneX, y: detourY },
-      { x: outsideLaneX, y: to.y },
-      to,
-    ])
-  }
-
-  if (from.side === "right" && toIsLeftOfFrom) {
-    return dedupePoints([
-      from,
-      { x: outsideLaneX, y: from.y },
-      { x: outsideLaneX, y: detourY },
-      { x: openLaneX, y: detourY },
-      { x: openLaneX, y: to.y },
-      to,
-    ])
-  }
-
-  return undefined
-}
-
-function sameSideRouteCrossesBlockInterior(
-  fromBlock: BlockDiagramBlock,
-  toBlock: BlockDiagramBlock,
-  from: ConnectionAnchor,
-  to: ConnectionAnchor,
-  outsideLaneX: number,
-): boolean {
-  return [fromBlock, toBlock].some(
-    (block) =>
-      horizontalSegmentCrossesBlockInterior(
-        from.x,
-        outsideLaneX,
-        from.y,
-        block,
-      ) ||
-      horizontalSegmentCrossesBlockInterior(outsideLaneX, to.x, to.y, block),
-  )
-}
-
-function horizontalSegmentCrossesBlockInterior(
-  x1: number,
-  x2: number,
-  y: number,
-  block: BlockDiagramBlock,
-): boolean {
-  const edgeAllowance = 3
-  const minX = Math.min(x1, x2)
-  const maxX = Math.max(x1, x2)
-  const blockMinX = block.x + edgeAllowance
-  const blockMaxX = block.x + block.width - edgeAllowance
-  const blockMinY = block.y + edgeAllowance
-  const blockMaxY = block.y + block.height - edgeAllowance
-
-  return y > blockMinY && y < blockMaxY && minX < blockMaxX && maxX > blockMinX
-}
-
-function getExitPoint(
-  anchor: ConnectionAnchor,
-  clearance: number,
-): { x: number; y: number } {
-  switch (anchor.side) {
-    case "left":
-      return { x: anchor.x - clearance, y: anchor.y }
-    case "right":
-      return { x: anchor.x + clearance, y: anchor.y }
-    case "top":
-      return { x: anchor.x, y: anchor.y - clearance }
-    case "bottom":
-      return { x: anchor.x, y: anchor.y + clearance }
-  }
-}
-
-function dedupePoints<T extends { x: number; y: number }>(points: T[]): T[] {
-  return points.filter((point, index) => {
-    const previous = points[index - 1]
-    return !previous || previous.x !== point.x || previous.y !== point.y
-  })
-}
-
-function uniquePoints<T extends { x: number; y: number }>(points: T[]): T[] {
-  const seen = new Set<string>()
-  const unique: T[] = []
-
-  for (const point of points) {
-    const key = `${point.x}:${point.y}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    unique.push(point)
-  }
-
-  return unique
-}
-
-function getRouteMidpoint(points: Array<{ x: number; y: number }>): {
-  x: number
-  y: number
-} {
-  if (points.length === 0) return { x: 0, y: 0 }
-  if (points.length === 1) return points[0]!
-
-  const segments = points.slice(1).map((point, index) => ({
-    start: points[index]!,
-    end: point,
-    length:
-      Math.abs(point.x - points[index]!.x) +
-      Math.abs(point.y - points[index]!.y),
-  }))
-  const totalLength = segments.reduce((sum, segment) => sum + segment.length, 0)
-  let remaining = totalLength / 2
-
-  for (const segment of segments) {
-    if (remaining <= segment.length) {
-      const ratio = segment.length === 0 ? 0 : remaining / segment.length
-      return {
-        x: segment.start.x + (segment.end.x - segment.start.x) * ratio,
-        y: segment.start.y + (segment.end.y - segment.start.y) * ratio,
-      }
-    }
-    remaining -= segment.length
-  }
-
-  return points[points.length - 1]!
-}
-
-function getRouteLabelPoint(
-  points: Array<{ x: number; y: number }>,
-  jumpPoints: Array<{ x: number; y: number }>,
-  labelWidth: number,
-  labelHeight: number,
-  avoidRects: Array<{
-    x: number
-    y: number
-    width: number
-    height: number
-  }> = [],
-): { x: number; y: number } | undefined {
-  const bendClearance = 24
-  const jumpClearance = 28
-  const minimumRunway = Math.max(72, Math.max(labelWidth, labelHeight) + 24)
-  const candidates = getRouteSegments(points)
-    .filter((segment) => segment.orientation !== "other")
-    .flatMap((segment) => {
-      const horizontal = segment.orientation === "horizontal"
-      const min = horizontal
-        ? Math.min(segment.start.x, segment.end.x)
-        : Math.min(segment.start.y, segment.end.y)
-      const max = horizontal
-        ? Math.max(segment.start.x, segment.end.x)
-        : Math.max(segment.start.y, segment.end.y)
-      const labelSize = horizontal ? labelWidth : labelHeight
-      const intervals = [
-        {
-          min: min + bendClearance + labelSize / 2,
-          max: max - bendClearance - labelSize / 2,
-        },
-      ]
-
-      const jumpPositions = jumpPoints
-        .filter((jumpPoint) =>
-          horizontal
-            ? jumpPoint.y === segment.start.y &&
-              jumpPoint.x > min &&
-              jumpPoint.x < max
-            : jumpPoint.x === segment.start.x &&
-              jumpPoint.y > min &&
-              jumpPoint.y < max,
-        )
-        .map((jumpPoint) => (horizontal ? jumpPoint.x : jumpPoint.y))
-
-      for (const jumpPosition of jumpPositions) {
-        for (let i = intervals.length - 1; i >= 0; i--) {
-          const interval = intervals[i]!
-          const blockedMin = jumpPosition - jumpClearance - labelSize / 2
-          const blockedMax = jumpPosition + jumpClearance + labelSize / 2
-          if (blockedMax <= interval.min || blockedMin >= interval.max) continue
-
-          intervals.splice(
-            i,
-            1,
-            { min: interval.min, max: blockedMin },
-            { min: blockedMax, max: interval.max },
-          )
-        }
-      }
-
-      return intervals.map((interval) => ({
-        segment,
-        horizontal,
-        usableMin: interval.min,
-        usableMax: interval.max,
-        usableLength: interval.max - interval.min,
-      }))
-    })
-    .filter((candidate) => candidate.usableLength >= minimumRunway)
-    .map((candidate) => {
-      const labelRect = getLabelRectForRouteCandidate(
-        candidate,
-        labelWidth,
-        labelHeight,
-      )
-
-      return {
-        ...candidate,
-        labelRect,
-        collidesWithAvoidRect: avoidRects.some((rect) =>
-          rectsOverlap(labelRect, rect),
-        ),
-      }
-    })
-    .filter((candidate) => !candidate.collidesWithAvoidRect)
-    .sort((a, b) => {
-      if (a.horizontal !== b.horizontal) return a.horizontal ? -1 : 1
-      return b.usableLength - a.usableLength
-    })
-
-  const best = candidates[0]
-  if (!best) return undefined
-
-  const center = best.usableMin + best.usableLength / 2
-
-  return best.horizontal
-    ? { x: center, y: best.segment.start.y }
-    : { x: best.segment.start.x, y: center }
-}
-
-function getLabelRectForRouteCandidate(
-  candidate: {
-    segment: {
-      start: { x: number; y: number }
-      end: { x: number; y: number }
-      orientation: "horizontal" | "vertical" | "other"
-    }
-    horizontal: boolean
-    usableMin: number
-    usableMax: number
-    usableLength: number
-  },
-  labelWidth: number,
-  labelHeight: number,
-): { x: number; y: number; width: number; height: number } {
-  const center = candidate.usableMin + candidate.usableLength / 2
-
-  return candidate.horizontal
-    ? {
-        x: center - labelWidth / 2,
-        y: candidate.segment.start.y - labelHeight / 2,
-        width: labelWidth,
-        height: labelHeight,
-      }
-    : {
-        x: candidate.segment.start.x - labelWidth / 2,
-        y: center - labelHeight / 2,
-        width: labelWidth,
-        height: labelHeight,
-      }
-}
-
-function getLongestStraightSegmentLabelPoint(
-  points: Array<{ x: number; y: number }>,
-): { x: number; y: number } {
-  const longestSegment = getRouteSegments(points)
-    .filter((segment) => segment.orientation !== "other")
-    .sort((a, b) => {
-      const aLength =
-        Math.abs(a.start.x - a.end.x) + Math.abs(a.start.y - a.end.y)
-      const bLength =
-        Math.abs(b.start.x - b.end.x) + Math.abs(b.start.y - b.end.y)
-      return bLength - aLength
-    })[0]
-
-  if (!longestSegment) return getRouteMidpoint(points)
-
-  return {
-    x: (longestSegment.start.x + longestSegment.end.x) / 2,
-    y: (longestSegment.start.y + longestSegment.end.y) / 2,
-  }
-}
-
-function pointsToPathD(
-  points: Array<{ x: number; y: number }>,
-  jumpPoints: Array<{ x: number; y: number }> = [],
-): string {
-  const [firstPoint, ...restPoints] = points
-  if (!firstPoint) return ""
-
-  const jumpRadius = 8
-  const commands = [`M ${firstPoint.x} ${firstPoint.y}`]
-
-  for (let i = 1; i < points.length; i++) {
-    const start = points[i - 1]!
-    const end = points[i]!
-
-    if (start.y !== end.y) {
-      commands.push(`L ${end.x} ${end.y}`)
-      continue
-    }
-
-    const direction = end.x >= start.x ? 1 : -1
-    const segmentJumpPoints = jumpPoints
-      .filter(
-        (point) =>
-          point.y === start.y &&
-          point.x > Math.min(start.x, end.x) + jumpRadius &&
-          point.x < Math.max(start.x, end.x) - jumpRadius,
-      )
-      .sort((a, b) => (a.x - b.x) * direction)
-
-    for (const jumpCluster of clusterNearbyJumpPoints(
-      segmentJumpPoints,
-      jumpRadius * 2 + 8,
-    )) {
-      const firstJumpPoint = jumpCluster[0]!
-      const lastJumpPoint = jumpCluster[jumpCluster.length - 1]!
-      const beforeX = firstJumpPoint.x - direction * jumpRadius
-      const afterX = lastJumpPoint.x + direction * jumpRadius
-      const controlX = (firstJumpPoint.x + lastJumpPoint.x) / 2
-      const jumpHeight = 12 + Math.min(8, (jumpCluster.length - 1) * 3)
-      commands.push(`L ${beforeX} ${firstJumpPoint.y}`)
-      commands.push(
-        `Q ${controlX} ${firstJumpPoint.y - jumpHeight} ${afterX} ${firstJumpPoint.y}`,
-      )
-    }
-
-    commands.push(`L ${end.x} ${end.y}`)
-  }
-
-  return commands.join(" ")
-}
-
-function clusterNearbyJumpPoints(
-  jumpPoints: Array<{ x: number; y: number }>,
-  threshold: number,
-): Array<Array<{ x: number; y: number }>> {
-  const clusters: Array<Array<{ x: number; y: number }>> = []
-
-  for (const jumpPoint of jumpPoints) {
-    const currentCluster = clusters[clusters.length - 1]
-    const previousJumpPoint = currentCluster?.[currentCluster.length - 1]
-    if (
-      currentCluster &&
-      previousJumpPoint &&
-      Math.abs(jumpPoint.x - previousJumpPoint.x) <= threshold
-    ) {
-      currentCluster.push(jumpPoint)
-      continue
-    }
-
-    clusters.push([jumpPoint])
-  }
-
-  return clusters
 }
 
 function getCandidateNetNames(
@@ -2009,11 +1755,7 @@ function addConnection(
     connection.fromBlockId,
     connection.toBlockId,
   ].sort()
-  const [fromSourcePortId = "", toSourcePortId = ""] = [
-    connection.fromSourcePortId,
-    connection.toSourcePortId,
-  ].sort()
-  const key = `${fromBlockId}:${toBlockId}:${fromSourcePortId}:${toSourcePortId}:${connection.label}`
+  const key = `${fromBlockId}:${toBlockId}:${connection.label}`
   const existingConnection = connectionMap.get(key)
 
   if (existingConnection) {
@@ -2142,16 +1884,6 @@ function group(
 function rect(attributes: Record<string, string>): SvgObject {
   return {
     name: "rect",
-    type: "element",
-    attributes,
-    value: "",
-    children: [],
-  }
-}
-
-function line(attributes: Record<string, string>): SvgObject {
-  return {
-    name: "line",
     type: "element",
     attributes,
     value: "",
