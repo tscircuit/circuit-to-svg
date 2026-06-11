@@ -1,6 +1,7 @@
 export * from "./pcb/convert-circuit-json-to-pcb-svg"
 export * from "./assembly/convert-circuit-json-to-assembly-svg"
 export * from "./pinout/convert-circuit-json-to-pinout-svg"
+export * from "./block-diagram/convert-circuit-json-to-block-diagram-svg"
 export * from "./sch/convert-circuit-json-to-schematic-svg"
 export * from "./convert-circuit-json-to-schematic-simulation-svg"
 export * from "./pcb/convert-circuit-json-to-solder-paste-mask"
