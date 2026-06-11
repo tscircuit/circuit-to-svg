@@ -204,7 +204,18 @@ function deriveBlockDiagramGraph(
   const portsById = new Map(
     sourcePorts.map((port) => [port.source_port_id, port]),
   )
+  const sourceComponentById = new Map<string, SourceComponentLike>(
+    sourceComponents.map((component) => [
+      component.source_component_id,
+      component,
+    ]),
+  )
   const netsById = new Map(sourceNets.map((net) => [net.source_net_id, net]))
+  const portConnectionLabels = getPortConnectionLabels(
+    sourceTraces,
+    portsById,
+    netsById,
+  )
   const sourceGroupById = new Map(
     sourceGroups.map((group) => [group.source_group_id, group]),
   )
@@ -313,6 +324,7 @@ function deriveBlockDiagramGraph(
         .join(", "),
       ports: getBlockPortsForComponents(components, portsByComponentId, {
         includeComponentName: true,
+        portConnectionLabels,
       }),
       sourceComponentIds,
       sourceGroupId: sourceGroup?.source_group_id,
@@ -329,7 +341,7 @@ function deriveBlockDiagramGraph(
       id: `component:${component.source_component_id}`,
       title: component.name ?? component.source_component_id,
       subtitle: component.ftype,
-      ports: getBlockPorts(component, portsByComponentId),
+      ports: getBlockPorts(component, portsByComponentId, portConnectionLabels),
       sourceComponentIds: [component.source_component_id],
     })
   }
@@ -365,12 +377,16 @@ function deriveBlockDiagramGraph(
 
   const supportHeights = supportComponents.map((component) =>
     getComponentBlockHeight(
-      getBlockPorts(component, portsByComponentId).length,
+      getBlockPorts(component, portsByComponentId, portConnectionLabels).length,
     ),
   )
 
   for (const [index, component] of supportComponents.entries()) {
-    const ports = getBlockPorts(component, portsByComponentId)
+    const ports = getBlockPorts(
+      component,
+      portsByComponentId,
+      portConnectionLabels,
+    )
     const blockHeight =
       supportHeights[index] ?? getComponentBlockHeight(ports.length)
     const block: BlockDiagramBlock = {
@@ -437,15 +453,18 @@ function deriveBlockDiagramGraph(
     const connectedComponentPorts = connectedPorts
       .map((port) => {
         if (!port.source_component_id) return undefined
+        const component = sourceComponentById.get(port.source_component_id)
+        if (!component) return undefined
         const block = blockByComponentId.get(port.source_component_id)
         if (!block) return undefined
-        return { block, port }
+        return { block, component, port }
       })
       .filter(
         (
           item,
         ): item is {
           block: BlockDiagramBlock
+          component: SourceComponentLike
           port: SourcePortLike
         } => Boolean(item),
       )
@@ -486,9 +505,30 @@ function deriveBlockDiagramGraph(
       }
     }
 
+    const powerDriver = powerName
+      ? connectedComponentPorts.find(({ component, port }) =>
+          isPowerOutputPort(component, port, powerName),
+        )
+      : undefined
+
+    if (powerDriver) {
+      for (const targetBlock of targetBlocks) {
+        if (powerDriver.block.id === targetBlock.id) continue
+        addConnection(connectionMap, {
+          fromBlockId: powerDriver.block.id,
+          toBlockId: targetBlock.id,
+          fromSourcePortId: powerDriver.port.source_port_id,
+          label,
+          sourceTraceId: trace.source_trace_id,
+          sourceNetIds,
+        })
+      }
+    }
+
     for (const { block: componentBlock, port } of connectedComponentPorts) {
       for (const targetBlock of targetBlocks) {
         if (componentBlock.id === targetBlock.id) continue
+        if (powerDriver?.block.id === componentBlock.id) continue
         addConnection(connectionMap, {
           fromBlockId: targetBlock.id,
           toBlockId: componentBlock.id,
@@ -622,11 +662,12 @@ function createBlockSvgObject(block: BlockDiagramBlock): SvgObject {
 function getBlockPorts(
   component: SourceComponentLike,
   portsByComponentId: Map<string, SourcePortLike[]>,
+  portConnectionLabels: Map<string, string>,
 ): Array<{ sourcePortId: string; name: string }> {
   return (portsByComponentId.get(component.source_component_id) ?? []).map(
     (port) => ({
       sourcePortId: port.source_port_id,
-      name: port.name ?? port.source_port_id,
+      name: getPortDiagramLabel(port, portConnectionLabels),
     }),
   )
 }
@@ -634,14 +675,20 @@ function getBlockPorts(
 function getBlockPortsForComponents(
   components: SourceComponentLike[],
   portsByComponentId: Map<string, SourcePortLike[]>,
-  options?: { includeComponentName?: boolean },
+  options?: {
+    includeComponentName?: boolean
+    portConnectionLabels?: Map<string, string>
+  },
 ): Array<{ sourcePortId: string; name: string }> {
   return components.flatMap((component) => {
     const componentName = component.name ?? component.source_component_id
 
     return (portsByComponentId.get(component.source_component_id) ?? []).map(
       (port) => {
-        const portName = port.name ?? port.source_port_id
+        const portName = getPortDiagramLabel(
+          port,
+          options?.portConnectionLabels ?? new Map(),
+        )
         return {
           sourcePortId: port.source_port_id,
           name: options?.includeComponentName
@@ -651,6 +698,50 @@ function getBlockPortsForComponents(
       },
     )
   })
+}
+
+function getPortConnectionLabels(
+  sourceTraces: SourceTraceLike[],
+  portsById: Map<string, SourcePortLike>,
+  netsById: Map<string, SourceNetLike>,
+): Map<string, string> {
+  const portConnectionLabels = new Map<string, string>()
+
+  for (const trace of sourceTraces) {
+    const connectedPorts = (trace.connected_source_port_ids ?? [])
+      .map((portId) => portsById.get(portId))
+      .filter((port): port is SourcePortLike => Boolean(port))
+    const sourceNetIds = trace.connected_source_net_ids ?? []
+    const names = getCandidateNetNames(
+      trace,
+      connectedPorts,
+      sourceNetIds,
+      netsById,
+    )
+    const label =
+      names.find(isPowerNetName) ?? inferInterfaceLabel(names) ?? names[0]
+    if (!label) continue
+
+    for (const port of connectedPorts) {
+      portConnectionLabels.set(port.source_port_id, label)
+    }
+  }
+
+  return portConnectionLabels
+}
+
+function getPortDiagramLabel(
+  port: SourcePortLike,
+  portConnectionLabels: Map<string, string>,
+): string {
+  const portName = port.name ?? port.source_port_id
+  const connectionLabel = portConnectionLabels.get(port.source_port_id)
+  if (!connectionLabel) return portName
+  if (normalizeNetName(connectionLabel) === normalizeNetName(portName)) {
+    return portName
+  }
+
+  return `${portName} (${connectionLabel})`
 }
 
 function getComponentBlockHeight(portCount: number, isPrimary = false): number {
@@ -806,7 +897,7 @@ function getOverviewArrowToLabelPathD(
   }
   const start = movePoint(from, unit, 18)
   const labelSpan =
-    Math.abs(unit.x) >= Math.abs(unit.y) ? labelWidth / 2 + 8 : 19
+    Math.abs(unit.x) >= Math.abs(unit.y) ? labelWidth / 2 + 2 : 19
   const end = movePoint(labelPosition, unit, -labelSpan)
 
   if (getPointDistance(start, end) < 18) return ""
@@ -1222,8 +1313,8 @@ function getElbowLabelRouteCandidate({
     destinationIsRight ? 1 : -1,
   )
   const labelEdgeX = destinationIsRight
-    ? labelPosition.x - labelWidth / 2 - 8
-    : labelPosition.x + labelWidth / 2 + 8
+    ? labelPosition.x - labelWidth / 2 - 2
+    : labelPosition.x + labelWidth / 2 + 2
   const routePoints = [
     fromPoint,
     elbowLeadPoint,
@@ -1575,11 +1666,14 @@ function getOverviewArrowLabelPosition(
         y: from.y + unit.y * Math.min(routeLength * 0.45, labelHeight / 2 + 64),
       }
     : midpoint
+  const veryShortRoute = routeLength < labelWidth + 48
   const offsets =
     arrowTarget === "label"
       ? [0, 82, 164, -82, -164]
       : horizontal
-        ? [0, -24, 24, -44, 44]
+        ? veryShortRoute
+          ? [-30, 30, -52, 52, 0]
+          : [0, -24, 24, -44, 44]
         : [0, -30, 30, -54, 54]
 
   for (const offset of offsets) {
@@ -1822,6 +1916,32 @@ function isPrimaryComponent(component: SourceComponentLike): boolean {
     ftype.includes("MCU") ||
     ftype.includes("MODULE") ||
     ftype.includes("SOURCE")
+  )
+}
+
+function isPowerOutputPort(
+  component: SourceComponentLike,
+  port: SourcePortLike,
+  powerName: string,
+): boolean {
+  const ftype = normalizeNetName(component.ftype ?? "")
+  const componentLooksLikePowerSource =
+    ftype.includes("REGULATOR") ||
+    ftype.includes("POWER_SOURCE") ||
+    ftype.includes("BATTERY") ||
+    ftype.includes("SUPPLY")
+  if (!componentLooksLikePowerSource) return false
+
+  const portName = normalizeNetName(port.name ?? "")
+  const normalizedPowerName = normalizeNetName(powerName)
+  return (
+    portName === normalizedPowerName ||
+    portName.includes("VOUT") ||
+    portName.includes("VBUS") ||
+    portName === "OUT" ||
+    portName === "PWR" ||
+    portName === "POWER" ||
+    portName.endsWith("_OUT")
   )
 }
 
