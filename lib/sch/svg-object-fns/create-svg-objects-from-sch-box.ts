@@ -29,7 +29,7 @@ export const createSvgObjectsFromSchematicBox = ({
 
   const strokeWidthPx = getSchStrokeSize(transform)
   const attributes: Record<string, string> = {
-    class: "schematic-box",
+    class: "schematic-box sch-box",
     x: xLeft.toString(),
     y: yTop.toString(),
     width: (xRight - xLeft).toString(),

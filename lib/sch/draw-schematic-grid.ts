@@ -108,7 +108,7 @@ export function drawSchematicGrid(params: {
     name: "g",
     value: "",
     type: "element",
-    attributes: { class: "grid" },
+    attributes: { class: "grid sch-grid" },
     children: gridLines,
   }
 }

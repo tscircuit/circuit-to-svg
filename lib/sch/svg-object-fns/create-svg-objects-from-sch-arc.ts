@@ -50,6 +50,7 @@ export function createSvgObjectsFromSchematicArc({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-arc",
         d: pathData,
         fill: "none",
         stroke: schArc.color,

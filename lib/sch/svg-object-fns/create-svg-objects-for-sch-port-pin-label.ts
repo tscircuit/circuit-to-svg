@@ -62,7 +62,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     name: "text",
     type: "element",
     attributes: {
-      class: "pin-number",
+      class: "pin-number sch-pin-label",
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
       style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,

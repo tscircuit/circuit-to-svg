@@ -55,7 +55,7 @@ export function createSchematicTrace({
       type: "element",
       attributes: {
         d: path,
-        class: "trace-invisible-hover-outline",
+        class: "trace-invisible-hover-outline sch-trace-hitbox",
         stroke: colorMap.schematic.wire,
         fill: "none",
         "stroke-width": `${getSchStrokeSize(transform) * 8}px`,
@@ -70,6 +70,7 @@ export function createSchematicTrace({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-trace-path",
         d: path,
         stroke: colorMap.schematic.wire,
         fill: "none",
@@ -120,7 +121,7 @@ export function createSchematicTrace({
       name: "path",
       type: "element",
       attributes: {
-        class: "trace-crossing-outline",
+        class: "trace-crossing-outline sch-trace-crossing-outline",
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
         stroke: colorMap.schematic.background,
         fill: "none",
@@ -135,6 +136,7 @@ export function createSchematicTrace({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-trace-crossing-path",
         d: `M ${screenFromX} ${screenFromY} Q ${controlX} ${controlY} ${screenToX} ${screenToY}`,
         stroke: colorMap.schematic.wire,
         fill: "none",
@@ -161,7 +163,7 @@ export function createSchematicTrace({
           cx: screenX.toString(),
           cy: screenY.toString(),
           r: (Math.abs(transform.a) * 0.03).toString(),
-          class: "trace-junction",
+          class: "trace-junction sch-trace-junction",
           fill: colorMap.schematic.junction,
         },
         value: "",
@@ -177,7 +179,7 @@ export function createSchematicTrace({
       type: "element",
       value: "",
       attributes: {
-        class: "trace",
+        class: "trace sch-trace",
         "data-layer": "base",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
@@ -193,7 +195,7 @@ export function createSchematicTrace({
       type: "element",
       value: "",
       attributes: {
-        class: "trace-overlays",
+        class: "trace-overlays sch-trace-overlays",
         "data-layer": "overlay",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,

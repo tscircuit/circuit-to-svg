@@ -88,6 +88,7 @@ test("component wrapper has correct attributes", () => {
   expect(svg).toContain('data-circuit-json-type="schematic_component"')
   expect(svg).toContain("data-schematic-component-id")
 
-  expect(svg).toContain('class="component-overlay"')
+  expect(svg).toContain("component-overlay")
+  expect(svg).toContain("sch-component-overlay")
   expect(svg).toContain('fill="transparent"')
 })

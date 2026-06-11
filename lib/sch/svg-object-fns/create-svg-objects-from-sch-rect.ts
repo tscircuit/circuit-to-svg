@@ -28,6 +28,7 @@ export function createSvgObjectsFromSchematicRect({
     name: "rect",
     type: "element",
     attributes: {
+      class: "sch-rect",
       x: x.toString(),
       y: y.toString(),
       width: transformedWidth.toString(),

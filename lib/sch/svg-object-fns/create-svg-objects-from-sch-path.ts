@@ -45,6 +45,7 @@ export function createSvgObjectsFromSchematicPath({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-path",
         d: pathD,
         stroke: strokeColor,
         "stroke-width": transformedStrokeWidth.toString(),

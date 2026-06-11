@@ -176,7 +176,7 @@ export const createSvgObjectsForSchReferenceDesignators = ({
           "text-anchor": ninePointAnchorToTextAnchor[text.anchor],
           "dominant-baseline": dominantBaseline,
           "font-size": `${getSchScreenFontSize(realToScreenTransform, "reference_designator")}px`,
-          class: "component-name",
+          class: "component-name sch-component-name",
           "data-schematic-component-id": schComponent.schematic_component_id,
         },
         value: "",

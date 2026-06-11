@@ -115,6 +115,7 @@ export const createSvgSchText = ({
     name: "text",
     value: "",
     attributes: {
+      class: "sch-text",
       x: center.x.toString(),
       y: center.y.toString(),
       fill: elm.color ?? colorMap.schematic.sheet_label,

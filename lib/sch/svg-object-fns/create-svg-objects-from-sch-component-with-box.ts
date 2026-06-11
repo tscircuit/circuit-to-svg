@@ -48,7 +48,7 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     type: "element",
     value: "",
     attributes: {
-      class: "component chip",
+      class: "component chip sch-component-body",
       x: componentScreenTopLeft.x.toString(),
       y: componentScreenTopLeft.y.toString(),
       width: componentScreenWidth.toString(),
@@ -65,7 +65,7 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     type: "element",
     value: "",
     attributes: {
-      class: "component-overlay",
+      class: "component-overlay sch-component-overlay",
       x: componentScreenTopLeft.x.toString(),
       y: componentScreenTopLeft.y.toString(),
       width: componentScreenWidth.toString(),

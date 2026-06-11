@@ -144,7 +144,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     type: "element",
     value: "",
     attributes: {
-      class: "component-overlay",
+      class: "component-overlay sch-component-overlay",
       x: rectX.toString(),
       y: rectY.toString(),
       width: rectWidth.toString(),
@@ -159,6 +159,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       type: "element",
       name: "path",
       attributes: {
+        class: "sch-component-symbol-path",
         d:
           points
             .map((p, i) => {
@@ -199,6 +200,9 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       name: "text",
       type: "element",
       attributes: {
+        class: isReferenceText
+          ? "sch-component-name sch-component-text"
+          : "sch-component-text",
         x: screenTextPos.x.toString(),
         y: screenTextPos.y.toString(),
         ...(isReferenceText
@@ -243,6 +247,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       name: "rect",
       type: "element",
       attributes: {
+        class: "sch-component-symbol-box",
         x: screenBoxPos.x.toString(),
         y: screenBoxPos.y.toString(),
         width: (box.width * symbolToScreenScale).toString(),
@@ -265,6 +270,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       type: "element",
       name: "circle",
       attributes: {
+        class: "component-pin sch-component-pin",
         cx: screenPortPos.x.toString(),
         cy: screenPortPos.y.toString(),
         r: `${Math.abs(realToScreenTransform.a) * 0.02}px`,
@@ -287,6 +293,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       type: "element",
       name: "circle",
       attributes: {
+        class: "sch-component-symbol-circle",
         cx: screenCirclePos.x.toString(),
         cy: screenCirclePos.y.toString(),
         r: `${screenRadius}px`,

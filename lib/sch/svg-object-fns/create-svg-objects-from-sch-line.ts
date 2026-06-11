@@ -32,6 +32,7 @@ export function createSvgObjectsFromSchematicLine({
       name: "line",
       type: "element",
       attributes: {
+        class: "sch-line",
         x1: p1.x.toString(),
         y1: p1.y.toString(),
         x2: p2.x.toString(),
