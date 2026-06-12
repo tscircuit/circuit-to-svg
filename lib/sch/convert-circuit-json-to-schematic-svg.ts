@@ -47,6 +47,8 @@ interface Options {
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
   drawPorts?: boolean
+  css?: string
+  className?: string
 }
 
 // Build CSS rules to highlight all traces sharing a connectivity key
@@ -367,6 +369,9 @@ export function convertCircuitJsonToSchematicSvg(
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
+      class: ["tscircuit-schematic", options?.className]
+        .filter(Boolean)
+        .join(" "),
       width: svgWidth.toString(),
       height: svgHeight.toString(),
       style: `background-color: ${colorMap.schematic.background}`,
@@ -413,6 +418,7 @@ export function convertCircuitJsonToSchematicSvg(
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
               .component-name { fill: ${colorMap.schematic.reference}; }
+              ${options?.css ?? ""}
             `,
             name: "",
             attributes: {},

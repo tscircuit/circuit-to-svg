@@ -70,6 +70,7 @@ export const createSvgObjectsFromSchematicTable = ({
     name: "rect",
     type: "element",
     attributes: {
+      class: "sch-table-border",
       x: screenTopLeftX.toString(),
       y: screenTopLeftY.toString(),
       width: (screenBottomRightX - screenTopLeftX).toString(),
@@ -110,6 +111,7 @@ export const createSvgObjectsFromSchematicTable = ({
           name: "line",
           type: "element",
           attributes: {
+            class: "sch-table-grid-line",
             x1: start.x.toString(),
             y1: start.y.toString(),
             x2: end.x.toString(),
@@ -149,6 +151,7 @@ export const createSvgObjectsFromSchematicTable = ({
           name: "line",
           type: "element",
           attributes: {
+            class: "sch-table-grid-line",
             x1: start.x.toString(),
             y1: start.y.toString(),
             x2: end.x.toString(),
@@ -237,6 +240,7 @@ export const createSvgObjectsFromSchematicTable = ({
         name: "text",
         type: "element",
         attributes: {
+          class: "sch-table-text",
           x: screenTextAnchorPos.x.toString(),
           y: screenTextAnchorPos.y.toString(),
           "font-size": `${fontSize}px`,
@@ -264,6 +268,7 @@ export const createSvgObjectsFromSchematicTable = ({
       name: "g",
       type: "element",
       attributes: {
+        class: "sch-table",
         "data-schematic-table-id": schematicTable.schematic_table_id,
       },
       children: svgObjects,

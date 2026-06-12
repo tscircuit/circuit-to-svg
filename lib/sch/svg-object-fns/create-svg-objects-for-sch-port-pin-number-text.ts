@@ -51,7 +51,7 @@ export const createSvgObjectsForSchPortPinNumberText = (params: {
     name: "text",
     type: "element",
     attributes: {
-      class: "pin-number",
+      class: "pin-number sch-pin-number",
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
       style: "font-family: sans-serif;",

@@ -36,6 +36,7 @@ export function createSvgObjectsFromSchematicComponent(params: {
       type: "element",
       name: "g",
       attributes: {
+        class: "sch-component",
         "data-circuit-json-type": "schematic_component",
         "data-schematic-component-id": component.schematic_component_id,
       },

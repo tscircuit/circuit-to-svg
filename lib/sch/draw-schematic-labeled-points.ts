@@ -70,7 +70,7 @@ export function drawSchematicLabeledPoints(params: {
     name: "g",
     value: "",
     type: "element",
-    attributes: { class: "labeled-points" },
+    attributes: { class: "labeled-points sch-labeled-points" },
     children: labeledPointsGroup,
   }
 }

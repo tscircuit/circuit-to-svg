@@ -145,7 +145,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
       name: "circle",
       type: "element",
       attributes: {
-        class: "component-pin",
+        class: "component-pin sch-component-pin sch-inversion-bubble",
         cx: bubbleCenter.x.toString(),
         cy: bubbleCenter.y.toString(),
         r: bubbleRadiusPx.toString(),
@@ -163,7 +163,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
     name: "line",
     type: "element",
     attributes: {
-      class: "component-pin",
+      class: "component-pin sch-component-pin sch-port-line",
       x1: screenRealEdgePos.x.toString(),
       y1: screenRealEdgePos.y.toString(),
       x2: screenLineEnd.x.toString(),
@@ -182,7 +182,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
       name: "circle",
       type: "element",
       attributes: {
-        class: "component-pin",
+        class: "component-pin sch-component-pin sch-port-terminal",
         cx: screenSchPortPos.x.toString(),
         cy: screenSchPortPos.y.toString(),
         r: pinRadiusPx.toString(),
@@ -212,6 +212,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
     type: "element",
     value: "",
     attributes: {
+      class: "sch-port",
       "data-schematic-port-id": schPort.source_port_id,
     },
     children: pinChildren,

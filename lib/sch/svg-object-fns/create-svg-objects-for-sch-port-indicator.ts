@@ -33,7 +33,7 @@ export const createSvgObjectsForSchPortIndicator = ({
     type: "element",
     value: "",
     attributes: {
-      class: "component-pin",
+      class: "component-pin sch-component-pin sch-port-indicator",
       cx: screenPos.x.toString(),
       cy: screenPos.y.toString(),
       r: radiusPx.toString(),
@@ -102,7 +102,7 @@ export const createSvgObjectsForSchPortIndicator = ({
       type: "element",
       value: "",
       attributes: {
-        class: "port-indicator-label",
+        class: "port-indicator-label sch-port-label",
         x: screenLabelPos.x.toString(),
         y: screenLabelPos.y.toString(),
         fill: colorMap.schematic.component_outline,

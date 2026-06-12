@@ -25,7 +25,7 @@ export const createSvgObjectsForSchPortHover = ({
       type: "element",
       value: "",
       attributes: {
-        class: "schematic-port-hover",
+        class: "schematic-port-hover sch-port-hover",
         "data-schematic-port-id": schPort.source_port_id,
       },
       children: [

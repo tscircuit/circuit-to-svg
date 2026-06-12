@@ -164,7 +164,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     type: "element",
     value: "",
     attributes: {
-      class: "component-overlay",
+      class: "component-overlay sch-component-overlay sch-net-label-overlay",
       x: rectX.toString(),
       y: rectY.toString(),
       width: rectWidth.toString(),
@@ -190,6 +190,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-net-label-symbol-path",
         d: symbolPath + (path.closed ? " Z" : ""),
         stroke: colorMap.schematic.component_outline,
         fill: "none",
@@ -232,6 +233,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       name: "text",
       type: "element",
       attributes: {
+        class: "sch-net-label-symbol-text",
         x: offsetScreenPos.x.toString(),
         y: offsetScreenPos.y.toString(),
         fill: colorMap.schematic.label_local,
@@ -270,6 +272,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       name: "rect",
       type: "element",
       attributes: {
+        class: "sch-net-label-symbol-box",
         x: screenBoxPos.x.toString(),
         y: screenBoxPos.y.toString(),
         width: (box.width * symbolToScreenScale).toString(),
@@ -296,6 +299,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       name: "circle",
       type: "element",
       attributes: {
+        class: "sch-net-label-symbol-circle",
         cx: screenCirclePos.x.toString(),
         cy: screenCirclePos.y.toString(),
         r: (circle.radius * symbolToScreenScale).toString(),

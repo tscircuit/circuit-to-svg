@@ -173,6 +173,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       name: "path",
       type: "element",
       attributes: {
+        class: "sch-voltage-probe",
         d: arrowPath,
         stroke: probeColor,
         fill: probeColor,
@@ -186,6 +187,7 @@ export function createSvgObjectsFromSchVoltageProbe({
       name: "text",
       value: "",
       attributes: {
+        class: "sch-voltage-probe-label",
         x,
         y,
         fill: probeColor,

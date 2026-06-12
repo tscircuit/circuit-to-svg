@@ -24,6 +24,7 @@ export function createSvgObjectsFromSchematicCircle({
       name: "circle",
       type: "element",
       attributes: {
+        class: "sch-circle",
         cx: center.x.toString(),
         cy: center.y.toString(),
         r: transformedRadius.toString(),

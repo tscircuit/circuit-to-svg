@@ -73,6 +73,8 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
 - `grid` – enable a schematic grid (`true`) or configure cell size and labels.
 - `labeledPoints` – annotate specific coordinates with helper labels.
 - `colorOverrides` – override portions of the schematic color palette.
+- `className` – add one or more extra classes to the root schematic `<svg>`.
+- `css` – append custom CSS to the generated schematic SVG.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
