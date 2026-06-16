@@ -3,6 +3,14 @@
   "type": "module",
   "version": "0.0.354",
   "description": "Convert Circuit JSON to SVG",
+  "homepage": "https://github.com/tscircuit/circuit-to-svg#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tscircuit/circuit-to-svg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tscircuit/circuit-to-svg/issues"
+  },
   "main": "dist/index.js",
   "files": [
     "dist"
