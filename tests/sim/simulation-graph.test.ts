@@ -125,3 +125,73 @@ test("uses voltage probe name as label fallback", () => {
 
   expect(svg).toMatchSvgSnapshot(import.meta.path, "with-probe-names")
 })
+
+test("uses voltage probe display options through graph provenance", () => {
+  const circuitWithProbeDisplay: CircuitJsonWithSimulation[] = [
+    {
+      type: "simulation_experiment",
+      simulation_experiment_id: "exp-probe-display-test",
+      name: "Scope-style Probe Display",
+      experiment_type: "spice_transient_analysis",
+    },
+    {
+      type: "simulation_voltage_probe",
+      simulation_voltage_probe_id: "simulation_voltage_probe_vout",
+      name: "VOUT_PROBE",
+      color: "#315cff",
+      display_options: {
+        label: "VO",
+        center: 3.3,
+        offset_divs: 3,
+        units_per_div: 0.05,
+      },
+    },
+    {
+      type: "simulation_voltage_probe",
+      simulation_voltage_probe_id: "simulation_voltage_probe_l1",
+      name: "L1_PROBE",
+      color: "#ff8c00",
+      display_options: {
+        label: "L1",
+        center: 0,
+        offset_divs: 1,
+        units_per_div: 5,
+      },
+    },
+    {
+      type: "simulation_transient_voltage_graph",
+      simulation_transient_voltage_graph_id: "graph-vout",
+      simulation_experiment_id: "exp-probe-display-test",
+      source_probe_id: "simulation_voltage_probe_vout",
+      source_probe_name: "VOUT_PROBE",
+      start_time_ms: 0,
+      end_time_ms: 2,
+      time_per_step: 1,
+      timestamps_ms: [0, 1, 2],
+      voltage_levels: [3.25, 3.3, 3.35],
+      name: "N5",
+    } as CircuitJsonWithSimulation,
+    {
+      type: "simulation_transient_voltage_graph",
+      simulation_transient_voltage_graph_id: "graph-l1",
+      simulation_experiment_id: "exp-probe-display-test",
+      source_probe_id: "simulation_voltage_probe_l1",
+      source_probe_name: "L1_PROBE",
+      start_time_ms: 0,
+      end_time_ms: 2,
+      time_per_step: 1,
+      timestamps_ms: [0, 1, 2],
+      voltage_levels: [0, 5, 10],
+      name: "N7",
+    } as CircuitJsonWithSimulation,
+  ]
+
+  const svg = convertCircuitJsonToSimulationGraphSvg({
+    circuitJson: circuitWithProbeDisplay,
+    simulation_experiment_id: "exp-probe-display-test",
+    width: 400,
+    height: 300,
+  })
+
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "probe-display-options")
+})
