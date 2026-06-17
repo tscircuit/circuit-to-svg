@@ -88,7 +88,11 @@ export function convertCircuitJsonToSimulationGraphSvg({
     )
   }
 
-  const timeAxis = buildAxisInfo(allPoints.map((point) => point.timeMs))
+  const timeAxis = buildTimeAxisInfo(
+    allPoints.map((point) => point.timeMs),
+    graphs,
+    experiment,
+  )
   const voltageAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -399,6 +403,76 @@ function buildAxisInfo(values: number[], applyPadding = false): AxisInfo {
   }
 
   return { domainMin, domainMax, ticks: safeTicks }
+}
+
+function buildTimeAxisInfo(
+  values: number[],
+  graphs: SimulationTransientVoltageGraph[],
+  experiment?: SimulationExperiment,
+): AxisInfo {
+  const experimentStartTimeMs = getFiniteNumber(
+    (experiment as { start_time_ms?: number } | undefined)?.start_time_ms,
+  )
+  const experimentEndTimeMs = getFiniteNumber(
+    (experiment as { end_time_ms?: number } | undefined)?.end_time_ms,
+  )
+
+  const startTimes = graphs
+    .map((graph) => getFiniteNumber(graph.start_time_ms))
+    .filter((value): value is number => value !== undefined)
+  const endTimes = graphs
+    .map((graph) => getFiniteNumber(graph.end_time_ms))
+    .filter((value): value is number => value !== undefined)
+
+  const domainMin =
+    experimentStartTimeMs ??
+    (startTimes.length > 0 ? Math.min(...startTimes) : undefined)
+  const domainMax =
+    experimentEndTimeMs ??
+    (endTimes.length > 0 ? Math.max(...endTimes) : undefined)
+
+  if (
+    domainMin === undefined ||
+    domainMax === undefined ||
+    domainMin === domainMax
+  ) {
+    return buildAxisInfo(values)
+  }
+
+  const min = Math.min(domainMin, domainMax)
+  const max = Math.max(domainMin, domainMax)
+  const span = max - min
+  const minimumEndpointTickDistance = span * 0.12
+  const interiorTicks = generateTickValues(min, max).filter(
+    (tick) =>
+      tick > min + minimumEndpointTickDistance &&
+      tick < max - minimumEndpointTickDistance,
+  )
+  const ticks = dedupeSortedNumbers([min, ...interiorTicks, max])
+
+  return {
+    domainMin: min,
+    domainMax: max,
+    ticks,
+  }
+}
+
+function getFiniteNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined
+}
+
+function dedupeSortedNumbers(values: number[]): number[] {
+  const sorted = [...values].sort((a, b) => a - b)
+  const deduped: number[] = []
+
+  for (const value of sorted) {
+    const previous = deduped[deduped.length - 1]
+    if (previous === undefined || Math.abs(value - previous) > 1e-12) {
+      deduped.push(value)
+    }
+  }
+
+  return deduped
 }
 
 function generateTickValues(min: number, max: number, desired = 6): number[] {
@@ -939,14 +1013,24 @@ function formatTickLabel(value: number, ticks: number[]): string {
   const span = ticks[ticks.length - 1]! - ticks[0]!
   if (!Number.isFinite(span) || span === 0) return formatNumber(value)
 
-  const precision = span >= 100 ? 0 : span >= 10 ? 1 : span >= 1 ? 2 : 3
-  const factor = Math.pow(10, precision)
+  const basePrecision = span >= 100 ? 0 : span >= 10 ? 1 : span >= 1 ? 2 : 3
+  const precision = Math.max(basePrecision, getDecimalPrecision(value))
+  const factor = 10 ** precision
   const rounded = Math.round(value * factor) / factor
   const fixed = rounded.toFixed(precision)
   return fixed
     .replace(/\.0+$/, "")
     .replace(/(\.\d*?)0+$/, "$1")
     .replace(/\.$/, "")
+}
+
+function getDecimalPrecision(value: number): number {
+  if (!Number.isFinite(value)) return 0
+
+  const fixed = value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")
+  const decimalIndex = fixed.indexOf(".")
+
+  return decimalIndex === -1 ? 0 : fixed.length - decimalIndex - 1
 }
 
 function svgElement(

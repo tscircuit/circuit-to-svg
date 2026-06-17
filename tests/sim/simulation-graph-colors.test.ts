@@ -29,7 +29,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
     voltage_levels: [0, 1],
     name: "V(should be blue)",
     start_time_ms: 0,
-    end_time_ms: 10,
+    end_time_ms: 1,
     time_per_step: 2,
   },
   // Graph 2: has its own color property
@@ -43,7 +43,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
     name: "V(should be green)",
     color: "green",
     start_time_ms: 0,
-    end_time_ms: 10,
+    end_time_ms: 1,
     time_per_step: 2,
   },
   // Graph 3: no color, should get from palette
@@ -56,7 +56,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
     voltage_levels: [2, 3],
     name: "V(should be from palette)",
     start_time_ms: 0,
-    end_time_ms: 10,
+    end_time_ms: 1,
     time_per_step: 2,
   },
 ]
