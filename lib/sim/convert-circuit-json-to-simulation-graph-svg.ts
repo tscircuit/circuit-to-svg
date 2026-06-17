@@ -38,6 +38,7 @@ interface AxisInfo {
   domainMin: number
   domainMax: number
   ticks: number[]
+  tickLabelOverrides?: Map<number, string>
 }
 
 type ScaleFn = (value: number) => number
@@ -88,7 +89,11 @@ export function convertCircuitJsonToSimulationGraphSvg({
     )
   }
 
-  const timeAxis = buildAxisInfo(allPoints.map((point) => point.timeMs))
+  const timeAxis = buildTimeAxisInfo({
+    values: allPoints.map((point) => point.timeMs),
+    graphs,
+    experiment,
+  })
   const voltageAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -401,6 +406,84 @@ function buildAxisInfo(values: number[], applyPadding = false): AxisInfo {
   return { domainMin, domainMax, ticks: safeTicks }
 }
 
+function buildTimeAxisInfo({
+  values,
+  graphs,
+  experiment,
+}: {
+  values: number[]
+  graphs: SimulationTransientVoltageGraph[]
+  experiment?: SimulationExperiment
+}): AxisInfo {
+  const experimentStartTimeMs = getFiniteNumber(
+    (experiment as { start_time_ms?: number } | undefined)?.start_time_ms,
+  )
+  const experimentEndTimeMs = getFiniteNumber(
+    (experiment as { end_time_ms?: number } | undefined)?.end_time_ms,
+  )
+
+  const startTimes = graphs
+    .map((graph) => getFiniteNumber(graph.start_time_ms))
+    .filter((value): value is number => value !== undefined)
+  const endTimes = graphs
+    .map((graph) => getFiniteNumber(graph.end_time_ms))
+    .filter((value): value is number => value !== undefined)
+
+  const domainMin =
+    experimentStartTimeMs ??
+    (startTimes.length > 0 ? Math.min(...startTimes) : undefined)
+  const domainMax =
+    experimentEndTimeMs ??
+    (endTimes.length > 0 ? Math.max(...endTimes) : undefined)
+
+  if (
+    domainMin === undefined ||
+    domainMax === undefined ||
+    domainMin === domainMax
+  ) {
+    return buildAxisInfo(values)
+  }
+
+  const min = Math.min(domainMin, domainMax)
+  const max = Math.max(domainMin, domainMax)
+  const span = max - min
+  const minimumEndpointTickDistance = span * 0.12
+  const interiorTicks = generateTickValues(min, max).filter(
+    (tick) =>
+      tick > min + minimumEndpointTickDistance &&
+      tick < max - minimumEndpointTickDistance,
+  )
+  const ticks = sortAndDedupeApproximateNumbers([min, ...interiorTicks, max])
+
+  return {
+    domainMin: min,
+    domainMax: max,
+    ticks,
+    tickLabelOverrides: new Map([
+      [min, formatNumber(min)],
+      [max, formatNumber(max)],
+    ]),
+  }
+}
+
+function getFiniteNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined
+}
+
+function sortAndDedupeApproximateNumbers(values: number[]): number[] {
+  const sorted = [...values].sort((a, b) => a - b)
+  const deduped: number[] = []
+
+  for (const value of sorted) {
+    const previous = deduped[deduped.length - 1]
+    if (previous === undefined || Math.abs(value - previous) > 1e-12) {
+      deduped.push(value)
+    }
+  }
+
+  return deduped
+}
+
 function generateTickValues(min: number, max: number, desired = 6): number[] {
   const span = max - min
   if (!Number.isFinite(span) || span <= Number.EPSILON) {
@@ -629,7 +712,7 @@ function createAxes({
           y: formatNumber(bottom + 22),
           "text-anchor": "middle",
         },
-        [textNode(formatTickLabel(tick, timeAxis.ticks))],
+        [textNode(formatTickLabel(tick, timeAxis))],
       ),
     )
   }
@@ -655,7 +738,7 @@ function createAxes({
           "text-anchor": "end",
           "dominant-baseline": "middle",
         },
-        [textNode(formatTickLabel(tick, voltageAxis.ticks))],
+        [textNode(formatTickLabel(tick, voltageAxis))],
       ),
     )
   }
@@ -934,19 +1017,31 @@ function formatNumber(value: number): string {
   return rounded.toString()
 }
 
-function formatTickLabel(value: number, ticks: number[]): string {
+function formatTickLabel(value: number, axis: AxisInfo): string {
+  const overriddenLabel = axis.tickLabelOverrides?.get(value)
+  if (overriddenLabel !== undefined) return overriddenLabel
+
+  const { ticks } = axis
   if (ticks.length <= 1) return formatNumber(value)
   const span = ticks[ticks.length - 1]! - ticks[0]!
   if (!Number.isFinite(span) || span === 0) return formatNumber(value)
 
-  const precision = span >= 100 ? 0 : span >= 10 ? 1 : span >= 1 ? 2 : 3
-  const factor = Math.pow(10, precision)
+  const precision = getTickLabelPrecisionForSpan(span)
+  const factor = 10 ** precision
   const rounded = Math.round(value * factor) / factor
   const fixed = rounded.toFixed(precision)
   return fixed
     .replace(/\.0+$/, "")
     .replace(/(\.\d*?)0+$/, "$1")
     .replace(/\.$/, "")
+}
+
+function getTickLabelPrecisionForSpan(span: number): number {
+  if (span >= 100) return 0
+  if (span >= 10) return 1
+  if (span >= 1) return 2
+
+  return 3
 }
 
 function svgElement(
