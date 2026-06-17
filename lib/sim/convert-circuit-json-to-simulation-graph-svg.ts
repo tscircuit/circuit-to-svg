@@ -38,6 +38,7 @@ interface AxisInfo {
   domainMin: number
   domainMax: number
   ticks: number[]
+  tickLabelOverrides?: Map<number, string>
 }
 
 type ScaleFn = (value: number) => number
@@ -88,11 +89,11 @@ export function convertCircuitJsonToSimulationGraphSvg({
     )
   }
 
-  const timeAxis = buildTimeAxisInfo(
-    allPoints.map((point) => point.timeMs),
+  const timeAxis = buildTimeAxisInfo({
+    values: allPoints.map((point) => point.timeMs),
     graphs,
     experiment,
-  )
+  })
   const voltageAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -405,11 +406,15 @@ function buildAxisInfo(values: number[], applyPadding = false): AxisInfo {
   return { domainMin, domainMax, ticks: safeTicks }
 }
 
-function buildTimeAxisInfo(
-  values: number[],
-  graphs: SimulationTransientVoltageGraph[],
-  experiment?: SimulationExperiment,
-): AxisInfo {
+function buildTimeAxisInfo({
+  values,
+  graphs,
+  experiment,
+}: {
+  values: number[]
+  graphs: SimulationTransientVoltageGraph[]
+  experiment?: SimulationExperiment
+}): AxisInfo {
   const experimentStartTimeMs = getFiniteNumber(
     (experiment as { start_time_ms?: number } | undefined)?.start_time_ms,
   )
@@ -448,12 +453,16 @@ function buildTimeAxisInfo(
       tick > min + minimumEndpointTickDistance &&
       tick < max - minimumEndpointTickDistance,
   )
-  const ticks = dedupeSortedNumbers([min, ...interiorTicks, max])
+  const ticks = sortAndDedupeApproximateNumbers([min, ...interiorTicks, max])
 
   return {
     domainMin: min,
     domainMax: max,
     ticks,
+    tickLabelOverrides: new Map([
+      [min, formatNumber(min)],
+      [max, formatNumber(max)],
+    ]),
   }
 }
 
@@ -461,7 +470,7 @@ function getFiniteNumber(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined
 }
 
-function dedupeSortedNumbers(values: number[]): number[] {
+function sortAndDedupeApproximateNumbers(values: number[]): number[] {
   const sorted = [...values].sort((a, b) => a - b)
   const deduped: number[] = []
 
@@ -703,7 +712,7 @@ function createAxes({
           y: formatNumber(bottom + 22),
           "text-anchor": "middle",
         },
-        [textNode(formatTickLabel(tick, timeAxis.ticks))],
+        [textNode(formatTickLabel(tick, timeAxis))],
       ),
     )
   }
@@ -729,7 +738,7 @@ function createAxes({
           "text-anchor": "end",
           "dominant-baseline": "middle",
         },
-        [textNode(formatTickLabel(tick, voltageAxis.ticks))],
+        [textNode(formatTickLabel(tick, voltageAxis))],
       ),
     )
   }
@@ -1008,13 +1017,16 @@ function formatNumber(value: number): string {
   return rounded.toString()
 }
 
-function formatTickLabel(value: number, ticks: number[]): string {
+function formatTickLabel(value: number, axis: AxisInfo): string {
+  const overriddenLabel = axis.tickLabelOverrides?.get(value)
+  if (overriddenLabel !== undefined) return overriddenLabel
+
+  const { ticks } = axis
   if (ticks.length <= 1) return formatNumber(value)
   const span = ticks[ticks.length - 1]! - ticks[0]!
   if (!Number.isFinite(span) || span === 0) return formatNumber(value)
 
-  const basePrecision = span >= 100 ? 0 : span >= 10 ? 1 : span >= 1 ? 2 : 3
-  const precision = Math.max(basePrecision, getDecimalPrecision(value))
+  const precision = getTickLabelPrecisionForSpan(span)
   const factor = 10 ** precision
   const rounded = Math.round(value * factor) / factor
   const fixed = rounded.toFixed(precision)
@@ -1024,13 +1036,12 @@ function formatTickLabel(value: number, ticks: number[]): string {
     .replace(/\.$/, "")
 }
 
-function getDecimalPrecision(value: number): number {
-  if (!Number.isFinite(value)) return 0
+function getTickLabelPrecisionForSpan(span: number): number {
+  if (span >= 100) return 0
+  if (span >= 10) return 1
+  if (span >= 1) return 2
 
-  const fixed = value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")
-  const decimalIndex = fixed.indexOf(".")
-
-  return decimalIndex === -1 ? 0 : fixed.length - decimalIndex - 1
+  return 3
 }
 
 function svgElement(
