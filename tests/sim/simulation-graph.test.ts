@@ -216,15 +216,13 @@ test("renders transient current graphs with current probe metadata", () => {
       simulation_transient_current_graph_id: "current-graph-load",
       simulation_experiment_id: "exp-current-test",
       source_component_id: "ammeter-1",
-      source_probe_id: "simulation_current_probe_load",
-      source_probe_name: "LOAD_CURRENT",
       start_time_ms: 0,
       end_time_ms: 3,
       time_per_step: 1,
       timestamps_ms: [0, 1, 2, 3],
       current_levels: [0, 0.015, 0.01, 0.02],
       name: "I(load)",
-    } as CircuitJsonWithSimulation,
+    },
     {
       type: "simulation_transient_current_graph",
       simulation_transient_current_graph_id: "current-graph-unselected",
@@ -252,7 +250,7 @@ test("renders transient current graphs with current probe metadata", () => {
   expect(svg).not.toContain(
     'data-simulation-transient-current-graph-id="current-graph-unselected"',
   )
-  expect(svg).toContain('data-source-probe-id="simulation_current_probe_load"')
+  expect(svg).toContain("I(LOAD_CURRENT)")
   expect(svg).toContain("#b00020")
   expect(svg).toMatchSvgSnapshot(import.meta.path, "current-graph")
 })
@@ -284,29 +282,25 @@ test("renders voltage and current graphs in the same simulation output", () => {
       simulation_transient_voltage_graph_id: "voltage-graph-vout",
       simulation_experiment_id: "exp-mixed-test",
       source_component_id: "voltage-probe-1",
-      source_probe_id: "simulation_voltage_probe_vout",
-      source_probe_name: "VOUT",
       start_time_ms: 0,
       end_time_ms: 4,
       time_per_step: 1,
       timestamps_ms: [0, 1, 2, 3, 4],
       voltage_levels: [0, 1.8, 3.3, 3.1, 3.3],
       name: "V(out)",
-    } as CircuitJsonWithSimulation,
+    },
     {
       type: "simulation_transient_current_graph",
       simulation_transient_current_graph_id: "current-graph-load",
       simulation_experiment_id: "exp-mixed-test",
       source_component_id: "ammeter-1",
-      source_probe_id: "simulation_current_probe_load",
-      source_probe_name: "LOAD_CURRENT",
       start_time_ms: 0,
       end_time_ms: 4,
       time_per_step: 1,
       timestamps_ms: [0, 1, 2, 3, 4],
       current_levels: [0, 0.012, 0.018, 0.011, 0.016],
       name: "I(load)",
-    } as CircuitJsonWithSimulation,
+    },
   ]
 
   const svg = convertCircuitJsonToSimulationGraphSvg({
@@ -324,8 +318,8 @@ test("renders voltage and current graphs in the same simulation output", () => {
   expect(svg).toContain(
     'data-simulation-transient-current-graph-id="current-graph-load"',
   )
-  expect(svg).toContain('data-source-probe-id="simulation_voltage_probe_vout"')
-  expect(svg).toContain('data-source-probe-id="simulation_current_probe_load"')
+  expect(svg).toContain("V(VOUT)")
+  expect(svg).toContain("I(LOAD_CURRENT)")
   expect(svg).toContain("#315cff")
   expect(svg).toContain("#b00020")
   expect(svg).toMatchSvgSnapshot(
@@ -345,6 +339,7 @@ test("uses display divisions for mixed voltage and current graphs with display o
     {
       type: "simulation_voltage_probe",
       simulation_voltage_probe_id: "simulation_voltage_probe_vout",
+      source_component_id: "voltage-probe-1",
       name: "VOUT",
       display_options: {
         label: "Vo",
@@ -356,6 +351,7 @@ test("uses display divisions for mixed voltage and current graphs with display o
     {
       type: "simulation_current_probe",
       simulation_current_probe_id: "simulation_current_probe_load",
+      source_component_id: "ammeter-1",
       name: "LOAD_CURRENT",
       display_options: {
         label: "IL",
@@ -368,26 +364,24 @@ test("uses display divisions for mixed voltage and current graphs with display o
       type: "simulation_transient_voltage_graph",
       simulation_transient_voltage_graph_id: "voltage-graph-vout",
       simulation_experiment_id: "exp-mixed-display-test",
-      source_probe_id: "simulation_voltage_probe_vout",
-      source_probe_name: "VOUT",
+      source_component_id: "voltage-probe-1",
       start_time_ms: 0,
       end_time_ms: 2,
       time_per_step: 1,
       timestamps_ms: [0, 1, 2],
       voltage_levels: [3.23, 3.25, 3.27],
-    } as CircuitJsonWithSimulation,
+    },
     {
       type: "simulation_transient_current_graph",
       simulation_transient_current_graph_id: "current-graph-load",
       simulation_experiment_id: "exp-mixed-display-test",
-      source_probe_id: "simulation_current_probe_load",
-      source_probe_name: "LOAD_CURRENT",
+      source_component_id: "ammeter-1",
       start_time_ms: 0,
       end_time_ms: 2,
       time_per_step: 1,
       timestamps_ms: [0, 1, 2],
       current_levels: [0.005, 0.01, 0.015],
-    } as CircuitJsonWithSimulation,
+    },
   ]
 
   const svg = convertCircuitJsonToSimulationGraphSvg({

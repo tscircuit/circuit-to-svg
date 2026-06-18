@@ -233,6 +233,14 @@ function prepareSimulationGraphs(
   const sourceComponentIdToCurrentProbeColor = new Map<string, string>()
   const voltageProbeIdToProbe = new Map<string, SimulationVoltageProbe>()
   const currentProbeIdToProbe = new Map<string, SimulationCurrentProbe>()
+  const sourceComponentIdToVoltageProbe = new Map<
+    string,
+    SimulationVoltageProbe
+  >()
+  const sourceComponentIdToCurrentProbe = new Map<
+    string,
+    SimulationCurrentProbe
+  >()
   for (const probe of voltageProbes) {
     voltageProbeIdToProbe.set(probe.simulation_voltage_probe_id, probe)
     if (probe.name && probe.source_component_id) {
@@ -246,6 +254,9 @@ function prepareSimulationGraphs(
         probe.source_component_id,
         probe.color,
       )
+    }
+    if (probe.source_component_id) {
+      sourceComponentIdToVoltageProbe.set(probe.source_component_id, probe)
     }
   }
   for (const probe of currentProbes) {
@@ -262,6 +273,9 @@ function prepareSimulationGraphs(
         probe.color,
       )
     }
+    if (probe.source_component_id) {
+      sourceComponentIdToCurrentProbe.set(probe.source_component_id, probe)
+    }
   }
 
   return graphs
@@ -270,6 +284,8 @@ function prepareSimulationGraphs(
         graph,
         voltageProbeIdToProbe,
         currentProbeIdToProbe,
+        sourceComponentIdToVoltageProbe,
+        sourceComponentIdToCurrentProbe,
       )
       const points = createGraphPoints(graph, probe?.display_options)
       const paletteColor = getPaletteColor(palette, index)
@@ -304,12 +320,21 @@ function getProbeForGraph(
   graph: SimulationTransientGraph,
   voltageProbeIdToProbe: Map<string, SimulationVoltageProbe>,
   currentProbeIdToProbe: Map<string, SimulationCurrentProbe>,
+  sourceComponentIdToVoltageProbe: Map<string, SimulationVoltageProbe>,
+  sourceComponentIdToCurrentProbe: Map<string, SimulationCurrentProbe>,
 ): SimulationProbe | undefined {
   const sourceProbeId = getStringProperty(graph, "source_probe_id")
-  if (!sourceProbeId) return undefined
+  if (sourceProbeId) {
+    const probe = isCurrentGraph(graph)
+      ? currentProbeIdToProbe.get(sourceProbeId)
+      : voltageProbeIdToProbe.get(sourceProbeId)
+    if (probe) return probe
+  }
+
+  if (!graph.source_component_id) return undefined
   return isCurrentGraph(graph)
-    ? currentProbeIdToProbe.get(sourceProbeId)
-    : voltageProbeIdToProbe.get(sourceProbeId)
+    ? sourceComponentIdToCurrentProbe.get(graph.source_component_id)
+    : sourceComponentIdToVoltageProbe.get(graph.source_component_id)
 }
 
 function getPaletteColor(palette: string[], index: number): string {
