@@ -20,7 +20,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@tscircuit/alphabet": "^0.0.25",
-    "@tscircuit/props": "^0.0.551",
     "@types/bun": "^1.2.8",
     "@types/debug": "^4.1.12",
     "@vitejs/plugin-react": "5.0.0",
