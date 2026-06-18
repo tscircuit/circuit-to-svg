@@ -162,6 +162,7 @@ import { convertCircuitJsonToSchematicSimulationSvg } from 'circuit-to-svg'
 const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
   circuitJson,
   simulation_experiment_id: 'simulation-experiment-id',
+  simulation_transient_current_graph_ids: ['transient-current-graph-id'],
   simulation_transient_voltage_graph_ids: ['transient-graph-id'],
   schematicHeightRatio: 0.6,
 })
@@ -174,6 +175,8 @@ const schematicSimulationSvg = convertCircuitJsonToSchematicSimulationSvg({
 - `width` and `height` – overall SVG dimensions. Defaults to `1200x1200`.
 - `schematicHeightRatio` – ratio of the SVG dedicated to the schematic view. Defaults to `0.55`.
 - `schematicOptions` – forward additional schematic rendering options (except `width`, `height`, and `includeVersion`).
+- `simulation_transient_current_graph_ids` – optional list of current graph IDs to render.
+- `simulation_transient_voltage_graph_ids` – optional list of voltage graph IDs to render.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 - `graphAboveSchematic` – if `true`, place the simulation graph above the
@@ -189,6 +192,7 @@ import { convertCircuitJsonToSimulationGraphSvg } from 'circuit-to-svg'
 const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
   circuitJson,
   simulation_experiment_id: 'simulation-experiment-id',
+  simulation_transient_current_graph_ids: ['transient-current-graph-id'],
   simulation_transient_voltage_graph_ids: ['transient-graph-id'],
 })
 ```
@@ -198,6 +202,8 @@ const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
 ### Options
 
 - `width` and `height` – SVG dimensions for the graph. Defaults to `1200x600`.
+- `simulation_transient_current_graph_ids` – optional list of current graph IDs to render.
+- `simulation_transient_voltage_graph_ids` – optional list of voltage graph IDs to render.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 

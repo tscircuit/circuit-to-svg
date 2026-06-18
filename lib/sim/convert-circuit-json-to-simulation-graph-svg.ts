@@ -1,6 +1,9 @@
 import type {
   AnyCircuitElement,
+  SimulationCurrentProbe,
+  SimulationCurrentProbeDisplayOptions,
   SimulationExperiment,
+  SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
   SimulationVoltageProbe,
   SimulationVoltageProbeDisplayOptions,
@@ -12,7 +15,9 @@ import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
 import {
   type CircuitJsonWithSimulation,
+  isSimulationCurrentProbe,
   isSimulationExperiment,
+  isSimulationTransientCurrentGraph,
   isSimulationTransientVoltageGraph,
   isSimulationVoltageProbe,
 } from "./types"
@@ -20,15 +25,26 @@ import {
 interface ConvertSimulationGraphParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
+  simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   width?: number
   height?: number
   includeVersion?: boolean
 }
 
+type SimulationTransientGraph =
+  | SimulationTransientVoltageGraph
+  | SimulationTransientCurrentGraph
+
+type SimulationProbe = SimulationVoltageProbe | SimulationCurrentProbe
+
+type SimulationProbeDisplayOptions =
+  | SimulationVoltageProbeDisplayOptions
+  | SimulationCurrentProbeDisplayOptions
+
 interface PreparedSimulationGraph {
-  graph: SimulationTransientVoltageGraph
-  points: Array<{ timeMs: number; voltage: number; displayValue: number }>
+  graph: SimulationTransientGraph
+  points: Array<{ timeMs: number; rawValue: number; displayValue: number }>
   color: string
   label: string
   usesDisplayOptions: boolean
@@ -51,14 +67,19 @@ const FALLBACK_LINE_COLOR = "#1f77b4"
 export function convertCircuitJsonToSimulationGraphSvg({
   circuitJson,
   simulation_experiment_id,
+  simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
 }: ConvertSimulationGraphParams): string {
-  const selectedIds = simulation_transient_voltage_graph_ids
+  const selectedVoltageIds = simulation_transient_voltage_graph_ids
     ? new Set(simulation_transient_voltage_graph_ids)
     : null
+  const selectedCurrentIds = simulation_transient_current_graph_ids
+    ? new Set(simulation_transient_current_graph_ids)
+    : null
+  const hasGraphSelection = Boolean(selectedVoltageIds || selectedCurrentIds)
 
   const experiment = circuitJson.find(
     (element): element is SimulationExperiment =>
@@ -66,17 +87,34 @@ export function convertCircuitJsonToSimulationGraphSvg({
       element.simulation_experiment_id === simulation_experiment_id,
   )
 
-  const graphs = circuitJson.filter(
+  const voltageGraphs = circuitJson.filter(
     (element): element is SimulationTransientVoltageGraph =>
       isSimulationTransientVoltageGraph(element) &&
       element.simulation_experiment_id === simulation_experiment_id &&
-      (!selectedIds ||
-        selectedIds.has(element.simulation_transient_voltage_graph_id)),
+      (!hasGraphSelection ||
+        (selectedVoltageIds?.has(
+          element.simulation_transient_voltage_graph_id,
+        ) ??
+          false)),
   )
+  const currentGraphs = circuitJson.filter(
+    (element): element is SimulationTransientCurrentGraph =>
+      isSimulationTransientCurrentGraph(element) &&
+      element.simulation_experiment_id === simulation_experiment_id &&
+      (!hasGraphSelection ||
+        (selectedCurrentIds?.has(
+          element.simulation_transient_current_graph_id,
+        ) ??
+          false)),
+  )
+  const graphs: SimulationTransientGraph[] = [
+    ...voltageGraphs,
+    ...currentGraphs,
+  ]
 
   if (graphs.length === 0) {
     throw new Error(
-      `No simulation_transient_voltage_graph elements found for simulation_experiment_id "${simulation_experiment_id}"`,
+      `No simulation_transient_voltage_graph or simulation_transient_current_graph elements found for simulation_experiment_id "${simulation_experiment_id}"`,
     )
   }
 
@@ -85,7 +123,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
 
   if (allPoints.length === 0) {
     throw new Error(
-      `simulation_transient_voltage_graph elements for simulation_experiment_id "${simulation_experiment_id}" do not contain any datapoints`,
+      `simulation transient graph elements for simulation_experiment_id "${simulation_experiment_id}" do not contain any datapoints`,
     )
   }
 
@@ -94,7 +132,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
     graphs,
     experiment,
   })
-  const voltageAxis = buildAxisInfo(
+  const valueAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
   )
@@ -112,8 +150,8 @@ export function convertCircuitJsonToSimulationGraphSvg({
     MARGIN.left + plotWidth,
   )
   const scaleY = createLinearScale(
-    voltageAxis.domainMin,
-    voltageAxis.domainMax,
+    valueAxis.domainMin,
+    valueAxis.domainMax,
     MARGIN.top + plotHeight,
     MARGIN.top,
   )
@@ -133,7 +171,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
     createPlotBackground(plotWidth, plotHeight),
     createGridLines({
       timeAxis,
-      voltageAxis,
+      valueAxis,
       scaleX,
       scaleY,
       plotWidth,
@@ -142,12 +180,12 @@ export function convertCircuitJsonToSimulationGraphSvg({
     createDataGroup(preparedGraphs, clipPathId, scaleX, scaleY),
     createAxes({
       timeAxis,
-      voltageAxis,
+      valueAxis,
       scaleX,
       scaleY,
       plotWidth,
       plotHeight,
-      yAxisTitle: usesDisplayOptions ? "Display (div)" : "Voltage (V)",
+      yAxisTitle: getYAxisTitle(preparedGraphs, usesDisplayOptions),
     }),
     createLegend(preparedGraphs, width),
     ...(titleNode ? [titleNode] : []),
@@ -178,7 +216,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
 }
 
 function prepareSimulationGraphs(
-  graphs: SimulationTransientVoltageGraph[],
+  graphs: SimulationTransientGraph[],
   circuitJson: CircuitJsonWithSimulation[],
 ): PreparedSimulationGraph[] {
   const palette = Array.isArray(colorMap.simulation_palette)
@@ -188,31 +226,84 @@ function prepareSimulationGraphs(
       : []
 
   const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
-  const sourceComponentIdToProbeName = new Map<string, string>()
-  const sourceComponentIdToProbeColor = new Map<string, string>()
-  const probeIdToProbe = new Map<string, SimulationVoltageProbe>()
+  const currentProbes = circuitJson.filter(isSimulationCurrentProbe)
+  const sourceComponentIdToVoltageProbeName = new Map<string, string>()
+  const sourceComponentIdToVoltageProbeColor = new Map<string, string>()
+  const sourceComponentIdToCurrentProbeName = new Map<string, string>()
+  const sourceComponentIdToCurrentProbeColor = new Map<string, string>()
+  const voltageProbeIdToProbe = new Map<string, SimulationVoltageProbe>()
+  const currentProbeIdToProbe = new Map<string, SimulationCurrentProbe>()
+  const sourceComponentIdToVoltageProbe = new Map<
+    string,
+    SimulationVoltageProbe
+  >()
+  const sourceComponentIdToCurrentProbe = new Map<
+    string,
+    SimulationCurrentProbe
+  >()
   for (const probe of voltageProbes) {
-    probeIdToProbe.set(probe.simulation_voltage_probe_id, probe)
+    voltageProbeIdToProbe.set(probe.simulation_voltage_probe_id, probe)
     if (probe.name && probe.source_component_id) {
-      sourceComponentIdToProbeName.set(probe.source_component_id, probe.name)
+      sourceComponentIdToVoltageProbeName.set(
+        probe.source_component_id,
+        probe.name,
+      )
     }
     if (probe.color && probe.source_component_id) {
-      sourceComponentIdToProbeColor.set(probe.source_component_id, probe.color)
+      sourceComponentIdToVoltageProbeColor.set(
+        probe.source_component_id,
+        probe.color,
+      )
+    }
+    if (probe.source_component_id) {
+      sourceComponentIdToVoltageProbe.set(probe.source_component_id, probe)
+    }
+  }
+  for (const probe of currentProbes) {
+    currentProbeIdToProbe.set(probe.simulation_current_probe_id, probe)
+    if (probe.name && probe.source_component_id) {
+      sourceComponentIdToCurrentProbeName.set(
+        probe.source_component_id,
+        probe.name,
+      )
+    }
+    if (probe.color && probe.source_component_id) {
+      sourceComponentIdToCurrentProbeColor.set(
+        probe.source_component_id,
+        probe.color,
+      )
+    }
+    if (probe.source_component_id) {
+      sourceComponentIdToCurrentProbe.set(probe.source_component_id, probe)
     }
   }
 
   return graphs
     .map((graph, index) => {
-      const probe = getProbeForGraph(graph, probeIdToProbe)
+      const probe = getProbeForGraph(
+        graph,
+        voltageProbeIdToProbe,
+        currentProbeIdToProbe,
+        sourceComponentIdToVoltageProbe,
+        sourceComponentIdToCurrentProbe,
+      )
       const points = createGraphPoints(graph, probe?.display_options)
       const paletteColor = getPaletteColor(palette, index)
       const probeColor = getProbeColor(
         graph,
         probe,
-        sourceComponentIdToProbeColor,
+        isCurrentGraph(graph)
+          ? sourceComponentIdToCurrentProbeColor
+          : sourceComponentIdToVoltageProbeColor,
       )
       const color = graph.color ?? probeColor ?? paletteColor
-      const label = getGraphLabel(graph, probe, sourceComponentIdToProbeName)
+      const label = getGraphLabel(
+        graph,
+        probe,
+        isCurrentGraph(graph)
+          ? sourceComponentIdToCurrentProbeName
+          : sourceComponentIdToVoltageProbeName,
+      )
 
       return {
         graph,
@@ -226,12 +317,24 @@ function prepareSimulationGraphs(
 }
 
 function getProbeForGraph(
-  graph: SimulationTransientVoltageGraph,
-  probeIdToProbe: Map<string, SimulationVoltageProbe>,
-): SimulationVoltageProbe | undefined {
+  graph: SimulationTransientGraph,
+  voltageProbeIdToProbe: Map<string, SimulationVoltageProbe>,
+  currentProbeIdToProbe: Map<string, SimulationCurrentProbe>,
+  sourceComponentIdToVoltageProbe: Map<string, SimulationVoltageProbe>,
+  sourceComponentIdToCurrentProbe: Map<string, SimulationCurrentProbe>,
+): SimulationProbe | undefined {
   const sourceProbeId = getStringProperty(graph, "source_probe_id")
-  if (!sourceProbeId) return undefined
-  return probeIdToProbe.get(sourceProbeId)
+  if (sourceProbeId) {
+    const probe = isCurrentGraph(graph)
+      ? currentProbeIdToProbe.get(sourceProbeId)
+      : voltageProbeIdToProbe.get(sourceProbeId)
+    if (probe) return probe
+  }
+
+  if (!graph.source_component_id) return undefined
+  return isCurrentGraph(graph)
+    ? sourceComponentIdToCurrentProbe.get(graph.source_component_id)
+    : sourceComponentIdToVoltageProbe.get(graph.source_component_id)
 }
 
 function getPaletteColor(palette: string[], index: number): string {
@@ -240,8 +343,8 @@ function getPaletteColor(palette: string[], index: number): string {
 }
 
 function getProbeColor(
-  graph: SimulationTransientVoltageGraph,
-  probe: SimulationVoltageProbe | undefined,
+  graph: SimulationTransientGraph,
+  probe: SimulationProbe | undefined,
   sourceComponentIdToProbeColor: Map<string, string>,
 ): string | undefined {
   if (probe?.color) return probe.color
@@ -250,26 +353,27 @@ function getProbeColor(
 }
 
 function getGraphLabel(
-  graph: SimulationTransientVoltageGraph,
-  probe: SimulationVoltageProbe | undefined,
+  graph: SimulationTransientGraph,
+  probe: SimulationProbe | undefined,
   sourceComponentIdToProbeName: Map<string, string>,
 ): string {
+  const prefix = isCurrentGraph(graph) ? "I" : "V"
   if (probe?.display_options?.label) return probe.display_options.label
-  if (probe?.name) return `V(${probe.name})`
+  if (probe?.name) return `${prefix}(${probe.name})`
 
   const sourceProbeName = getStringProperty(graph, "source_probe_name")
-  if (sourceProbeName) return `V(${sourceProbeName})`
+  if (sourceProbeName) return `${prefix}(${sourceProbeName})`
 
   if (graph.source_component_id) {
     const probeName = sourceComponentIdToProbeName.get(
       graph.source_component_id,
     )
-    if (probeName) return `V(${probeName})`
+    if (probeName) return `${prefix}(${probeName})`
   }
 
   if (graph.name) return graph.name
   if (graph.source_component_id) return `Probe ${graph.source_component_id}`
-  return graph.simulation_transient_voltage_graph_id
+  return getGraphId(graph)
 }
 
 function getStringProperty(value: object, key: string): string | undefined {
@@ -279,28 +383,29 @@ function getStringProperty(value: object, key: string): string | undefined {
 }
 
 function createGraphPoints(
-  graph: SimulationTransientVoltageGraph,
-  displayOptions?: SimulationVoltageProbeDisplayOptions,
-): Array<{ timeMs: number; voltage: number; displayValue: number }> {
+  graph: SimulationTransientGraph,
+  displayOptions?: SimulationProbeDisplayOptions,
+): Array<{ timeMs: number; rawValue: number; displayValue: number }> {
   const timestamps = getTimestamps(graph)
-  const length = Math.min(timestamps.length, graph.voltage_levels.length)
+  const levels = getGraphLevels(graph)
+  const length = Math.min(timestamps.length, levels.length)
   const points: Array<{
     timeMs: number
-    voltage: number
+    rawValue: number
     displayValue: number
   }> = []
   const transformDisplayValue = createDisplayValueTransform(displayOptions)
 
   for (let index = 0; index < length; index++) {
     const timeMs = Number(timestamps[index] ?? Number.NaN)
-    const voltage = Number(graph.voltage_levels[index] ?? Number.NaN)
+    const rawValue = Number(levels[index] ?? Number.NaN)
 
-    if (!Number.isFinite(timeMs) || !Number.isFinite(voltage)) continue
+    if (!Number.isFinite(timeMs) || !Number.isFinite(rawValue)) continue
 
     points.push({
       timeMs,
-      voltage,
-      displayValue: transformDisplayValue(voltage),
+      rawValue,
+      displayValue: transformDisplayValue(rawValue),
     })
   }
 
@@ -308,20 +413,20 @@ function createGraphPoints(
 }
 
 function createDisplayValueTransform(
-  displayOptions?: SimulationVoltageProbeDisplayOptions,
-): (rawVoltage: number) => number {
-  if (!isUsableDisplayOptions(displayOptions)) return (rawVoltage) => rawVoltage
+  displayOptions?: SimulationProbeDisplayOptions,
+): (rawValue: number) => number {
+  if (!isUsableDisplayOptions(displayOptions)) return (rawValue) => rawValue
 
   const center = displayOptions.center ?? 0
   const offsetDivs = displayOptions.offset_divs ?? 0
   const unitsPerDiv = displayOptions.units_per_div
 
-  return (rawVoltage) => offsetDivs + (rawVoltage - center) / unitsPerDiv
+  return (rawValue) => offsetDivs + (rawValue - center) / unitsPerDiv
 }
 
 function isUsableDisplayOptions(
-  displayOptions?: SimulationVoltageProbeDisplayOptions,
-): displayOptions is SimulationVoltageProbeDisplayOptions & {
+  displayOptions?: SimulationProbeDisplayOptions,
+): displayOptions is SimulationProbeDisplayOptions & {
   units_per_div: number
 } {
   return (
@@ -331,15 +436,16 @@ function isUsableDisplayOptions(
   )
 }
 
-function getTimestamps(graph: SimulationTransientVoltageGraph): number[] {
+function getTimestamps(graph: SimulationTransientGraph): number[] {
+  const levels = getGraphLevels(graph)
   if (
     Array.isArray(graph.timestamps_ms) &&
-    graph.timestamps_ms.length === graph.voltage_levels.length
+    graph.timestamps_ms.length === levels.length
   ) {
     return graph.timestamps_ms.map((value: number) => Number(value))
   }
 
-  const count = graph.voltage_levels.length
+  const count = levels.length
   if (count === 0) return []
 
   const timestamps: number[] = []
@@ -412,7 +518,7 @@ function buildTimeAxisInfo({
   experiment,
 }: {
   values: number[]
-  graphs: SimulationTransientVoltageGraph[]
+  graphs: SimulationTransientGraph[]
   experiment?: SimulationExperiment
 }): AxisInfo {
   const experimentStartTimeMs = getFiniteNumber(
@@ -601,7 +707,7 @@ function createPlotBackground(
 
 interface GridLinesOptions {
   timeAxis: AxisInfo
-  voltageAxis: AxisInfo
+  valueAxis: AxisInfo
   scaleX: ScaleFn
   scaleY: ScaleFn
   plotWidth: number
@@ -610,7 +716,7 @@ interface GridLinesOptions {
 
 function createGridLines({
   timeAxis,
-  voltageAxis,
+  valueAxis,
   scaleX,
   scaleY,
   plotWidth,
@@ -636,7 +742,7 @@ function createGridLines({
     )
   }
 
-  for (const tick of voltageAxis.ticks) {
+  for (const tick of valueAxis.ticks) {
     const y = formatNumber(scaleY(tick))
     children.push(
       svgElement("line", {
@@ -654,7 +760,7 @@ function createGridLines({
 
 interface AxesOptions {
   timeAxis: AxisInfo
-  voltageAxis: AxisInfo
+  valueAxis: AxisInfo
   scaleX: ScaleFn
   scaleY: ScaleFn
   plotWidth: number
@@ -664,7 +770,7 @@ interface AxesOptions {
 
 function createAxes({
   timeAxis,
-  voltageAxis,
+  valueAxis,
   scaleX,
   scaleY,
   plotWidth,
@@ -717,7 +823,7 @@ function createAxes({
     )
   }
 
-  for (const tick of voltageAxis.ticks) {
+  for (const tick of valueAxis.ticks) {
     const y = formatNumber(scaleY(tick))
     children.push(
       svgElement("line", {
@@ -738,7 +844,7 @@ function createAxes({
           "text-anchor": "end",
           "dominant-baseline": "middle",
         },
-        [textNode(formatTickLabel(tick, voltageAxis))],
+        [textNode(formatTickLabel(tick, valueAxis))],
       ),
     )
   }
@@ -916,8 +1022,7 @@ function createDataGroup(
       d: commands.join(" "),
       stroke: entry.color,
       "clip-path": `url(#${clipPathId})`,
-      "data-simulation-transient-voltage-graph-id":
-        entry.graph.simulation_transient_voltage_graph_id,
+      [getGraphIdDataAttributeName(entry.graph)]: getGraphId(entry.graph),
     }
 
     if (entry.graph.source_component_id) {
@@ -1003,6 +1108,42 @@ function createTitleNode(
     },
     [textNode(experiment.name)],
   )
+}
+
+function isCurrentGraph(
+  graph: SimulationTransientGraph,
+): graph is SimulationTransientCurrentGraph {
+  return graph.type === "simulation_transient_current_graph"
+}
+
+function getGraphId(graph: SimulationTransientGraph): string {
+  return isCurrentGraph(graph)
+    ? graph.simulation_transient_current_graph_id
+    : graph.simulation_transient_voltage_graph_id
+}
+
+function getGraphIdDataAttributeName(graph: SimulationTransientGraph): string {
+  return isCurrentGraph(graph)
+    ? "data-simulation-transient-current-graph-id"
+    : "data-simulation-transient-voltage-graph-id"
+}
+
+function getGraphLevels(graph: SimulationTransientGraph): number[] {
+  return isCurrentGraph(graph) ? graph.current_levels : graph.voltage_levels
+}
+
+function getYAxisTitle(
+  graphs: PreparedSimulationGraph[],
+  usesDisplayOptions: boolean,
+): string {
+  if (usesDisplayOptions) return "Display (div)"
+
+  const hasCurrentGraphs = graphs.some((entry) => isCurrentGraph(entry.graph))
+  const hasVoltageGraphs = graphs.some((entry) => !isCurrentGraph(entry.graph))
+
+  if (hasCurrentGraphs && !hasVoltageGraphs) return "Current (A)"
+  if (hasVoltageGraphs && !hasCurrentGraphs) return "Voltage (V)"
+  return "Value"
 }
 
 function createClipPathId(simulationExperimentId: string): string {

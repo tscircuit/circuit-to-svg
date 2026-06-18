@@ -5,6 +5,7 @@ import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-js
 import {
   type CircuitJsonWithSimulation,
   isSimulationExperiment,
+  isSimulationTransientCurrentGraph,
   isSimulationTransientVoltageGraph,
 } from "./sim/types"
 import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
@@ -14,6 +15,7 @@ import type { SvgObject } from "./svg-object"
 interface ConvertSchematicSimulationParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
+  simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   width?: number
   height?: number
@@ -35,6 +37,7 @@ const DEFAULT_SCHEMATIC_RATIO = 0.55
 export function convertCircuitJsonToSchematicSimulationSvg({
   circuitJson,
   simulation_experiment_id,
+  simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
@@ -47,6 +50,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const schematicElements = circuitJson.filter(
     (element): element is AnyCircuitElement =>
       !isSimulationExperiment(element) &&
+      !isSimulationTransientCurrentGraph(element) &&
       !isSimulationTransientVoltageGraph(element),
   )
 
@@ -69,6 +73,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const simulationSvg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id,
+    simulation_transient_current_graph_ids,
     simulation_transient_voltage_graph_ids,
     width,
     height: simulationHeight,
