@@ -21,7 +21,7 @@ test("dc_ammeter_horz renders literal symbol text", () => {
       size: symbol.size,
       is_box_with_pins: true,
       symbol_name: "dc_ammeter_horz",
-      symbol_display_value: "DC",
+      symbol_display_value: "VAL",
     },
     {
       type: "schematic_port",
@@ -49,5 +49,6 @@ test("dc_ammeter_horz renders literal symbol text", () => {
   })
 
   expect(svg).toContain(">A</text>")
+  expect(svg).toContain(">VAL</text>")
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
