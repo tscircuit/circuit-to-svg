@@ -47,6 +47,7 @@ interface PreparedSimulationGraph {
   points: Array<{ timeMs: number; rawValue: number; displayValue: number }>
   color: string
   label: string
+  displayOptions?: SimulationProbeDisplayOptions
   usesDisplayOptions: boolean
 }
 
@@ -62,6 +63,7 @@ type ScaleFn = (value: number) => number
 const DEFAULT_WIDTH = 1200
 const DEFAULT_HEIGHT = 600
 const MARGIN = { top: 64, right: 100, bottom: 80, left: 100 }
+const SCOPE_LEGEND_GAP = 24
 const FALLBACK_LINE_COLOR = "#1f77b4"
 
 export function convertCircuitJsonToSimulationGraphSvg({
@@ -139,6 +141,13 @@ export function convertCircuitJsonToSimulationGraphSvg({
   const usesDisplayOptions = preparedGraphs.some(
     (entry) => entry.usesDisplayOptions,
   )
+  const scopeLegendLayout = usesDisplayOptions
+    ? getScopeLegendGridLayout(preparedGraphs.length, width)
+    : null
+  const outputWidth = width
+  const outputHeight = scopeLegendLayout
+    ? height + SCOPE_LEGEND_GAP + scopeLegendLayout.height + SCOPE_LEGEND_GAP
+    : height
 
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
@@ -162,11 +171,11 @@ export function convertCircuitJsonToSimulationGraphSvg({
   )
   const version = CIRCUIT_TO_SVG_VERSION
 
-  const titleNode = createTitleNode(experiment, width)
+  const titleNode = createTitleNode(experiment, outputWidth)
 
   const svgChildren: SvgObject[] = [
     createStyleNode(),
-    createBackgroundRect(width, height),
+    createBackgroundRect(outputWidth, outputHeight),
     createDefsNode(clipPathId, plotWidth, plotHeight),
     createPlotBackground(plotWidth, plotHeight),
     createGridLines({
@@ -187,7 +196,9 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotHeight,
       yAxisTitle: getYAxisTitle(preparedGraphs, usesDisplayOptions),
     }),
-    createLegend(preparedGraphs, width),
+    usesDisplayOptions
+      ? createScopeLegend(preparedGraphs, width, height)
+      : createLegend(preparedGraphs, width),
     ...(titleNode ? [titleNode] : []),
   ]
 
@@ -195,9 +206,9 @@ export function convertCircuitJsonToSimulationGraphSvg({
     "svg",
     {
       xmlns: "http://www.w3.org/2000/svg",
-      width: width.toString(),
-      height: height.toString(),
-      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(height)}`,
+      width: outputWidth.toString(),
+      height: outputHeight.toString(),
+      viewBox: `0 0 ${formatNumber(outputWidth)} ${formatNumber(outputHeight)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(experiment?.name && {
         "data-simulation-experiment-name": experiment.name,
@@ -310,6 +321,7 @@ function prepareSimulationGraphs(
         points,
         color,
         label,
+        displayOptions: probe?.display_options,
         usesDisplayOptions: isUsableDisplayOptions(probe?.display_options),
       }
     })
@@ -612,7 +624,7 @@ function niceStep(step: number): number {
   if (!Number.isFinite(step) || step <= 0) return 1
 
   const exponent = Math.floor(Math.log10(step))
-  const fraction = step / Math.pow(10, exponent)
+  const fraction = step / 10 ** exponent
 
   let niceFraction: number
   if (fraction <= 1) niceFraction = 1
@@ -620,7 +632,7 @@ function niceStep(step: number): number {
   else if (fraction <= 5) niceFraction = 5
   else niceFraction = 10
 
-  return niceFraction * Math.pow(10, exponent)
+  return niceFraction * 10 ** exponent
 }
 
 function createLinearScale(
@@ -657,6 +669,9 @@ svg { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
 .axis-title { fill: rgba(0, 0, 0, 0.9); font-size: 14px; font-weight: 600; }
 .legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 11px; }
 .legend-line { stroke-width: 3; }
+.scope-channel-card { fill: #ffffff; stroke: rgba(0, 0, 0, 0.22); stroke-width: 1; }
+.scope-channel-header-text { fill: #ffffff; font-size: 14px; font-weight: 700; }
+.scope-channel-detail { fill: rgba(0, 0, 0, 0.42); font-size: 14px; }
 .simulation-line { fill: none; stroke-width: 2.5; }
 .simulation-point { stroke-width: 0; }
 .chart-title { fill: rgba(0, 0, 0, 0.85); font-size: 18px; font-weight: 600; }
@@ -903,6 +918,189 @@ function createLegend(
   return svgElement("g", { class: "legend" }, children)
 }
 
+const SCOPE_LEGEND_CARD_WIDTH = 118
+const SCOPE_LEGEND_CARD_HEIGHT = 94
+const SCOPE_LEGEND_CARD_GAP = 18
+const SCOPE_LEGEND_HEADER_HEIGHT = 20
+const SCOPE_LEGEND_BODY_PADDING = 8
+const SCOPE_LEGEND_BODY_FONT_SIZE = 14
+const SCOPE_LEGEND_MAX_COLUMNS = 3
+
+function getScopeLegendGridLayout(
+  graphCount: number,
+  containerWidth: number,
+): { columns: number; rows: number; x: number; height: number } {
+  const columns = Math.max(
+    1,
+    Math.min(SCOPE_LEGEND_MAX_COLUMNS, Math.max(1, graphCount)),
+  )
+  const rows = Math.max(1, Math.ceil(graphCount / columns))
+  const width =
+    columns * SCOPE_LEGEND_CARD_WIDTH + (columns - 1) * SCOPE_LEGEND_CARD_GAP
+  const height =
+    rows * SCOPE_LEGEND_CARD_HEIGHT + (rows - 1) * SCOPE_LEGEND_CARD_GAP
+
+  return {
+    columns,
+    rows,
+    x: Math.max(0, (containerWidth - width) / 2),
+    height,
+  }
+}
+
+function createScopeLegend(
+  graphs: PreparedSimulationGraph[],
+  graphWidth: number,
+  graphHeight: number,
+): SvgObject {
+  const layout = getScopeLegendGridLayout(graphs.length, graphWidth)
+  const children: SvgObject[] = []
+
+  for (const [index, entry] of graphs.entries()) {
+    const column = index % layout.columns
+    const row = Math.floor(index / layout.columns)
+    children.push(
+      createScopeLegendCard(
+        entry,
+        index,
+        layout.x + column * (SCOPE_LEGEND_CARD_WIDTH + SCOPE_LEGEND_CARD_GAP),
+        graphHeight +
+          SCOPE_LEGEND_GAP +
+          row * (SCOPE_LEGEND_CARD_HEIGHT + SCOPE_LEGEND_CARD_GAP),
+      ),
+    )
+  }
+
+  return svgElement("g", { class: "scope-legend" }, children)
+}
+
+function createScopeLegendCard(
+  entry: PreparedSimulationGraph,
+  index: number,
+  x: number,
+  y: number,
+): SvgObject {
+  const displayOptions = entry.displayOptions
+  const unit = isCurrentGraph(entry.graph) ? "A" : "V"
+  const unitsPerDiv =
+    displayOptions && isUsableDisplayOptions(displayOptions)
+      ? formatValueWithUnit(displayOptions.units_per_div, unit)
+      : `1 ${unit}`
+  const center = formatValueWithUnit(displayOptions?.center ?? 0, unit)
+  const offsetDivs = formatDivs(displayOptions?.offset_divs ?? 0)
+  const channelName = `Ch${index + 1}`
+  const label = entry.label === channelName ? undefined : entry.label
+
+  const bodyLines = [label, `${unitsPerDiv}/div`, offsetDivs, center].filter(
+    (line): line is string => Boolean(line),
+  )
+  const bodyLineSpacing =
+    bodyLines.length > 1
+      ? (SCOPE_LEGEND_CARD_HEIGHT -
+          SCOPE_LEGEND_HEADER_HEIGHT -
+          SCOPE_LEGEND_BODY_PADDING * 2 -
+          SCOPE_LEGEND_BODY_FONT_SIZE) /
+        (bodyLines.length - 1)
+      : 0
+
+  return svgElement(
+    "g",
+    {
+      class: "scope-channel",
+      transform: `translate(${formatNumber(x)} ${formatNumber(y)})`,
+      [getGraphIdDataAttributeName(entry.graph)]: getGraphId(entry.graph),
+    },
+    [
+      svgElement("rect", {
+        class: "scope-channel-card",
+        x: "0",
+        y: "0",
+        width: formatNumber(SCOPE_LEGEND_CARD_WIDTH),
+        height: formatNumber(SCOPE_LEGEND_CARD_HEIGHT),
+        rx: "6",
+        ry: "6",
+      }),
+      svgElement("rect", {
+        x: "0",
+        y: "0",
+        width: formatNumber(SCOPE_LEGEND_CARD_WIDTH),
+        height: formatNumber(SCOPE_LEGEND_HEADER_HEIGHT),
+        rx: "6",
+        ry: "6",
+        fill: entry.color,
+      }),
+      svgElement("rect", {
+        x: "0",
+        y: formatNumber(SCOPE_LEGEND_HEADER_HEIGHT - 6),
+        width: formatNumber(SCOPE_LEGEND_CARD_WIDTH),
+        height: "6",
+        fill: entry.color,
+      }),
+      svgElement(
+        "text",
+        {
+          class: "scope-channel-header-text",
+          x: formatNumber(SCOPE_LEGEND_CARD_WIDTH / 2),
+          y: "14",
+          "text-anchor": "middle",
+        },
+        [textNode(channelName)],
+      ),
+      ...bodyLines.map((line, lineIndex) =>
+        svgElement(
+          "text",
+          {
+            class: "scope-channel-detail",
+            x: formatNumber(SCOPE_LEGEND_BODY_PADDING),
+            y: formatNumber(
+              SCOPE_LEGEND_HEADER_HEIGHT +
+                SCOPE_LEGEND_BODY_PADDING +
+                lineIndex * bodyLineSpacing,
+            ),
+            "dominant-baseline": "hanging",
+          },
+          [textNode(line)],
+        ),
+      ),
+    ],
+  )
+}
+
+function formatValueWithUnit(value: number, unit: "V" | "A"): string {
+  if (!Number.isFinite(value)) return `0 ${unit}`
+  if (value === 0) return `0 ${unit}`
+
+  const absValue = Math.abs(value)
+  const prefixes = [
+    { threshold: 1e6, factor: 1e6, prefix: "M" },
+    { threshold: 1e3, factor: 1e3, prefix: "k" },
+    { threshold: 1, factor: 1, prefix: "" },
+    { threshold: 1e-3, factor: 1e-3, prefix: "m" },
+    { threshold: 1e-6, factor: 1e-6, prefix: "µ" },
+    { threshold: 1e-9, factor: 1e-9, prefix: "n" },
+  ]
+  const prefix =
+    prefixes.find((candidate) => absValue >= candidate.threshold) ??
+    prefixes[prefixes.length - 1]!
+  const scaledValue = value / prefix.factor
+
+  return `${formatScopeNumber(scaledValue)} ${prefix.prefix}${unit}`
+}
+
+function formatDivs(value: number): string {
+  return `${formatScopeNumber(value)} div`
+}
+
+function formatScopeNumber(value: number): string {
+  if (!Number.isFinite(value)) return "0"
+
+  const absValue = Math.abs(value)
+  const maximumFractionDigits =
+    absValue >= 100 ? 0 : absValue >= 10 ? 1 : absValue >= 1 ? 2 : 3
+
+  return Number.parseFloat(value.toFixed(maximumFractionDigits)).toString()
+}
+
 function wrapLegendText(label: string): string[] {
   // Split on underscores for wrapping
   const parts = label.split("_")
@@ -916,7 +1114,7 @@ function wrapLegendText(label: string): string[] {
 
   for (let i = 1; i < parts.length; i++) {
     const part = parts[i] ?? ""
-    const testLine = currentLine + "_" + part
+    const testLine = `${currentLine}_${part}`
 
     // If line would be too long, start new line
     // Note: Individual parts longer than MAX_LEGEND_LINE_LENGTH won't wrap
@@ -1069,7 +1267,7 @@ function createDataGroup(
   const lineElements: SvgObject[] = []
 
   for (let cycle = 0; cycle < LINE_REPEAT_COUNT; cycle++) {
-    processedGraphs.forEach((graphInfo) => {
+    for (const graphInfo of processedGraphs) {
       const offsetIndex = (graphInfo.graphIndex + cycle) % LINE_REPEAT_COUNT
       const dashOffset = formatNumber(offsetIndex * dashOffsetStep)
       lineElements.push(
@@ -1079,7 +1277,7 @@ function createDataGroup(
           "stroke-dashoffset": dashOffset,
         }),
       )
-    })
+    }
   }
 
   const pointElements = processedGraphs.flatMap(

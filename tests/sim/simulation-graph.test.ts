@@ -193,6 +193,14 @@ test("uses voltage probe display options through graph provenance", () => {
     height: 300,
   })
 
+  expect(svg).toContain('class="scope-legend"')
+  expect(svg).toContain("Ch1")
+  expect(svg).toContain("Ch2")
+  expect(svg).toContain("50 mV/div")
+  expect(svg).toContain("5 V/div")
+  expect(svg).toContain("3.3 V")
+  expect(svg).toContain('width="400"')
+  expect(svg).toContain('height="442"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "probe-display-options")
 })
 
@@ -393,6 +401,94 @@ test("uses display divisions for mixed voltage and current graphs with display o
 
   expect(svg).toContain(">Display (div)</text>")
   expect(svg).not.toContain(">Value</text>")
+  expect(svg).toContain('class="scope-legend"')
+  expect(svg).toContain("20 mV/div")
+  expect(svg).toContain("5 mA/div")
   expect(svg).toContain("Vo")
   expect(svg).toContain("IL")
+})
+
+function createScopeDisplayCircuit(
+  channelCount: number,
+  experimentId: string,
+): CircuitJsonWithSimulation[] {
+  const circuit: CircuitJsonWithSimulation[] = [
+    {
+      type: "simulation_experiment",
+      simulation_experiment_id: experimentId,
+      name: `${channelCount} Channel Scope Display`,
+      experiment_type: "spice_transient_analysis",
+    },
+  ]
+
+  for (let index = 0; index < channelCount; index++) {
+    const channelNumber = index + 1
+    const probeId = `simulation_voltage_probe_ch${channelNumber}`
+    circuit.push(
+      {
+        type: "simulation_voltage_probe",
+        simulation_voltage_probe_id: probeId,
+        name: `CHANNEL_${channelNumber}`,
+        color: ["#315cff", "#ff8c00", "#00c88a", "#ff42e6", "#7c4dff"][index],
+        display_options: {
+          label: `CH${channelNumber}_SIG`,
+          center: channelNumber,
+          offset_divs: channelNumber - 3,
+          units_per_div: channelNumber === 1 ? 0.05 : channelNumber,
+        },
+      },
+      {
+        type: "simulation_transient_voltage_graph",
+        simulation_transient_voltage_graph_id: `graph-ch${channelNumber}`,
+        simulation_experiment_id: experimentId,
+        source_probe_id: probeId,
+        source_probe_name: `CHANNEL_${channelNumber}`,
+        start_time_ms: 0,
+        end_time_ms: 2,
+        time_per_step: 1,
+        timestamps_ms: [0, 1, 2],
+        voltage_levels: [
+          channelNumber - 0.1,
+          channelNumber,
+          channelNumber + 0.1,
+        ],
+      } as CircuitJsonWithSimulation,
+    )
+  }
+
+  return circuit
+}
+
+test("renders scope legend layout for 4 display-option channels", () => {
+  const svg = convertCircuitJsonToSimulationGraphSvg({
+    circuitJson: createScopeDisplayCircuit(4, "exp-four-channel-display"),
+    simulation_experiment_id: "exp-four-channel-display",
+    width: 500,
+    height: 520,
+  })
+
+  expect(svg).toContain('width="500"')
+  expect(svg).toContain('height="774"')
+  expect(svg).toContain('<rect x="100" y="64" width="300"')
+  expect(svg).toContain("Ch4")
+  expect(svg).toContain("CH4_SIG")
+  expect(svg).toContain('transform="translate(55 656)"')
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "four-channel-scope-legend")
+})
+
+test("renders scope legend layout for 5 display-option channels", () => {
+  const svg = convertCircuitJsonToSimulationGraphSvg({
+    circuitJson: createScopeDisplayCircuit(5, "exp-five-channel-display"),
+    simulation_experiment_id: "exp-five-channel-display",
+    width: 500,
+    height: 640,
+  })
+
+  expect(svg).toContain('width="500"')
+  expect(svg).toContain('height="894"')
+  expect(svg).toContain('<rect x="100" y="64" width="300"')
+  expect(svg).toContain("Ch5")
+  expect(svg).toContain("CH5_SIG")
+  expect(svg).toContain('transform="translate(191 776)"')
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "five-channel-scope-legend")
 })
