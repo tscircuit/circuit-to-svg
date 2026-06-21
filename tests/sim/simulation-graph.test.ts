@@ -126,7 +126,7 @@ test("uses voltage probe name as label fallback", () => {
   expect(svg).toMatchSvgSnapshot(import.meta.path, "with-probe-names")
 })
 
-test("uses voltage probe display options through graph provenance", () => {
+test("uses oscilloscope traces through voltage graph provenance", () => {
   const circuitWithProbeDisplay: CircuitJsonWithSimulation[] = [
     {
       type: "simulation_experiment",
@@ -138,25 +138,11 @@ test("uses voltage probe display options through graph provenance", () => {
       type: "simulation_voltage_probe",
       simulation_voltage_probe_id: "simulation_voltage_probe_vout",
       name: "VOUT_PROBE",
-      color: "#315cff",
-      display_options: {
-        label: "VO",
-        center: 3.3,
-        offset_divs: 3,
-        units_per_div: 0.05,
-      },
     },
     {
       type: "simulation_voltage_probe",
       simulation_voltage_probe_id: "simulation_voltage_probe_l1",
       name: "L1_PROBE",
-      color: "#ff8c00",
-      display_options: {
-        label: "L1",
-        center: 0,
-        offset_divs: 1,
-        units_per_div: 5,
-      },
     },
     {
       type: "simulation_transient_voltage_graph",
@@ -184,6 +170,26 @@ test("uses voltage probe display options through graph provenance", () => {
       voltage_levels: [0, 5, 10],
       name: "N7",
     } as CircuitJsonWithSimulation,
+    {
+      type: "simulation_oscilloscope_trace",
+      simulation_oscilloscope_trace_id: "scope-trace-vout",
+      simulation_transient_voltage_graph_id: "graph-vout",
+      display_name: "VO",
+      color: "#315cff",
+      display_center_value: 3.3,
+      display_center_offset_divs: 3,
+      volts_per_div: 0.05,
+    },
+    {
+      type: "simulation_oscilloscope_trace",
+      simulation_oscilloscope_trace_id: "scope-trace-l1",
+      simulation_transient_voltage_graph_id: "graph-l1",
+      display_name: "L1",
+      color: "#ff8c00",
+      display_center_value: 0,
+      display_center_offset_divs: 1,
+      volts_per_div: 5,
+    },
   ]
 
   const svg = convertCircuitJsonToSimulationGraphSvg({
@@ -201,7 +207,7 @@ test("uses voltage probe display options through graph provenance", () => {
   expect(svg).toContain("3.3 V")
   expect(svg).toContain('width="400"')
   expect(svg).toContain('height="442"')
-  expect(svg).toMatchSvgSnapshot(import.meta.path, "probe-display-options")
+  expect(svg).toMatchSvgSnapshot(import.meta.path, "oscilloscope-trace-display")
 })
 
 test("renders transient current graphs with current probe metadata", () => {
@@ -336,7 +342,7 @@ test("renders voltage and current graphs in the same simulation output", () => {
   )
 })
 
-test("uses display divisions for mixed voltage and current graphs with display options", () => {
+test("uses oscilloscope traces for mixed voltage and current graphs", () => {
   const circuitWithMixedDisplayGraphs: CircuitJsonWithSimulation[] = [
     {
       type: "simulation_experiment",
@@ -349,24 +355,12 @@ test("uses display divisions for mixed voltage and current graphs with display o
       simulation_voltage_probe_id: "simulation_voltage_probe_vout",
       source_component_id: "voltage-probe-1",
       name: "VOUT",
-      display_options: {
-        label: "Vo",
-        center: 3.25,
-        offset_divs: 2,
-        units_per_div: 0.02,
-      },
     },
     {
       type: "simulation_current_probe",
       simulation_current_probe_id: "simulation_current_probe_load",
       source_component_id: "ammeter-1",
       name: "LOAD_CURRENT",
-      display_options: {
-        label: "IL",
-        center: 0.01,
-        offset_divs: -1,
-        units_per_div: 0.005,
-      },
     },
     {
       type: "simulation_transient_voltage_graph",
@@ -390,6 +384,24 @@ test("uses display divisions for mixed voltage and current graphs with display o
       timestamps_ms: [0, 1, 2],
       current_levels: [0.005, 0.01, 0.015],
     },
+    {
+      type: "simulation_oscilloscope_trace",
+      simulation_oscilloscope_trace_id: "scope-trace-vout",
+      simulation_voltage_probe_id: "simulation_voltage_probe_vout",
+      display_name: "Vo",
+      display_center_value: 3.25,
+      display_center_offset_divs: 2,
+      volts_per_div: 0.02,
+    },
+    {
+      type: "simulation_oscilloscope_trace",
+      simulation_oscilloscope_trace_id: "scope-trace-load",
+      simulation_current_probe_id: "simulation_current_probe_load",
+      display_name: "IL",
+      display_center_value: 0.01,
+      display_center_offset_divs: -1,
+      amps_per_div: 0.005,
+    },
   ]
 
   const svg = convertCircuitJsonToSimulationGraphSvg({
@@ -399,7 +411,8 @@ test("uses display divisions for mixed voltage and current graphs with display o
     height: 320,
   })
 
-  expect(svg).toContain(">Display (div)</text>")
+  expect(svg).toContain("axis-y-scope")
+  expect(svg).not.toContain(">Display (div)</text>")
   expect(svg).not.toContain(">Value</text>")
   expect(svg).toContain('class="scope-legend"')
   expect(svg).toContain("20 mV/div")
@@ -436,22 +449,16 @@ function createScopeDisplayCircuit(
 
     if (isCurrentChannel) {
       const probeId = `simulation_current_probe_ch${channelNumber}`
+      const graphId = `graph-ch${channelNumber}`
       circuit.push(
         {
           type: "simulation_current_probe",
           simulation_current_probe_id: probeId,
           name: `CHANNEL_${channelNumber}`,
-          color,
-          display_options: {
-            label: `CH${channelNumber}_SIG`,
-            center: channelNumber / 1000,
-            offset_divs: channelNumber - 3,
-            units_per_div: channelNumber / 1000,
-          },
         },
         {
           type: "simulation_transient_current_graph",
-          simulation_transient_current_graph_id: `graph-ch${channelNumber}`,
+          simulation_transient_current_graph_id: graphId,
           simulation_experiment_id: experimentId,
           source_probe_id: probeId,
           source_probe_name: `CHANNEL_${channelNumber}`,
@@ -465,27 +472,31 @@ function createScopeDisplayCircuit(
             channelNumber / 1000 + 0.0001,
           ],
         } as unknown as CircuitJsonWithSimulation,
+        {
+          type: "simulation_oscilloscope_trace",
+          simulation_oscilloscope_trace_id: `scope-trace-ch${channelNumber}`,
+          simulation_transient_current_graph_id: graphId,
+          display_name: `CH${channelNumber}_SIG`,
+          color,
+          display_center_value: channelNumber / 1000,
+          display_center_offset_divs: channelNumber - 3,
+          amps_per_div: channelNumber / 1000,
+        },
       )
       continue
     }
 
     const probeId = `simulation_voltage_probe_ch${channelNumber}`
+    const graphId = `graph-ch${channelNumber}`
     circuit.push(
       {
         type: "simulation_voltage_probe",
         simulation_voltage_probe_id: probeId,
         name: `CHANNEL_${channelNumber}`,
-        color,
-        display_options: {
-          label: `CH${channelNumber}_SIG`,
-          center: channelNumber,
-          offset_divs: channelNumber - 3,
-          units_per_div: channelNumber === 1 ? 0.05 : channelNumber,
-        },
       },
       {
         type: "simulation_transient_voltage_graph",
-        simulation_transient_voltage_graph_id: `graph-ch${channelNumber}`,
+        simulation_transient_voltage_graph_id: graphId,
         simulation_experiment_id: experimentId,
         source_probe_id: probeId,
         source_probe_name: `CHANNEL_${channelNumber}`,
@@ -499,13 +510,23 @@ function createScopeDisplayCircuit(
           channelNumber + 0.1,
         ],
       } as unknown as CircuitJsonWithSimulation,
+      {
+        type: "simulation_oscilloscope_trace",
+        simulation_oscilloscope_trace_id: `scope-trace-ch${channelNumber}`,
+        simulation_transient_voltage_graph_id: graphId,
+        display_name: `CH${channelNumber}_SIG`,
+        color,
+        display_center_value: channelNumber,
+        display_center_offset_divs: channelNumber - 3,
+        volts_per_div: channelNumber === 1 ? 0.05 : channelNumber,
+      },
     )
   }
 
   return circuit
 }
 
-test("renders scope legend layout for 4 display-option channels", () => {
+test("renders scope legend layout for 4 oscilloscope trace channels", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson: createScopeDisplayCircuit(4, "exp-four-channel-display"),
     simulation_experiment_id: "exp-four-channel-display",
@@ -513,16 +534,16 @@ test("renders scope legend layout for 4 display-option channels", () => {
     height: 520,
   })
 
-  expect(svg).toContain('width="500"')
+  expect(svg).toContain('width="572"')
   expect(svg).toContain('height="774"')
-  expect(svg).toContain('<rect x="100" y="64" width="300"')
+  expect(svg).toContain('<rect x="136" y="64" width="300"')
   expect(svg).toContain("Ch4")
   expect(svg).toContain("CH4_SIG")
-  expect(svg).toContain('transform="translate(55 656)"')
+  expect(svg).toContain('transform="translate(91 656)"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "four-channel-scope-legend")
 })
 
-test("renders scope legend layout for 5 display-option channels", () => {
+test("renders scope legend layout for 5 oscilloscope trace channels", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson: createScopeDisplayCircuit(5, "exp-five-channel-display", {
       includeCurrentChannel: true,
@@ -532,12 +553,12 @@ test("renders scope legend layout for 5 display-option channels", () => {
     height: 640,
   })
 
-  expect(svg).toContain('width="500"')
+  expect(svg).toContain('width="628"')
   expect(svg).toContain('height="894"')
-  expect(svg).toContain('<rect x="100" y="64" width="300"')
+  expect(svg).toContain('<rect x="192" y="64" width="300"')
   expect(svg).toContain("Ch5")
   expect(svg).toContain("CH5_SIG")
   expect(svg).toContain("5 mA/div")
-  expect(svg).toContain('transform="translate(191 776)"')
+  expect(svg).toContain('transform="translate(255 776)"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "five-channel-scope-legend")
 })
