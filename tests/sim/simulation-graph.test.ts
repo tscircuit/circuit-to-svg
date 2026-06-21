@@ -411,6 +411,7 @@ test("uses display divisions for mixed voltage and current graphs with display o
 function createScopeDisplayCircuit(
   channelCount: number,
   experimentId: string,
+  options: { includeCurrentChannel?: boolean } = {},
 ): CircuitJsonWithSimulation[] {
   const circuit: CircuitJsonWithSimulation[] = [
     {
@@ -423,13 +424,54 @@ function createScopeDisplayCircuit(
 
   for (let index = 0; index < channelCount; index++) {
     const channelNumber = index + 1
+    const isCurrentChannel =
+      Boolean(options.includeCurrentChannel) && channelNumber === channelCount
+    const color =
+      ["#315cff", "#ff8c00", "#00c88a", "#ff42e6", "#7c4dff"][index] ??
+      "#315cff"
+
+    if (isCurrentChannel) {
+      const probeId = `simulation_current_probe_ch${channelNumber}`
+      circuit.push(
+        {
+          type: "simulation_current_probe",
+          simulation_current_probe_id: probeId,
+          name: `CHANNEL_${channelNumber}`,
+          color,
+          display_options: {
+            label: `CH${channelNumber}_SIG`,
+            center: channelNumber / 1000,
+            offset_divs: channelNumber - 3,
+            units_per_div: channelNumber / 1000,
+          },
+        },
+        {
+          type: "simulation_transient_current_graph",
+          simulation_transient_current_graph_id: `graph-ch${channelNumber}`,
+          simulation_experiment_id: experimentId,
+          source_probe_id: probeId,
+          source_probe_name: `CHANNEL_${channelNumber}`,
+          start_time_ms: 0,
+          end_time_ms: 2,
+          time_per_step: 1,
+          timestamps_ms: [0, 1, 2],
+          current_levels: [
+            channelNumber / 1000 - 0.0001,
+            channelNumber / 1000,
+            channelNumber / 1000 + 0.0001,
+          ],
+        } as unknown as CircuitJsonWithSimulation,
+      )
+      continue
+    }
+
     const probeId = `simulation_voltage_probe_ch${channelNumber}`
     circuit.push(
       {
         type: "simulation_voltage_probe",
         simulation_voltage_probe_id: probeId,
         name: `CHANNEL_${channelNumber}`,
-        color: ["#315cff", "#ff8c00", "#00c88a", "#ff42e6", "#7c4dff"][index],
+        color,
         display_options: {
           label: `CH${channelNumber}_SIG`,
           center: channelNumber,
@@ -452,7 +494,7 @@ function createScopeDisplayCircuit(
           channelNumber,
           channelNumber + 0.1,
         ],
-      } as CircuitJsonWithSimulation,
+      } as unknown as CircuitJsonWithSimulation,
     )
   }
 
@@ -478,7 +520,9 @@ test("renders scope legend layout for 4 display-option channels", () => {
 
 test("renders scope legend layout for 5 display-option channels", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
-    circuitJson: createScopeDisplayCircuit(5, "exp-five-channel-display"),
+    circuitJson: createScopeDisplayCircuit(5, "exp-five-channel-display", {
+      includeCurrentChannel: true,
+    }),
     simulation_experiment_id: "exp-five-channel-display",
     width: 500,
     height: 640,
@@ -489,6 +533,7 @@ test("renders scope legend layout for 5 display-option channels", () => {
   expect(svg).toContain('<rect x="100" y="64" width="300"')
   expect(svg).toContain("Ch5")
   expect(svg).toContain("CH5_SIG")
+  expect(svg).toContain("5 mA/div")
   expect(svg).toContain('transform="translate(191 776)"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "five-channel-scope-legend")
 })
