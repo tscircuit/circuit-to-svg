@@ -406,6 +406,10 @@ test("uses display divisions for mixed voltage and current graphs with display o
   expect(svg).toContain("5 mA/div")
   expect(svg).toContain("Vo")
   expect(svg).toContain("IL")
+  expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "mixed-current-voltage-scope-legend",
+  )
 })
 
 function createScopeDisplayCircuit(
