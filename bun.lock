@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "circuit-to-svg",
@@ -21,7 +20,7 @@
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
         "bun-match-svg": "^0.0.12",
-        "circuit-json": "^0.0.437",
+        "circuit-json": "^0.0.438",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.7",
         "performance-now": "^2.1.0",
@@ -462,7 +461,7 @@
 
     "chownr": ["chownr@1.1.4", "", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
 
-    "circuit-json": ["circuit-json@0.0.437", "", {}, "sha512-/y7XSXZIMUlAnLR8sXvCKVZVDPsvFDVwC0D2N6Y9Rjfl62v760Q4+qtv/s4qgkyiSnYnugiuay+fJ3TVtb+9yQ=="],
+    "circuit-json": ["circuit-json@0.0.438", "", {}, "sha512-aZiroCeGymKFRZcKzSGA6Ojzjz252NJXBNaRnLn2FjWNmsRm38Kyb3rJWnHt5ALyAobsXCzE51Fn5Hy04WrFaQ=="],
 
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 

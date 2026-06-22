@@ -1,25 +1,49 @@
 import type {
   AnyCircuitElement,
-  SimulationCurrentProbe,
-  SimulationCurrentProbeDisplayOptions,
   SimulationExperiment,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
-  SimulationVoltageProbe,
-  SimulationVoltageProbeDisplayOptions,
 } from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap } from "lib/utils/colors"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
+import { createAxes } from "./simulation-graph-svg/create-axes"
+import {
+  buildAxisInfo,
+  buildTimeAxisInfo,
+} from "./simulation-graph-svg/create-axes/build-axis-info"
+import { createBackgroundRect } from "./simulation-graph-svg/create-axes/create-background-rect"
+import { createDefsNode } from "./simulation-graph-svg/create-axes/create-defs-node"
+import { createGridLines } from "./simulation-graph-svg/create-axes/create-grid-lines"
+import { createLinearScale } from "./simulation-graph-svg/create-axes/create-linear-scale"
+import { createPlotBackground } from "./simulation-graph-svg/create-axes/create-plot-background"
+import { createStyleNode } from "./simulation-graph-svg/create-axes/create-style-node"
+import {
+  createDataGroup,
+  createTitleNode,
+} from "./simulation-graph-svg/create-data-group"
+import { createLegend } from "./simulation-graph-svg/create-legend"
+import { createScopeLegend } from "./simulation-graph-svg/create-legend/create-scope-legend"
+import { getScopeAxisGutters } from "./simulation-graph-svg/create-legend/get-scope-axis-gutters"
+import { getScopeLegendGridLayout } from "./simulation-graph-svg/create-legend/get-scope-legend-grid-layout"
+import { prepareSimulationGraphs } from "./simulation-graph-svg/prepare-simulation-graphs"
+import {
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+  MARGIN,
+  SCOPE_LEGEND_GAP,
+  type SimulationTransientGraph,
+  createClipPathId,
+  formatNumber,
+  getYAxisTitle,
+  svgElement,
+} from "./simulation-graph-svg/simulation-graph-svg-shared"
 import {
   type CircuitJsonWithSimulation,
-  isSimulationCurrentProbe,
   isSimulationExperiment,
   isSimulationTransientCurrentGraph,
   isSimulationTransientVoltageGraph,
-  isSimulationVoltageProbe,
 } from "./types"
 
 interface ConvertSimulationGraphParams {
@@ -31,38 +55,6 @@ interface ConvertSimulationGraphParams {
   height?: number
   includeVersion?: boolean
 }
-
-type SimulationTransientGraph =
-  | SimulationTransientVoltageGraph
-  | SimulationTransientCurrentGraph
-
-type SimulationProbe = SimulationVoltageProbe | SimulationCurrentProbe
-
-type SimulationProbeDisplayOptions =
-  | SimulationVoltageProbeDisplayOptions
-  | SimulationCurrentProbeDisplayOptions
-
-interface PreparedSimulationGraph {
-  graph: SimulationTransientGraph
-  points: Array<{ timeMs: number; rawValue: number; displayValue: number }>
-  color: string
-  label: string
-  usesDisplayOptions: boolean
-}
-
-interface AxisInfo {
-  domainMin: number
-  domainMax: number
-  ticks: number[]
-  tickLabelOverrides?: Map<number, string>
-}
-
-type ScaleFn = (value: number) => number
-
-const DEFAULT_WIDTH = 1200
-const DEFAULT_HEIGHT = 600
-const MARGIN = { top: 64, right: 100, bottom: 80, left: 100 }
-const FALLBACK_LINE_COLOR = "#1f77b4"
 
 export function convertCircuitJsonToSimulationGraphSvg({
   circuitJson,
@@ -136,18 +128,29 @@ export function convertCircuitJsonToSimulationGraphSvg({
     allPoints.map((point) => point.displayValue),
     true,
   )
-  const usesDisplayOptions = preparedGraphs.some(
-    (entry) => entry.usesDisplayOptions,
+  const usesScopeTraceDisplay = preparedGraphs.some(
+    (entry) => entry.usesScopeTraceDisplay,
   )
+  const scopeAxisGutters = usesScopeTraceDisplay
+    ? getScopeAxisGutters(preparedGraphs.length)
+    : { left: 0, right: 0 }
+  const outputWidth = width + scopeAxisGutters.left + scopeAxisGutters.right
+  const scopeLegendLayout = usesScopeTraceDisplay
+    ? getScopeLegendGridLayout(preparedGraphs.length, outputWidth)
+    : null
+  const outputHeight = scopeLegendLayout
+    ? height + SCOPE_LEGEND_GAP + scopeLegendLayout.height + SCOPE_LEGEND_GAP
+    : height
 
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
+  const plotLeft = MARGIN.left + scopeAxisGutters.left
 
   const scaleX = createLinearScale(
     timeAxis.domainMin,
     timeAxis.domainMax,
-    MARGIN.left,
-    MARGIN.left + plotWidth,
+    plotLeft,
+    plotLeft + plotWidth,
   )
   const scaleY = createLinearScale(
     valueAxis.domainMin,
@@ -162,18 +165,19 @@ export function convertCircuitJsonToSimulationGraphSvg({
   )
   const version = CIRCUIT_TO_SVG_VERSION
 
-  const titleNode = createTitleNode(experiment, width)
+  const titleNode = createTitleNode(experiment, outputWidth)
 
   const svgChildren: SvgObject[] = [
     createStyleNode(),
-    createBackgroundRect(width, height),
-    createDefsNode(clipPathId, plotWidth, plotHeight),
-    createPlotBackground(plotWidth, plotHeight),
+    createBackgroundRect(outputWidth, outputHeight),
+    createDefsNode(clipPathId, plotLeft, plotWidth, plotHeight),
+    createPlotBackground(plotLeft, plotWidth, plotHeight),
     createGridLines({
       timeAxis,
       valueAxis,
       scaleX,
       scaleY,
+      plotLeft,
       plotWidth,
       plotHeight,
     }),
@@ -181,13 +185,18 @@ export function convertCircuitJsonToSimulationGraphSvg({
     createAxes({
       timeAxis,
       valueAxis,
+      graphs: preparedGraphs,
       scaleX,
       scaleY,
+      plotLeft,
       plotWidth,
       plotHeight,
-      yAxisTitle: getYAxisTitle(preparedGraphs, usesDisplayOptions),
+      yAxisTitle: getYAxisTitle(preparedGraphs),
+      usesScopeTraceDisplay,
     }),
-    createLegend(preparedGraphs, width),
+    usesScopeTraceDisplay
+      ? createScopeLegend(preparedGraphs, outputWidth, height)
+      : createLegend(preparedGraphs, outputWidth),
     ...(titleNode ? [titleNode] : []),
   ]
 
@@ -195,9 +204,9 @@ export function convertCircuitJsonToSimulationGraphSvg({
     "svg",
     {
       xmlns: "http://www.w3.org/2000/svg",
-      width: width.toString(),
-      height: height.toString(),
-      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(height)}`,
+      width: outputWidth.toString(),
+      height: outputHeight.toString(),
+      viewBox: `0 0 ${formatNumber(outputWidth)} ${formatNumber(outputHeight)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(experiment?.name && {
         "data-simulation-experiment-name": experiment.name,
@@ -213,998 +222,4 @@ export function convertCircuitJsonToSimulationGraphSvg({
   )
 
   return stringify(svgObject)
-}
-
-function prepareSimulationGraphs(
-  graphs: SimulationTransientGraph[],
-  circuitJson: CircuitJsonWithSimulation[],
-): PreparedSimulationGraph[] {
-  const palette = Array.isArray(colorMap.simulation_palette)
-    ? colorMap.simulation_palette
-    : Array.isArray(colorMap.palette)
-      ? colorMap.palette
-      : []
-
-  const voltageProbes = circuitJson.filter(isSimulationVoltageProbe)
-  const currentProbes = circuitJson.filter(isSimulationCurrentProbe)
-  const sourceComponentIdToVoltageProbeName = new Map<string, string>()
-  const sourceComponentIdToVoltageProbeColor = new Map<string, string>()
-  const sourceComponentIdToCurrentProbeName = new Map<string, string>()
-  const sourceComponentIdToCurrentProbeColor = new Map<string, string>()
-  const voltageProbeIdToProbe = new Map<string, SimulationVoltageProbe>()
-  const currentProbeIdToProbe = new Map<string, SimulationCurrentProbe>()
-  const sourceComponentIdToVoltageProbe = new Map<
-    string,
-    SimulationVoltageProbe
-  >()
-  const sourceComponentIdToCurrentProbe = new Map<
-    string,
-    SimulationCurrentProbe
-  >()
-  for (const probe of voltageProbes) {
-    voltageProbeIdToProbe.set(probe.simulation_voltage_probe_id, probe)
-    if (probe.name && probe.source_component_id) {
-      sourceComponentIdToVoltageProbeName.set(
-        probe.source_component_id,
-        probe.name,
-      )
-    }
-    if (probe.color && probe.source_component_id) {
-      sourceComponentIdToVoltageProbeColor.set(
-        probe.source_component_id,
-        probe.color,
-      )
-    }
-    if (probe.source_component_id) {
-      sourceComponentIdToVoltageProbe.set(probe.source_component_id, probe)
-    }
-  }
-  for (const probe of currentProbes) {
-    currentProbeIdToProbe.set(probe.simulation_current_probe_id, probe)
-    if (probe.name && probe.source_component_id) {
-      sourceComponentIdToCurrentProbeName.set(
-        probe.source_component_id,
-        probe.name,
-      )
-    }
-    if (probe.color && probe.source_component_id) {
-      sourceComponentIdToCurrentProbeColor.set(
-        probe.source_component_id,
-        probe.color,
-      )
-    }
-    if (probe.source_component_id) {
-      sourceComponentIdToCurrentProbe.set(probe.source_component_id, probe)
-    }
-  }
-
-  return graphs
-    .map((graph, index) => {
-      const probe = getProbeForGraph(
-        graph,
-        voltageProbeIdToProbe,
-        currentProbeIdToProbe,
-        sourceComponentIdToVoltageProbe,
-        sourceComponentIdToCurrentProbe,
-      )
-      const points = createGraphPoints(graph, probe?.display_options)
-      const paletteColor = getPaletteColor(palette, index)
-      const probeColor = getProbeColor(
-        graph,
-        probe,
-        isCurrentGraph(graph)
-          ? sourceComponentIdToCurrentProbeColor
-          : sourceComponentIdToVoltageProbeColor,
-      )
-      const color = graph.color ?? probeColor ?? paletteColor
-      const label = getGraphLabel(
-        graph,
-        probe,
-        isCurrentGraph(graph)
-          ? sourceComponentIdToCurrentProbeName
-          : sourceComponentIdToVoltageProbeName,
-      )
-
-      return {
-        graph,
-        points,
-        color,
-        label,
-        usesDisplayOptions: isUsableDisplayOptions(probe?.display_options),
-      }
-    })
-    .filter((entry) => entry.points.length > 0)
-}
-
-function getProbeForGraph(
-  graph: SimulationTransientGraph,
-  voltageProbeIdToProbe: Map<string, SimulationVoltageProbe>,
-  currentProbeIdToProbe: Map<string, SimulationCurrentProbe>,
-  sourceComponentIdToVoltageProbe: Map<string, SimulationVoltageProbe>,
-  sourceComponentIdToCurrentProbe: Map<string, SimulationCurrentProbe>,
-): SimulationProbe | undefined {
-  const sourceProbeId = getStringProperty(graph, "source_probe_id")
-  if (sourceProbeId) {
-    const probe = isCurrentGraph(graph)
-      ? currentProbeIdToProbe.get(sourceProbeId)
-      : voltageProbeIdToProbe.get(sourceProbeId)
-    if (probe) return probe
-  }
-
-  if (!graph.source_component_id) return undefined
-  return isCurrentGraph(graph)
-    ? sourceComponentIdToCurrentProbe.get(graph.source_component_id)
-    : sourceComponentIdToVoltageProbe.get(graph.source_component_id)
-}
-
-function getPaletteColor(palette: string[], index: number): string {
-  if (palette.length === 0) return FALLBACK_LINE_COLOR
-  return palette[index % palette.length] ?? FALLBACK_LINE_COLOR
-}
-
-function getProbeColor(
-  graph: SimulationTransientGraph,
-  probe: SimulationProbe | undefined,
-  sourceComponentIdToProbeColor: Map<string, string>,
-): string | undefined {
-  if (probe?.color) return probe.color
-  if (!graph.source_component_id) return undefined
-  return sourceComponentIdToProbeColor.get(graph.source_component_id)
-}
-
-function getGraphLabel(
-  graph: SimulationTransientGraph,
-  probe: SimulationProbe | undefined,
-  sourceComponentIdToProbeName: Map<string, string>,
-): string {
-  const prefix = isCurrentGraph(graph) ? "I" : "V"
-  if (probe?.display_options?.label) return probe.display_options.label
-  if (probe?.name) return `${prefix}(${probe.name})`
-
-  const sourceProbeName = getStringProperty(graph, "source_probe_name")
-  if (sourceProbeName) return `${prefix}(${sourceProbeName})`
-
-  if (graph.source_component_id) {
-    const probeName = sourceComponentIdToProbeName.get(
-      graph.source_component_id,
-    )
-    if (probeName) return `${prefix}(${probeName})`
-  }
-
-  if (graph.name) return graph.name
-  if (graph.source_component_id) return `Probe ${graph.source_component_id}`
-  return getGraphId(graph)
-}
-
-function getStringProperty(value: object, key: string): string | undefined {
-  const propertyValue = (value as Record<string, unknown>)[key]
-  if (typeof propertyValue !== "string") return undefined
-  return propertyValue
-}
-
-function createGraphPoints(
-  graph: SimulationTransientGraph,
-  displayOptions?: SimulationProbeDisplayOptions,
-): Array<{ timeMs: number; rawValue: number; displayValue: number }> {
-  const timestamps = getTimestamps(graph)
-  const levels = getGraphLevels(graph)
-  const length = Math.min(timestamps.length, levels.length)
-  const points: Array<{
-    timeMs: number
-    rawValue: number
-    displayValue: number
-  }> = []
-  const transformDisplayValue = createDisplayValueTransform(displayOptions)
-
-  for (let index = 0; index < length; index++) {
-    const timeMs = Number(timestamps[index] ?? Number.NaN)
-    const rawValue = Number(levels[index] ?? Number.NaN)
-
-    if (!Number.isFinite(timeMs) || !Number.isFinite(rawValue)) continue
-
-    points.push({
-      timeMs,
-      rawValue,
-      displayValue: transformDisplayValue(rawValue),
-    })
-  }
-
-  return points
-}
-
-function createDisplayValueTransform(
-  displayOptions?: SimulationProbeDisplayOptions,
-): (rawValue: number) => number {
-  if (!isUsableDisplayOptions(displayOptions)) return (rawValue) => rawValue
-
-  const center = displayOptions.center ?? 0
-  const offsetDivs = displayOptions.offset_divs ?? 0
-  const unitsPerDiv = displayOptions.units_per_div
-
-  return (rawValue) => offsetDivs + (rawValue - center) / unitsPerDiv
-}
-
-function isUsableDisplayOptions(
-  displayOptions?: SimulationProbeDisplayOptions,
-): displayOptions is SimulationProbeDisplayOptions & {
-  units_per_div: number
-} {
-  return (
-    displayOptions?.units_per_div !== undefined &&
-    Number.isFinite(displayOptions.units_per_div) &&
-    Math.abs(displayOptions.units_per_div) > Number.EPSILON
-  )
-}
-
-function getTimestamps(graph: SimulationTransientGraph): number[] {
-  const levels = getGraphLevels(graph)
-  if (
-    Array.isArray(graph.timestamps_ms) &&
-    graph.timestamps_ms.length === levels.length
-  ) {
-    return graph.timestamps_ms.map((value: number) => Number(value))
-  }
-
-  const count = levels.length
-  if (count === 0) return []
-
-  const timestamps: number[] = []
-  for (let index = 0; index < count; index++) {
-    timestamps.push(graph.start_time_ms + graph.time_per_step * index)
-  }
-
-  const lastTimestamp =
-    timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined
-  if (
-    lastTimestamp !== undefined &&
-    Number.isFinite(graph.end_time_ms) &&
-    Number.isFinite(lastTimestamp) &&
-    Math.abs(lastTimestamp - graph.end_time_ms) > graph.time_per_step / 2
-  ) {
-    timestamps.push(graph.end_time_ms)
-  }
-
-  return timestamps
-}
-
-function buildAxisInfo(values: number[], applyPadding = false): AxisInfo {
-  if (values.length === 0) {
-    return {
-      domainMin: 0,
-      domainMax: 1,
-      ticks: [0, 1],
-    }
-  }
-
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-
-  if (min === max) {
-    const offset = min === 0 ? 1 : Math.abs(min) * 0.1 || 1
-    return {
-      domainMin: min - offset,
-      domainMax: min + offset,
-      ticks: [min - offset, min, min + offset],
-    }
-  }
-
-  const ticks = generateTickValues(min, max)
-  // Create a mutable copy of the ticks
-  const safeTicks = ticks.length > 0 ? [...ticks] : [min, max]
-  let domainMin = safeTicks[0]!
-  let domainMax = safeTicks[safeTicks.length - 1]!
-
-  if (applyPadding && safeTicks.length > 1) {
-    const tickStep = Math.abs(safeTicks[1]! - safeTicks[0]!)
-    const PADDING_TOLERANCE_RATIO = 0.1 // 10% of tick step
-
-    // Add padding if the data's min/max are too close to the domain edges
-    if (min < domainMin + tickStep * PADDING_TOLERANCE_RATIO) {
-      domainMin -= tickStep
-      safeTicks.unshift(domainMin)
-    }
-    if (max > domainMax - tickStep * PADDING_TOLERANCE_RATIO) {
-      domainMax += tickStep
-      safeTicks.push(domainMax)
-    }
-  }
-
-  return { domainMin, domainMax, ticks: safeTicks }
-}
-
-function buildTimeAxisInfo({
-  values,
-  graphs,
-  experiment,
-}: {
-  values: number[]
-  graphs: SimulationTransientGraph[]
-  experiment?: SimulationExperiment
-}): AxisInfo {
-  const experimentStartTimeMs = getFiniteNumber(
-    (experiment as { start_time_ms?: number } | undefined)?.start_time_ms,
-  )
-  const experimentEndTimeMs = getFiniteNumber(
-    (experiment as { end_time_ms?: number } | undefined)?.end_time_ms,
-  )
-
-  const startTimes = graphs
-    .map((graph) => getFiniteNumber(graph.start_time_ms))
-    .filter((value): value is number => value !== undefined)
-  const endTimes = graphs
-    .map((graph) => getFiniteNumber(graph.end_time_ms))
-    .filter((value): value is number => value !== undefined)
-
-  const domainMin =
-    experimentStartTimeMs ??
-    (startTimes.length > 0 ? Math.min(...startTimes) : undefined)
-  const domainMax =
-    experimentEndTimeMs ??
-    (endTimes.length > 0 ? Math.max(...endTimes) : undefined)
-
-  if (
-    domainMin === undefined ||
-    domainMax === undefined ||
-    domainMin === domainMax
-  ) {
-    return buildAxisInfo(values)
-  }
-
-  const min = Math.min(domainMin, domainMax)
-  const max = Math.max(domainMin, domainMax)
-  const span = max - min
-  const minimumEndpointTickDistance = span * 0.12
-  const interiorTicks = generateTickValues(min, max).filter(
-    (tick) =>
-      tick > min + minimumEndpointTickDistance &&
-      tick < max - minimumEndpointTickDistance,
-  )
-  const ticks = sortAndDedupeApproximateNumbers([min, ...interiorTicks, max])
-
-  return {
-    domainMin: min,
-    domainMax: max,
-    ticks,
-    tickLabelOverrides: new Map([
-      [min, formatNumber(min)],
-      [max, formatNumber(max)],
-    ]),
-  }
-}
-
-function getFiniteNumber(value: unknown): number | undefined {
-  return typeof value === "number" && Number.isFinite(value) ? value : undefined
-}
-
-function sortAndDedupeApproximateNumbers(values: number[]): number[] {
-  const sorted = [...values].sort((a, b) => a - b)
-  const deduped: number[] = []
-
-  for (const value of sorted) {
-    const previous = deduped[deduped.length - 1]
-    if (previous === undefined || Math.abs(value - previous) > 1e-12) {
-      deduped.push(value)
-    }
-  }
-
-  return deduped
-}
-
-function generateTickValues(min: number, max: number, desired = 6): number[] {
-  const span = max - min
-  if (!Number.isFinite(span) || span <= Number.EPSILON) {
-    return [min, max]
-  }
-
-  const step = niceStep(span / Math.max(1, desired - 1))
-  const niceMin = Math.floor(min / step) * step
-  const niceMax = Math.ceil(max / step) * step
-  const values: number[] = []
-
-  for (let value = niceMin; value <= niceMax + step / 2; value += step) {
-    values.push(Number.parseFloat(value.toPrecision(12)))
-  }
-
-  return values
-}
-
-function niceStep(step: number): number {
-  if (!Number.isFinite(step) || step <= 0) return 1
-
-  const exponent = Math.floor(Math.log10(step))
-  const fraction = step / Math.pow(10, exponent)
-
-  let niceFraction: number
-  if (fraction <= 1) niceFraction = 1
-  else if (fraction <= 2) niceFraction = 2
-  else if (fraction <= 5) niceFraction = 5
-  else niceFraction = 10
-
-  return niceFraction * Math.pow(10, exponent)
-}
-
-function createLinearScale(
-  domainMin: number,
-  domainMax: number,
-  rangeMin: number,
-  rangeMax: number,
-): ScaleFn {
-  if (!Number.isFinite(domainMin) || !Number.isFinite(domainMax)) {
-    const midpoint = (rangeMin + rangeMax) / 2
-    return () => midpoint
-  }
-
-  const span = domainMax - domainMin
-  if (Math.abs(span) < Number.EPSILON) {
-    const midpoint = (rangeMin + rangeMax) / 2
-    return () => midpoint
-  }
-
-  return (value: number) =>
-    rangeMin + ((value - domainMin) / span) * (rangeMax - rangeMin)
-}
-
-function createStyleNode(): SvgObject {
-  const content = `
-:root { color-scheme: light; }
-svg { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
-.background { fill: ${colorMap.schematic.background}; }
-.plot-background { fill: #ffffff; }
-.grid-line { stroke: rgba(0, 0, 0, 0.08); stroke-width: 1; }
-.axis { stroke: rgba(0, 0, 0, 0.6); stroke-width: 1.5; }
-.axis-tick { stroke: rgba(0, 0, 0, 0.6); stroke-width: 1; }
-.axis-label { fill: rgba(0, 0, 0, 0.75); font-size: 12px; }
-.axis-title { fill: rgba(0, 0, 0, 0.9); font-size: 14px; font-weight: 600; }
-.legend-label { fill: rgba(0, 0, 0, 0.75); font-size: 11px; }
-.legend-line { stroke-width: 3; }
-.simulation-line { fill: none; stroke-width: 2.5; }
-.simulation-point { stroke-width: 0; }
-.chart-title { fill: rgba(0, 0, 0, 0.85); font-size: 18px; font-weight: 600; }
-`
-
-  return svgElement("style", {}, [textNode(content)])
-}
-
-function createBackgroundRect(width: number, height: number): SvgObject {
-  return svgElement("rect", {
-    class: "background",
-    x: "0",
-    y: "0",
-    width: formatNumber(width),
-    height: formatNumber(height),
-  })
-}
-
-function createDefsNode(
-  clipPathId: string,
-  plotWidth: number,
-  plotHeight: number,
-): SvgObject {
-  return svgElement("defs", {}, [
-    svgElement("clipPath", { id: clipPathId }, [
-      svgElement("rect", {
-        x: formatNumber(MARGIN.left),
-        y: formatNumber(MARGIN.top),
-        width: formatNumber(plotWidth),
-        height: formatNumber(plotHeight),
-      }),
-    ]),
-  ])
-}
-
-function createPlotBackground(
-  plotWidth: number,
-  plotHeight: number,
-): SvgObject {
-  return svgElement("rect", {
-    class: "plot-background",
-    x: formatNumber(MARGIN.left),
-    y: formatNumber(MARGIN.top),
-    width: formatNumber(plotWidth),
-    height: formatNumber(plotHeight),
-  })
-}
-
-interface GridLinesOptions {
-  timeAxis: AxisInfo
-  valueAxis: AxisInfo
-  scaleX: ScaleFn
-  scaleY: ScaleFn
-  plotWidth: number
-  plotHeight: number
-}
-
-function createGridLines({
-  timeAxis,
-  valueAxis,
-  scaleX,
-  scaleY,
-  plotWidth,
-  plotHeight,
-}: GridLinesOptions): SvgObject {
-  const top = MARGIN.top
-  const bottom = MARGIN.top + plotHeight
-  const left = MARGIN.left
-  const right = MARGIN.left + plotWidth
-
-  const children: SvgObject[] = []
-
-  for (const tick of timeAxis.ticks) {
-    const x = formatNumber(scaleX(tick))
-    children.push(
-      svgElement("line", {
-        class: "grid-line grid-line-x",
-        x1: x,
-        y1: formatNumber(top),
-        x2: x,
-        y2: formatNumber(bottom),
-      }),
-    )
-  }
-
-  for (const tick of valueAxis.ticks) {
-    const y = formatNumber(scaleY(tick))
-    children.push(
-      svgElement("line", {
-        class: "grid-line grid-line-y",
-        x1: formatNumber(left),
-        y1: y,
-        x2: formatNumber(right),
-        y2: y,
-      }),
-    )
-  }
-
-  return svgElement("g", { class: "grid" }, children)
-}
-
-interface AxesOptions {
-  timeAxis: AxisInfo
-  valueAxis: AxisInfo
-  scaleX: ScaleFn
-  scaleY: ScaleFn
-  plotWidth: number
-  plotHeight: number
-  yAxisTitle: string
-}
-
-function createAxes({
-  timeAxis,
-  valueAxis,
-  scaleX,
-  scaleY,
-  plotWidth,
-  plotHeight,
-  yAxisTitle,
-}: AxesOptions): SvgObject {
-  const bottom = MARGIN.top + plotHeight
-  const left = MARGIN.left
-  const right = MARGIN.left + plotWidth
-
-  const children: SvgObject[] = [
-    svgElement("line", {
-      class: "axis axis-x",
-      x1: formatNumber(left),
-      y1: formatNumber(bottom),
-      x2: formatNumber(right),
-      y2: formatNumber(bottom),
-    }),
-    svgElement("line", {
-      class: "axis axis-y",
-      x1: formatNumber(left),
-      y1: formatNumber(MARGIN.top),
-      x2: formatNumber(left),
-      y2: formatNumber(bottom),
-    }),
-  ]
-
-  for (const tick of timeAxis.ticks) {
-    const x = formatNumber(scaleX(tick))
-    children.push(
-      svgElement("line", {
-        class: "axis-tick axis-tick-x",
-        x1: x,
-        y1: formatNumber(bottom),
-        x2: x,
-        y2: formatNumber(bottom + 6),
-      }),
-    )
-    children.push(
-      svgElement(
-        "text",
-        {
-          class: "axis-label axis-label-x",
-          x,
-          y: formatNumber(bottom + 22),
-          "text-anchor": "middle",
-        },
-        [textNode(formatTickLabel(tick, timeAxis))],
-      ),
-    )
-  }
-
-  for (const tick of valueAxis.ticks) {
-    const y = formatNumber(scaleY(tick))
-    children.push(
-      svgElement("line", {
-        class: "axis-tick axis-tick-y",
-        x1: formatNumber(left - 6),
-        y1: y,
-        x2: formatNumber(left),
-        y2: y,
-      }),
-    )
-    children.push(
-      svgElement(
-        "text",
-        {
-          class: "axis-label axis-label-y",
-          x: formatNumber(left - 10),
-          y,
-          "text-anchor": "end",
-          "dominant-baseline": "middle",
-        },
-        [textNode(formatTickLabel(tick, valueAxis))],
-      ),
-    )
-  }
-
-  children.push(
-    svgElement(
-      "text",
-      {
-        class: "axis-title axis-title-x",
-        x: formatNumber(left + plotWidth / 2),
-        y: formatNumber(bottom + 48),
-        "text-anchor": "middle",
-      },
-      [textNode("Time (ms)")],
-    ),
-    svgElement(
-      "text",
-      {
-        class: "axis-title axis-title-y",
-        x: formatNumber(left - 64),
-        y: formatNumber(MARGIN.top + plotHeight / 2),
-        transform: `rotate(-90 ${formatNumber(left - 64)} ${formatNumber(
-          MARGIN.top + plotHeight / 2,
-        )})`,
-        "text-anchor": "middle",
-      },
-      [textNode(yAxisTitle)],
-    ),
-  )
-
-  return svgElement("g", { class: "axes" }, children)
-}
-
-const MAX_LEGEND_LINE_LENGTH = 15
-const LEGEND_LINE_HEIGHT = 16
-const LEGEND_MIN_SPACING = 24
-
-function createLegend(
-  graphs: PreparedSimulationGraph[],
-  width: number,
-): SvgObject {
-  let currentY = MARGIN.top
-
-  const children = graphs.map((entry) => {
-    const x = width - MARGIN.right + 10
-    const lines = wrapLegendText(entry.label)
-    const legendItem = createLegendItem(entry, x, currentY, lines)
-
-    // Calculate height of this legend item (line count * line height)
-    const itemHeight = lines.length * LEGEND_LINE_HEIGHT
-    currentY += Math.max(itemHeight, LEGEND_MIN_SPACING)
-
-    return legendItem
-  })
-
-  return svgElement("g", { class: "legend" }, children)
-}
-
-function wrapLegendText(label: string): string[] {
-  // Split on underscores for wrapping
-  const parts = label.split("_")
-
-  if (parts.length <= 1) {
-    return [label]
-  }
-
-  const lines: string[] = []
-  let currentLine = parts[0] ?? ""
-
-  for (let i = 1; i < parts.length; i++) {
-    const part = parts[i] ?? ""
-    const testLine = currentLine + "_" + part
-
-    // If line would be too long, start new line
-    // Note: Individual parts longer than MAX_LEGEND_LINE_LENGTH won't wrap
-    if (testLine.length > MAX_LEGEND_LINE_LENGTH) {
-      lines.push(currentLine)
-      currentLine = part
-    } else {
-      currentLine = testLine
-    }
-  }
-
-  if (currentLine) {
-    lines.push(currentLine)
-  }
-
-  return lines
-}
-
-function createLegendItem(
-  entry: PreparedSimulationGraph,
-  x: number,
-  y: number,
-  lines: string[],
-): SvgObject {
-  // Lines are pre-calculated to avoid duplicate work
-
-  // Create tspan elements for each line
-  const textChildren = lines.map((line, index) => {
-    return svgElement(
-      "tspan",
-      {
-        x: "20",
-        dy: index === 0 ? "0" : String(LEGEND_LINE_HEIGHT),
-      },
-      [textNode(line)],
-    )
-  })
-
-  return svgElement(
-    "g",
-    {
-      class: "legend-item",
-      transform: `translate(${formatNumber(x)} ${formatNumber(y)})`,
-    },
-    [
-      svgElement("line", {
-        class: "legend-line",
-        x1: "0",
-        y1: "0",
-        x2: "16",
-        y2: "0",
-        stroke: entry.color,
-      }),
-      svgElement(
-        "text",
-        {
-          class: "legend-label",
-          x: "20",
-          y: "0",
-          "dominant-baseline": "middle",
-        },
-        textChildren,
-      ),
-    ],
-  )
-}
-
-function createDataGroup(
-  graphs: PreparedSimulationGraph[],
-  clipPathId: string,
-  scaleX: ScaleFn,
-  scaleY: ScaleFn,
-): SvgObject {
-  const LINE_REPEAT_COUNT = 3
-  const DASH_PATTERN = [4, 8]
-  const dashArrayString = DASH_PATTERN.map((value) => formatNumber(value)).join(
-    " ",
-  )
-  const dashCycleLength = DASH_PATTERN.reduce((sum, value) => sum + value, 0)
-  const dashOffsetStep = dashCycleLength / LINE_REPEAT_COUNT
-
-  interface GraphRenderingInfo {
-    entry: PreparedSimulationGraph
-    graphIndex: number
-    pathAttributes: Record<string, string>
-    pointElements: SvgObject[]
-  }
-
-  const processedGraphs: GraphRenderingInfo[] = []
-
-  graphs.forEach((entry, graphIndex) => {
-    if (entry.points.length === 0) return
-
-    const commands: string[] = []
-    entry.points.forEach((point, index) => {
-      const x = formatNumber(scaleX(point.timeMs))
-      const y = formatNumber(scaleY(point.displayValue))
-      commands.push(`${index === 0 ? "M" : "L"} ${x} ${y}`)
-    })
-
-    const baseAttributes: Record<string, string> = {
-      class: "simulation-line",
-      d: commands.join(" "),
-      stroke: entry.color,
-      "clip-path": `url(#${clipPathId})`,
-      [getGraphIdDataAttributeName(entry.graph)]: getGraphId(entry.graph),
-    }
-
-    if (entry.graph.source_component_id) {
-      baseAttributes["data-source-component-id"] =
-        entry.graph.source_component_id
-    }
-
-    const sourceProbeId = getStringProperty(entry.graph, "source_probe_id")
-    if (sourceProbeId) {
-      baseAttributes["data-source-probe-id"] = sourceProbeId
-    }
-
-    const sourceProbeName = getStringProperty(entry.graph, "source_probe_name")
-    if (sourceProbeName) {
-      baseAttributes["data-source-probe-name"] = sourceProbeName
-    }
-
-    if (entry.graph.subcircuit_connectivity_map_key) {
-      baseAttributes["data-subcircuit-connectivity-map-key"] =
-        entry.graph.subcircuit_connectivity_map_key
-    }
-
-    const pointElements = entry.points.map((point) => {
-      const cx = formatNumber(scaleX(point.timeMs))
-      const cy = formatNumber(scaleY(point.displayValue))
-      return svgElement("circle", {
-        class: "simulation-point",
-        cx,
-        cy,
-        r: "2.5",
-        fill: entry.color,
-        "clip-path": `url(#${clipPathId})`,
-      })
-    })
-
-    processedGraphs.push({
-      entry,
-      graphIndex,
-      pathAttributes: baseAttributes,
-      pointElements,
-    })
-  })
-
-  const lineElements: SvgObject[] = []
-
-  for (let cycle = 0; cycle < LINE_REPEAT_COUNT; cycle++) {
-    processedGraphs.forEach((graphInfo) => {
-      const offsetIndex = (graphInfo.graphIndex + cycle) % LINE_REPEAT_COUNT
-      const dashOffset = formatNumber(offsetIndex * dashOffsetStep)
-      lineElements.push(
-        svgElement("path", {
-          ...graphInfo.pathAttributes,
-          "stroke-dasharray": dashArrayString,
-          "stroke-dashoffset": dashOffset,
-        }),
-      )
-    })
-  }
-
-  const pointElements = processedGraphs.flatMap(
-    (graphInfo) => graphInfo.pointElements,
-  )
-
-  return svgElement("g", { class: "data-series" }, [
-    ...lineElements,
-    ...pointElements,
-  ])
-}
-
-function createTitleNode(
-  experiment: SimulationExperiment | undefined,
-  width: number,
-): SvgObject | null {
-  if (!experiment?.name) return null
-
-  return svgElement(
-    "text",
-    {
-      class: "chart-title",
-      x: formatNumber(width / 2),
-      y: formatNumber(MARGIN.top - 40),
-      "text-anchor": "middle",
-    },
-    [textNode(experiment.name)],
-  )
-}
-
-function isCurrentGraph(
-  graph: SimulationTransientGraph,
-): graph is SimulationTransientCurrentGraph {
-  return graph.type === "simulation_transient_current_graph"
-}
-
-function getGraphId(graph: SimulationTransientGraph): string {
-  return isCurrentGraph(graph)
-    ? graph.simulation_transient_current_graph_id
-    : graph.simulation_transient_voltage_graph_id
-}
-
-function getGraphIdDataAttributeName(graph: SimulationTransientGraph): string {
-  return isCurrentGraph(graph)
-    ? "data-simulation-transient-current-graph-id"
-    : "data-simulation-transient-voltage-graph-id"
-}
-
-function getGraphLevels(graph: SimulationTransientGraph): number[] {
-  return isCurrentGraph(graph) ? graph.current_levels : graph.voltage_levels
-}
-
-function getYAxisTitle(
-  graphs: PreparedSimulationGraph[],
-  usesDisplayOptions: boolean,
-): string {
-  if (usesDisplayOptions) return "Display (div)"
-
-  const hasCurrentGraphs = graphs.some((entry) => isCurrentGraph(entry.graph))
-  const hasVoltageGraphs = graphs.some((entry) => !isCurrentGraph(entry.graph))
-
-  if (hasCurrentGraphs && !hasVoltageGraphs) return "Current (A)"
-  if (hasVoltageGraphs && !hasCurrentGraphs) return "Voltage (V)"
-  return "Value"
-}
-
-function createClipPathId(simulationExperimentId: string): string {
-  const sanitized = simulationExperimentId.replace(/[^a-zA-Z0-9_-]+/g, "-")
-  return `simulation-graph-${sanitized}`
-}
-
-function formatNumber(value: number): string {
-  if (!Number.isFinite(value)) return "0"
-  const rounded = Number.parseFloat(value.toFixed(6))
-  if (Number.isInteger(rounded)) return rounded.toString()
-  return rounded.toString()
-}
-
-function formatTickLabel(value: number, axis: AxisInfo): string {
-  const overriddenLabel = axis.tickLabelOverrides?.get(value)
-  if (overriddenLabel !== undefined) return overriddenLabel
-
-  const { ticks } = axis
-  if (ticks.length <= 1) return formatNumber(value)
-  const span = ticks[ticks.length - 1]! - ticks[0]!
-  if (!Number.isFinite(span) || span === 0) return formatNumber(value)
-
-  const precision = getTickLabelPrecisionForSpan(span)
-  const factor = 10 ** precision
-  const rounded = Math.round(value * factor) / factor
-  const fixed = rounded.toFixed(precision)
-  return fixed
-    .replace(/\.0+$/, "")
-    .replace(/(\.\d*?)0+$/, "$1")
-    .replace(/\.$/, "")
-}
-
-function getTickLabelPrecisionForSpan(span: number): number {
-  if (span >= 100) return 0
-  if (span >= 10) return 1
-  if (span >= 1) return 2
-
-  return 3
-}
-
-function svgElement(
-  name: string,
-  attributes: Record<string, string>,
-  children: SvgObject[] = [],
-): SvgObject {
-  return {
-    name,
-    type: "element",
-    value: "",
-    attributes,
-    children,
-  }
-}
-
-function textNode(value: string): SvgObject {
-  return {
-    name: "",
-    type: "text",
-    value,
-    attributes: {},
-    children: [],
-  }
 }

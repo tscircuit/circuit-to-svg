@@ -2,6 +2,7 @@ import type {
   AnyCircuitElement,
   SimulationCurrentProbe,
   SimulationExperiment,
+  SimulationOscilloscopeTrace,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
   SimulationVoltageProbe,
@@ -14,6 +15,7 @@ export type CircuitJsonWithSimulation =
   | SimulationTransientVoltageGraph
   | SimulationCurrentProbe
   | SimulationVoltageProbe
+  | SimulationOscilloscopeTrace
 
 export function isSimulationTransientCurrentGraph(
   value: CircuitJsonWithSimulation,
@@ -43,4 +45,10 @@ export function isSimulationCurrentProbe(
   value: CircuitJsonWithSimulation,
 ): value is SimulationCurrentProbe {
   return value?.type === "simulation_current_probe"
+}
+
+export function isSimulationOscilloscopeTrace(
+  value: CircuitJsonWithSimulation,
+): value is SimulationOscilloscopeTrace {
+  return value?.type === "simulation_oscilloscope_trace"
 }
