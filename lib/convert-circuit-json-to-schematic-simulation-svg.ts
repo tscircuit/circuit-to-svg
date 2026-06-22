@@ -82,17 +82,26 @@ export function convertCircuitJsonToSchematicSimulationSvg({
 
   const schematicNode = ensureElementNode(parseSync(schematicSvg))
   const simulationNode = ensureElementNode(parseSync(simulationSvg))
+  const simulationViewBoxSize = getSvgViewBoxSize(simulationNode) ?? {
+    width,
+    height: simulationHeight,
+  }
+  const simulationDisplayHeight =
+    simulationViewBoxSize.width > 0
+      ? width * (simulationViewBoxSize.height / simulationViewBoxSize.width)
+      : simulationHeight
+  const outputHeight = schematicHeight + simulationDisplayHeight
 
   const combinedChildren: SvgObject[] = []
   if (graphAboveSchematic) {
     combinedChildren.push(
-      translateNestedSvg(simulationNode, 0, 0, width, simulationHeight),
+      translateNestedSvg(simulationNode, 0, 0, width, simulationDisplayHeight),
     )
     combinedChildren.push(
       translateNestedSvg(
         schematicNode,
         0,
-        simulationHeight,
+        simulationDisplayHeight,
         width,
         schematicHeight,
       ),
@@ -107,7 +116,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
         0,
         schematicHeight,
         width,
-        simulationHeight,
+        simulationDisplayHeight,
       ),
     )
   }
@@ -121,8 +130,8 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
       width: formatNumber(width),
-      height: formatNumber(height),
-      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(height)}`,
+      height: formatNumber(outputHeight),
+      viewBox: `0 0 ${formatNumber(width)} ${formatNumber(outputHeight)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(softwareUsedString && {
         "data-software-used-string": softwareUsedString,
@@ -162,6 +171,27 @@ function ensureElementNode(node: SvgObject): SvgObject {
     throw new Error("Expected SVG root element to be of type 'element'")
   }
   return node
+}
+
+function getSvgViewBoxSize(
+  node: SvgObject,
+): { width: number; height: number } | null {
+  const viewBox = node.attributes?.viewBox
+  if (typeof viewBox !== "string") return null
+
+  const values = viewBox
+    .trim()
+    .split(/[\s,]+/)
+    .map((value) => Number.parseFloat(value))
+
+  if (values.length !== 4) return null
+  const width = values.at(2)
+  const height = values.at(3)
+  if (!Number.isFinite(width) || !Number.isFinite(height)) return null
+  if (width === undefined || height === undefined) return null
+  if (width <= 0 || height <= 0) return null
+
+  return { width, height }
 }
 
 function cloneSvgObject(node: SvgObject): SvgObject {

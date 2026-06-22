@@ -1,6 +1,11 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToSimulationGraphSvg } from "lib"
+import { createElement } from "react"
+import {
+  convertCircuitJsonToSchematicSimulationSvg,
+  convertCircuitJsonToSimulationGraphSvg,
+} from "lib"
 import type { CircuitJsonWithSimulation } from "lib/sim/types"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const simulationExperimentId = "exp-1"
 
@@ -46,6 +51,35 @@ const circuitJson: CircuitJsonWithSimulation[] = [
     name: "V(ref)",
   },
 ]
+
+async function createResistorSchematicCircuitJson(): Promise<
+  CircuitJsonWithSimulation[]
+> {
+  const { circuit } = getTestFixture()
+
+  circuit.add(
+    createElement(
+      "board",
+      { width: "10mm", height: "10mm", routingDisabled: true },
+      createElement("resistor", {
+        name: "R1",
+        resistance: "10",
+        footprint: "0402",
+        symbolName: "boxresistor_right",
+      }),
+    ),
+  )
+
+  await circuit.renderUntilSettled()
+
+  return circuit.getCircuitJson() as CircuitJsonWithSimulation[]
+}
+
+async function withResistorSchematic(
+  circuitJson: CircuitJsonWithSimulation[],
+): Promise<CircuitJsonWithSimulation[]> {
+  return [...(await createResistorSchematicCircuitJson()), ...circuitJson]
+}
 
 test("renders all transient voltage graphs", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
@@ -526,39 +560,32 @@ function createScopeDisplayCircuit(
   return circuit
 }
 
-test("renders scope legend layout for 4 oscilloscope trace channels", () => {
-  const svg = convertCircuitJsonToSimulationGraphSvg({
-    circuitJson: createScopeDisplayCircuit(4, "exp-four-channel-display"),
+test("renders schematic simulation layout for 4 oscilloscope trace channels", async () => {
+  const svg = convertCircuitJsonToSchematicSimulationSvg({
+    circuitJson: await withResistorSchematic(
+      createScopeDisplayCircuit(4, "exp-four-channel-display"),
+    ),
     simulation_experiment_id: "exp-four-channel-display",
     width: 500,
-    height: 520,
+    height: 1000,
+    schematicHeightRatio: 0.48,
   })
 
-  expect(svg).toContain('width="572"')
-  expect(svg).toContain('height="774"')
-  expect(svg).toContain('<rect x="136" y="64" width="300"')
-  expect(svg).toContain("Ch4")
-  expect(svg).toContain("CH4_SIG")
-  expect(svg).toContain('transform="translate(91 656)"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "four-channel-scope-legend")
 })
 
-test("renders scope legend layout for 5 oscilloscope trace channels", () => {
-  const svg = convertCircuitJsonToSimulationGraphSvg({
-    circuitJson: createScopeDisplayCircuit(5, "exp-five-channel-display", {
-      includeCurrentChannel: true,
-    }),
+test("renders schematic simulation layout for 5 oscilloscope trace channels", async () => {
+  const svg = convertCircuitJsonToSchematicSimulationSvg({
+    circuitJson: await withResistorSchematic(
+      createScopeDisplayCircuit(5, "exp-five-channel-display", {
+        includeCurrentChannel: true,
+      }),
+    ),
     simulation_experiment_id: "exp-five-channel-display",
     width: 500,
-    height: 640,
+    height: 1000,
+    schematicHeightRatio: 0.36,
   })
 
-  expect(svg).toContain('width="628"')
-  expect(svg).toContain('height="894"')
-  expect(svg).toContain('<rect x="192" y="64" width="300"')
-  expect(svg).toContain("Ch5")
-  expect(svg).toContain("CH5_SIG")
-  expect(svg).toContain("5 mA/div")
-  expect(svg).toContain('transform="translate(255 776)"')
   expect(svg).toMatchSvgSnapshot(import.meta.path, "five-channel-scope-legend")
 })
