@@ -3,13 +3,11 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
-  applyToPoint,
   compose,
   scale,
   translate,
   fromTriangles,
   type Matrix,
-  fromTwoMovingPoints,
   toSVG,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
@@ -36,7 +34,7 @@ import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg
 import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-objects-from-sch-sheet"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
-const MAX_SHEET_SUBCIRCUIT_FIT_SCALE = 8
+const MAX_SHEET_SUBCIRCUIT_FIT_SCALE = 12
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -177,6 +175,28 @@ function getSchematicElementsForSubcircuit(
       .map((elm) => elm.source_port_id),
   )
 
+  const sourceTraceIds = new Set(
+    circuitJson
+      .filter(
+        (elm): elm is Extract<AnyCircuitElement, { type: "source_trace" }> =>
+          elm.type === "source_trace" &&
+          elm.connected_source_port_ids.some((sourcePortId) =>
+            sourcePortIds.has(sourcePortId),
+          ),
+      )
+      .map((elm) => elm.source_trace_id),
+  )
+  const sourceTraceConnectivityMapKeys = new Set(
+    circuitJson
+      .filter(
+        (elm): elm is Extract<AnyCircuitElement, { type: "source_trace" }> =>
+          elm.type === "source_trace" &&
+          sourceTraceIds.has(elm.source_trace_id) &&
+          elm.subcircuit_connectivity_map_key !== undefined,
+      )
+      .map((elm) => elm.subcircuit_connectivity_map_key!),
+  )
+
   return circuitJson.filter((elm) => {
     if (elm.type === "schematic_sheet") return false
     if ((elm as { subcircuit_id?: string }).subcircuit_id === subcircuitId) {
@@ -200,8 +220,16 @@ function getSchematicElementsForSubcircuit(
       return true
     }
     if (elm.type === "source_trace") {
-      return elm.connected_source_port_ids.some((sourcePortId) =>
-        sourcePortIds.has(sourcePortId),
+      return sourceTraceIds.has(elm.source_trace_id)
+    }
+    if (elm.type === "schematic_trace") {
+      return (
+        (elm.source_trace_id !== undefined &&
+          sourceTraceIds.has(elm.source_trace_id)) ||
+        (elm.subcircuit_connectivity_map_key !== undefined &&
+          sourceTraceConnectivityMapKeys.has(
+            elm.subcircuit_connectivity_map_key,
+          ))
       )
     }
     if (elm.type === "schematic_port") {
