@@ -10,6 +10,7 @@ import {
 } from "lib/utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { estimateTextWidth } from "./estimate-text-width"
+import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
 interface Bounds {
   minX: number
@@ -28,10 +29,19 @@ export function getSchematicBoundsFromCircuitJson(
   let maxY = Number.NEGATIVE_INFINITY
 
   const portSize = 0.2
+  let sheetIndex = 0
 
   // Find the bounds
   for (const item of soup) {
-    if (item.type === "schematic_component") {
+    if (item.type === "schematic_sheet") {
+      const layout = getSchematicSheetLayout(item, sheetIndex)
+      sheetIndex += 1
+      updateBounds(
+        layout.center,
+        { width: layout.width, height: layout.height },
+        0,
+      )
+    } else if (item.type === "schematic_component") {
       updateBounds(item.center, item.size, 0)
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
@@ -181,6 +191,13 @@ export function getSchematicBoundsFromCircuitJson(
   }
 
   // Add padding to bounds
+  if (!Number.isFinite(minX)) {
+    minX = -1
+    minY = -1
+    maxX = 1
+    maxY = 1
+  }
+
   minX -= padding
   minY -= padding
   maxX += padding
