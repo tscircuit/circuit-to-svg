@@ -36,6 +36,8 @@ import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg
 import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-objects-from-sch-sheet"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
+const MAX_SHEET_SUBCIRCUIT_FIT_SCALE = 8
+
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
 }
@@ -94,7 +96,10 @@ function createCenteredSheetSubcircuitTransform({
   const layout = getSchematicSheetLayout(sheet, sheetIndex)
   const contentWidth = layout.innerMaxX - layout.innerMinX
   const contentHeight = layout.innerMaxY - layout.innerMinY
-  const fitScale = Math.min(contentWidth / width, contentHeight / height) * 0.8
+  const fitScale = Math.min(
+    Math.min(contentWidth / width, contentHeight / height) * 0.8,
+    MAX_SHEET_SUBCIRCUIT_FIT_SCALE,
+  )
   const childCenter = {
     x: (bounds.minX + bounds.maxX) / 2,
     y: (bounds.minY + bounds.maxY) / 2,
