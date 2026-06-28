@@ -1,10 +1,10 @@
 import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
-import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
+import type { Matrix } from "transformation-matrix"
 import { createSvgObjectsFromSchematicComponentWithBox } from "./create-svg-objects-from-sch-component-with-box"
 import { createSvgObjectsFromSchematicComponentWithPrimitives } from "./create-svg-objects-from-sch-component-with-primitives"
-import type { Matrix } from "transformation-matrix"
+import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 
 export function createSvgObjectsFromSchematicComponent(params: {
   component: SchematicComponent
@@ -39,6 +39,9 @@ export function createSvgObjectsFromSchematicComponent(params: {
         class: "sch-component",
         "data-circuit-json-type": "schematic_component",
         "data-schematic-component-id": component.schematic_component_id,
+        ...(component.schematic_sheet_id
+          ? { "data-schematic-sheet-id": component.schematic_sheet_id }
+          : {}),
       },
       children: innerElements,
       value: "",

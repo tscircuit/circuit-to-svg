@@ -1,15 +1,15 @@
 import type { AnyCircuitElement } from "circuit-json"
-import { getTableDimensions } from "./get-table-dimensions"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
-  getPathRotation,
   calculateAnchorPosition,
+  getPathRotation,
 } from "lib/utils/net-label-utils"
-import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { estimateTextWidth } from "./estimate-text-width"
+import { getTableDimensions } from "./get-table-dimensions"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
 interface Bounds {
@@ -29,13 +29,11 @@ export function getSchematicBoundsFromCircuitJson(
   let maxY = Number.NEGATIVE_INFINITY
 
   const portSize = 0.2
-  let sheetIndex = 0
 
   // Find the bounds
   for (const item of soup) {
     if (item.type === "schematic_sheet") {
-      const layout = getSchematicSheetLayout(item, sheetIndex)
-      sheetIndex += 1
+      const layout = getSchematicSheetLayout(item)
       updateBounds(
         layout.center,
         { width: layout.width, height: layout.height },

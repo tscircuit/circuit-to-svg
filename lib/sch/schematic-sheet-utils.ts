@@ -1,11 +1,15 @@
 import type { SchematicSheet } from "circuit-json"
 
-// A4 dimensions in mm
-export const DEFAULT_SCHEMATIC_SHEET_WIDTH = 297
-export const DEFAULT_SCHEMATIC_SHEET_HEIGHT = 210
+const KICAD_RESISTOR_PIN_SPAN_MM = 10.16
+const TSCIRCUIT_RESISTOR_PIN_SPAN = 1.1
+export const SCHEMATIC_UNIT_TO_MM =
+  KICAD_RESISTOR_PIN_SPAN_MM / TSCIRCUIT_RESISTOR_PIN_SPAN
 
-export const SCHEMATIC_SHEET_GAP = 20
-export const SCHEMATIC_SHEET_INNER_MARGIN = 5
+export const DEFAULT_SCHEMATIC_SHEET_WIDTH = 297 / SCHEMATIC_UNIT_TO_MM
+export const DEFAULT_SCHEMATIC_SHEET_HEIGHT = 210 / SCHEMATIC_UNIT_TO_MM
+
+export const SCHEMATIC_SHEET_GAP = 20 / SCHEMATIC_UNIT_TO_MM
+export const SCHEMATIC_SHEET_INNER_MARGIN = 5 / SCHEMATIC_UNIT_TO_MM
 
 export interface SchematicSheetLayout {
   center: { x: number; y: number }
@@ -22,9 +26,9 @@ export interface SchematicSheetLayout {
 }
 
 export function getSchematicSheetLayout(
-  _sheet: SchematicSheet,
-  sheetIndex: number,
+  sheet: SchematicSheet,
 ): SchematicSheetLayout {
+  const sheetIndex = sheet.sheet_index ?? 0
   const center = {
     x: sheetIndex * (DEFAULT_SCHEMATIC_SHEET_WIDTH + SCHEMATIC_SHEET_GAP),
     y: 0,
