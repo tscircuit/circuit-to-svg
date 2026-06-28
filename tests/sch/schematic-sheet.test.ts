@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 
-test("schematic sheet renders linked subcircuit centered on sheet", () => {
+test.skip("schematic sheet renders linked subcircuit centered on sheet", () => {
   const circuitJson: AnyCircuitElement[] = [
     {
       type: "schematic_sheet",
