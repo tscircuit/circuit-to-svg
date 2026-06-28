@@ -1,13 +1,15 @@
-import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
+import type { AnyCircuitElement } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
 import { stringify } from "svgson"
 import {
+  applyToPoint,
   compose,
   scale,
   translate,
   fromTriangles,
   type Matrix,
+  fromTwoMovingPoints,
   toSVG,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
@@ -31,10 +33,6 @@ import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-ob
 import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
-import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-objects-from-sch-sheet"
-import { getSchematicSheetLayout } from "./schematic-sheet-utils"
-
-const MAX_SHEET_SUBCIRCUIT_FIT_SCALE = 12
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -73,170 +71,6 @@ function buildNetHoverStyles(connectivityKeys: Set<string>): string {
     )
   }
   return rules.join("\n")
-}
-
-function createCenteredSheetSubcircuitTransform({
-  sheet,
-  sheetIndex,
-  transform,
-  elements,
-}: {
-  sheet: SchematicSheet
-  sheetIndex: number
-  transform: Matrix
-  elements: AnyCircuitElement[]
-}): Matrix {
-  const bounds = getSchematicBoundsFromCircuitJson(elements, 0.2)
-  const width = bounds.maxX - bounds.minX
-  const height = bounds.maxY - bounds.minY
-  if (width <= 0 || height <= 0) return transform
-
-  const layout = getSchematicSheetLayout(sheet, sheetIndex)
-  const contentWidth = layout.innerMaxX - layout.innerMinX
-  const contentHeight = layout.innerMaxY - layout.innerMinY
-  const fitScale = Math.min(
-    Math.min(contentWidth / width, contentHeight / height) * 0.8,
-    MAX_SHEET_SUBCIRCUIT_FIT_SCALE,
-  )
-  const childCenter = {
-    x: (bounds.minX + bounds.maxX) / 2,
-    y: (bounds.minY + bounds.maxY) / 2,
-  }
-
-  return compose(
-    transform,
-    translate(layout.center.x, layout.center.y),
-    scale(fitScale, fitScale),
-    translate(-childCenter.x, -childCenter.y),
-  )
-}
-
-function getSchematicElementsForSubcircuit(
-  circuitJson: AnyCircuitElement[],
-  subcircuitId: string,
-): AnyCircuitElement[] {
-  const sourceGroupIds = new Set(
-    circuitJson
-      .filter(
-        (elm): elm is Extract<AnyCircuitElement, { type: "source_group" }> =>
-          elm.type === "source_group" && elm.subcircuit_id === subcircuitId,
-      )
-      .map((elm) => elm.source_group_id),
-  )
-  const sourceComponentIds = new Set(
-    circuitJson
-      .filter(
-        (
-          elm,
-        ): elm is Extract<AnyCircuitElement, { type: "source_component" }> => {
-          if (elm.type !== "source_component") return false
-          const sourceComponent = elm as {
-            subcircuit_id?: string
-            source_group_id?: string
-          }
-          return (
-            sourceComponent.subcircuit_id === subcircuitId ||
-            (sourceComponent.source_group_id !== undefined &&
-              sourceGroupIds.has(sourceComponent.source_group_id))
-          )
-        },
-      )
-      .map((elm) => elm.source_component_id),
-  )
-  const schematicComponentIds = new Set(
-    circuitJson
-      .filter(
-        (
-          elm,
-        ): elm is Extract<AnyCircuitElement, { type: "schematic_component" }> =>
-          elm.type === "schematic_component" &&
-          (elm.subcircuit_id === subcircuitId ||
-            sourceComponentIds.has(elm.source_component_id ?? "") ||
-            (elm.source_group_id !== undefined &&
-              sourceGroupIds.has(elm.source_group_id))),
-      )
-      .map((elm) => elm.schematic_component_id),
-  )
-  for (const elm of circuitJson) {
-    if (elm.type !== "schematic_component") continue
-    if (schematicComponentIds.has(elm.schematic_component_id)) {
-      sourceComponentIds.add(elm.source_component_id ?? "")
-    }
-  }
-
-  const sourcePortIds = new Set(
-    circuitJson
-      .filter(
-        (elm): elm is Extract<AnyCircuitElement, { type: "source_port" }> =>
-          elm.type === "source_port" &&
-          elm.source_component_id !== undefined &&
-          sourceComponentIds.has(elm.source_component_id),
-      )
-      .map((elm) => elm.source_port_id),
-  )
-
-  const sourceTraceIds = new Set(
-    circuitJson
-      .filter(
-        (elm): elm is Extract<AnyCircuitElement, { type: "source_trace" }> =>
-          elm.type === "source_trace" &&
-          elm.connected_source_port_ids.some((sourcePortId) =>
-            sourcePortIds.has(sourcePortId),
-          ),
-      )
-      .map((elm) => elm.source_trace_id),
-  )
-  const sourceTraceConnectivityMapKeys = new Set(
-    circuitJson
-      .filter(
-        (elm): elm is Extract<AnyCircuitElement, { type: "source_trace" }> =>
-          elm.type === "source_trace" &&
-          sourceTraceIds.has(elm.source_trace_id) &&
-          elm.subcircuit_connectivity_map_key !== undefined,
-      )
-      .map((elm) => elm.subcircuit_connectivity_map_key!),
-  )
-
-  return circuitJson.filter((elm) => {
-    if (elm.type === "schematic_sheet") return false
-    if ((elm as { subcircuit_id?: string }).subcircuit_id === subcircuitId) {
-      return true
-    }
-    const schematicComponentId = (elm as { schematic_component_id?: string })
-      .schematic_component_id
-    if (
-      schematicComponentId &&
-      schematicComponentIds.has(schematicComponentId)
-    ) {
-      return true
-    }
-    const sourceComponentId = (elm as { source_component_id?: string })
-      .source_component_id
-    if (sourceComponentId && sourceComponentIds.has(sourceComponentId)) {
-      return true
-    }
-    const sourceGroupId = (elm as { source_group_id?: string }).source_group_id
-    if (sourceGroupId && sourceGroupIds.has(sourceGroupId)) {
-      return true
-    }
-    if (elm.type === "source_trace") {
-      return sourceTraceIds.has(elm.source_trace_id)
-    }
-    if (elm.type === "schematic_trace") {
-      return (
-        (elm.source_trace_id !== undefined &&
-          sourceTraceIds.has(elm.source_trace_id)) ||
-        (elm.subcircuit_connectivity_map_key !== undefined &&
-          sourceTraceConnectivityMapKeys.has(
-            elm.subcircuit_connectivity_map_key,
-          ))
-      )
-    }
-    if (elm.type === "schematic_port") {
-      return sourcePortIds.has(elm.source_port_id)
-    }
-    return false
-  })
 }
 
 export function convertCircuitJsonToSchematicSvg(
@@ -337,246 +171,149 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
-  const schSheetSvgs: SvgObject[] = []
   const simulationPalette = Array.isArray(colorMap.simulation_palette)
     ? colorMap.simulation_palette
     : Array.isArray(colorMap.palette)
       ? colorMap.palette
       : []
   let schematicVoltageProbeIndex = 0
-  const collectSchematicSvgObjects = ({
-    elements,
-    elementTransform,
-    renderCircuitJson,
-  }: {
-    elements: AnyCircuitElement[]
-    elementTransform: Matrix
-    renderCircuitJson: AnyCircuitElement[]
-  }) => {
-    for (const elm of elements) {
-      if (elm.type === "schematic_debug_object") {
-        schDebugObjectSvgs.push(
-          ...createSvgObjectsFromSchDebugObject({
-            debugObject: elm,
-            transform: elementTransform,
-          }),
-        )
-      } else if (elm.type === "schematic_component") {
-        schComponentSvgs.push(
-          ...createSvgObjectsFromSchematicComponent({
-            component: elm,
-            transform: elementTransform,
-            circuitJson: renderCircuitJson,
-            colorMap,
-          }),
-        )
-        schPortHoverSvgs.push(
-          ...createSvgObjectsForSchComponentPortHovers({
-            component: elm,
-            transform: elementTransform,
-            circuitJson: renderCircuitJson,
-          }),
-        )
-      } else if (elm.type === "schematic_box") {
-        schBoxSvgs.push(
-          ...createSvgObjectsFromSchematicBox({
-            schematicBox: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_trace") {
-        schTraceSvgs.push(
-          ...createSchematicTrace({
-            trace: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-        if (elm.subcircuit_connectivity_map_key) {
-          connectivityKeys.add(elm.subcircuit_connectivity_map_key)
-        }
-      } else if (elm.type === "schematic_net_label") {
-        schNetLabel.push(
-          ...createSvgObjectsForSchNetLabel({
-            schNetLabel: elm,
-            realToScreenTransform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
-        schText.push(
-          createSvgSchText({
-            elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_voltage_probe") {
-        const fallbackColor =
-          simulationPalette.length > 0
-            ? simulationPalette[
-                schematicVoltageProbeIndex % simulationPalette.length
-              ]
-            : undefined
-        schematicVoltageProbeIndex += 1
-        voltageProbeSvgs.push(
-          ...createSvgObjectsFromSchVoltageProbe({
-            probe: elm,
-            transform: elementTransform,
-            colorMap,
-            fallbackColor,
-          }),
-        )
-      } else if (elm.type === "schematic_table") {
-        schTableSvgs.push(
-          ...createSvgObjectsFromSchematicTable({
-            schematicTable: elm,
-            transform: elementTransform,
-            colorMap,
-            circuitJson: renderCircuitJson,
-          }),
-        )
-      } else if (elm.type === "schematic_line") {
-        if (elm.schematic_component_id) continue
-        schLineSvgs.push(
-          ...createSvgObjectsFromSchematicLine({
-            schLine: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_circle") {
-        if (elm.schematic_component_id) continue
-        schCircleSvgs.push(
-          ...createSvgObjectsFromSchematicCircle({
-            schCircle: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_rect") {
-        if (elm.schematic_component_id) continue
-        schRectSvgs.push(
-          ...createSvgObjectsFromSchematicRect({
-            schRect: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_arc") {
-        if (elm.schematic_component_id) continue
-        schArcSvgs.push(
-          ...createSvgObjectsFromSchematicArc({
-            schArc: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_path") {
-        if (elm.schematic_component_id) continue
-        schPathSvgs.push(
-          ...createSvgObjectsFromSchematicPath({
-            schPath: elm,
-            transform: elementTransform,
-            colorMap,
-          }),
-        )
-      } else if (elm.type === "schematic_port" && options?.drawPorts) {
-        schPortIndicatorSvgs.push(
-          ...createSvgObjectsForSchPortIndicator({
-            schPort: elm,
-            transform: elementTransform,
-            circuitJson: renderCircuitJson,
-            colorMap,
-          }),
-        )
-      }
-    }
-  }
-
-  const schematicSheets = circuitJson.filter(
-    (elm): elm is SchematicSheet => elm.type === "schematic_sheet",
-  )
-
-  if (schematicSheets.length > 0) {
-    const sheetedSubcircuitIds = new Set(
-      schematicSheets
-        .map((sheet) => sheet.subcircuit_id)
-        .filter((id): id is string => Boolean(id)),
-    )
-    const sheetedSchematicComponentIds = new Set(
-      circuitJson
-        .filter(
-          (
-            elm,
-          ): elm is Extract<
-            AnyCircuitElement,
-            { type: "schematic_component" }
-          > =>
-            elm.type === "schematic_component" &&
-            elm.subcircuit_id !== undefined &&
-            sheetedSubcircuitIds.has(elm.subcircuit_id),
-        )
-        .map((elm) => elm.schematic_component_id),
-    )
-    const sheetedElements = new Set<AnyCircuitElement>()
-
-    schematicSheets.forEach((sheet, sheetIndex) => {
-      schSheetSvgs.push(
-        ...createSvgObjectsFromSchematicSheet({
-          schematicSheet: sheet,
-          sheetIndex,
+  for (const elm of circuitJson) {
+    if (elm.type === "schematic_debug_object") {
+      schDebugObjectSvgs.push(
+        ...createSvgObjectsFromSchDebugObject({
+          debugObject: elm,
+          transform,
+        }),
+      )
+    } else if (elm.type === "schematic_component") {
+      schComponentSvgs.push(
+        ...createSvgObjectsFromSchematicComponent({
+          component: elm,
+          transform,
+          circuitJson,
+          colorMap,
+        }),
+      )
+      schPortHoverSvgs.push(
+        ...createSvgObjectsForSchComponentPortHovers({
+          component: elm,
+          transform,
+          circuitJson,
+        }),
+      )
+    } else if (elm.type === "schematic_box") {
+      schBoxSvgs.push(
+        ...createSvgObjectsFromSchematicBox({
+          schematicBox: elm,
           transform,
           colorMap,
         }),
       )
-
-      if (!sheet.subcircuit_id) return
-
-      const linkedElements = getSchematicElementsForSubcircuit(
-        circuitJson,
-        sheet.subcircuit_id,
-      )
-      if (linkedElements.length === 0) return
-      for (const linkedElement of linkedElements) {
-        sheetedElements.add(linkedElement)
-      }
-
-      collectSchematicSvgObjects({
-        elements: linkedElements,
-        elementTransform: createCenteredSheetSubcircuitTransform({
-          sheet,
-          sheetIndex,
+    } else if (elm.type === "schematic_trace") {
+      schTraceSvgs.push(
+        ...createSchematicTrace({
+          trace: elm,
           transform,
-          elements: linkedElements,
+          colorMap,
         }),
-        renderCircuitJson: linkedElements,
-      })
-    })
-
-    collectSchematicSvgObjects({
-      elements: circuitJson.filter(
-        (elm) =>
-          elm.type !== "schematic_sheet" &&
-          !sheetedElements.has(elm) &&
-          !sheetedSubcircuitIds.has(
-            (elm as { subcircuit_id?: string }).subcircuit_id ?? "",
-          ) &&
-          !sheetedSchematicComponentIds.has(
-            (elm as { schematic_component_id?: string })
-              .schematic_component_id ?? "",
-          ),
-      ),
-      elementTransform: transform,
-      renderCircuitJson: circuitJson,
-    })
-  } else {
-    collectSchematicSvgObjects({
-      elements: circuitJson,
-      elementTransform: transform,
-      renderCircuitJson: circuitJson,
-    })
+      )
+      connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
+    } else if (elm.type === "schematic_net_label") {
+      schNetLabel.push(
+        ...createSvgObjectsForSchNetLabel({
+          schNetLabel: elm,
+          realToScreenTransform: transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
+      schText.push(
+        createSvgSchText({
+          elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_voltage_probe") {
+      const fallbackColor =
+        simulationPalette.length > 0
+          ? simulationPalette[
+              schematicVoltageProbeIndex % simulationPalette.length
+            ]
+          : undefined
+      schematicVoltageProbeIndex += 1
+      voltageProbeSvgs.push(
+        ...createSvgObjectsFromSchVoltageProbe({
+          probe: elm,
+          transform,
+          colorMap,
+          fallbackColor,
+        }),
+      )
+    } else if (elm.type === "schematic_table") {
+      schTableSvgs.push(
+        ...createSvgObjectsFromSchematicTable({
+          schematicTable: elm,
+          transform,
+          colorMap,
+          circuitJson,
+        }),
+      )
+    } else if (elm.type === "schematic_line") {
+      if (elm.schematic_component_id) continue
+      schLineSvgs.push(
+        ...createSvgObjectsFromSchematicLine({
+          schLine: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_circle") {
+      if (elm.schematic_component_id) continue
+      schCircleSvgs.push(
+        ...createSvgObjectsFromSchematicCircle({
+          schCircle: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_rect") {
+      if (elm.schematic_component_id) continue
+      schRectSvgs.push(
+        ...createSvgObjectsFromSchematicRect({
+          schRect: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_arc") {
+      if (elm.schematic_component_id) continue
+      schArcSvgs.push(
+        ...createSvgObjectsFromSchematicArc({
+          schArc: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_path") {
+      if (elm.schematic_component_id) continue
+      schPathSvgs.push(
+        ...createSvgObjectsFromSchematicPath({
+          schPath: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_port" && options?.drawPorts) {
+      schPortIndicatorSvgs.push(
+        ...createSvgObjectsForSchPortIndicator({
+          schPort: elm,
+          transform,
+          circuitJson,
+          colorMap,
+        }),
+      )
+    }
   }
 
   // Split traces into base vs overlays, ensure overlays render on top of all base wires
@@ -589,7 +326,6 @@ export function convertCircuitJsonToSchematicSvg(
 
   // Add elements in correct order
   svgChildren.push(
-    ...schSheetSvgs,
     ...schDebugObjectSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
