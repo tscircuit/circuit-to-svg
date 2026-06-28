@@ -2,7 +2,7 @@ import type { SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 import { getSchematicSheetLayout } from "../schematic-sheet-utils"
 
 const SHEET_STROKE_WIDTH = 0.2
@@ -12,16 +12,14 @@ const SHEET_ROWS = ["A", "B", "C", "D"]
 
 export function createSvgObjectsFromSchematicSheet({
   schematicSheet,
-  sheetIndex,
   transform,
   colorMap,
 }: {
   schematicSheet: SchematicSheet
-  sheetIndex: number
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
-  const layout = getSchematicSheetLayout(schematicSheet, sheetIndex)
+  const layout = getSchematicSheetLayout(schematicSheet)
   const sheetColor = colorMap.schematic.sheet
   const labelColor = colorMap.schematic.net_name
   const children: SvgObject[] = [

@@ -22,9 +22,9 @@ export interface SchematicSheetLayout {
 }
 
 export function getSchematicSheetLayout(
-  _sheet: SchematicSheet,
-  sheetIndex: number,
+  sheet: SchematicSheet,
 ): SchematicSheetLayout {
+  const sheetIndex = sheet.sheet_index ?? 0
   const center = {
     x: sheetIndex * (DEFAULT_SCHEMATIC_SHEET_WIDTH + SCHEMATIC_SHEET_GAP),
     y: 0,

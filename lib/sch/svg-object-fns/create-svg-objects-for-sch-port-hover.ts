@@ -1,11 +1,11 @@
+import { su } from "@tscircuit/circuit-json-util"
 import type {
   AnyCircuitElement,
   SchematicComponent,
   SchematicPort,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
-import { su } from "@tscircuit/circuit-json-util"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 const PIN_CIRCLE_RADIUS_MM = 0.02
 
@@ -27,6 +27,9 @@ export const createSvgObjectsForSchPortHover = ({
       attributes: {
         class: "schematic-port-hover sch-port-hover",
         "data-schematic-port-id": schPort.source_port_id,
+        ...(schPort.schematic_sheet_id
+          ? { "data-schematic-sheet-id": schPort.schematic_sheet_id }
+          : {}),
       },
       children: [
         {

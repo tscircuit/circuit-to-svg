@@ -1,38 +1,40 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
+import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
-import { colorMap as defaultColorMap, type ColorMap } from "lib/utils/colors"
+import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
+import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
 import {
+  type Matrix,
   applyToPoint,
   compose,
-  scale,
-  translate,
   fromTriangles,
-  type Matrix,
   fromTwoMovingPoints,
+  scale,
   toSVG,
+  translate,
 } from "transformation-matrix"
 import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
+import { getDefaultSchematicSheet } from "./get-default-schematic-sheet"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
-import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
-import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
-import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
-import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
-import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
-import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
-import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
-import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
-import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-objects-from-sch-line"
-import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
-import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
-import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
-import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
-import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
+import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
+import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
+import { createSvgObjectsFromSchematicBox } from "./svg-object-fns/create-svg-objects-from-sch-box"
+import { createSvgObjectsFromSchematicCircle } from "./svg-object-fns/create-svg-objects-from-sch-circle"
+import { createSvgObjectsFromSchematicComponent } from "./svg-object-fns/create-svg-objects-from-sch-component"
+import { createSvgObjectsFromSchDebugObject } from "./svg-object-fns/create-svg-objects-from-sch-debug-object"
+import { createSvgObjectsFromSchematicLine } from "./svg-object-fns/create-svg-objects-from-sch-line"
+import { createSvgObjectsFromSchematicPath } from "./svg-object-fns/create-svg-objects-from-sch-path"
+import { createSvgObjectsFromSchematicRect } from "./svg-object-fns/create-svg-objects-from-sch-rect"
+import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-objects-from-sch-sheet"
+import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
+import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
+import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -42,6 +44,8 @@ interface Options {
   colorOverrides?: ColorOverrides
   width?: number
   height?: number
+  schematicSheetIndex?: number
+  schematicSheetId?: string
   grid?: boolean | { cellSize?: number; labelCells?: boolean }
   labeledPoints?: Array<{ x: number; y: number; label: string }>
   includeVersion?: boolean
@@ -77,8 +81,35 @@ export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
+  const schematicSheets = circuitJson.filter(
+    (elm): elm is SchematicSheet => elm.type === "schematic_sheet",
+  )
+  const defaultSheet = getDefaultSchematicSheet(schematicSheets)
+  let selectedSheet = defaultSheet
+
+  if (options?.schematicSheetId !== undefined) {
+    selectedSheet =
+      schematicSheets.find(
+        (sheet) => sheet.schematic_sheet_id === options.schematicSheetId,
+      ) ?? defaultSheet
+  } else if (options?.schematicSheetIndex !== undefined) {
+    selectedSheet =
+      schematicSheets.find(
+        (sheet) => sheet.sheet_index === options.schematicSheetIndex,
+      ) ?? defaultSheet
+  }
+
+  const sheetCircuitJson = selectedSheet
+    ? circuitJson.filter(
+        (elm) =>
+          !elm.type.startsWith("schematic_") ||
+          ("schematic_sheet_id" in elm &&
+            elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
+      )
+    : circuitJson
+
   // Get bounds with padding
-  const realBounds = getSchematicBoundsFromCircuitJson(circuitJson)
+  const realBounds = getSchematicBoundsFromCircuitJson(sheetCircuitJson)
   const realWidth = realBounds.maxX - realBounds.minX
   const realHeight = realBounds.maxY - realBounds.minY
 
@@ -171,14 +202,23 @@ export function convertCircuitJsonToSchematicSvg(
   const schRectSvgs: SvgObject[] = []
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
+  const schSheetSvgs: SvgObject[] = []
   const simulationPalette = Array.isArray(colorMap.simulation_palette)
     ? colorMap.simulation_palette
     : Array.isArray(colorMap.palette)
       ? colorMap.palette
       : []
   let schematicVoltageProbeIndex = 0
-  for (const elm of circuitJson) {
-    if (elm.type === "schematic_debug_object") {
+  for (const elm of sheetCircuitJson) {
+    if (elm.type === "schematic_sheet") {
+      schSheetSvgs.push(
+        ...createSvgObjectsFromSchematicSheet({
+          schematicSheet: elm,
+          transform,
+          colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_debug_object") {
       schDebugObjectSvgs.push(
         ...createSvgObjectsFromSchDebugObject({
           debugObject: elm,
@@ -190,7 +230,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsFromSchematicComponent({
           component: elm,
           transform,
-          circuitJson,
+          circuitJson: sheetCircuitJson,
           colorMap,
         }),
       )
@@ -198,7 +238,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsForSchComponentPortHovers({
           component: elm,
           transform,
-          circuitJson,
+          circuitJson: sheetCircuitJson,
         }),
       )
     } else if (elm.type === "schematic_box") {
@@ -256,7 +296,7 @@ export function convertCircuitJsonToSchematicSvg(
           schematicTable: elm,
           transform,
           colorMap,
-          circuitJson,
+          circuitJson: sheetCircuitJson,
         }),
       )
     } else if (elm.type === "schematic_line") {
@@ -309,7 +349,7 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsForSchPortIndicator({
           schPort: elm,
           transform,
-          circuitJson,
+          circuitJson: sheetCircuitJson,
           colorMap,
         }),
       )
@@ -327,6 +367,7 @@ export function convertCircuitJsonToSchematicSvg(
   // Add elements in correct order
   svgChildren.push(
     ...schDebugObjectSvgs,
+    ...schSheetSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
     ...schLineSvgs,
