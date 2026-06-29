@@ -1,5 +1,6 @@
 import type { AnyCircuitElement } from "circuit-json"
-import { stringify, parseSync } from "svgson"
+import { parseSync, stringify } from "svgson"
+import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
 import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
 import {
@@ -8,9 +9,13 @@ import {
   isSimulationTransientCurrentGraph,
   isSimulationTransientVoltageGraph,
 } from "./sim/types"
-import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
-import { getSoftwareUsedString } from "./utils/get-software-used-string"
 import type { SvgObject } from "./svg-object"
+import { getSoftwareUsedString } from "./utils/get-software-used-string"
+import {
+  ensureElementNode,
+  formatNumber,
+  translateNestedSvg,
+} from "./utils/svg-object-utils"
 
 interface ConvertSchematicSimulationParams {
   circuitJson: CircuitJsonWithSimulation[]
@@ -146,33 +151,6 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   return stringify(svgObject)
 }
 
-function translateNestedSvg(
-  node: SvgObject,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-): SvgObject {
-  const clone = cloneSvgObject(node)
-  clone.attributes = {
-    ...clone.attributes,
-    x: formatNumber(x),
-    y: formatNumber(y),
-    width: formatNumber(width),
-    height: formatNumber(height),
-  }
-
-  delete clone.attributes.xmlns
-  return clone
-}
-
-function ensureElementNode(node: SvgObject): SvgObject {
-  if (node.type !== "element") {
-    throw new Error("Expected SVG root element to be of type 'element'")
-  }
-  return node
-}
-
 function getSvgViewBoxSize(
   node: SvgObject,
 ): { width: number; height: number } | null {
@@ -194,24 +172,9 @@ function getSvgViewBoxSize(
   return { width, height }
 }
 
-function cloneSvgObject(node: SvgObject): SvgObject {
-  return {
-    ...node,
-    attributes: { ...(node.attributes ?? {}) },
-    children: node.children?.map(cloneSvgObject) ?? [],
-  }
-}
-
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return DEFAULT_SCHEMATIC_RATIO
   if (value <= 0) return 0
   if (value >= 1) return 1
   return value
-}
-
-function formatNumber(value: number): string {
-  if (!Number.isFinite(value)) return "0"
-  const rounded = Number.parseFloat(value.toFixed(6))
-  if (Number.isInteger(rounded)) return rounded.toString()
-  return rounded.toString()
 }
