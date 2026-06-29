@@ -3,16 +3,18 @@ import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToStackedSchematicSheetsSvg } from "lib/index"
 import { getSchematicSheetLayout } from "lib/sch/schematic-sheet-utils"
 
-test("REPRO: sheet frame is offset from its content for sheet_index > 0", () => {
-  // The frame for sheet_index 1 is positioned ~34 units from the origin, while
-  // the sheet's content lives at the origin. BUG: this should be ~0 once the
-  // frame follows the sheet content.
-  const layout = getSchematicSheetLayout({
-    type: "schematic_sheet",
-    schematic_sheet_id: "schematic_sheet_2",
-    sheet_index: 1,
-  } as AnyCircuitElement as any)
-  expect(layout.center.x).toBeGreaterThan(30)
+/**
+ * The sheet frame is centered at the origin for every sheet (it is not tiled by
+ * sheet_index), so it lines up with the sheet's components - which core lays out
+ * independently around the origin. In the stacked snapshot both sheets' single
+ * component sits centered in its own frame.
+ */
+test("sheet frame follows content (centered at the origin) regardless of sheet_index", () => {
+  // The frame is centered at the origin, so content laid out around the origin
+  // lines up with its frame.
+  const layout = getSchematicSheetLayout()
+  expect(layout.center.x).toBe(0)
+  expect(layout.center.y).toBe(0)
 
   const svg = convertCircuitJsonToStackedSchematicSheetsSvg(
     createMultiSheetCircuitJson(),
