@@ -19,7 +19,7 @@ type SchematicSvgOptions = NonNullable<
   Parameters<typeof convertCircuitJsonToSchematicSvg>[1]
 >
 
-export interface StackedSchematicSvgOptions extends SchematicSvgOptions {
+export interface StackedSchematicSheetsSvgOptions extends SchematicSvgOptions {
   /** Height in px of the label band drawn above each sheet. Default 28. */
   sheetLabelHeight?: number
   /** Vertical gap in px between stacked sheets. Default 16. */
@@ -45,9 +45,9 @@ const DEFAULT_GAP = 16
  * fewer than two sheets are present this falls back to the single-sheet
  * renderer.
  */
-export function convertCircuitJsonToStackedSchematicSvg(
+export function convertCircuitJsonToStackedSchematicSheetsSvg(
   circuitJson: AnyCircuitElement[],
-  options?: StackedSchematicSvgOptions,
+  options?: StackedSchematicSheetsSvgOptions,
 ): string {
   const sheets = circuitJson
     .filter((elm): elm is SchematicSheet => elm.type === "schematic_sheet")

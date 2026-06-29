@@ -1,11 +1,11 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
-import { convertCircuitJsonToStackedSchematicSvg } from "lib/index"
+import { convertCircuitJsonToStackedSchematicSheetsSvg } from "lib/index"
 
 test("stacked schematic svg renders every sheet stacked vertically", () => {
   // width:height matches the A4 sheet aspect ratio (297:210) so each panel
   // fills the width without letterboxing.
-  const svg = convertCircuitJsonToStackedSchematicSvg(
+  const svg = convertCircuitJsonToStackedSchematicSheetsSvg(
     createMultiSheetCircuitJson(),
     { width: 600, height: 424 },
   )
