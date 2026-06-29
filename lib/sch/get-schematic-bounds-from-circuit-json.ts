@@ -33,7 +33,7 @@ export function getSchematicBoundsFromCircuitJson(
   // Find the bounds
   for (const item of soup) {
     if (item.type === "schematic_sheet") {
-      const layout = getSchematicSheetLayout(item)
+      const layout = getSchematicSheetLayout()
       updateBounds(
         layout.center,
         { width: layout.width, height: layout.height },
