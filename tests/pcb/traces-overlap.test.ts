@@ -16,7 +16,7 @@ describe("PCB traces in non-overlapping trace checks", () => {
             "y": -1.5972222222222219,
           },
           "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] overlaps with pcb_smtpad "pcb_port[.C1 > .cathode]" (gap: 0.092mm)",
+          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] is too close to pcb_smtpad "pcb_port[.C1 > .cathode]" (gap: 0.092mm)",
           "pcb_component_ids": [
             "pcb_component_1",
           ],
@@ -36,7 +36,7 @@ describe("PCB traces in non-overlapping trace checks", () => {
             "y": -0.07159251656145789,
           },
           "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] overlaps with trace[.R1 > port.neg, .C1 > port.neg] (gap: 0.016mm)",
+          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] is too close to trace[.R1 > port.neg, .C1 > port.neg] (gap: 0.016mm)",
           "pcb_component_ids": [],
           "pcb_port_ids": [
             "pcb_port_0",
