@@ -219,8 +219,8 @@ async function createTps63802ExampleCircuitJson(): Promise<
         color="#315cff"
         graphDisplayName="VO"
         graphCenter={3.3}
-        graphOffsetDivs={3}
-        graphUnitsPerDiv={0.15}
+        graphVerticalOffset={3}
+        graphVoltagePerDiv={0.15}
       />
       <voltageprobe
         name="L1_PROBE"
@@ -229,8 +229,8 @@ async function createTps63802ExampleCircuitJson(): Promise<
         color="#00d98b"
         graphDisplayName="L1"
         graphCenter={0}
-        graphOffsetDivs={2}
-        graphUnitsPerDiv={6.5}
+        graphVerticalOffset={2}
+        graphVoltagePerDiv={6.5}
       />
       <voltageprobe
         name="L2_PROBE"
@@ -239,8 +239,8 @@ async function createTps63802ExampleCircuitJson(): Promise<
         color="#f1b400"
         graphDisplayName="L2"
         graphCenter={0}
-        graphOffsetDivs={1}
-        graphUnitsPerDiv={5.5}
+        graphVerticalOffset={1}
+        graphVoltagePerDiv={5.5}
       />
     </board>,
   )
@@ -273,18 +273,19 @@ function withExampleSimulationData(
     id: string,
     probe: { simulation_voltage_probe_id: string; name?: string },
     voltageLevels: number[],
-  ): CircuitJsonWithSimulation => ({
-    type: "simulation_transient_voltage_graph",
-    simulation_transient_voltage_graph_id: id,
-    simulation_experiment_id: TPS63802_EXAMPLE_SIMULATION_ID,
-    source_probe_id: probe.simulation_voltage_probe_id,
-    source_probe_name: probe.name,
-    start_time_ms: 0,
-    end_time_ms: 0.018,
-    time_per_step: 0.006,
-    timestamps_ms: timestampsMs,
-    voltage_levels: voltageLevels,
-  })
+  ): CircuitJsonWithSimulation =>
+    ({
+      type: "simulation_transient_voltage_graph",
+      simulation_transient_voltage_graph_id: id,
+      simulation_experiment_id: TPS63802_EXAMPLE_SIMULATION_ID,
+      source_probe_id: probe.simulation_voltage_probe_id,
+      source_probe_name: probe.name,
+      start_time_ms: 0,
+      end_time_ms: 0.018,
+      time_per_step: 0.006,
+      timestamps_ms: timestampsMs,
+      voltage_levels: voltageLevels,
+    }) as CircuitJsonWithSimulation
 
   const createScopeTrace = (
     id: string,
