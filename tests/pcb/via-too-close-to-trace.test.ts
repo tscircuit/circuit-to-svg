@@ -16,7 +16,7 @@ describe("PCB vias in non-overlapping trace checks", () => {
             "y": -0.13905158630535422,
           },
           "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.neg, .C1 > port.neg] overlaps with pcb_via "pcb_via[#pcb_via_0]" (gap: 0.086mm)",
+          "message": "PCB trace trace[.R1 > port.neg, .C1 > port.neg] is too close to pcb_via "pcb_via[#pcb_via_0]" (gap: 0.086mm)",
           "pcb_component_ids": [],
           "pcb_port_ids": [
             "pcb_port_1",
