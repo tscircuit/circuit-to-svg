@@ -54,6 +54,7 @@ interface ConvertSimulationGraphParams {
   width?: number
   height?: number
   includeVersion?: boolean
+  displayWidthForLayout?: number
 }
 
 export function convertCircuitJsonToSimulationGraphSvg({
@@ -64,6 +65,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
+  displayWidthForLayout,
 }: ConvertSimulationGraphParams): string {
   const selectedVoltageIds = simulation_transient_voltage_graph_ids
     ? new Set(simulation_transient_voltage_graph_ids)
@@ -134,17 +136,19 @@ export function convertCircuitJsonToSimulationGraphSvg({
   const scopeAxisGutters = usesScopeTraceDisplay
     ? getScopeAxisGutters(preparedGraphs.length)
     : { left: 0, right: 0 }
+  const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
+  const plotLeft = MARGIN.left + scopeAxisGutters.left
   const outputWidth = width + scopeAxisGutters.left + scopeAxisGutters.right
   const scopeLegendLayout = usesScopeTraceDisplay
-    ? getScopeLegendGridLayout(preparedGraphs.length, outputWidth)
+    ? getScopeLegendGridLayout(preparedGraphs.length, outputWidth, {
+        displayWidth: displayWidthForLayout,
+      })
     : null
   const outputHeight = scopeLegendLayout
     ? height + SCOPE_LEGEND_GAP + scopeLegendLayout.height + SCOPE_LEGEND_GAP
     : height
 
-  const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
-  const plotLeft = MARGIN.left + scopeAxisGutters.left
 
   const scaleX = createLinearScale(
     timeAxis.domainMin,

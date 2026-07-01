@@ -83,6 +83,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     width,
     height: simulationHeight,
     includeVersion: false,
+    displayWidthForLayout: width,
   })
 
   const schematicNode = ensureElementNode(parseSync(schematicSvg))
