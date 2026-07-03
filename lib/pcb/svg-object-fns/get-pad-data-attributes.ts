@@ -1,5 +1,4 @@
 import type { AnyCircuitElement } from "circuit-json"
-import type { SvgObject } from "lib/svg-object"
 
 type PadLike = {
   pcb_port_id?: string
@@ -105,35 +104,4 @@ function getConnectedSourceNetName(
   ) as { name?: string } | undefined
 
   return sourceNet?.name
-}
-
-export function addDataAttributesToMatchingSvgObjects(
-  svgObjects: SvgObject[],
-  dataType: string,
-  dataAttributes: DataAttributes,
-): SvgObject[] {
-  if (Object.keys(dataAttributes).length === 0) return svgObjects
-
-  return svgObjects.map((svgObject) =>
-    addDataAttributesToMatchingSvgObject(svgObject, dataType, dataAttributes),
-  )
-}
-
-function addDataAttributesToMatchingSvgObject(
-  svgObject: SvgObject,
-  dataType: string,
-  dataAttributes: DataAttributes,
-): SvgObject {
-  const attributes =
-    svgObject.attributes?.["data-type"] === dataType
-      ? { ...svgObject.attributes, ...dataAttributes }
-      : svgObject.attributes
-
-  return {
-    ...svgObject,
-    attributes,
-    children: svgObject.children.map((child) =>
-      addDataAttributesToMatchingSvgObject(child, dataType, dataAttributes),
-    ),
-  }
 }

@@ -96,4 +96,6 @@ test("adds pad name and net name data attributes to smt pads and plated holes", 
   expect(result).toContain(
     'data-type="pcb_plated_hole" data-pcb-layer="through" data-pad-name="U1.pin2" data-pad-net-name="VCC"',
   )
+  expect(result.match(/data-pad-name=/g)).toHaveLength(2)
+  expect(result).not.toContain('data-type="pcb_soldermask" data-pad-name=')
 })
