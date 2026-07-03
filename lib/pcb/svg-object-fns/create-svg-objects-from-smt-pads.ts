@@ -3,6 +3,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getPadDataAttributes } from "./get-pad-data-attributes"
 
 export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
@@ -10,6 +11,7 @@ export function createSvgObjectsFromSmtPad(
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
+  const padDataAttributes = getPadDataAttributes(pad, ctx.circuitJson)
 
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
   const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
@@ -68,6 +70,7 @@ export function createSvgObjectsFromSmtPad(
           transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
           ...(scaledBorderRadius
             ? {
                 rx: scaledBorderRadius.toString(),
@@ -211,6 +214,7 @@ export function createSvgObjectsFromSmtPad(
         height: height.toString(),
         "data-type": "pcb_smtpad",
         "data-pcb-layer": pad.layer,
+        ...padDataAttributes,
         ...(scaledBorderRadius
           ? {
               rx: scaledBorderRadius.toString(),
@@ -362,6 +366,7 @@ export function createSvgObjectsFromSmtPad(
       ry: radius.toString(),
       "data-type": "pcb_smtpad",
       "data-pcb-layer": pad.layer,
+      ...padDataAttributes,
       ...(rotationTransformAttributes ?? {}),
     }
 
@@ -504,6 +509,7 @@ export function createSvgObjectsFromSmtPad(
         r: radius.toString(),
         "data-type": "pcb_smtpad",
         "data-pcb-layer": pad.layer,
+        ...padDataAttributes,
       },
     }
 
@@ -608,6 +614,7 @@ export function createSvgObjectsFromSmtPad(
         points: points.map((p) => p.join(",")).join(" "),
         "data-type": "pcb_smtpad",
         "data-pcb-layer": pad.layer,
+        ...padDataAttributes,
       },
     }
 

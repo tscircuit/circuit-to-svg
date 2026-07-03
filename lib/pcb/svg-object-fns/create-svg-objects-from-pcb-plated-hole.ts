@@ -7,6 +7,7 @@ import type {
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getPadDataAttributes } from "./get-pad-data-attributes"
 
 type HoleWithRectPadOffsets = {
   hole_offset_x?: number
@@ -19,6 +20,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 ): SvgObject[] {
   const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
+  const padDataAttributes = getPadDataAttributes(hole, ctx.circuitJson)
   // Extract the actual copper layer from the plated hole
   const layer =
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
@@ -193,6 +195,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -257,6 +260,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -377,6 +381,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -583,6 +588,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -749,6 +755,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -919,6 +926,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children,
         value: "",
@@ -1057,6 +1065,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...padDataAttributes,
         },
         children: [
           // Polygon pad (outer shape)
