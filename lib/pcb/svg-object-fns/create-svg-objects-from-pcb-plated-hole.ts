@@ -7,6 +7,10 @@ import type {
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import {
+  addDataAttributesToMatchingSvgObjects,
+  getPadDataAttributes,
+} from "./get-pad-data-attributes"
 
 type HoleWithRectPadOffsets = {
   hole_offset_x?: number
@@ -19,6 +23,13 @@ export function createSvgObjectsFromPcbPlatedHole(
 ): SvgObject[] {
   const { transform, colorMap, showSolderMask } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
+  const padDataAttributes = getPadDataAttributes(hole, ctx.circuitJson)
+  const withPadData = (svgObjects: SvgObject[]) =>
+    addDataAttributesToMatchingSvgObjects(
+      svgObjects,
+      "pcb_plated_hole",
+      padDataAttributes,
+    )
   // Extract the actual copper layer from the plated hole
   const layer =
     (Array.isArray((hole as any).layers) && (hole as any).layers[0]) ||
@@ -186,7 +197,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -197,7 +208,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
   // Handle oval shape
   if (hole.shape === "oval") {
@@ -250,7 +261,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       },
     ]
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -261,7 +272,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
@@ -370,7 +381,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -381,7 +392,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
 
   // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
@@ -576,7 +587,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -587,7 +598,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
   if (hole.shape === "pill_hole_with_rect_pad") {
     const pillHole = hole as PcbHolePillWithRectPad
@@ -742,7 +753,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -753,7 +764,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
 
   if (hole.shape === "rotated_pill_hole_with_rect_pad") {
@@ -912,7 +923,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -923,7 +934,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         children,
         value: "",
       },
-    ]
+    ])
   }
 
   if (hole.shape === "hole_with_polygon_pad") {
@@ -1050,7 +1061,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-    return [
+    return withPadData([
       {
         name: "g",
         type: "element",
@@ -1078,7 +1089,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         ],
         value: "",
       },
-    ]
+    ])
   }
 
   return []

@@ -3,6 +3,10 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import {
+  addDataAttributesToMatchingSvgObjects,
+  getPadDataAttributes,
+} from "./get-pad-data-attributes"
 
 export function createSvgObjectsFromSmtPad(
   pad: PcbSmtPad,
@@ -10,6 +14,13 @@ export function createSvgObjectsFromSmtPad(
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
   if (layerFilter && pad.layer !== layerFilter) return []
+  const padDataAttributes = getPadDataAttributes(pad, ctx.circuitJson)
+  const withPadData = (svgObjects: SvgObject[]) =>
+    addDataAttributesToMatchingSvgObjects(
+      svgObjects,
+      "pcb_smtpad",
+      padDataAttributes,
+    )
 
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
   const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
@@ -78,7 +89,7 @@ export function createSvgObjectsFromSmtPad(
       }
 
       if (!shouldShowSolderMask) {
-        return [padElement]
+        return withPadData([padElement])
       }
 
       const maskWidth = width + m.left + m.right
@@ -137,7 +148,7 @@ export function createSvgObjectsFromSmtPad(
           },
         }
 
-        return [coveredPadElement, exposedOpeningElement]
+        return withPadData([coveredPadElement, exposedOpeningElement])
       }
 
       // For zero margin, pad is fully covered with soldermask
@@ -166,7 +177,7 @@ export function createSvgObjectsFromSmtPad(
           },
         }
 
-        return [coveredPadElement]
+        return withPadData([coveredPadElement])
       }
 
       // For positive margins, draw substrate cutout then pad on top
@@ -194,7 +205,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [substrateElement, padElement]
+      return withPadData([substrateElement, padElement])
     }
 
     const padElement: SvgObject = {
@@ -221,7 +232,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-      return [padElement]
+      return withPadData([padElement])
     }
 
     // Apply soldermask margin to dimensions
@@ -281,7 +292,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement, exposedOpeningElement]
+      return withPadData([coveredPadElement, exposedOpeningElement])
     }
 
     // For zero margin, pad is fully covered with soldermask
@@ -309,7 +320,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement]
+      return withPadData([coveredPadElement])
     }
 
     // For positive margins, draw substrate cutout (soldermask opening) then pad on top
@@ -336,7 +347,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    return [substrateElement, padElement]
+    return withPadData([substrateElement, padElement])
   }
 
   if (pad.shape === "pill" || pad.shape === "rotated_pill") {
@@ -374,7 +385,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-      return [padElement]
+      return withPadData([padElement])
     }
 
     // Apply soldermask margin to dimensions
@@ -430,7 +441,7 @@ export function createSvgObjectsFromSmtPad(
         attributes: exposedAttributes,
       }
 
-      return [coveredPadElement, exposedOpeningElement]
+      return withPadData([coveredPadElement, exposedOpeningElement])
     }
 
     // For zero margin, pad is fully covered with soldermask
@@ -455,7 +466,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement]
+      return withPadData([coveredPadElement])
     }
 
     // For positive margins, draw substrate cutout then pad on top
@@ -485,7 +496,7 @@ export function createSvgObjectsFromSmtPad(
       attributes: substrateAttributes,
     }
 
-    return [substrateElement, padElement]
+    return withPadData([substrateElement, padElement])
   }
   if (pad.shape === "circle") {
     const radius = pad.radius * Math.abs(transform.a)
@@ -508,7 +519,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-      return [padElement]
+      return withPadData([padElement])
     }
 
     // Apply soldermask margin to radius
@@ -548,7 +559,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement, exposedOpeningElement]
+      return withPadData([coveredPadElement, exposedOpeningElement])
     }
 
     // For zero margin, pad is fully covered with soldermask
@@ -569,7 +580,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement]
+      return withPadData([coveredPadElement])
     }
 
     // For positive margins, draw substrate cutout (soldermask opening) then pad on top
@@ -589,7 +600,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    return [substrateElement, padElement]
+    return withPadData([substrateElement, padElement])
   }
 
   if (pad.shape === "polygon") {
@@ -612,7 +623,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     if (!shouldShowSolderMask) {
-      return [padElement]
+      return withPadData([padElement])
     }
 
     // Apply soldermask margin to polygon by offsetting each point from centroid
@@ -668,7 +679,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement, exposedOpeningElement]
+      return withPadData([coveredPadElement, exposedOpeningElement])
     }
 
     // For zero margin, pad is fully covered with soldermask
@@ -687,7 +698,7 @@ export function createSvgObjectsFromSmtPad(
         },
       }
 
-      return [coveredPadElement]
+      return withPadData([coveredPadElement])
     }
 
     // For positive margins, draw substrate cutout then pad on top
@@ -705,7 +716,7 @@ export function createSvgObjectsFromSmtPad(
       },
     }
 
-    return [substrateElement, padElement]
+    return withPadData([substrateElement, padElement])
   }
 
   // TODO: Implement SMT pad circles/ovals etc.
