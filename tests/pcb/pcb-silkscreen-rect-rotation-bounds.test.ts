@@ -22,18 +22,14 @@ const wideRotatedRect: AnyCircuitElement[] = [
 ]
 
 // Rotating the 7.778 x 1 rect by 90deg swaps its extents: the true axis-aligned
-// bounds are +/-0.5 in x and +/-3.889 in y. Fails today because rotation is
-// ignored (returns the un-rotated +/-3.889 x, +/-0.5 y).
-test.failing(
-  "getPcbBoundsFromCircuitJson accounts for a rotated pcb_silkscreen_rect",
-  () => {
-    const bounds = getPcbBoundsFromCircuitJson(wideRotatedRect)
-    expect(bounds.minX).toBeCloseTo(-0.5, 6)
-    expect(bounds.maxX).toBeCloseTo(0.5, 6)
-    expect(bounds.minY).toBeCloseTo(-3.889, 6)
-    expect(bounds.maxY).toBeCloseTo(3.889, 6)
-  },
-)
+// bounds are +/-0.5 in x and +/-3.889 in y.
+test("getPcbBoundsFromCircuitJson accounts for a rotated pcb_silkscreen_rect", () => {
+  const bounds = getPcbBoundsFromCircuitJson(wideRotatedRect)
+  expect(bounds.minX).toBeCloseTo(-0.5, 6)
+  expect(bounds.maxX).toBeCloseTo(0.5, 6)
+  expect(bounds.minY).toBeCloseTo(-3.889, 6)
+  expect(bounds.maxY).toBeCloseTo(3.889, 6)
+})
 
 test("wide rotated silkscreen rect is not clipped by the svg viewport", () => {
   const svg = convertCircuitJsonToPcbSvg(wideRotatedRect)
