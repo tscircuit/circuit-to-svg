@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
-import { getPcbBoundsFromCircuitJson } from "lib/pcb/get-pcb-bounds-from-circuit-json"
+import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
 
 const circuitJson: any[] = [
   {
@@ -43,7 +43,7 @@ const circuitJson: any[] = [
 ]
 
 test("through_pad trace points contribute to pcb bounds", () => {
-  const bounds = getPcbBoundsFromCircuitJson(circuitJson as any)
+  const bounds = getComprehensivePcbBounds(circuitJson as any)
 
   expect(bounds.minX).toBe(-4)
   expect(bounds.maxX).toBe(4)

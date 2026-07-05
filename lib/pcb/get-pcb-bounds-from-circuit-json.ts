@@ -25,7 +25,7 @@ export interface PcbBounds {
   hasBoardBounds: boolean
 }
 
-export function getPcbBoundsFromCircuitJson(
+export function getComprehensivePcbBounds(
   circuitJson: AnyCircuitElement[],
 ): PcbBounds {
   let minX = Number.POSITIVE_INFINITY
@@ -525,3 +525,10 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 }
+
+/**
+ * @deprecated Use `getComprehensivePcbBounds`. "PCB bounds" is ambiguous — this
+ * returns the comprehensive bounds (board, copper, silkscreen, notes, etc.),
+ * not the copper-only bounds.
+ */
+export const getPcbBoundsFromCircuitJson = getComprehensivePcbBounds
