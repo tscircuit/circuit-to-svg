@@ -74,7 +74,7 @@ import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
-import { getPcbBoundsFromCircuitJson } from "./get-pcb-bounds-from-circuit-json"
+import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 interface PointObjectNotation {
   x: number
@@ -209,7 +209,7 @@ export function convertCircuitJsonToPcbSvg(
     boardMaxX,
     boardMaxY,
     hasBoardBounds,
-  } = getPcbBoundsFromCircuitJson(circuitJson)
+  } = getComprehensivePcbBounds(circuitJson)
 
   const { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY, padding } =
     getViewportBounds({

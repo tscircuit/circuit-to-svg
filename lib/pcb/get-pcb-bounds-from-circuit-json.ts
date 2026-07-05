@@ -25,7 +25,7 @@ export interface PcbBounds {
   hasBoardBounds: boolean
 }
 
-export function getPcbBoundsFromCircuitJson(
+export function getComprehensivePcbBounds(
   circuitJson: AnyCircuitElement[],
 ): PcbBounds {
   let minX = Number.POSITIVE_INFINITY
@@ -329,10 +329,12 @@ export function getPcbBoundsFromCircuitJson(
     center,
     width,
     height,
+    ccwRotationDegrees,
   }: {
     center: Point
     width?: number
     height?: number
+    ccwRotationDegrees?: number
   }) {
     if (!center) return
     const centerX = distance.parse(center.x)
@@ -340,8 +342,19 @@ export function getPcbBoundsFromCircuitJson(
     if (centerX === undefined || centerY === undefined) return
     const numericWidth = distance.parse(width) ?? 0
     const numericHeight = distance.parse(height) ?? 0
-    const halfWidth = numericWidth / 2
-    const halfHeight = numericHeight / 2
+    let halfWidth = numericWidth / 2
+    let halfHeight = numericHeight / 2
+    if (typeof ccwRotationDegrees === "number" && ccwRotationDegrees !== 0) {
+      // A rotated rectangle's axis-aligned bounds grow: project both edges onto
+      // each axis so the box still contains the whole rotated shape.
+      const angleRadians = (ccwRotationDegrees * Math.PI) / 180
+      const absCos = Math.abs(Math.cos(angleRadians))
+      const absSin = Math.abs(Math.sin(angleRadians))
+      const rotatedHalfWidth = halfWidth * absCos + halfHeight * absSin
+      const rotatedHalfHeight = halfWidth * absSin + halfHeight * absCos
+      halfWidth = rotatedHalfWidth
+      halfHeight = rotatedHalfHeight
+    }
     minX = Math.min(minX, centerX - halfWidth)
     minY = Math.min(minY, centerY - halfHeight)
     maxX = Math.max(maxX, centerX + halfWidth)
@@ -460,6 +473,7 @@ export function getPcbBoundsFromCircuitJson(
         center: item.center,
         width: item.width,
         height: item.height,
+        ccwRotationDegrees: item.ccw_rotation,
       })
     } else if (item.type === "pcb_silkscreen_circle") {
       const radius = distance.parse(item.radius)
@@ -511,3 +525,10 @@ export function getPcbBoundsFromCircuitJson(
     }
   }
 }
+
+/**
+ * @deprecated Use `getComprehensivePcbBounds`. "PCB bounds" is ambiguous — this
+ * returns the comprehensive bounds (board, copper, silkscreen, notes, etc.),
+ * not the copper-only bounds.
+ */
+export const getPcbBoundsFromCircuitJson = getComprehensivePcbBounds
