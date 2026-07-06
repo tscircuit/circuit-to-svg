@@ -5,6 +5,7 @@ import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
+  NET_LABEL_HEIGHT_MM,
   calculateAnchorPosition,
   getPathRotation,
 } from "lib/utils/net-label-utils"
@@ -59,7 +60,7 @@ export function getSchematicBoundsFromCircuitJson(
         END_PADDING_EXTRA_PER_CHARACTER_FSR * (item.text?.length || 0) +
         END_PADDING_FSR
       const width = fullWidthFsr * fontSizeMm
-      const height = 1.2 * fontSizeMm
+      const height = NET_LABEL_HEIGHT_MM
       const rotation = (getPathRotation(item.anchor_side) / 180) * Math.PI
 
       const anchorPosition = calculateAnchorPosition(

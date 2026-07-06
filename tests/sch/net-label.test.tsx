@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import type { SchematicNetLabel } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
+import { parseSync, type INode } from "svgson"
 
 test(
   "schematic net label",
@@ -171,3 +172,61 @@ test(
   },
   20 * 1000,
 )
+
+test("adjacent schematic net labels align to 0.2mm pin spacing", () => {
+  const circuitJson: SchematicNetLabel[] = [
+    {
+      type: "schematic_net_label",
+      source_net_id: "net1",
+      center: { x: 0, y: 0 },
+      anchor_position: { x: 0, y: 0 },
+      anchor_side: "left",
+      text: "SYNC",
+      schematic_net_label_id: "schematic_net_label_0",
+    },
+    {
+      type: "schematic_net_label",
+      source_net_id: "net2",
+      center: { x: 0, y: -0.2 },
+      anchor_position: { x: 0, y: -0.2 },
+      anchor_side: "left",
+      text: "CS",
+      schematic_net_label_id: "schematic_net_label_1",
+    },
+  ]
+
+  const svg = convertCircuitJsonToSchematicSvg(circuitJson, {
+    width: 800,
+    height: 600,
+  })
+  const parsed = parseSync(svg)
+  const netLabelPaths = flattenSvgNodes(parsed).filter(
+    (node) =>
+      node.name === "path" &&
+      node.attributes.class?.split(" ").includes("sch-net-label"),
+  )
+
+  expect(netLabelPaths).toHaveLength(2)
+
+  const firstLabelPoints = getPathPoints(netLabelPaths[0]!)
+  const secondLabelPoints = getPathPoints(netLabelPaths[1]!)
+
+  const firstBottomY = firstLabelPoints[3]!.y
+  const secondTopY = secondLabelPoints[1]!.y
+
+  expect(Math.abs(firstBottomY - secondTopY)).toBeLessThan(1e-9)
+})
+
+function flattenSvgNodes(node: INode): INode[] {
+  return [node, ...node.children.flatMap(flattenSvgNodes)]
+}
+
+function getPathPoints(pathNode: INode): Array<{ x: number; y: number }> {
+  const d = pathNode.attributes.d
+  if (!d) return []
+
+  return [...d.matchAll(/[ML]\s*([^,\s]+),([^\s]+)/g)].map((match) => ({
+    x: Number(match[1]),
+    y: Number(match[2]),
+  }))
+}

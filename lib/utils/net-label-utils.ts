@@ -6,6 +6,7 @@ import { type TextPrimitive } from "schematic-symbols"
 export const ARROW_POINT_WIDTH_FSR = 0.3
 export const END_PADDING_FSR = 0.3
 export const END_PADDING_EXTRA_PER_CHARACTER_FSR = 0.06
+export const NET_LABEL_HEIGHT_MM = 0.2
 
 export const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],

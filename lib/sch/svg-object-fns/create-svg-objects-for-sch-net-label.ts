@@ -21,6 +21,7 @@ import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
+  NET_LABEL_HEIGHT_MM,
 } from "../../utils/net-label-utils"
 
 export const createSvgObjectsForSchNetLabel = ({
@@ -49,6 +50,7 @@ export const createSvgObjectsForSchNetLabel = ({
 
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
+  const halfHeightFsr = NET_LABEL_HEIGHT_MM / fontSizeMm / 2
   const textWidthFSR = estimateTextWidth(labelText || "")
 
   // Transform the center position to screen coordinates
@@ -103,7 +105,7 @@ export const createSvgObjectsForSchNetLabel = ({
     // Top left corner in font-relative coordinates
     {
       x: ARROW_POINT_WIDTH_FSR,
-      y: 0.6,
+      y: halfHeightFsr,
     },
     // Top right corner in font-relative coordinates
     {
@@ -112,7 +114,7 @@ export const createSvgObjectsForSchNetLabel = ({
         END_PADDING_FSR +
         END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
         textWidthFSR,
-      y: 0.6,
+      y: halfHeightFsr,
     },
     // Bottom right corner in font-relative coordinates
     {
@@ -121,12 +123,12 @@ export const createSvgObjectsForSchNetLabel = ({
         END_PADDING_FSR +
         END_PADDING_EXTRA_PER_CHARACTER_FSR * labelText.length +
         textWidthFSR,
-      y: -0.6,
+      y: -halfHeightFsr,
     },
     // Bottom left corner in font-relative coordinates
     {
       x: ARROW_POINT_WIDTH_FSR,
-      y: -0.6,
+      y: -halfHeightFsr,
     },
   ].map((fontRelativePoint) =>
     applyToPoint(
