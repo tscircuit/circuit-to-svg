@@ -8,11 +8,15 @@ export function createSchematicTrace({
   trace,
   transform,
   colorMap,
+  connectivityKey,
 }: {
   trace: SchematicTrace
   transform: Matrix
   colorMap: ColorMap
+  connectivityKey?: string
 }): SvgObject[] {
+  const resolvedConnectivityKey =
+    connectivityKey ?? trace.subcircuit_connectivity_map_key
   const edges = trace.edges
   if (edges.length === 0) return []
   // Split into base vs overlay to control global z-order
@@ -183,9 +187,8 @@ export function createSchematicTrace({
         "data-layer": "base",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
-        ...(trace.subcircuit_connectivity_map_key && {
-          "data-subcircuit-connectivity-map-key":
-            trace.subcircuit_connectivity_map_key,
+        ...(resolvedConnectivityKey && {
+          "data-subcircuit-connectivity-map-key": resolvedConnectivityKey,
         }),
       },
       children: baseObjects,
@@ -199,9 +202,8 @@ export function createSchematicTrace({
         "data-layer": "overlay",
         "data-circuit-json-type": "schematic_trace",
         "data-schematic-trace-id": trace.schematic_trace_id,
-        ...(trace.subcircuit_connectivity_map_key && {
-          "data-subcircuit-connectivity-map-key":
-            trace.subcircuit_connectivity_map_key,
+        ...(resolvedConnectivityKey && {
+          "data-subcircuit-connectivity-map-key": resolvedConnectivityKey,
         }),
       },
       children: overlayObjects,

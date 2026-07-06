@@ -190,6 +190,17 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
   const connectivityKeys = new Set<string>()
+  // schematic_trace elements often don't carry a connectivity key themselves;
+  // fall back to the key on their source_trace so net hover works for them.
+  const sourceTraceConnectivityKeyById = new Map<string, string>()
+  for (const elm of circuitJson) {
+    if (elm.type === "source_trace" && elm.subcircuit_connectivity_map_key) {
+      sourceTraceConnectivityKeyById.set(
+        elm.source_trace_id,
+        elm.subcircuit_connectivity_map_key,
+      )
+    }
+  }
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
@@ -250,14 +261,22 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_trace") {
+      const connectivityKey =
+        elm.subcircuit_connectivity_map_key ??
+        (elm.source_trace_id
+          ? sourceTraceConnectivityKeyById.get(elm.source_trace_id)
+          : undefined)
       schTraceSvgs.push(
         ...createSchematicTrace({
           trace: elm,
           transform,
           colorMap,
+          connectivityKey,
         }),
       )
-      connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
+      if (connectivityKey) {
+        connectivityKeys.add(connectivityKey)
+      }
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
