@@ -1,18 +1,18 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import { type INode, parseSync } from "svgson"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const flattenSvgNodes = (node: INode): INode[] => [
   node,
   ...node.children.flatMap(flattenSvgNodes),
 ]
 
-test("net labels of the same net are hover-linked by a connectivity key", async () => {
+test("net labels of the same net are hover-linked by their source net", async () => {
   const { circuit } = getTestFixture()
 
   // The chip between R1 and C1 makes the connection render as a net label at
-  // each endpoint (no drawn wire), so hovering one should highlight the other.
+  // each endpoint (no drawn wire), so hovering one should recolor the other.
   circuit.add(
     <board width="20mm" height="20mm">
       <resistor name="R1" resistance="10k" footprint="0402" schX={-4} />
@@ -33,16 +33,16 @@ test("net labels of the same net are hover-linked by a connectivity key", async 
   // Each endpoint yields a real net label wrapped in a hoverable group.
   expect(netLabelGroups.length).toBeGreaterThanOrEqual(2)
 
-  // Every label of the net carries the same, non-empty connectivity key.
-  const keys = netLabelGroups.map(
-    (group) => group.attributes["data-subcircuit-connectivity-map-key"],
+  // Every label of the net is grouped by the same, non-empty source net id.
+  const sourceNetIds = netLabelGroups.map(
+    (group) => group.attributes["data-source-net-id"],
   )
-  expect(keys[0]).toBeTruthy()
-  expect(keys.every((key) => key === keys[0])).toBe(true)
+  expect(sourceNetIds[0]).toBeTruthy()
+  expect(sourceNetIds.every((id) => id === sourceNetIds[0])).toBe(true)
 
-  // That key is wired into the net-hover CSS, so hovering a label highlights
-  // the whole net.
+  // That source net is wired into the net-label hover CSS, so hovering one
+  // label recolors the whole net's labels.
   expect(svg).toContain(
-    `g.sch-net-label[data-subcircuit-connectivity-map-key="${keys[0]}"]`,
+    `g.sch-net-label[data-source-net-id="${sourceNetIds[0]}"]`,
   )
 })

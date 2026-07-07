@@ -1,40 +1,37 @@
-import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
+import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
-import { getSchematicNetLabelConnectivityKey } from "lib/utils/get-schematic-net-label-connectivity-key"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   rotate,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
-import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
 import {
   ARROW_POINT_WIDTH_FSR,
-  END_PADDING_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
+  END_PADDING_FSR,
   NET_LABEL_HEIGHT_MM,
 } from "../../utils/net-label-utils"
+import { estimateTextWidth } from "../estimate-text-width"
+import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
 
 export const createSvgObjectsForSchNetLabel = ({
   schNetLabel,
   realToScreenTransform,
   colorMap,
-  circuitJson,
 }: {
   schNetLabel: SchematicNetLabel
   realToScreenTransform: Matrix
   colorMap: ColorMap
-  circuitJson: AnyCircuitElement[]
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
 
@@ -220,14 +217,9 @@ export const createSvgObjectsForSchNetLabel = ({
   })
 
   // Wrap the outline + text in a group so the net label can participate in
-  // net-hover highlighting (mirrors how schematic traces are grouped). The
-  // group carries the same subcircuit connectivity key as the traces of the
-  // net, so hovering the label highlights the net and vice-versa.
-  const connectivityKey = getSchematicNetLabelConnectivityKey(
-    schNetLabel,
-    circuitJson,
-  )
-
+  // net-hover highlighting (mirrors how schematic traces are grouped).
+  // `data-source-net-id` groups a net's labels together, so hovering one
+  // recolors the label at the net's other endpoint.
   return [
     {
       name: "g",
@@ -237,8 +229,8 @@ export const createSvgObjectsForSchNetLabel = ({
         class: "net-label sch-net-label",
         "data-circuit-json-type": "schematic_net_label",
         "data-schematic-net-label-id": schNetLabel.schematic_net_label_id,
-        ...(connectivityKey && {
-          "data-subcircuit-connectivity-map-key": connectivityKey,
+        ...(schNetLabel.source_net_id && {
+          "data-source-net-id": schNetLabel.source_net_id,
         }),
       },
       children: svgObjects,

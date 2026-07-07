@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import { type INode, parseSync } from "svgson"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const flattenSvgNodes = (node: INode): INode[] => [
   node,

@@ -19,7 +19,6 @@ import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getDefaultSchematicSheet } from "./get-default-schematic-sheet"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
-import { getSchematicNetLabelConnectivityKey } from "lib/utils/get-schematic-net-label-connectivity-key"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
@@ -63,18 +62,19 @@ interface Options {
 //     spot the label at the net's other endpoint), leaving traces untouched.
 function buildNetHoverStyles(
   connectivityKeys: Set<string>,
+  netLabelSourceNetIds: Set<string>,
   netLabelHighlight: string,
 ): string {
   const rules: string[] = []
   const esc = (v: string) => String(v).replace(/"/g, '\\"')
+
+  // Traces are grouped by their subcircuit connectivity key. Hovering any
+  // trace of the net inverts all of the net's traces.
   for (const key of connectivityKeys) {
-    const k = esc(key)
-    const keyAttr = `[data-subcircuit-connectivity-map-key="${k}"]`
+    const keyAttr = `[data-subcircuit-connectivity-map-key="${esc(key)}"]`
     const baseSel = `g.trace${keyAttr}`
     const overlaySel = `g.trace-overlays${keyAttr}`
-    const netLabelSel = `g.sch-net-label${keyAttr}`
 
-    // Hovering any trace of the net inverts all of the net's traces.
     const traceHovered = `:is(${baseSel}, ${overlaySel}):hover`
     rules.push(
       `svg:has(${traceHovered}) :is(${baseSel}, ${overlaySel}) { filter: invert(1); }`,
@@ -83,15 +83,20 @@ function buildNetHoverStyles(
     rules.push(
       `svg:has(${traceHovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
     )
+  }
 
-    // Hovering any net label of the net recolors all of the net's labels.
-    // Recolor the outline stroke + text rather than inverting the filled box.
-    const labelHovered = `${netLabelSel}:hover`
+  // Net labels are grouped by their source net, so a net's labels recolor
+  // together even when the net has no drawn trace (a connection shown only as a
+  // label at each endpoint). Recolor the outline stroke + text rather than
+  // inverting the filled box.
+  for (const sourceNetId of netLabelSourceNetIds) {
+    const sel = `g.sch-net-label[data-source-net-id="${esc(sourceNetId)}"]`
+    const labelHovered = `${sel}:hover`
     rules.push(
-      `svg:has(${labelHovered}) ${netLabelSel} path.sch-net-label { stroke: ${netLabelHighlight}; }`,
+      `svg:has(${labelHovered}) ${sel} path.sch-net-label { stroke: ${netLabelHighlight}; }`,
     )
     rules.push(
-      `svg:has(${labelHovered}) ${netLabelSel} .sch-net-label-text { fill: ${netLabelHighlight}; }`,
+      `svg:has(${labelHovered}) ${sel} .sch-net-label-text { fill: ${netLabelHighlight}; }`,
     )
   }
   return rules.join("\n")
@@ -210,6 +215,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
   const connectivityKeys = new Set<string>()
+  const netLabelSourceNetIds = new Set<string>()
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
@@ -284,18 +290,13 @@ export function convertCircuitJsonToSchematicSvg(
           schNetLabel: elm,
           realToScreenTransform: transform,
           colorMap,
-          circuitJson: sheetCircuitJson,
         }),
       )
-      // Real (non-symbol) net labels share their net's connectivity key so they
-      // highlight together with the net's traces on hover. Power/ground labels
-      // are rendered as symbols and are intentionally excluded.
-      if (!elm.symbol_name) {
-        const netLabelKey = getSchematicNetLabelConnectivityKey(
-          elm,
-          sheetCircuitJson,
-        )
-        if (netLabelKey) connectivityKeys.add(netLabelKey)
+      // Real (non-symbol) net labels recolor together with the other labels on
+      // their source net when hovered. Power/ground labels are rendered as
+      // symbols and are intentionally excluded.
+      if (!elm.symbol_name && elm.source_net_id) {
+        netLabelSourceNetIds.add(elm.source_net_id)
       }
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(
@@ -494,7 +495,7 @@ export function convertCircuitJsonToSchematicSvg(
               /* Net-hover highlighting: when a trace or its overlays are hovered,
                  invert color for all traces (base + overlays) sharing the same
                  subcircuit connectivity key. Also hide crossing outline during hover. */
-              ${buildNetHoverStyles(connectivityKeys, colorMap.schematic.label_highlight)}
+              ${buildNetHoverStyles(connectivityKeys, netLabelSourceNetIds, colorMap.schematic.label_highlight)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }
