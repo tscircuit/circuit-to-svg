@@ -23,6 +23,7 @@ import {
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
   getTextOffsets,
+  getNetLabelDataAttributes,
 } from "../../utils/net-label-utils"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import type { ColorMap } from "lib/utils/colors"
@@ -39,18 +40,22 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   if (!schNetLabel.text) return []
   const isNegated = schNetLabel.text.startsWith("N_")
   const labelText = isNegated ? schNetLabel.text.slice(2) : schNetLabel.text
+  const netLabelDataAttributes = getNetLabelDataAttributes(schNetLabel)
   const svgObjects: SvgObject[] = []
 
   // If symbol name is provided, draw the symbol
   const symbol = symbols[schNetLabel.symbol_name as keyof typeof symbols]
   if (!symbol) {
-    svgObjects.push(
-      createSvgSchErrorText({
-        text: `Symbol not found: ${schNetLabel.symbol_name}`,
-        realCenter: schNetLabel.center,
-        realToScreenTransform,
-      }),
-    )
+    const errorText = createSvgSchErrorText({
+      text: `Symbol not found: ${schNetLabel.symbol_name}`,
+      realCenter: schNetLabel.center,
+      realToScreenTransform,
+    })
+    errorText.attributes = {
+      ...errorText.attributes,
+      ...netLabelDataAttributes,
+    }
+    svgObjects.push(errorText)
     return svgObjects
   }
   const symbolPaths = symbol.primitives.filter((p) => p.type === "path")
@@ -165,6 +170,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
     value: "",
     attributes: {
       class: "component-overlay sch-component-overlay sch-net-label-overlay",
+      ...netLabelDataAttributes,
       x: rectX.toString(),
       y: rectY.toString(),
       width: rectWidth.toString(),
@@ -191,6 +197,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       type: "element",
       attributes: {
         class: "sch-net-label-symbol-path",
+        ...netLabelDataAttributes,
         d: symbolPath + (path.closed ? " Z" : ""),
         stroke: colorMap.schematic.component_outline,
         fill: "none",
@@ -234,6 +241,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       type: "element",
       attributes: {
         class: "sch-net-label-symbol-text",
+        ...netLabelDataAttributes,
         x: offsetScreenPos.x.toString(),
         y: offsetScreenPos.y.toString(),
         fill: colorMap.schematic.label_local,
@@ -273,6 +281,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       type: "element",
       attributes: {
         class: "sch-net-label-symbol-box",
+        ...netLabelDataAttributes,
         x: screenBoxPos.x.toString(),
         y: screenBoxPos.y.toString(),
         width: (box.width * symbolToScreenScale).toString(),
@@ -300,6 +309,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
       type: "element",
       attributes: {
         class: "sch-net-label-symbol-circle",
+        ...netLabelDataAttributes,
         cx: screenCirclePos.x.toString(),
         cy: screenCirclePos.y.toString(),
         r: (circle.radius * symbolToScreenScale).toString(),
