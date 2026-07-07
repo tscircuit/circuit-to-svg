@@ -19,6 +19,7 @@ import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getDefaultSchematicSheet } from "./get-default-schematic-sheet"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
+import { getSchematicNetLabelConnectivityKey } from "lib/utils/get-schematic-net-label-connectivity-key"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
@@ -55,8 +56,9 @@ interface Options {
   className?: string
 }
 
-// Build CSS rules to highlight all traces sharing a connectivity key
-// when any corresponding trace (base or overlays) is hovered.
+// Build CSS rules to highlight everything sharing a connectivity key (traces
+// and net labels) when any corresponding element (base/overlay trace or net
+// label) is hovered.
 function buildNetHoverStyles(connectivityKeys: Set<string>): string {
   const rules: string[] = []
   const esc = (v: string) => String(v).replace(/"/g, '\\"')
@@ -65,9 +67,10 @@ function buildNetHoverStyles(connectivityKeys: Set<string>): string {
     const keyAttr = `[data-subcircuit-connectivity-map-key="${k}"]`
     const baseSel = `g.trace${keyAttr}`
     const overlaySel = `g.trace-overlays${keyAttr}`
-    const hovered = `:is(${baseSel}, ${overlaySel}):hover`
-    const target = `:is(${baseSel}, ${overlaySel})`
-    // Invert color for all segments in the net when any is hovered
+    const netLabelSel = `g.sch-net-label${keyAttr}`
+    const hovered = `:is(${baseSel}, ${overlaySel}, ${netLabelSel}):hover`
+    const target = `:is(${baseSel}, ${overlaySel}, ${netLabelSel})`
+    // Invert color for all segments/labels in the net when any is hovered
     rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
     // Hide crossing outline for the hovered net
     rules.push(
@@ -264,8 +267,19 @@ export function convertCircuitJsonToSchematicSvg(
           schNetLabel: elm,
           realToScreenTransform: transform,
           colorMap,
+          circuitJson: sheetCircuitJson,
         }),
       )
+      // Real (non-symbol) net labels share their net's connectivity key so they
+      // highlight together with the net's traces on hover. Power/ground labels
+      // are rendered as symbols and are intentionally excluded.
+      if (!elm.symbol_name) {
+        const netLabelKey = getSchematicNetLabelConnectivityKey(
+          elm,
+          sheetCircuitJson,
+        )
+        if (netLabelKey) connectivityKeys.add(netLabelKey)
+      }
     } else if (elm.type === "schematic_text" && !elm.schematic_component_id) {
       schText.push(
         createSvgSchText({
@@ -449,6 +463,10 @@ export function convertCircuitJsonToSchematicSvg(
                 opacity: 0;
               }
               .trace:hover .trace-junction {
+                filter: invert(1);
+              }
+              /* Basic per-net-label hover fallback */
+              g.sch-net-label:hover {
                 filter: invert(1);
               }
               /* Net-hover highlighting: when a trace or its overlays are hovered,

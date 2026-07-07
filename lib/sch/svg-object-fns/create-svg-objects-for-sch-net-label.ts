@@ -1,10 +1,11 @@
-import type { SchematicNetLabel } from "circuit-json"
+import type { AnyCircuitElement, SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
+import { getSchematicNetLabelConnectivityKey } from "lib/utils/get-schematic-net-label-connectivity-key"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import {
@@ -27,10 +28,12 @@ export const createSvgObjectsForSchNetLabel = ({
   schNetLabel,
   realToScreenTransform,
   colorMap,
+  circuitJson,
 }: {
   schNetLabel: SchematicNetLabel
   realToScreenTransform: Matrix
   colorMap: ColorMap
+  circuitJson: AnyCircuitElement[]
 }): SvgObject[] => {
   if (!schNetLabel.text) return []
 
@@ -155,7 +158,7 @@ export const createSvgObjectsForSchNetLabel = ({
     name: "path",
     type: "element",
     attributes: {
-      class: "net-label sch-net-label",
+      class: "net-label-outline sch-net-label-outline",
       d: pathD,
       fill: colorMap.schematic.label_background,
       stroke: colorMap.schematic.label_global,
@@ -212,5 +215,29 @@ export const createSvgObjectsForSchNetLabel = ({
     value: "",
   })
 
-  return svgObjects
+  // Wrap the outline + text in a group so the net label can participate in
+  // net-hover highlighting (mirrors how schematic traces are grouped). The
+  // group carries the same subcircuit connectivity key as the traces of the
+  // net, so hovering the label highlights the net and vice-versa.
+  const connectivityKey = getSchematicNetLabelConnectivityKey(
+    schNetLabel,
+    circuitJson,
+  )
+
+  return [
+    {
+      name: "g",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "net-label sch-net-label",
+        "data-circuit-json-type": "schematic_net_label",
+        "data-schematic-net-label-id": schNetLabel.schematic_net_label_id,
+        ...(connectivityKey && {
+          "data-subcircuit-connectivity-map-key": connectivityKey,
+        }),
+      },
+      children: svgObjects,
+    },
+  ]
 }
