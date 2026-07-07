@@ -155,7 +155,9 @@ export const createSvgObjectsForSchNetLabel = ({
     Z
   `
 
-  // Add the label container path
+  // Add the label container path. Shares the `sch-net-label` class with the
+  // wrapping group; net-hover styles target it via `path.sch-net-label` (the
+  // group is a <g>, so the element-qualified selector doesn't collide).
   svgObjects.push({
     name: "path",
     type: "element",

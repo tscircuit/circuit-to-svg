@@ -56,10 +56,15 @@ interface Options {
   className?: string
 }
 
-// Build CSS rules to highlight everything sharing a connectivity key (traces
-// and net labels) when any corresponding element (base/overlay trace or net
-// label) is hovered.
-function buildNetHoverStyles(connectivityKeys: Set<string>): string {
+// Build CSS rules for net-hover highlighting. Traces and net labels are
+// decoupled — hovering one kind never highlights the other:
+//   - Hovering a trace inverts every trace on the same net (green -> magenta).
+//   - Hovering a net label recolors every net label on the same net (so you can
+//     spot the label at the net's other endpoint), leaving traces untouched.
+function buildNetHoverStyles(
+  connectivityKeys: Set<string>,
+  netLabelHighlight: string,
+): string {
   const rules: string[] = []
   const esc = (v: string) => String(v).replace(/"/g, '\\"')
   for (const key of connectivityKeys) {
@@ -68,13 +73,25 @@ function buildNetHoverStyles(connectivityKeys: Set<string>): string {
     const baseSel = `g.trace${keyAttr}`
     const overlaySel = `g.trace-overlays${keyAttr}`
     const netLabelSel = `g.sch-net-label${keyAttr}`
-    const hovered = `:is(${baseSel}, ${overlaySel}, ${netLabelSel}):hover`
-    const target = `:is(${baseSel}, ${overlaySel}, ${netLabelSel})`
-    // Invert color for all segments/labels in the net when any is hovered
-    rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
-    // Hide crossing outline for the hovered net
+
+    // Hovering any trace of the net inverts all of the net's traces.
+    const traceHovered = `:is(${baseSel}, ${overlaySel}):hover`
     rules.push(
-      `svg:has(${hovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
+      `svg:has(${traceHovered}) :is(${baseSel}, ${overlaySel}) { filter: invert(1); }`,
+    )
+    // Hide crossing outline for the hovered net.
+    rules.push(
+      `svg:has(${traceHovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
+    )
+
+    // Hovering any net label of the net recolors all of the net's labels.
+    // Recolor the outline stroke + text rather than inverting the filled box.
+    const labelHovered = `${netLabelSel}:hover`
+    rules.push(
+      `svg:has(${labelHovered}) ${netLabelSel} path.sch-net-label { stroke: ${netLabelHighlight}; }`,
+    )
+    rules.push(
+      `svg:has(${labelHovered}) ${netLabelSel} .sch-net-label-text { fill: ${netLabelHighlight}; }`,
     )
   }
   return rules.join("\n")
@@ -465,14 +482,19 @@ export function convertCircuitJsonToSchematicSvg(
               .trace:hover .trace-junction {
                 filter: invert(1);
               }
-              /* Basic per-net-label hover fallback */
-              g.sch-net-label:hover {
-                filter: invert(1);
+              /* Basic per-net-label hover fallback. Recolor the outline + text
+                 (matching buildNetHoverStyles) instead of inverting the filled
+                 box, so a directly-hovered label matches its linked labels. */
+              g.sch-net-label:hover path.sch-net-label {
+                stroke: ${colorMap.schematic.label_highlight};
+              }
+              g.sch-net-label:hover .sch-net-label-text {
+                fill: ${colorMap.schematic.label_highlight};
               }
               /* Net-hover highlighting: when a trace or its overlays are hovered,
                  invert color for all traces (base + overlays) sharing the same
                  subcircuit connectivity key. Also hide crossing outline during hover. */
-              ${buildNetHoverStyles(connectivityKeys)}
+              ${buildNetHoverStyles(connectivityKeys, colorMap.schematic.label_highlight)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }

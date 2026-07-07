@@ -225,6 +225,10 @@ export const colorMap = {
     label_global: "rgb(132, 0, 0)",
     label_background: "rgba(255, 255, 255, 0.6)",
     label_hier: "rgb(114, 86, 0)",
+    // Border/text color for a net label when its net is hovered. Matches the
+    // color the wire inverts to (green -> magenta) so the label and its traces
+    // read as one highlighted net.
+    label_highlight: "rgb(255, 105, 255)",
     label_local: "rgb(15, 15, 15)",
     net_name: "rgb(132, 132, 132)",
     no_connect: "rgb(0, 0, 132)",
