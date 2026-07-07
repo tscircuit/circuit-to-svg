@@ -8,6 +8,15 @@ export const END_PADDING_FSR = 0.3
 export const END_PADDING_EXTRA_PER_CHARACTER_FSR = 0.06
 export const NET_LABEL_HEIGHT_MM = 0.2
 
+// Metadata attributes tagged onto every visible element of a net label so
+// consumers can find/classify them by id without a wrapping group.
+export const getNetLabelDataAttributes = (
+  schNetLabel: SchematicNetLabel,
+): Record<string, string> => ({
+  "data-circuit-json-type": "schematic_net_label",
+  "data-schematic-net-label-id": schNetLabel.schematic_net_label_id,
+})
+
 export const ninePointAnchorToTextAnchor: Record<
   TextPrimitive["anchor"],
   "middle" | "start" | "end"

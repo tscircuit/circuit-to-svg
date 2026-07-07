@@ -55,28 +55,6 @@ interface Options {
   className?: string
 }
 
-// Build CSS rules to highlight all traces sharing a connectivity key
-// when any corresponding trace (base or overlays) is hovered.
-function buildNetHoverStyles(connectivityKeys: Set<string>): string {
-  const rules: string[] = []
-  const esc = (v: string) => String(v).replace(/"/g, '\\"')
-  for (const key of connectivityKeys) {
-    const k = esc(key)
-    const keyAttr = `[data-subcircuit-connectivity-map-key="${k}"]`
-    const baseSel = `g.trace${keyAttr}`
-    const overlaySel = `g.trace-overlays${keyAttr}`
-    const hovered = `:is(${baseSel}, ${overlaySel}):hover`
-    const target = `:is(${baseSel}, ${overlaySel})`
-    // Invert color for all segments in the net when any is hovered
-    rules.push(`svg:has(${hovered}) ${target} { filter: invert(1); }`)
-    // Hide crossing outline for the hovered net
-    rules.push(
-      `svg:has(${hovered}) ${overlaySel} .trace-crossing-outline { opacity: 0; }`,
-    )
-  }
-  return rules.join("\n")
-}
-
 export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
@@ -189,7 +167,6 @@ export function convertCircuitJsonToSchematicSvg(
   const schDebugObjectSvgs: SvgObject[] = []
   const schComponentSvgs: SvgObject[] = []
   const schTraceSvgs: SvgObject[] = []
-  const connectivityKeys = new Set<string>()
   const schNetLabel: SvgObject[] = []
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
@@ -257,7 +234,6 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-      connectivityKeys.add(elm.subcircuit_connectivity_map_key!)
     } else if (elm.type === "schematic_net_label") {
       schNetLabel.push(
         ...createSvgObjectsForSchNetLabel({
@@ -441,20 +417,6 @@ export function convertCircuitJsonToSchematicSvg(
               .component { fill: none; stroke: ${colorMap.schematic.component_outline}; }
               .chip { fill: ${colorMap.schematic.component_body}; stroke: ${colorMap.schematic.component_outline}; }
               .component-pin { fill: none; stroke: ${colorMap.schematic.component_outline}; }
-              /* Basic per-trace hover fallback */
-              .trace:hover {
-                filter: invert(1);
-              }
-              .trace:hover .trace-crossing-outline {
-                opacity: 0;
-              }
-              .trace:hover .trace-junction {
-                filter: invert(1);
-              }
-              /* Net-hover highlighting: when a trace or its overlays are hovered,
-                 invert color for all traces (base + overlays) sharing the same
-                 subcircuit connectivity key. Also hide crossing outline during hover. */
-              ${buildNetHoverStyles(connectivityKeys)}
               .text { font-family: sans-serif; fill: ${colorMap.schematic.wire}; }
               .pin-number { fill: ${colorMap.schematic.pin_number}; }
               .port-label { fill: ${colorMap.schematic.reference}; }

@@ -22,6 +22,7 @@ import {
   END_PADDING_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   NET_LABEL_HEIGHT_MM,
+  getNetLabelDataAttributes,
 } from "../../utils/net-label-utils"
 
 export const createSvgObjectsForSchNetLabel = ({
@@ -46,6 +47,7 @@ export const createSvgObjectsForSchNetLabel = ({
     })
   }
 
+  const netLabelDataAttributes = getNetLabelDataAttributes(schNetLabel)
   const svgObjects: SvgObject[] = []
 
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
@@ -158,6 +160,7 @@ export const createSvgObjectsForSchNetLabel = ({
     type: "element",
     attributes: {
       class: "net-label sch-net-label",
+      ...netLabelDataAttributes,
       d: pathD,
       fill: colorMap.schematic.label_background,
       stroke: colorMap.schematic.label_global,
@@ -192,6 +195,7 @@ export const createSvgObjectsForSchNetLabel = ({
     type: "element",
     attributes: {
       class: "net-label-text sch-net-label-text",
+      ...netLabelDataAttributes,
       x: screenTextPos.x.toString(),
       y: screenTextPos.y.toString(),
       fill: colorMap.schematic.label_global,
