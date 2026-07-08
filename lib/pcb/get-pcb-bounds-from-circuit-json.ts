@@ -288,6 +288,20 @@ export function getComprehensivePcbBounds(
           height: textHeight,
         })
       }
+    } else if (
+      circuitJsonElm.type === "pcb_note_text" ||
+      circuitJsonElm.type === "pcb_fabrication_note_text"
+    ) {
+      updateTextBounds({
+        text: circuitJsonElm.text,
+        anchorPosition: circuitJsonElm.anchor_position,
+        fontSize: circuitJsonElm.font_size,
+        anchorAlignment: circuitJsonElm.anchor_alignment,
+        ccwRotationDegrees:
+          circuitJsonElm.type === "pcb_fabrication_note_text"
+            ? (circuitJsonElm.ccw_rotation ?? 1)
+            : 0,
+      })
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
@@ -498,6 +512,56 @@ export function getComprehensivePcbBounds(
 
   function getTracePoints(point: Point | PcbTraceRoutePoint): readonly Point[] {
     return "route_type" in point ? getPcbTracePoints(point) : [point]
+  }
+
+  function updateTextBounds({
+    text,
+    anchorPosition,
+    fontSize = 1,
+    anchorAlignment = "center",
+    ccwRotationDegrees = 0,
+  }: {
+    text?: string
+    anchorPosition?: Point
+    fontSize?: number
+    anchorAlignment?:
+      | "center"
+      | "top_left"
+      | "top_right"
+      | "bottom_left"
+      | "bottom_right"
+    ccwRotationDegrees?: number
+  }) {
+    if (!text || !anchorPosition) return
+
+    const lines = text.split("\n")
+    const maxLineLength = Math.max(...lines.map((line) => line.length), 0)
+    const textWidth = maxLineLength * fontSize * 0.6
+    const textHeight = Math.max(lines.length, 1) * fontSize
+
+    let centerX = anchorPosition.x
+    let centerY = anchorPosition.y
+
+    if (anchorAlignment === "top_left") {
+      centerX += textWidth / 2
+      centerY += textHeight / 2
+    } else if (anchorAlignment === "top_right") {
+      centerX -= textWidth / 2
+      centerY += textHeight / 2
+    } else if (anchorAlignment === "bottom_left") {
+      centerX += textWidth / 2
+      centerY -= textHeight / 2
+    } else if (anchorAlignment === "bottom_right") {
+      centerX -= textWidth / 2
+      centerY -= textHeight / 2
+    }
+
+    updateBounds({
+      center: { x: centerX, y: centerY },
+      width: textWidth,
+      height: textHeight,
+      ccwRotationDegrees,
+    })
   }
 
   function updateSilkscreenBounds(item: AnyCircuitElement) {
