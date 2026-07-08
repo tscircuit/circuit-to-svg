@@ -19,16 +19,13 @@ const rotatedRectCutout: AnyCircuitElement[] = [
 ]
 
 // Rotating the 8 x 1 cutout by 90deg swaps its extents.
-test.failing(
-  "getComprehensivePcbBounds accounts for a rotated rect cutout",
-  () => {
-    const bounds = getComprehensivePcbBounds(rotatedRectCutout)
-    expect(bounds.minX).toBeCloseTo(-0.5, 6)
-    expect(bounds.maxX).toBeCloseTo(0.5, 6)
-    expect(bounds.minY).toBeCloseTo(-4, 6)
-    expect(bounds.maxY).toBeCloseTo(4, 6)
-  },
-)
+test("getComprehensivePcbBounds accounts for a rotated rect cutout", () => {
+  const bounds = getComprehensivePcbBounds(rotatedRectCutout)
+  expect(bounds.minX).toBeCloseTo(-0.5, 6)
+  expect(bounds.maxX).toBeCloseTo(0.5, 6)
+  expect(bounds.minY).toBeCloseTo(-4, 6)
+  expect(bounds.maxY).toBeCloseTo(4, 6)
+})
 
 test("rotated cutout svg viewport snapshot", () => {
   const svg = convertCircuitJsonToPcbSvg(rotatedRectCutout)

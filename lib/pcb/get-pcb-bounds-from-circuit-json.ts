@@ -151,6 +151,42 @@ export function getComprehensivePcbBounds(
           })),
         )
       }
+    } else if (circuitJsonElm.type === "pcb_hole") {
+      const hole = circuitJsonElm
+      const holeCenter = { x: hole.x, y: hole.y }
+      if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
+        const diameter = distance.parse(hole.hole_diameter)
+        updateBounds({
+          center: holeCenter,
+          width: diameter ?? 0,
+          height: diameter ?? 0,
+        })
+      } else if (hole.hole_shape === "rotated_pill") {
+        updateBounds({
+          center: holeCenter,
+          width: hole.hole_width,
+          height: hole.hole_height,
+          ccwRotationDegrees: hole.ccw_rotation,
+        })
+      } else if (
+        hole.hole_shape === "oval" ||
+        hole.hole_shape === "rect" ||
+        hole.hole_shape === "pill"
+      ) {
+        // oval, rect, and pill holes are axis-aligned width x height
+        updateBounds({
+          center: holeCenter,
+          width: hole.hole_width,
+          height: hole.hole_height,
+        })
+      }
+    } else if (circuitJsonElm.type === "pcb_note_line") {
+      // pcb_note_line uses x1/y1/x2/y2 endpoints (no x/y or route), so it
+      // would otherwise contribute nothing to the bounds and be clipped.
+      updateTraceBounds([
+        { x: circuitJsonElm.x1, y: circuitJsonElm.y1 },
+        { x: circuitJsonElm.x2, y: circuitJsonElm.y2 },
+      ])
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({
         center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
@@ -295,6 +331,7 @@ export function getComprehensivePcbBounds(
           center: cutout.center,
           width: cutout.width,
           height: cutout.height,
+          ccwRotationDegrees: cutout.rotation,
         })
       } else if (cutout.shape === "circle") {
         const radius = distance.parse(cutout.radius)
@@ -565,6 +602,7 @@ export function getComprehensivePcbBounds(
           center: cutout.center,
           width: cutout.width,
           height: cutout.height,
+          ccwRotationDegrees: cutout.rotation,
         })
       } else if (cutout.shape === "circle") {
         const radius = distance.parse(cutout.radius)

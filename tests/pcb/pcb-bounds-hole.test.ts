@@ -43,18 +43,15 @@ const rotatedPillHole: AnyCircuitElement[] = [
   } as AnyCircuitElement,
 ]
 
-test.failing(
-  "getComprehensivePcbBounds includes a circle hole's diameter",
-  () => {
-    const bounds = getComprehensivePcbBounds(circleHole)
-    expect(bounds.minX).toBeCloseTo(-3, 6)
-    expect(bounds.maxX).toBeCloseTo(3, 6)
-    expect(bounds.minY).toBeCloseTo(-3, 6)
-    expect(bounds.maxY).toBeCloseTo(3, 6)
-  },
-)
+test("getComprehensivePcbBounds includes a circle hole's diameter", () => {
+  const bounds = getComprehensivePcbBounds(circleHole)
+  expect(bounds.minX).toBeCloseTo(-3, 6)
+  expect(bounds.maxX).toBeCloseTo(3, 6)
+  expect(bounds.minY).toBeCloseTo(-3, 6)
+  expect(bounds.maxY).toBeCloseTo(3, 6)
+})
 
-test.failing("getComprehensivePcbBounds includes an oval hole's extent", () => {
+test("getComprehensivePcbBounds includes an oval hole's extent", () => {
   const bounds = getComprehensivePcbBounds(ovalHole)
   expect(bounds.minX).toBeCloseTo(-4, 6)
   expect(bounds.maxX).toBeCloseTo(4, 6)
@@ -63,7 +60,7 @@ test.failing("getComprehensivePcbBounds includes an oval hole's extent", () => {
 })
 
 // Rotating the 8 x 2 pill by 90deg swaps its extents.
-test.failing("getComprehensivePcbBounds includes a rotated_pill hole", () => {
+test("getComprehensivePcbBounds includes a rotated_pill hole", () => {
   const bounds = getComprehensivePcbBounds(rotatedPillHole)
   expect(bounds.minX).toBeCloseTo(-1, 6)
   expect(bounds.maxX).toBeCloseTo(1, 6)

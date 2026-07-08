@@ -36,7 +36,7 @@ const diamond: AnyCircuitElement[] = [
     }) as AnyCircuitElement,
 )
 
-test.failing("getComprehensivePcbBounds includes a pcb_note_line", () => {
+test("getComprehensivePcbBounds includes a pcb_note_line", () => {
   const bounds = getComprehensivePcbBounds(noteLine)
   expect(bounds.minX).toBeCloseTo(-6, 6)
   expect(bounds.maxX).toBeCloseTo(6, 6)
