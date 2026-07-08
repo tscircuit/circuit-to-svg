@@ -21,16 +21,13 @@ const via: AnyCircuitElement[] = [
   },
 ]
 
-test.failing(
-  "getComprehensivePcbBounds includes a via's outer diameter",
-  () => {
-    const bounds = getComprehensivePcbBounds(via)
-    expect(bounds.minX).toBeCloseTo(-4, 6)
-    expect(bounds.maxX).toBeCloseTo(4, 6)
-    expect(bounds.minY).toBeCloseTo(-4, 6)
-    expect(bounds.maxY).toBeCloseTo(4, 6)
-  },
-)
+test("getComprehensivePcbBounds includes a via's outer diameter", () => {
+  const bounds = getComprehensivePcbBounds(via)
+  expect(bounds.minX).toBeCloseTo(-4, 6)
+  expect(bounds.maxX).toBeCloseTo(4, 6)
+  expect(bounds.minY).toBeCloseTo(-4, 6)
+  expect(bounds.maxY).toBeCloseTo(4, 6)
+})
 
 test("via svg viewport snapshot", () => {
   const svg = convertCircuitJsonToPcbSvg(via)

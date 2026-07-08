@@ -20,16 +20,13 @@ const rotatedRectPour: AnyCircuitElement[] = [
 ]
 
 // Rotating the 8 x 1 pour by 90deg swaps its extents.
-test.failing(
-  "getComprehensivePcbBounds accounts for a rotated rect copper pour",
-  () => {
-    const bounds = getComprehensivePcbBounds(rotatedRectPour)
-    expect(bounds.minX).toBeCloseTo(-0.5, 6)
-    expect(bounds.maxX).toBeCloseTo(0.5, 6)
-    expect(bounds.minY).toBeCloseTo(-4, 6)
-    expect(bounds.maxY).toBeCloseTo(4, 6)
-  },
-)
+test("getComprehensivePcbBounds accounts for a rotated rect copper pour", () => {
+  const bounds = getComprehensivePcbBounds(rotatedRectPour)
+  expect(bounds.minX).toBeCloseTo(-0.5, 6)
+  expect(bounds.maxX).toBeCloseTo(0.5, 6)
+  expect(bounds.minY).toBeCloseTo(-4, 6)
+  expect(bounds.maxY).toBeCloseTo(4, 6)
+})
 
 test("rotated copper pour svg viewport snapshot", () => {
   const svg = convertCircuitJsonToPcbSvg(rotatedRectPour)

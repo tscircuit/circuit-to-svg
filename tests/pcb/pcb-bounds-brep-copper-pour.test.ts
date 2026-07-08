@@ -38,7 +38,7 @@ const brepPourWithMarker: AnyCircuitElement[] = [
   },
 ]
 
-test.failing("getComprehensivePcbBounds includes a brep copper pour", () => {
+test("getComprehensivePcbBounds includes a brep copper pour", () => {
   const bounds = getComprehensivePcbBounds(brepPourWithMarker)
   expect(bounds.minX).toBeCloseTo(-5, 6)
   expect(bounds.maxX).toBeCloseTo(5, 6)
