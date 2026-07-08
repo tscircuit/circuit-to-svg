@@ -1,5 +1,6 @@
 import type {
   AnyCircuitElement,
+  NinePointAnchor,
   PCBKeepoutCircle,
   PCBKeepoutRect,
   PcbCutout,
@@ -11,6 +12,7 @@ import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
+import { getTextCenterFromAnchorPosition } from "./text-anchor-alignment"
 
 export interface PcbBounds {
   minX: number
@@ -296,7 +298,7 @@ export function getComprehensivePcbBounds(
         text: circuitJsonElm.text,
         anchorPosition: circuitJsonElm.anchor_position,
         fontSize: circuitJsonElm.font_size,
-        anchorAlignment: circuitJsonElm.anchor_alignment,
+        anchorAlignment: circuitJsonElm.anchor_alignment as NinePointAnchor,
         ccwRotationDegrees:
           circuitJsonElm.type === "pcb_fabrication_note_text"
             ? (circuitJsonElm.ccw_rotation ?? 1)
@@ -524,12 +526,7 @@ export function getComprehensivePcbBounds(
     text?: string
     anchorPosition?: Point
     fontSize?: number
-    anchorAlignment?:
-      | "center"
-      | "top_left"
-      | "top_right"
-      | "bottom_left"
-      | "bottom_right"
+    anchorAlignment?: NinePointAnchor
     ccwRotationDegrees?: number
   }) {
     if (!text || !anchorPosition) return
@@ -539,25 +536,15 @@ export function getComprehensivePcbBounds(
     const textWidth = maxLineLength * fontSize * 0.6
     const textHeight = Math.max(lines.length, 1) * fontSize
 
-    let centerX = anchorPosition.x
-    let centerY = anchorPosition.y
-
-    if (anchorAlignment === "top_left") {
-      centerX += textWidth / 2
-      centerY += textHeight / 2
-    } else if (anchorAlignment === "top_right") {
-      centerX -= textWidth / 2
-      centerY += textHeight / 2
-    } else if (anchorAlignment === "bottom_left") {
-      centerX += textWidth / 2
-      centerY -= textHeight / 2
-    } else if (anchorAlignment === "bottom_right") {
-      centerX -= textWidth / 2
-      centerY -= textHeight / 2
-    }
+    const center = getTextCenterFromAnchorPosition({
+      anchorPosition,
+      textWidth,
+      textHeight,
+      anchorAlignment,
+    })
 
     updateBounds({
-      center: { x: centerX, y: centerY },
+      center,
       width: textWidth,
       height: textHeight,
       ccwRotationDegrees,

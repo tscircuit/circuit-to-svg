@@ -1,9 +1,10 @@
-import type { PcbNoteText } from "circuit-json"
+import type { NinePointAnchor, PcbNoteText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { colorMap } from "lib/utils/colors"
+import { getSvgTextAnchorAlignment } from "../text-anchor-alignment"
 
 const DEFAULT_OVERLAY_COLOR = colorMap.board.user_2
 
@@ -41,33 +42,9 @@ export function createSvgObjectsFromPcbNoteText(
   const [x, y] = applyToPoint(transform, [anchor_position.x, anchor_position.y])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  let textAnchor: "start" | "middle" | "end" = "middle"
-  let dominantBaseline: "central" | "text-before-edge" | "text-after-edge" =
-    "central"
-
-  switch (anchor_alignment) {
-    case "top_left":
-      textAnchor = "start"
-      dominantBaseline = "text-before-edge"
-      break
-    case "top_right":
-      textAnchor = "end"
-      dominantBaseline = "text-before-edge"
-      break
-    case "bottom_left":
-      textAnchor = "start"
-      dominantBaseline = "text-after-edge"
-      break
-    case "bottom_right":
-      textAnchor = "end"
-      dominantBaseline = "text-after-edge"
-      break
-    case "center":
-    default:
-      textAnchor = "middle"
-      dominantBaseline = "central"
-      break
-  }
+  const { textAnchor, dominantBaseline } = getSvgTextAnchorAlignment(
+    anchor_alignment as NinePointAnchor,
+  )
 
   const lines = text.split("\n")
 
