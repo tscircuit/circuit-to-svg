@@ -37,18 +37,15 @@ const rotatedPillPad: AnyCircuitElement[] = [
 ]
 
 // Rotating the 4 x 0.5 pad by 90deg swaps its extents.
-test.failing(
-  "getComprehensivePcbBounds accounts for a rotated_rect smtpad's rotation",
-  () => {
-    const bounds = getComprehensivePcbBounds(rotatedRectPad)
-    expect(bounds.minX).toBeCloseTo(-0.25, 6)
-    expect(bounds.maxX).toBeCloseTo(0.25, 6)
-    expect(bounds.minY).toBeCloseTo(-2, 6)
-    expect(bounds.maxY).toBeCloseTo(2, 6)
-  },
-)
+test("getComprehensivePcbBounds accounts for a rotated_rect smtpad's rotation", () => {
+  const bounds = getComprehensivePcbBounds(rotatedRectPad)
+  expect(bounds.minX).toBeCloseTo(-0.25, 6)
+  expect(bounds.maxX).toBeCloseTo(0.25, 6)
+  expect(bounds.minY).toBeCloseTo(-2, 6)
+  expect(bounds.maxY).toBeCloseTo(2, 6)
+})
 
-test.failing("getComprehensivePcbBounds includes a rotated_pill smtpad", () => {
+test("getComprehensivePcbBounds includes a rotated_pill smtpad", () => {
   const bounds = getComprehensivePcbBounds(rotatedPillPad)
   expect(bounds.minX).toBeCloseTo(-0.5, 6)
   expect(bounds.maxX).toBeCloseTo(0.5, 6)

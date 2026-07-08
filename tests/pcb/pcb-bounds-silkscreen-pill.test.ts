@@ -29,7 +29,7 @@ const silkscreenPillWithMarker: AnyCircuitElement[] = [
   },
 ]
 
-test.failing("getComprehensivePcbBounds includes a silkscreen pill", () => {
+test("getComprehensivePcbBounds includes a silkscreen pill", () => {
   const bounds = getComprehensivePcbBounds(silkscreenPillWithMarker)
   expect(bounds.minX).toBeCloseTo(-5, 6)
   expect(bounds.maxX).toBeCloseTo(5, 6)

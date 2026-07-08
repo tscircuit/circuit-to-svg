@@ -78,15 +78,18 @@ export function getComprehensivePcbBounds(
       }
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       const pad = circuitJsonElm
-      if (
-        pad.shape === "rect" ||
-        pad.shape === "rotated_rect" ||
-        pad.shape === "pill"
-      ) {
+      if (pad.shape === "rect" || pad.shape === "pill") {
         updateBounds({
           center: { x: pad.x, y: pad.y },
           width: pad.width,
           height: pad.height,
+        })
+      } else if (pad.shape === "rotated_rect" || pad.shape === "rotated_pill") {
+        updateBounds({
+          center: { x: pad.x, y: pad.y },
+          width: pad.width,
+          height: pad.height,
+          ccwRotationDegrees: pad.ccw_rotation,
         })
       } else if (pad.shape === "circle") {
         const radius = distance.parse(pad.radius)
@@ -99,6 +102,54 @@ export function getComprehensivePcbBounds(
         }
       } else if (pad.shape === "polygon") {
         updateTraceBounds(pad.points)
+      }
+    } else if (circuitJsonElm.type === "pcb_via") {
+      const outerDiameter = distance.parse(circuitJsonElm.outer_diameter)
+      updateBounds({
+        center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
+        width: outerDiameter ?? 0,
+        height: outerDiameter ?? 0,
+      })
+    } else if (circuitJsonElm.type === "pcb_plated_hole") {
+      const platedHole = circuitJsonElm
+      const holeCenter = { x: platedHole.x, y: platedHole.y }
+      if (platedHole.shape === "circle") {
+        const outerDiameter = distance.parse(platedHole.outer_diameter)
+        updateBounds({
+          center: holeCenter,
+          width: outerDiameter ?? 0,
+          height: outerDiameter ?? 0,
+        })
+      } else if (platedHole.shape === "oval" || platedHole.shape === "pill") {
+        updateBounds({
+          center: holeCenter,
+          width: platedHole.outer_width,
+          height: platedHole.outer_height,
+        })
+      } else if (
+        platedHole.shape === "circular_hole_with_rect_pad" ||
+        platedHole.shape === "pill_hole_with_rect_pad"
+      ) {
+        updateBounds({
+          center: holeCenter,
+          width: platedHole.rect_pad_width,
+          height: platedHole.rect_pad_height,
+        })
+      } else if (platedHole.shape === "rotated_pill_hole_with_rect_pad") {
+        updateBounds({
+          center: holeCenter,
+          width: platedHole.rect_pad_width,
+          height: platedHole.rect_pad_height,
+          ccwRotationDegrees: platedHole.rect_ccw_rotation,
+        })
+      } else if (platedHole.shape === "hole_with_polygon_pad") {
+        // pad_outline points are relative to the hole position
+        updateTraceBounds(
+          (platedHole.pad_outline ?? []).map((point) => ({
+            x: platedHole.x + point.x,
+            y: platedHole.y + point.y,
+          })),
+        )
       }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({
@@ -290,7 +341,8 @@ export function getComprehensivePcbBounds(
       circuitJsonElm.type === "pcb_silkscreen_rect" ||
       circuitJsonElm.type === "pcb_silkscreen_circle" ||
       circuitJsonElm.type === "pcb_silkscreen_line" ||
-      circuitJsonElm.type === "pcb_silkscreen_oval"
+      circuitJsonElm.type === "pcb_silkscreen_oval" ||
+      circuitJsonElm.type === "pcb_silkscreen_pill"
     ) {
       updateSilkscreenBounds(circuitJsonElm)
     } else if (circuitJsonElm.type === "pcb_copper_text") {
@@ -305,9 +357,12 @@ export function getComprehensivePcbBounds(
           center: circuitJsonElm.center,
           width: circuitJsonElm.width,
           height: circuitJsonElm.height,
+          ccwRotationDegrees: circuitJsonElm.rotation,
         })
       } else if (circuitJsonElm.shape === "polygon") {
         updateTraceBounds(circuitJsonElm.points)
+      } else if (circuitJsonElm.shape === "brep") {
+        updateTraceBounds(circuitJsonElm.brep_shape.outer_ring.vertices)
       }
     }
   }
@@ -497,6 +552,12 @@ export function getComprehensivePcbBounds(
           height: radiusY * 2,
         })
       }
+    } else if (item.type === "pcb_silkscreen_pill") {
+      updateBounds({
+        center: item.center,
+        width: item.width,
+        height: item.height,
+      })
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
       if (cutout.shape === "rect") {
