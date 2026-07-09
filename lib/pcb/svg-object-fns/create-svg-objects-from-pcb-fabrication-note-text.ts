@@ -4,7 +4,7 @@ import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
 import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getSvgTextAnchorAlignment } from "../text-anchor-alignment"
+import { getSvgTextAnchorAlignment } from "../get-svg-text-anchor-alignment"
 
 export function createSvgObjectsFromPcbFabricationNoteText(
   pcbFabNoteText: PcbFabricationNoteText,

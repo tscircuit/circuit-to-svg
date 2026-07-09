@@ -12,7 +12,7 @@ import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
-import { getTextCenterFromAnchorPosition } from "./text-anchor-alignment"
+import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
 
 export interface PcbBounds {
   minX: number
