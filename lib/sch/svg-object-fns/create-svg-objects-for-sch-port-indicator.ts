@@ -67,12 +67,12 @@ export const createSvgObjectsForSchPortIndicator = ({
       case "left":
         labelPos.x += distanceFromComponentEdge / 2
         labelPos.y += labelOffset // Offset below
-        textAnchor = "start"
+        textAnchor = "end"
         break
       case "right":
         labelPos.x -= distanceFromComponentEdge / 2
         labelPos.y += labelOffset // Offset below
-        textAnchor = "end"
+        textAnchor = "start"
         break
       case "up":
         labelPos.y -= distanceFromComponentEdge / 2
