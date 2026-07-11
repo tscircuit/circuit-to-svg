@@ -31,11 +31,6 @@ const courtyardPolygonRepro: AnyCircuitElement[] = [
 
 test("repro: pcb_courtyard_polygon bounds and viewport", () => {
   const bounds = getComprehensivePcbBounds(courtyardPolygonRepro)
-  // expect(bounds.minX).toBeCloseTo(-5, 6)
-  // expect(bounds.maxX).toBeCloseTo(5, 6)
-  // expect(bounds.minY).toBeCloseTo(-4, 6)
-  // expect(bounds.maxY).toBeCloseTo(4, 6)
-
   const svg = convertCircuitJsonToPcbSvg(courtyardPolygonRepro, {
     showCourtyards: true,
   })
