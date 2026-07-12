@@ -1,6 +1,11 @@
-import type { AnyCircuitElement } from "circuit-json"
+import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, SchematicComponent } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
+import { matchSchPortsToSymbolPorts } from "lib/utils/match-sch-ports-with-symbol-ports"
+import { pointPairsToMatrix } from "lib/utils/point-pairs-to-matrix"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import { symbols, type SchSymbol, type TextPrimitive } from "schematic-symbols"
+import { applyToPoint } from "transformation-matrix"
 import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
@@ -28,6 +33,7 @@ export function getSchematicBoundsFromCircuitJson(
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
+  const circuitSoup = su(soup as any)
 
   const portSize = 0.2
 
@@ -42,6 +48,7 @@ export function getSchematicBoundsFromCircuitJson(
       )
     } else if (item.type === "schematic_component") {
       updateBounds(item.center, item.size, 0)
+      updateSymbolTextBounds(item)
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
     } else if (item.type === "schematic_debug_object") {
@@ -203,6 +210,122 @@ export function getSchematicBoundsFromCircuitJson(
   maxY += padding
 
   return { minX, minY, maxX, maxY }
+
+  function updateSymbolTextBounds(component: SchematicComponent) {
+    if (!component.symbol_name) return
+
+    const symbol = (symbols as Record<string, SchSymbol | undefined>)[
+      component.symbol_name
+    ]
+    if (!symbol) return
+
+    const textPrimitives = symbol.primitives.filter(
+      (primitive): primitive is TextPrimitive => primitive.type === "text",
+    )
+    if (textPrimitives.length === 0) return
+
+    const schPorts = circuitSoup.schematic_port.list({
+      schematic_component_id: component.schematic_component_id,
+    })
+
+    const schPortsWithSymbolPorts = matchSchPortsToSymbolPorts({
+      schPorts,
+      symbol,
+      schComponent: component,
+    })
+    if (!schPortsWithSymbolPorts[0]) return
+
+    const transformFromSymbolToReal = pointPairsToMatrix(
+      schPortsWithSymbolPorts[1]?.symbolPort ?? symbol.center,
+      schPortsWithSymbolPorts[1]?.schPort.center ?? component.center,
+      schPortsWithSymbolPorts[0].symbolPort,
+      schPortsWithSymbolPorts[0].schPort.center,
+    )
+
+    const srcComponent = component.source_component_id
+      ? circuitSoup.source_component.get(component.source_component_id)
+      : null
+
+    for (const text of textPrimitives) {
+      let textValue = ""
+
+      if (text.text === "{REF}") {
+        textValue = srcComponent?.display_name ?? srcComponent?.name ?? ""
+      } else if (text.text === "{VAL}") {
+        textValue = component.symbol_display_value ?? ""
+      } else {
+        continue
+      }
+
+      if (!textValue) continue
+
+      const anchorPosition = applyToPoint(transformFromSymbolToReal, {
+        x: text.x,
+        y: text.y,
+      })
+      const fontSize = getSchMmFontSize("reference_designator")
+      const width = estimateTextWidth(textValue) * fontSize
+      const height = fontSize
+      const textBounds = getTextBoundsFromAnchor(
+        anchorPosition.x,
+        anchorPosition.y,
+        width,
+        height,
+        text.anchor,
+      )
+
+      updateBoundsFromMinMax(
+        textBounds.minX,
+        textBounds.minY,
+        textBounds.maxX,
+        textBounds.maxY,
+      )
+    }
+  }
+
+  function getTextBoundsFromAnchor(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    anchor: TextPrimitive["anchor"],
+  ) {
+    let minX = x
+    let maxX = x
+    let minY = y - height / 2
+    let maxY = y + height / 2
+
+    if (anchor.includes("left")) {
+      maxX = x + width
+    } else if (anchor.includes("right")) {
+      minX = x - width
+    } else {
+      minX = x - width / 2
+      maxX = x + width / 2
+    }
+
+    if (anchor.includes("top")) {
+      minY = y - height
+      maxY = y
+    } else if (anchor.includes("bottom")) {
+      minY = y
+      maxY = y + height
+    }
+
+    return { minX, minY, maxX, maxY }
+  }
+
+  function updateBoundsFromMinMax(
+    nextMinX: number,
+    nextMinY: number,
+    nextMaxX: number,
+    nextMaxY: number,
+  ) {
+    minX = Math.min(minX, nextMinX)
+    minY = Math.min(minY, nextMinY)
+    maxX = Math.max(maxX, nextMaxX)
+    maxY = Math.max(maxY, nextMaxY)
+  }
 
   function updateBounds(center: any, size: any, rotation: number) {
     const corners = [
