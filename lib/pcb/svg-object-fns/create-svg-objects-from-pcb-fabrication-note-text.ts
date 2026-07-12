@@ -1,9 +1,10 @@
-import type { PcbFabricationNoteText } from "circuit-json"
+import type { NinePointAnchor, PcbFabricationNoteText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
 import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getSvgTextAnchorAlignment } from "../get-svg-text-anchor-alignment"
 
 export function createSvgObjectsFromPcbFabricationNoteText(
   pcbFabNoteText: PcbFabricationNoteText,
@@ -38,29 +39,9 @@ export function createSvgObjectsFromPcbFabricationNoteText(
   ])
   const transformedFontSize = font_size * Math.abs(transform.a)
 
-  // Set text-anchor and dominant-baseline based on anchor_alignment
-  let textAnchor = "middle"
-  let dominantBaseline = "central"
-
-  switch (anchor_alignment) {
-    case "top_left":
-      textAnchor = "start"
-      dominantBaseline = "text-before-edge"
-      break
-    case "top_right":
-      textAnchor = "end"
-      dominantBaseline = "text-before-edge"
-      break
-    case "bottom_left":
-      textAnchor = "start"
-      dominantBaseline = "text-after-edge"
-      break
-    case "bottom_right":
-      textAnchor = "end"
-      dominantBaseline = "text-after-edge"
-      break
-    // "center" is handled by the default values set above
-  }
+  const { textAnchor, dominantBaseline } = getSvgTextAnchorAlignment(
+    anchor_alignment as NinePointAnchor,
+  )
 
   // Create a composite transformation
   const textTransform = compose(

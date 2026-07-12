@@ -1,5 +1,6 @@
 import type {
   AnyCircuitElement,
+  NinePointAnchor,
   PCBKeepoutCircle,
   PCBKeepoutRect,
   PcbCutout,
@@ -11,6 +12,7 @@ import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
+import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
 
 export interface PcbBounds {
   minX: number
@@ -324,6 +326,20 @@ export function getComprehensivePcbBounds(
           height: textHeight,
         })
       }
+    } else if (
+      circuitJsonElm.type === "pcb_note_text" ||
+      circuitJsonElm.type === "pcb_fabrication_note_text"
+    ) {
+      updateTextBounds({
+        text: circuitJsonElm.text,
+        anchorPosition: circuitJsonElm.anchor_position,
+        fontSize: circuitJsonElm.font_size,
+        anchorAlignment: circuitJsonElm.anchor_alignment as NinePointAnchor,
+        ccwRotationDegrees:
+          circuitJsonElm.type === "pcb_fabrication_note_text"
+            ? (circuitJsonElm.ccw_rotation ?? 1)
+            : 0,
+      })
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
       if (cutout.shape === "rect") {
@@ -535,6 +551,41 @@ export function getComprehensivePcbBounds(
 
   function getTracePoints(point: Point | PcbTraceRoutePoint): readonly Point[] {
     return "route_type" in point ? getPcbTracePoints(point) : [point]
+  }
+
+  function updateTextBounds({
+    text,
+    anchorPosition,
+    fontSize = 1,
+    anchorAlignment = "center",
+    ccwRotationDegrees = 0,
+  }: {
+    text?: string
+    anchorPosition?: Point
+    fontSize?: number
+    anchorAlignment?: NinePointAnchor
+    ccwRotationDegrees?: number
+  }) {
+    if (!text || !anchorPosition) return
+
+    const lines = text.split("\n")
+    const maxLineLength = Math.max(...lines.map((line) => line.length), 0)
+    const textWidth = maxLineLength * fontSize * 0.6
+    const textHeight = Math.max(lines.length, 1) * fontSize
+
+    const center = getTextCenterFromAnchorPosition({
+      anchorPosition,
+      textWidth,
+      textHeight,
+      anchorAlignment,
+    })
+
+    updateBounds({
+      center,
+      width: textWidth,
+      height: textHeight,
+      ccwRotationDegrees,
+    })
   }
 
   function updateSilkscreenBounds(item: AnyCircuitElement) {
