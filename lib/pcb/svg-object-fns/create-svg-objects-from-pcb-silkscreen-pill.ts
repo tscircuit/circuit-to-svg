@@ -14,6 +14,7 @@ export function createSvgObjectsFromPcbSilkscreenPill(
     height,
     layer = "top",
     pcb_silkscreen_pill_id,
+    ccw_rotation = 0,
   } = pcbSilkscreenPill
 
   if (layerFilter && layer !== layerFilter) return []
@@ -52,6 +53,9 @@ export function createSvgObjectsFromPcbSilkscreenPill(
       "data-pcb-silkscreen-pill-id": pcb_silkscreen_pill_id,
       "data-type": "pcb_silkscreen_pill",
       "data-pcb-layer": layer,
+      ...(ccw_rotation !== 0 && {
+        transform: `rotate(${-ccw_rotation} ${transformedX} ${transformedY})`,
+      }),
     },
     value: "",
     children: [],

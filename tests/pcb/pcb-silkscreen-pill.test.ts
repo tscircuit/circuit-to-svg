@@ -40,6 +40,16 @@ test("silkscreen pill shape", () => {
       width: 2,
       height: 4,
     },
+    {
+      type: "pcb_silkscreen_pill",
+      layer: "top" as const,
+      pcb_component_id: "pcb_component_4",
+      pcb_silkscreen_pill_id: "pill_4",
+      center: { x: -8, y: 0 },
+      width: 8,
+      height: 2,
+      ccw_rotation: 90,
+    },
   ])
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
