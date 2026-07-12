@@ -645,6 +645,7 @@ export function getComprehensivePcbBounds(
         center: item.center,
         width: item.width,
         height: item.height,
+        ccwRotationDegrees: item.ccw_rotation,
       })
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
