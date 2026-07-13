@@ -10,6 +10,7 @@ import {
   getPathRotation,
 } from "lib/utils/net-label-utils"
 import { estimateTextWidth } from "./estimate-text-width"
+import { getSchematicSymbolTextBounds } from "./get-schematic-symbol-text-bounds"
 import { getTableDimensions } from "./get-table-dimensions"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
@@ -21,18 +22,17 @@ interface Bounds {
 }
 
 export function getSchematicBoundsFromCircuitJson(
-  soup: AnyCircuitElement[],
+  circuitJson: AnyCircuitElement[],
   padding = 0.5,
 ): Bounds {
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
-
   const portSize = 0.2
 
   // Find the bounds
-  for (const item of soup) {
+  for (const item of circuitJson) {
     if (item.type === "schematic_sheet") {
       const layout = getSchematicSheetLayout()
       updateBounds(
@@ -129,7 +129,10 @@ export function getSchematicBoundsFromCircuitJson(
         0,
       )
     } else if (item.type === "schematic_table") {
-      const { column_widths, row_heights } = getTableDimensions(item, soup)
+      const { column_widths, row_heights } = getTableDimensions(
+        item,
+        circuitJson,
+      )
       const totalWidth = column_widths.reduce((a, b) => a + b, 0)
       const totalHeight = row_heights.reduce((a, b) => a + b, 0)
       const anchor = item.anchor ?? "center"
@@ -201,6 +204,22 @@ export function getSchematicBoundsFromCircuitJson(
   minY -= padding
   maxX += padding
   maxY += padding
+
+  const symbolTextBounds = getSchematicSymbolTextBounds(circuitJson)
+  if (symbolTextBounds) {
+    if (symbolTextBounds.minX < minX) {
+      minX = symbolTextBounds.minX - padding
+    }
+    if (symbolTextBounds.minY < minY) {
+      minY = symbolTextBounds.minY - padding
+    }
+    if (symbolTextBounds.maxX > maxX) {
+      maxX = symbolTextBounds.maxX + padding
+    }
+    if (symbolTextBounds.maxY > maxY) {
+      maxY = symbolTextBounds.maxY + padding
+    }
+  }
 
   return { minX, minY, maxX, maxY }
 
