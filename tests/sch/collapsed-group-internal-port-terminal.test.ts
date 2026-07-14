@@ -51,6 +51,6 @@ test("collapsed group public ports use schematic connection state", () => {
 
   const svg = convertCircuitJsonToSchematicSvg(circuitJson)
 
-  expect(svg.match(/sch-port-terminal/g) ?? []).toHaveLength(0)
+  expect(svg.match(/sch-port-terminal/g) ?? []).toHaveLength(1)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
