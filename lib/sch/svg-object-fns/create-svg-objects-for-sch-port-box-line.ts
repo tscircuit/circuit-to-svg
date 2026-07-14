@@ -89,7 +89,17 @@ export const createSvgObjectsForSchPortBoxLine = ({
   const screenSchPortPos = applyToPoint(transform, schPort.center)
   const screenRealEdgePos = applyToPoint(transform, realEdgePos)
 
-  const isConnected = isSourcePortConnected(circuitJson, schPort.source_port_id)
+  // A direct port on a collapsed group can participate in source-level traces
+  // that are hidden inside the group. For those public ports, the schematic
+  // connection state is the authoritative signal for whether the exposed pin
+  // has a visible connection. Preserve the source-trace fallback for ordinary
+  // component ports and older Circuit JSON without this state.
+  const isConnected =
+    srcPort != null &&
+    srcPort.source_component_id == null &&
+    typeof schPort.is_connected === "boolean"
+      ? schPort.is_connected
+      : isSourcePortConnected(circuitJson, schPort.source_port_id)
 
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
