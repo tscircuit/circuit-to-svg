@@ -1,11 +1,15 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, SimulationExperiment } from "circuit-json"
 import { parseSync, stringify } from "svgson"
 import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
+import { convertCircuitJsonToOperatingPointSvg } from "./sim/convert-circuit-json-to-operating-point-svg"
 import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
 import {
   type CircuitJsonWithSimulation,
   isSimulationExperiment,
+  isSimulationExperimentError,
+  isSimulationOperatingPointCurrent,
+  isSimulationOperatingPointVoltage,
   isSimulationTransientCurrentGraph,
   isSimulationTransientVoltageGraph,
 } from "./sim/types"
@@ -17,11 +21,13 @@ import {
   translateNestedSvg,
 } from "./utils/svg-object-utils"
 
-interface ConvertSchematicSimulationParams {
+export interface ConvertSchematicSimulationParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
+  simulation_operating_point_voltage_ids?: string[]
+  simulation_operating_point_current_ids?: string[]
   width?: number
   height?: number
   schematicHeightRatio?: number
@@ -30,7 +36,7 @@ interface ConvertSchematicSimulationParams {
     "width" | "height" | "includeVersion"
   >
   includeVersion?: boolean
-  /** When true, place the simulation graph above the schematic instead of below (defaults to false). */
+  /** When true, place the simulation results above the schematic instead of below (defaults to false). */
   graphAboveSchematic?: boolean
   showErrorsInTextOverlay?: boolean
 }
@@ -44,6 +50,8 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   simulation_experiment_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
+  simulation_operating_point_voltage_ids,
+  simulation_operating_point_current_ids,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   schematicHeightRatio = DEFAULT_SCHEMATIC_RATIO,
@@ -55,6 +63,9 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const schematicElements = circuitJson.filter(
     (element): element is AnyCircuitElement =>
       !isSimulationExperiment(element) &&
+      !isSimulationExperimentError(element) &&
+      !isSimulationOperatingPointVoltage(element) &&
+      !isSimulationOperatingPointCurrent(element) &&
       !isSimulationTransientCurrentGraph(element) &&
       !isSimulationTransientVoltageGraph(element),
   )
@@ -75,15 +86,37 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     showErrorsInTextOverlay,
   })
 
-  const simulationSvg = convertCircuitJsonToSimulationGraphSvg({
-    circuitJson,
-    simulation_experiment_id,
-    simulation_transient_current_graph_ids,
-    simulation_transient_voltage_graph_ids,
-    width,
-    height: simulationHeight,
-    includeVersion: false,
-  })
+  const experiment = circuitJson.find(
+    (element): element is SimulationExperiment =>
+      isSimulationExperiment(element) &&
+      element.simulation_experiment_id === simulation_experiment_id,
+  )
+  if (!experiment) {
+    throw new Error(
+      `No simulation_experiment found for simulation_experiment_id "${simulation_experiment_id}"`,
+    )
+  }
+
+  const simulationSvg =
+    experiment.experiment_type === "spice_dc_operating_point"
+      ? convertCircuitJsonToOperatingPointSvg({
+          circuitJson,
+          simulation_experiment_id,
+          simulation_operating_point_voltage_ids,
+          simulation_operating_point_current_ids,
+          width,
+          height: simulationHeight,
+          includeVersion: false,
+        })
+      : convertCircuitJsonToSimulationGraphSvg({
+          circuitJson,
+          simulation_experiment_id,
+          simulation_transient_current_graph_ids,
+          simulation_transient_voltage_graph_ids,
+          width,
+          height: simulationHeight,
+          includeVersion: false,
+        })
 
   const schematicNode = ensureElementNode(parseSync(schematicSvg))
   const simulationNode = ensureElementNode(parseSync(simulationSvg))

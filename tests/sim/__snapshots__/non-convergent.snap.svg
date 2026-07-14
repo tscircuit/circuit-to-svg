@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" data-simulation-experiment-id="simulation_experiment_bias" data-simulation-experiment-name="Buck converter bias point" data-simulation-view="operating-point"><style>
+      .op-title { font: 700 24px Arial, sans-serif; fill: #0f172a; }
+      .op-subtitle { font: 14px Arial, sans-serif; fill: #64748b; }
+      .op-heading { font: 700 13px Arial, sans-serif; fill: #475569; letter-spacing: .04em; }
+      .op-label { font: 600 15px Arial, sans-serif; fill: #0f172a; }
+      .op-meta { font: 13px Arial, sans-serif; fill: #64748b; }
+      .op-value { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #0f172a; }
+      .op-error-title { font: 700 15px Arial, sans-serif; fill: #991b1b; }
+      .op-error-text { font: 13px Arial, sans-serif; fill: #7f1d1d; }
+      .op-error-guidance { font: 13px Arial, sans-serif; fill: #475569; }
+    </style><rect width="1200" height="480" fill="#f8fafc"/><g><text class="op-title" x="48" y="73">Buck converter bias point</text><text class="op-subtitle" x="1152" y="72" text-anchor="end">DC operating-point results</text></g><g class="op-errors"><g class="op-error-card" data-simulation-experiment-error-id="simulation_experiment_error_0" data-error-code="non_convergent"><rect x="48" y="120" width="1104" height="128" rx="10" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/><text class="op-error-title" x="68" y="149">Operating point did not converge</text><text class="op-error-text" x="68" y="177">ngspice could not find a stable DC operating point after source stepping</text><text class="op-error-guidance" x="68" y="208">Feedback or an oscillator may have no stable DC state; try a transient analysis or initial conditions.</text><text class="op-meta" x="68" y="231">Code: non_convergent</text></g></g></svg>

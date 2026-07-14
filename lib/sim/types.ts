@@ -2,6 +2,9 @@ import type {
   AnyCircuitElement,
   SimulationCurrentProbe,
   SimulationExperiment,
+  SimulationExperimentError,
+  SimulationOperatingPointCurrent,
+  SimulationOperatingPointVoltage,
   SimulationOscilloscopeTrace,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
@@ -11,6 +14,9 @@ import type {
 export type CircuitJsonWithSimulation =
   | AnyCircuitElement
   | SimulationExperiment
+  | SimulationExperimentError
+  | SimulationOperatingPointCurrent
+  | SimulationOperatingPointVoltage
   | SimulationTransientCurrentGraph
   | SimulationTransientVoltageGraph
   | SimulationCurrentProbe
@@ -33,6 +39,24 @@ export function isSimulationExperiment(
   value: CircuitJsonWithSimulation,
 ): value is SimulationExperiment {
   return value?.type === "simulation_experiment"
+}
+
+export function isSimulationExperimentError(
+  value: CircuitJsonWithSimulation,
+): value is SimulationExperimentError {
+  return value?.type === "simulation_experiment_error"
+}
+
+export function isSimulationOperatingPointVoltage(
+  value: CircuitJsonWithSimulation,
+): value is SimulationOperatingPointVoltage {
+  return value?.type === "simulation_operating_point_voltage"
+}
+
+export function isSimulationOperatingPointCurrent(
+  value: CircuitJsonWithSimulation,
+): value is SimulationOperatingPointCurrent {
+  return value?.type === "simulation_operating_point_current"
 }
 
 export function isSimulationVoltageProbe(
