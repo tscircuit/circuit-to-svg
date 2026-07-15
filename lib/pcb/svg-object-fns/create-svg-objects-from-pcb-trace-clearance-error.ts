@@ -1,16 +1,20 @@
 import type {
   AnyCircuitElement,
   PcbPadTraceClearanceError,
+  PcbPort,
   PcbPlatedHole,
   PcbSmtPad,
   PcbTrace,
+  PcbTraceError,
   PcbTraceRoutePoint,
   PcbVia,
   PcbViaTraceClearanceError,
+  SourceTrace,
 } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "../../../lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { createSvgObjectsFromPcbTraceError } from "./create-svg-objects-from-pcb-trace-error"
 
 type PcbTraceClearanceError =
   | PcbPadTraceClearanceError
@@ -113,6 +117,40 @@ function getTraceEndpoints(
   return start && end ? { start, end } : undefined
 }
 
+function getPcbPortIdsForTrace(
+  trace: PcbTrace | undefined,
+  circuitJson: AnyCircuitElement[],
+): [string, string] | undefined {
+  if (!trace) return undefined
+
+  const explicitPcbPortIds = trace.route.flatMap((routePoint) => {
+    if (routePoint.route_type !== "wire") return []
+    return [routePoint.start_pcb_port_id, routePoint.end_pcb_port_id].filter(
+      (id): id is string => id !== undefined,
+    )
+  })
+
+  const sourceTrace = circuitJson.find(
+    (element): element is SourceTrace =>
+      element.type === "source_trace" &&
+      element.source_trace_id === trace.source_trace_id,
+  )
+  const sourceTracePcbPortIds =
+    sourceTrace?.connected_source_port_ids.flatMap((sourcePortId) => {
+      const pcbPort = circuitJson.find(
+        (element): element is PcbPort =>
+          element.type === "pcb_port" &&
+          element.source_port_id === sourcePortId,
+      )
+      return pcbPort ? [pcbPort.pcb_port_id] : []
+    }) ?? []
+
+  const pcbPortIds = [
+    ...new Set([...explicitPcbPortIds, ...sourceTracePcbPortIds]),
+  ]
+  return pcbPortIds.length >= 2 ? [pcbPortIds[0]!, pcbPortIds[1]!] : undefined
+}
+
 function midpoint(pointA: PcbPoint, pointB: PcbPoint): PcbPoint {
   return {
     x: (pointA.x + pointB.x) / 2,
@@ -155,7 +193,7 @@ function annotateError(
     ...object,
     attributes: {
       ...(object.attributes ?? {}),
-      "data-type": object.attributes?.["data-type"] ?? errorType,
+      "data-type": errorType,
       "data-pcb-layer": object.attributes?.["data-pcb-layer"] ?? "overlay",
     },
   }))
@@ -237,6 +275,38 @@ export function createSvgObjectsFromPcbTraceClearanceError(
         ? "Pad and trace too close"
         : "Via and trace too close"
   const message = error.message ?? defaultMessage
+
+  const pcbPortIds = getPcbPortIdsForTrace(trace, circuitJson)
+  if (pcbPortIds) {
+    const pcbComponentIds = pcbPortIds.flatMap((pcbPortId) => {
+      const pcbPort = circuitJson.find(
+        (element): element is PcbPort =>
+          element.type === "pcb_port" && element.pcb_port_id === pcbPortId,
+      )
+      return pcbPort?.pcb_component_id ? [pcbPort.pcb_component_id] : []
+    })
+    const clearanceErrorId =
+      error.type === "pcb_pad_trace_clearance_error"
+        ? error.pcb_pad_trace_clearance_error_id
+        : error.pcb_via_trace_clearance_error_id
+    const traceError: PcbTraceError = {
+      type: "pcb_trace_error",
+      error_type: "pcb_trace_error",
+      pcb_trace_error_id: clearanceErrorId,
+      message,
+      pcb_trace_id: error.pcb_trace_id,
+      source_trace_id: trace?.source_trace_id ?? "",
+      pcb_component_ids: pcbComponentIds,
+      pcb_port_ids: pcbPortIds,
+      center: isFinitePoint(error.center) ? error.center : undefined,
+      subcircuit_id: error.subcircuit_id,
+    }
+
+    return annotateError(
+      createSvgObjectsFromPcbTraceError(traceError, circuitJson, ctx),
+      error.type,
+    )
+  }
 
   const svgObjects: SvgObject[] = [
     ...referenceLines,
