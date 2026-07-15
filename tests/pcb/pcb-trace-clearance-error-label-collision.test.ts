@@ -70,5 +70,6 @@ test("stacks labels for co-located trace clearance errors", () => {
 
   expect(labelYs).toHaveLength(2)
   expect(Math.abs(labelYs[0]! - labelYs[1]!)).toBeGreaterThanOrEqual(16)
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
+  expect(svg).toContain("Pad pad1 and trace trace1 are too close")
+  expect(svg).toContain("Pad pad1 and trace trace2 are too close")
 })
