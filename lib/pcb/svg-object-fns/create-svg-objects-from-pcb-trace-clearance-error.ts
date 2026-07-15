@@ -11,7 +11,6 @@ import type {
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "../../../lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { createSvgObjectsForPcbTraceErrorAnnotation } from "./create-svg-objects-for-pcb-trace-error-annotation"
 
 type PcbTraceClearanceError =
   | PcbPadTraceClearanceError
@@ -114,6 +113,40 @@ function getTraceEndpoints(
   return start && end ? { start, end } : undefined
 }
 
+function midpoint(pointA: PcbPoint, pointB: PcbPoint): PcbPoint {
+  return {
+    x: (pointA.x + pointB.x) / 2,
+    y: (pointA.y + pointB.y) / 2,
+  }
+}
+
+function createDashedReferenceLine(
+  referencePoint: PcbPoint,
+  errorCenter: PcbPoint,
+  referenceType: "obstacle" | "trace-start" | "trace-end",
+): SvgObject | undefined {
+  const dx = referencePoint.x - errorCenter.x
+  const dy = referencePoint.y - errorCenter.y
+  if (dx * dx + dy * dy < 0.25) return undefined
+
+  return {
+    type: "element",
+    name: "line",
+    value: "",
+    attributes: {
+      x1: referencePoint.x.toString(),
+      y1: referencePoint.y.toString(),
+      x2: errorCenter.x.toString(),
+      y2: errorCenter.y.toString(),
+      stroke: "red",
+      "stroke-width": "1.5",
+      "stroke-dasharray": "2,2",
+      "data-error-reference": referenceType,
+    },
+    children: [],
+  }
+}
+
 function annotateError(
   objects: SvgObject[],
   errorType: PcbTraceClearanceError["type"],
@@ -143,6 +176,55 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       element.pcb_trace_id === error.pcb_trace_id,
   )
   const traceEndpoints = getTraceEndpoints(trace)
+  const worldErrorCenter = isFinitePoint(error.center)
+    ? error.center
+    : (obstacleCenter ??
+      (traceEndpoints
+        ? midpoint(traceEndpoints.start, traceEndpoints.end)
+        : undefined))
+
+  if (!worldErrorCenter) return []
+
+  const screenErrorCenter = applyToPoint(
+    transform,
+    worldErrorCenter,
+  ) as PointObjectNotation
+  const screenObstacleCenter = obstacleCenter
+    ? (applyToPoint(transform, obstacleCenter) as PointObjectNotation)
+    : undefined
+  const screenTraceEndpoints = traceEndpoints
+    ? {
+        start: applyToPoint(
+          transform,
+          traceEndpoints.start,
+        ) as PointObjectNotation,
+        end: applyToPoint(transform, traceEndpoints.end) as PointObjectNotation,
+      }
+    : undefined
+
+  const referenceLines = [
+    screenTraceEndpoints
+      ? createDashedReferenceLine(
+          screenTraceEndpoints.start,
+          screenErrorCenter,
+          "trace-start",
+        )
+      : undefined,
+    screenTraceEndpoints
+      ? createDashedReferenceLine(
+          screenTraceEndpoints.end,
+          screenErrorCenter,
+          "trace-end",
+        )
+      : undefined,
+    screenObstacleCenter
+      ? createDashedReferenceLine(
+          screenObstacleCenter,
+          screenErrorCenter,
+          "obstacle",
+        )
+      : undefined,
+  ].filter((object): object is SvgObject => object !== undefined)
 
   const errorSubject =
     error.type === "pcb_pad_trace_clearance_error" ? "Pad/trace" : "Via/trace"
@@ -156,36 +238,8 @@ export function createSvgObjectsFromPcbTraceClearanceError(
         : "Via and trace too close"
   const message = error.message ?? defaultMessage
 
-  if (traceEndpoints) {
-    return createSvgObjectsForPcbTraceErrorAnnotation({
-      ctx,
-      start: {
-        ...traceEndpoints.start,
-        dataErrorReference: "trace-start",
-      },
-      end: {
-        ...traceEndpoints.end,
-        dataErrorReference: "trace-end",
-      },
-      additionalReferences: obstacleCenter
-        ? [{ ...obstacleCenter, dataErrorReference: "obstacle" }]
-        : [],
-      message,
-      errorType: error.type,
-    })
-  }
-
-  const worldErrorCenter = isFinitePoint(error.center)
-    ? error.center
-    : obstacleCenter
-  if (!worldErrorCenter) return []
-
-  const screenErrorCenter = applyToPoint(
-    transform,
-    worldErrorCenter,
-  ) as PointObjectNotation
-
   const svgObjects: SvgObject[] = [
+    ...referenceLines,
     {
       type: "element",
       name: "rect",
