@@ -76,6 +76,7 @@ import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
+import { separatePcbClearanceErrorLabels } from "./separate-pcb-clearance-error-labels"
 interface PointObjectNotation {
   x: number
   y: number
@@ -292,6 +293,11 @@ export function convertCircuitJsonToPcbSvg(
 
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>
     createSvgObjects({ elm, circuitJson, ctx }),
+  )
+
+  unsortedSvgObjects = separatePcbClearanceErrorLabels(
+    unsortedSvgObjects,
+    svgHeight,
   )
 
   let strokeWidth = String(0.05 * scaleFactor)
