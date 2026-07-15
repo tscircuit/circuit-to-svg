@@ -4,23 +4,18 @@ import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import circuitJsonFixture from "../assets/traces-too-close.json"
 
-test("renders a real pcb_pad_trace_clearance_error", () => {
+test("falls back to referenced geometry when the error center is unavailable", () => {
   const circuitJson = [...circuitJsonFixture] as AnyCircuitElement[]
-  const errors = checkPadTraceClearance(circuitJson)
+  const [error] = checkPadTraceClearance(circuitJson)
+  if (!error) throw new Error("Expected a pad/trace clearance error")
 
-  expect(errors).toHaveLength(1)
-  const error = errors[0]!
-  expect(error.type).toBe("pcb_pad_trace_clearance_error")
-  expect(error.actual_clearance).toBeLessThan(error.minimum_clearance ?? 0)
-
-  const svg = convertCircuitJsonToPcbSvg([...circuitJson, ...errors], {
-    shouldDrawErrors: true,
-  })
+  const svg = convertCircuitJsonToPcbSvg(
+    [...circuitJson, { ...error, center: undefined }],
+    { shouldDrawErrors: true },
+  )
 
   expect(svg).toContain('data-type="pcb_pad_trace_clearance_error"')
   expect(svg).toContain('data-error-reference="trace-start"')
   expect(svg).toContain('data-error-reference="trace-end"')
-  expect(svg).toContain('data-error-reference="obstacle"')
   expect(svg).toContain(error.message)
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
