@@ -118,23 +118,14 @@ test("typed clearance errors stay at their DRC centers", () => {
       new RegExp(`<${elementName}\\b[^>]*data-type="${errorType}"`, "g"),
     ) ?? []
 
-  expect(typedElements("line")).toHaveLength(4)
+  expect(typedElements("line")).toHaveLength(6)
   expect(typedElements("rect")).toHaveLength(2)
+  expect(svg.match(/data-error-reference="trace-start"/g)).toHaveLength(2)
+  expect(svg.match(/data-error-reference="trace-end"/g)).toHaveLength(2)
   expect(svg.match(/data-error-reference="obstacle"/g)).toHaveLength(2)
-  expect(svg.match(/data-error-reference="trace-segment"/g)).toHaveLength(2)
-  const localLabels = typedElements("text")
-  expect(localLabels).toHaveLength(2)
+  expect(typedElements("text")).toHaveLength(0)
   expect(svg.match(/<tspan\b/g)).toHaveLength(2)
   expect(svg).not.toContain('data-type="pcb_trace_error"')
-
-  const labelYPositions = localLabels.map((label) => {
-    const y = label.match(/\by="([^"]+)"/)?.[1]
-    if (y === undefined) throw new Error("Expected clearance label y position")
-    return Number(y)
-  })
-  expect(Math.abs(labelYPositions[0]! - labelYPositions[1]!)).toBeGreaterThan(
-    20,
-  )
   expect(svg).toContain("rotate(45 400 256.875)")
   expect(svg).toContain("rotate(45 356.875 300)")
   expect(svg).not.toContain("rotate(45 400 213.75)")

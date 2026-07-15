@@ -15,7 +15,7 @@ test("falls back to referenced geometry when the error center is unavailable", (
   )
 
   expect(svg).toContain('data-type="pcb_pad_trace_clearance_error"')
-  expect(svg).toContain('data-error-reference="obstacle"')
-  expect(svg).toContain('data-error-reference="trace-segment"')
+  expect(svg).toContain('data-error-reference="trace-start"')
+  expect(svg).toContain('data-error-reference="trace-end"')
   expect(svg).toContain(error.message)
 })

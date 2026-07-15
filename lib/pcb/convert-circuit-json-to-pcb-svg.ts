@@ -76,7 +76,6 @@ import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
-import { separatePcbClearanceErrorLabels } from "./separate-pcb-clearance-error-labels"
 interface PointObjectNotation {
   x: number
   y: number
@@ -124,6 +123,17 @@ export interface PcbContext {
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
+}
+
+function isLocalPcbErrorLabel(object: SvgObject): boolean {
+  const dataType = object.attributes?.["data-type"]
+
+  return (
+    object.name === "text" &&
+    object.attributes?.["data-pcb-layer"] === "overlay" &&
+    typeof dataType === "string" &&
+    dataType.endsWith("_error")
+  )
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -295,10 +305,11 @@ export function convertCircuitJsonToPcbSvg(
     createSvgObjects({ elm, circuitJson, ctx }),
   )
 
-  unsortedSvgObjects = separatePcbClearanceErrorLabels(
-    unsortedSvgObjects,
-    svgHeight,
-  )
+  if (options?.showErrorsInTextOverlay) {
+    unsortedSvgObjects = unsortedSvgObjects.filter(
+      (object) => !isLocalPcbErrorLabel(object),
+    )
+  }
 
   let strokeWidth = String(0.05 * scaleFactor)
 

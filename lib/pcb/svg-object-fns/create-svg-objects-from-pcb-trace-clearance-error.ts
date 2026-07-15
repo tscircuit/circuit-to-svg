@@ -8,11 +8,9 @@ import type {
   PcbVia,
   PcbViaTraceClearanceError,
 } from "circuit-json"
+import { applyToPoint } from "transformation-matrix"
+import type { SvgObject } from "../../../lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import {
-  createSvgObjectsForPcbTraceErrorAnnotation,
-  type PcbErrorReferencePoint,
-} from "./create-svg-objects-for-pcb-trace-error-annotation"
 
 type PcbTraceClearanceError =
   | PcbPadTraceClearanceError
@@ -90,14 +88,6 @@ function getObstacleCenter(
   return undefined
 }
 
-function getObstacleLayers(
-  obstacle: PcbTraceClearanceObstacle | undefined,
-): string[] {
-  if (!obstacle) return []
-  if (obstacle.type === "pcb_smtpad") return [obstacle.layer]
-  return obstacle.layers
-}
-
 function getRoutePointPositions(point: PcbTraceRoutePoint): PcbPoint[] {
   if (point.route_type === "through_pad") {
     return [point.start, point.end].filter(isFinitePoint)
@@ -123,55 +113,6 @@ function getTraceEndpoints(
   return start && end ? { start, end } : undefined
 }
 
-function getClosestPointOnSegment(
-  point: PcbPoint,
-  start: PcbPoint,
-  end: PcbPoint,
-): PcbPoint {
-  const dx = end.x - start.x
-  const dy = end.y - start.y
-  const lengthSquared = dx * dx + dy * dy
-  if (lengthSquared === 0) return start
-
-  const projection =
-    ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared
-  const t = Math.max(0, Math.min(1, projection))
-  return { x: start.x + t * dx, y: start.y + t * dy }
-}
-
-function getClosestPointOnTrace(
-  trace: PcbTrace | undefined,
-  point: PcbPoint | undefined,
-  obstacleLayers: string[],
-): PcbPoint | undefined {
-  if (!trace || !point) return undefined
-
-  let closestPoint: PcbPoint | undefined
-  let closestDistanceSquared = Number.POSITIVE_INFINITY
-
-  for (let i = 0; i < trace.route.length - 1; i++) {
-    const start = trace.route[i]
-    const end = trace.route[i + 1]
-    if (start?.route_type !== "wire" || end?.route_type !== "wire") continue
-    if (start.layer !== end.layer) continue
-    if (obstacleLayers.length > 0 && !obstacleLayers.includes(start.layer)) {
-      continue
-    }
-    if (!isFinitePoint(start) || !isFinitePoint(end)) continue
-
-    const candidate = getClosestPointOnSegment(point, start, end)
-    const dx = point.x - candidate.x
-    const dy = point.y - candidate.y
-    const distanceSquared = dx * dx + dy * dy
-    if (distanceSquared < closestDistanceSquared) {
-      closestPoint = candidate
-      closestDistanceSquared = distanceSquared
-    }
-  }
-
-  return closestPoint
-}
-
 function midpoint(pointA: PcbPoint, pointB: PcbPoint): PcbPoint {
   return {
     x: (pointA.x + pointB.x) / 2,
@@ -179,52 +120,111 @@ function midpoint(pointA: PcbPoint, pointB: PcbPoint): PcbPoint {
   }
 }
 
+function createDashedReferenceLine(
+  referencePoint: PcbPoint,
+  errorCenter: PcbPoint,
+  referenceType: "obstacle" | "trace-start" | "trace-end",
+): SvgObject | undefined {
+  const dx = referencePoint.x - errorCenter.x
+  const dy = referencePoint.y - errorCenter.y
+  if (dx * dx + dy * dy < 0.25) return undefined
+
+  return {
+    type: "element",
+    name: "line",
+    value: "",
+    attributes: {
+      x1: referencePoint.x.toString(),
+      y1: referencePoint.y.toString(),
+      x2: errorCenter.x.toString(),
+      y2: errorCenter.y.toString(),
+      stroke: "red",
+      "stroke-width": "1.5",
+      "stroke-dasharray": "2,2",
+      "data-error-reference": referenceType,
+    },
+    children: [],
+  }
+}
+
+function annotateError(
+  objects: SvgObject[],
+  errorType: PcbTraceClearanceError["type"],
+): SvgObject[] {
+  return objects.map((object) => ({
+    ...object,
+    attributes: {
+      ...(object.attributes ?? {}),
+      "data-type": object.attributes?.["data-type"] ?? errorType,
+      "data-pcb-layer": object.attributes?.["data-pcb-layer"] ?? "overlay",
+    },
+  }))
+}
+
 export function createSvgObjectsFromPcbTraceClearanceError(
   error: PcbTraceClearanceError,
   circuitJson: AnyCircuitElement[],
   ctx: PcbContext,
-) {
-  if (!ctx.shouldDrawErrors) return []
+): SvgObject[] {
+  const { shouldDrawErrors, transform } = ctx
+  if (!shouldDrawErrors) return []
 
-  const obstacle = findObstacle(error, circuitJson)
-  const obstacleCenter = getObstacleCenter(obstacle)
+  const obstacleCenter = getObstacleCenter(findObstacle(error, circuitJson))
   const trace = circuitJson.find(
     (element): element is PcbTrace =>
       element.type === "pcb_trace" &&
       element.pcb_trace_id === error.pcb_trace_id,
   )
   const traceEndpoints = getTraceEndpoints(trace)
-  const suppliedErrorCenter = isFinitePoint(error.center)
+  const worldErrorCenter = isFinitePoint(error.center)
     ? error.center
+    : (obstacleCenter ??
+      (traceEndpoints
+        ? midpoint(traceEndpoints.start, traceEndpoints.end)
+        : undefined))
+
+  if (!worldErrorCenter) return []
+
+  const screenErrorCenter = applyToPoint(
+    transform,
+    worldErrorCenter,
+  ) as PointObjectNotation
+  const screenObstacleCenter = obstacleCenter
+    ? (applyToPoint(transform, obstacleCenter) as PointObjectNotation)
     : undefined
-  const traceReferencePoint = getClosestPointOnTrace(
-    trace,
-    suppliedErrorCenter ?? obstacleCenter,
-    getObstacleLayers(obstacle),
-  )
-  const errorCenter =
-    suppliedErrorCenter ??
-    (obstacleCenter && traceReferencePoint
-      ? midpoint(obstacleCenter, traceReferencePoint)
-      : undefined)
+  const screenTraceEndpoints = traceEndpoints
+    ? {
+        start: applyToPoint(
+          transform,
+          traceEndpoints.start,
+        ) as PointObjectNotation,
+        end: applyToPoint(transform, traceEndpoints.end) as PointObjectNotation,
+      }
+    : undefined
 
-  const start = obstacleCenter ?? traceEndpoints?.start ?? errorCenter
-  const end = traceReferencePoint ?? traceEndpoints?.end ?? errorCenter
-  if (!start || !end) return []
-
-  const references: PcbErrorReferencePoint[] = [
-    ...(obstacleCenter
-      ? [{ ...obstacleCenter, dataErrorReference: "obstacle" as const }]
-      : []),
-    ...(traceReferencePoint
-      ? [
-          {
-            ...traceReferencePoint,
-            dataErrorReference: "trace-segment" as const,
-          },
-        ]
-      : []),
-  ]
+  const referenceLines = [
+    screenTraceEndpoints
+      ? createDashedReferenceLine(
+          screenTraceEndpoints.start,
+          screenErrorCenter,
+          "trace-start",
+        )
+      : undefined,
+    screenTraceEndpoints
+      ? createDashedReferenceLine(
+          screenTraceEndpoints.end,
+          screenErrorCenter,
+          "trace-end",
+        )
+      : undefined,
+    screenObstacleCenter
+      ? createDashedReferenceLine(
+          screenObstacleCenter,
+          screenErrorCenter,
+          "obstacle",
+        )
+      : undefined,
+  ].filter((object): object is SvgObject => object !== undefined)
 
   const errorSubject =
     error.type === "pcb_pad_trace_clearance_error" ? "Pad/trace" : "Via/trace"
@@ -236,14 +236,47 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       : error.type === "pcb_pad_trace_clearance_error"
         ? "Pad and trace too close"
         : "Via and trace too close"
+  const message = error.message ?? defaultMessage
 
-  return createSvgObjectsForPcbTraceErrorAnnotation({
-    ctx,
-    start,
-    end,
-    center: errorCenter,
-    references: references.length > 0 ? references : undefined,
-    message: error.message ?? defaultMessage,
-    errorType: error.type,
-  })
+  const svgObjects: SvgObject[] = [
+    ...referenceLines,
+    {
+      type: "element",
+      name: "rect",
+      value: "",
+      attributes: {
+        x: (screenErrorCenter.x - 5).toString(),
+        y: (screenErrorCenter.y - 5).toString(),
+        width: "10",
+        height: "10",
+        fill: "red",
+        transform: `rotate(45 ${screenErrorCenter.x} ${screenErrorCenter.y})`,
+      },
+      children: [],
+    },
+    {
+      type: "element",
+      name: "text",
+      value: "",
+      attributes: {
+        x: screenErrorCenter.x.toString(),
+        y: (screenErrorCenter.y - 15).toString(),
+        fill: "red",
+        "font-family": "sans-serif",
+        "font-size": "12",
+        "text-anchor": "middle",
+      },
+      children: [
+        {
+          type: "text",
+          name: "",
+          value: message,
+          attributes: {},
+          children: [],
+        },
+      ],
+    },
+  ]
+
+  return annotateError(svgObjects, error.type)
 }

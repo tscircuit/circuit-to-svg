@@ -41,7 +41,7 @@ const circuitJson = [
   },
 ] as AnyCircuitElement[]
 
-test("keeps clearance markers at the DRC center and separates local labels", () => {
+test("keeps clearance labels only in the text overlay", () => {
   const errors = checkPadTraceClearance(circuitJson)
   expect(errors).toHaveLength(2)
 
@@ -62,17 +62,10 @@ test("keeps clearance markers at the DRC center and separates local labels", () 
     markers.map((marker) => marker.match(/transform="([^"]+)"/)?.[1]),
   ).toEqual(["rotate(45 381.25 256.875)", "rotate(45 418.75 256.875)"])
 
-  const localLabels = typedElements("text")
-  expect(localLabels).toHaveLength(2)
-  const labelYPositions = localLabels.map((label) => {
-    const y = label.match(/\by="([^"]+)"/)?.[1]
-    if (y === undefined) throw new Error("Expected clearance label y position")
-    return Number(y)
-  })
-  expect(
-    Math.abs(labelYPositions[0]! - labelYPositions[1]!),
-  ).toBeGreaterThanOrEqual(16)
-
+  expect(svg.match(/data-error-reference="trace-start"/g)).toHaveLength(2)
+  expect(svg.match(/data-error-reference="trace-end"/g)).toHaveLength(2)
+  expect(svg.match(/data-error-reference="obstacle"/g)).toHaveLength(2)
+  expect(typedElements("text")).toHaveLength(0)
   expect(svg.match(/<tspan\b/g)).toHaveLength(2)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
