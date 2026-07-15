@@ -123,6 +123,13 @@ export interface PcbContext {
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
+  errorLabelPlacements?: PcbErrorLabelPlacement[]
+}
+
+export interface PcbErrorLabelPlacement {
+  x: number
+  y: number
+  halfWidth: number
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -288,6 +295,7 @@ export function convertCircuitJsonToPcbSvg(
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
+    errorLabelPlacements: [],
   }
 
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>

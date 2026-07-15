@@ -10,7 +10,10 @@ import type {
 } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "../../../lib/svg-object"
-import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import type {
+  PcbContext,
+  PcbErrorLabelPlacement,
+} from "../convert-circuit-json-to-pcb-svg"
 
 type PcbTraceClearanceError =
   | PcbPadTraceClearanceError
@@ -27,6 +30,11 @@ interface TraceEndpoints {
   start: PcbPoint
   end: PcbPoint
 }
+
+const ERROR_LABEL_FONT_SIZE = 12
+const ERROR_LABEL_LINE_HEIGHT = 16
+const ERROR_LABEL_HORIZONTAL_PADDING = 4
+const APPROXIMATE_GLYPH_WIDTH = ERROR_LABEL_FONT_SIZE * 0.6
 
 function isFinitePoint(
   point: { x?: number; y?: number } | undefined,
@@ -161,6 +169,44 @@ function annotateError(
   }))
 }
 
+function labelsOverlap(
+  labelA: PcbErrorLabelPlacement,
+  labelB: PcbErrorLabelPlacement,
+): boolean {
+  return (
+    Math.abs(labelA.x - labelB.x) <
+      labelA.halfWidth + labelB.halfWidth + ERROR_LABEL_HORIZONTAL_PADDING &&
+    Math.abs(labelA.y - labelB.y) < ERROR_LABEL_LINE_HEIGHT
+  )
+}
+
+function placeErrorLabel(
+  errorCenter: PcbPoint,
+  message: string,
+  placements: PcbErrorLabelPlacement[],
+): PcbErrorLabelPlacement {
+  const placement: PcbErrorLabelPlacement = {
+    x: errorCenter.x,
+    y: errorCenter.y - 15,
+    halfWidth: (Array.from(message).length * APPROXIMATE_GLYPH_WIDTH) / 2,
+  }
+
+  let overlappingLabels = placements.filter((placedLabel) =>
+    labelsOverlap(placement, placedLabel),
+  )
+  while (overlappingLabels.length > 0) {
+    placement.y =
+      Math.min(...overlappingLabels.map((placedLabel) => placedLabel.y)) -
+      ERROR_LABEL_LINE_HEIGHT
+    overlappingLabels = placements.filter((placedLabel) =>
+      labelsOverlap(placement, placedLabel),
+    )
+  }
+
+  placements.push(placement)
+  return placement
+}
+
 export function createSvgObjectsFromPcbTraceClearanceError(
   error: PcbTraceClearanceError,
   circuitJson: AnyCircuitElement[],
@@ -237,6 +283,13 @@ export function createSvgObjectsFromPcbTraceClearanceError(
         ? "Pad and trace too close"
         : "Via and trace too close"
   const message = error.message ?? defaultMessage
+  const errorLabelPlacements = ctx.errorLabelPlacements ?? []
+  ctx.errorLabelPlacements = errorLabelPlacements
+  const labelPlacement = placeErrorLabel(
+    screenErrorCenter,
+    message,
+    errorLabelPlacements,
+  )
 
   const svgObjects: SvgObject[] = [
     ...referenceLines,
@@ -259,11 +312,11 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       name: "text",
       value: "",
       attributes: {
-        x: screenErrorCenter.x.toString(),
-        y: (screenErrorCenter.y - 15).toString(),
+        x: labelPlacement.x.toString(),
+        y: labelPlacement.y.toString(),
         fill: "red",
         "font-family": "sans-serif",
-        "font-size": "12",
+        "font-size": ERROR_LABEL_FONT_SIZE.toString(),
         "text-anchor": "middle",
       },
       children: [
