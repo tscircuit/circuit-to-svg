@@ -18,6 +18,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     font_size = 1,
     layer = "top",
     color,
+    ccw_rotation = 0,
   } = pcbFabNoteText
 
   if (layerFilter && layer !== layerFilter) return []
@@ -46,7 +47,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
   // Create a composite transformation
   const textTransform = compose(
     translate(transformedX, transformedY),
-    rotate(Math.PI / 180), // Convert degrees to radians
+    rotate((-ccw_rotation * Math.PI) / 180),
   )
 
   const svgObject: SvgObject = {
