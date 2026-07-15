@@ -38,7 +38,10 @@ export function createSvgObjectsFromPcbTraceClearanceError(
     return []
   }
 
-  const screenCenter = applyToPoint(transform, center)
+  const screenCenter = applyToPoint(transform, {
+    x: center.x,
+    y: center.y,
+  }) as PointObjectNotation
   const errorSubject =
     error.type === "pcb_pad_trace_clearance_error" ? "Pad/trace" : "Via/trace"
   const actualClearance = error.actual_clearance

@@ -22,8 +22,8 @@ test("pcb_pad_trace_clearance_error shown in pcb snapshot", () => {
     message: "pad and trace too close",
     pcb_pad_id: "pcb_smtpad_0",
     pcb_trace_id: "pcb_trace_0",
-    minimum_clearance: "0.2mm",
-    actual_clearance: "0.1mm",
+    minimum_clearance: 0.2,
+    actual_clearance: 0.1,
     center: {
       x: 1.25,
       y: 0,
