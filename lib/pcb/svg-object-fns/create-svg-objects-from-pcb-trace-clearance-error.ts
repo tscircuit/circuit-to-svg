@@ -254,10 +254,7 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       },
       children: [],
     },
-  ]
-
-  if (!ctx.showErrorsInTextOverlay) {
-    svgObjects.push({
+    {
       type: "element",
       name: "text",
       value: "",
@@ -278,8 +275,8 @@ export function createSvgObjectsFromPcbTraceClearanceError(
           children: [],
         },
       ],
-    })
-  }
+    },
+  ]
 
   return annotateError(svgObjects, error.type)
 }

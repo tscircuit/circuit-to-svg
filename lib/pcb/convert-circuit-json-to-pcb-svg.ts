@@ -115,7 +115,6 @@ export interface PcbContext {
   transform: Matrix
   layer?: "top" | "bottom"
   shouldDrawErrors?: boolean
-  showErrorsInTextOverlay?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
@@ -281,7 +280,6 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
-    showErrorsInTextOverlay: options?.showErrorsInTextOverlay,
     showCourtyards: options?.showCourtyards,
     showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
