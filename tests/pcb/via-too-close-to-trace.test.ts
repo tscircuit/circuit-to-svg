@@ -1,12 +1,11 @@
 import { expect, test, describe } from "bun:test"
-import circuitJson from "../assets/via-too-close-to-trace.json"
+import circuitJsonFixture from "../assets/via-too-close-to-trace.json"
 import { convertCircuitJsonToPcbSvg } from "lib/index"
 import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
 
 describe("PCB vias in non-overlapping trace checks", () => {
   test("non-overlapping functionality should include vias as collidable objects", async () => {
-    const errors = checkEachPcbTraceNonOverlapping(circuitJson as any)
-    circuitJson.push(...(errors as any))
+    const errors = checkEachPcbTraceNonOverlapping(circuitJsonFixture as any)
 
     expect(errors).toMatchInlineSnapshot(`
       [
@@ -30,9 +29,12 @@ describe("PCB vias in non-overlapping trace checks", () => {
       ]
     `)
     expect(errors.length).toBeGreaterThan(0)
-    const svg = convertCircuitJsonToPcbSvg(circuitJson as any, {
-      shouldDrawErrors: true,
-    })
+    const svg = convertCircuitJsonToPcbSvg(
+      [...circuitJsonFixture, ...errors] as any,
+      {
+        shouldDrawErrors: true,
+      },
+    )
     await expect(svg).toMatchSvgSnapshot(import.meta.path)
   })
 })
