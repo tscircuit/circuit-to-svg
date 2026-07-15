@@ -109,6 +109,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
   - `pcb_trace_error` – errors related to PCB traces
   - `pcb_footprint_overlap_error` – errors for overlapping pads, plated holes, and holes (displays error indicators at each affected element with connecting lines)
+  - `pcb_pad_trace_clearance_error` – clearance errors between pads and traces
+  - `pcb_via_trace_clearance_error` – clearance errors between vias and traces
   
   Defaults to `false`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to

@@ -1,43 +1,55 @@
-import type { AnyCircuitElement } from "circuit-json"
-import type { SvgObject } from "../../../lib/svg-object"
+import type {
+  AnyCircuitElement,
+  PcbPadTraceClearanceError,
+  PcbViaTraceClearanceError,
+} from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
+import type { SvgObject } from "../../../lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
-function annotateError(objects: SvgObject[]): SvgObject[] {
+type PcbTraceClearanceError =
+  | PcbPadTraceClearanceError
+  | PcbViaTraceClearanceError
+
+function annotateError(
+  objects: SvgObject[],
+  errorType: PcbTraceClearanceError["type"],
+): SvgObject[] {
   return objects.map((object) => ({
     ...object,
     attributes: {
       ...(object.attributes ?? {}),
-      "data-type":
-        object.attributes?.["data-type"] ?? "pcb_via_trace_clearance_error",
+      "data-type": object.attributes?.["data-type"] ?? errorType,
       "data-pcb-layer": object.attributes?.["data-pcb-layer"] ?? "overlay",
     },
   }))
 }
 
-export function createSvgObjectsFromPcbViaTraceClearanceError(
-  error: AnyCircuitElement,
+export function createSvgObjectsFromPcbTraceClearanceError(
+  error: PcbTraceClearanceError,
   _circuitJson: AnyCircuitElement[],
   ctx: PcbContext,
 ): SvgObject[] {
   const { shouldDrawErrors, transform } = ctx
   if (!shouldDrawErrors) return []
 
-  const center = (error as any).center
+  const center = error.center
   if (!center || typeof center.x !== "number" || typeof center.y !== "number") {
     return []
   }
 
-  const screenCenter = applyToPoint(transform, center) as PointObjectNotation
-
-  const actualClearance = (error as any).actual_clearance
-  const minimumClearance = (error as any).minimum_clearance
+  const screenCenter = applyToPoint(transform, center)
+  const errorSubject =
+    error.type === "pcb_pad_trace_clearance_error" ? "Pad/trace" : "Via/trace"
+  const actualClearance = error.actual_clearance
+  const minimumClearance = error.minimum_clearance
   const defaultMessage =
-    actualClearance && minimumClearance
-      ? `Via/trace clearance ${actualClearance} is below minimum ${minimumClearance}`
-      : "Via and trace too close"
-
-  const message = (error as any).message ?? defaultMessage
+    actualClearance !== undefined && minimumClearance !== undefined
+      ? `${errorSubject} clearance ${actualClearance} is below minimum ${minimumClearance}`
+      : error.type === "pcb_pad_trace_clearance_error"
+        ? "Pad and trace too close"
+        : "Via and trace too close"
+  const message = error.message ?? defaultMessage
 
   const svgObjects: SvgObject[] = [
     {
@@ -78,5 +90,5 @@ export function createSvgObjectsFromPcbViaTraceClearanceError(
     },
   ]
 
-  return annotateError(svgObjects)
+  return annotateError(svgObjects, error.type)
 }
