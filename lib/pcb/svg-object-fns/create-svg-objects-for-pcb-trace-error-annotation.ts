@@ -5,14 +5,18 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 export interface PcbErrorReferencePoint {
   x: number
   y: number
-  dataErrorReference?: "obstacle" | "trace-start" | "trace-end"
+  dataErrorReference?:
+    | "obstacle"
+    | "trace-segment"
+    | "trace-start"
+    | "trace-end"
 }
 
 interface CreatePcbTraceErrorAnnotationParams {
   ctx: PcbContext
   start: PcbErrorReferencePoint
   end: PcbErrorReferencePoint
-  additionalReferences?: PcbErrorReferencePoint[]
+  references?: PcbErrorReferencePoint[]
   message: string
   errorType: string
 }
@@ -56,7 +60,7 @@ export function createSvgObjectsForPcbTraceErrorAnnotation({
   ctx,
   start,
   end,
-  additionalReferences = [],
+  references,
   message,
   errorType,
 }: CreatePcbTraceErrorAnnotationParams): SvgObject[] {
@@ -78,23 +82,30 @@ export function createSvgObjectsForPcbTraceErrorAnnotation({
     return []
   }
 
-  const screenAdditionalReferences = additionalReferences.map((reference) => {
+  const transformReference = (reference: PcbErrorReferencePoint) => {
     const point = applyToPoint(ctx.transform, reference)
     return { ...point, dataErrorReference: reference.dataErrorReference }
-  })
+  }
+
+  const screenReferences = references?.map(transformReference)
+
+  const referenceLines = screenReferences
+    ? screenReferences.map((reference) =>
+        createReferenceLine(reference, screenCenter),
+      )
+    : [
+        createReferenceLine(
+          { ...screenStart, dataErrorReference: start.dataErrorReference },
+          screenCenter,
+        ),
+        createReferenceLine(
+          { ...screenCenter, dataErrorReference: end.dataErrorReference },
+          screenEnd,
+        ),
+      ]
 
   const objects: SvgObject[] = [
-    createReferenceLine(
-      { ...screenStart, dataErrorReference: start.dataErrorReference },
-      screenCenter,
-    ),
-    createReferenceLine(
-      { ...screenCenter, dataErrorReference: end.dataErrorReference },
-      screenEnd,
-    ),
-    ...screenAdditionalReferences.map((reference) =>
-      createReferenceLine(reference, screenCenter),
-    ),
+    ...referenceLines,
     {
       name: "rect",
       type: "element",

@@ -29,6 +29,51 @@ interface TraceEndpoints {
   end: PcbPoint
 }
 
+function getClosestPointOnSegment(
+  point: PcbPoint,
+  start: PcbPoint,
+  end: PcbPoint,
+): PcbPoint {
+  const dx = end.x - start.x
+  const dy = end.y - start.y
+  const lengthSquared = dx * dx + dy * dy
+  if (lengthSquared === 0) return start
+
+  const projection =
+    ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared
+  const t = Math.max(0, Math.min(1, projection))
+  return { x: start.x + t * dx, y: start.y + t * dy }
+}
+
+function getClosestPointOnTrace(
+  trace: PcbTrace | undefined,
+  point: PcbPoint | undefined,
+): PcbPoint | undefined {
+  if (!trace || !point) return undefined
+
+  let closestPoint: PcbPoint | undefined
+  let closestDistanceSquared = Number.POSITIVE_INFINITY
+
+  for (let i = 0; i < trace.route.length - 1; i++) {
+    const start = trace.route[i]
+    const end = trace.route[i + 1]
+    if (start?.route_type !== "wire" || end?.route_type !== "wire") continue
+    if (start.layer !== end.layer) continue
+    if (!isFinitePoint(start) || !isFinitePoint(end)) continue
+
+    const candidate = getClosestPointOnSegment(point, start, end)
+    const dx = point.x - candidate.x
+    const dy = point.y - candidate.y
+    const distanceSquared = dx * dx + dy * dy
+    if (distanceSquared < closestDistanceSquared) {
+      closestPoint = candidate
+      closestDistanceSquared = distanceSquared
+    }
+  }
+
+  return closestPoint
+}
+
 function isFinitePoint(
   point: { x?: number; y?: number } | undefined,
 ): point is PcbPoint {
@@ -143,6 +188,11 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       element.pcb_trace_id === error.pcb_trace_id,
   )
   const traceEndpoints = getTraceEndpoints(trace)
+  const errorCenter = isFinitePoint(error.center) ? error.center : undefined
+  const traceReferencePoint = getClosestPointOnTrace(
+    trace,
+    errorCenter ?? obstacleCenter,
+  )
 
   const errorSubject =
     error.type === "pcb_pad_trace_clearance_error" ? "Pad/trace" : "Via/trace"
@@ -161,23 +211,29 @@ export function createSvgObjectsFromPcbTraceClearanceError(
       ctx,
       start: {
         ...traceEndpoints.start,
-        dataErrorReference: "trace-start",
       },
       end: {
         ...traceEndpoints.end,
-        dataErrorReference: "trace-end",
       },
-      additionalReferences: obstacleCenter
-        ? [{ ...obstacleCenter, dataErrorReference: "obstacle" }]
-        : [],
+      references: [
+        ...(obstacleCenter
+          ? [{ ...obstacleCenter, dataErrorReference: "obstacle" as const }]
+          : []),
+        ...(traceReferencePoint
+          ? [
+              {
+                ...traceReferencePoint,
+                dataErrorReference: "trace-segment" as const,
+              },
+            ]
+          : []),
+      ],
       message,
       errorType: error.type,
     })
   }
 
-  const worldErrorCenter = isFinitePoint(error.center)
-    ? error.center
-    : obstacleCenter
+  const worldErrorCenter = errorCenter ?? obstacleCenter
   if (!worldErrorCenter) return []
 
   const screenErrorCenter = applyToPoint(

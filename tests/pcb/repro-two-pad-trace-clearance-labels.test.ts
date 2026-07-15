@@ -41,7 +41,7 @@ const circuitJson = [
   },
 ] as AnyCircuitElement[]
 
-test("two nearby clearance errors reuse endpoint-based label placement", () => {
+test("two nearby clearance errors point to their offending trace segments", () => {
   const errors = checkPadTraceClearance(circuitJson)
 
   expect(errors).toHaveLength(2)
@@ -54,8 +54,7 @@ test("two nearby clearance errors reuse endpoint-based label placement", () => {
     showErrorsInTextOverlay: true,
   })
 
-  expect(svg.match(/data-error-reference="trace-start"/g)).toHaveLength(2)
-  expect(svg.match(/data-error-reference="trace-end"/g)).toHaveLength(2)
+  expect(svg.match(/data-error-reference="trace-segment"/g)).toHaveLength(2)
   expect(svg.match(/data-error-reference="obstacle"/g)).toHaveLength(2)
   const localLabels =
     svg.match(/<text\b[^>]*data-type="pcb_pad_trace_clearance_error"[^>]*>/g) ??
