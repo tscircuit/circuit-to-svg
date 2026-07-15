@@ -125,17 +125,6 @@ export interface PcbContext {
   circuitJson?: AnyCircuitElement[]
 }
 
-function isLocalPcbErrorLabel(object: SvgObject): boolean {
-  const dataType = object.attributes?.["data-type"]
-
-  return (
-    object.name === "text" &&
-    object.attributes?.["data-pcb-layer"] === "overlay" &&
-    typeof dataType === "string" &&
-    dataType.endsWith("_error")
-  )
-}
-
 export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: PcbSvgOptions,
@@ -304,12 +293,6 @@ export function convertCircuitJsonToPcbSvg(
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>
     createSvgObjects({ elm, circuitJson, ctx }),
   )
-
-  if (options?.showErrorsInTextOverlay) {
-    unsortedSvgObjects = unsortedSvgObjects.filter(
-      (object) => !isLocalPcbErrorLabel(object),
-    )
-  }
 
   let strokeWidth = String(0.05 * scaleFactor)
 
