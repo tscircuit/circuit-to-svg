@@ -103,7 +103,7 @@ const circuitJson = [
   },
 ] as AnyCircuitElement[]
 
-test("typed clearance errors reuse pcb_trace_error port annotations", () => {
+test("typed clearance errors stay at their DRC centers", () => {
   const errors = checkPadTraceClearance(circuitJson)
   expect(errors).toHaveLength(2)
 
@@ -120,6 +120,8 @@ test("typed clearance errors reuse pcb_trace_error port annotations", () => {
 
   expect(typedElements("line")).toHaveLength(4)
   expect(typedElements("rect")).toHaveLength(2)
+  expect(svg.match(/data-error-reference="obstacle"/g)).toHaveLength(2)
+  expect(svg.match(/data-error-reference="trace-segment"/g)).toHaveLength(2)
   const localLabels = typedElements("text")
   expect(localLabels).toHaveLength(2)
   expect(svg.match(/<tspan\b/g)).toHaveLength(2)
@@ -133,5 +135,9 @@ test("typed clearance errors reuse pcb_trace_error port annotations", () => {
   expect(Math.abs(labelYPositions[0]! - labelYPositions[1]!)).toBeGreaterThan(
     20,
   )
+  expect(svg).toContain("rotate(45 400 256.875)")
+  expect(svg).toContain("rotate(45 356.875 300)")
+  expect(svg).not.toContain("rotate(45 400 213.75)")
+  expect(svg).not.toContain("rotate(45 313.75 300)")
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
