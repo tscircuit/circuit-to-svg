@@ -23,25 +23,25 @@ const circuitJson = [
   },
   {
     type: "pcb_trace",
-    pcb_trace_id: "left_trace",
-    source_trace_id: "left_source_trace",
+    pcb_trace_id: "upper_trace",
+    source_trace_id: "upper_source_trace",
     route: [
-      { route_type: "wire", x: -1.15, y: -2, width: 0.2, layer: "top" },
-      { route_type: "wire", x: -1.15, y: 2, width: 0.2, layer: "top" },
+      { route_type: "wire", x: -3, y: 1.15, width: 0.2, layer: "top" },
+      { route_type: "wire", x: 2, y: 1.15, width: 0.2, layer: "top" },
     ],
   },
   {
     type: "pcb_trace",
-    pcb_trace_id: "right_trace",
-    source_trace_id: "right_source_trace",
+    pcb_trace_id: "lower_trace",
+    source_trace_id: "lower_source_trace",
     route: [
-      { route_type: "wire", x: 1.15, y: -2, width: 0.2, layer: "top" },
-      { route_type: "wire", x: 1.15, y: 2, width: 0.2, layer: "top" },
+      { route_type: "wire", x: -2, y: -1.15, width: 0.2, layer: "top" },
+      { route_type: "wire", x: 3, y: -1.15, width: 0.2, layer: "top" },
     ],
   },
 ] as AnyCircuitElement[]
 
-test("two nearby clearance errors keep labels in the text overlay", () => {
+test("two nearby clearance errors reuse endpoint-based label placement", () => {
   const errors = checkPadTraceClearance(circuitJson)
 
   expect(errors).toHaveLength(2)
@@ -57,12 +57,18 @@ test("two nearby clearance errors keep labels in the text overlay", () => {
   expect(svg.match(/data-error-reference="trace-start"/g)).toHaveLength(2)
   expect(svg.match(/data-error-reference="trace-end"/g)).toHaveLength(2)
   expect(svg.match(/data-error-reference="obstacle"/g)).toHaveLength(2)
-  expect(
+  const localLabels =
     svg.match(/<text\b[^>]*data-type="pcb_pad_trace_clearance_error"[^>]*>/g) ??
-      [],
-  ).toHaveLength(0)
-  for (const error of errors) {
-    expect(svg.split(error.message).length - 1).toBe(1)
-  }
+    []
+  expect(localLabels).toHaveLength(2)
+
+  const labelYPositions = localLabels.map((label) => {
+    const y = label.match(/\by="([^"]+)"/)?.[1]
+    if (y === undefined) throw new Error("Expected clearance label y position")
+    return Number(y)
+  })
+  expect(Math.abs(labelYPositions[0]! - labelYPositions[1]!)).toBeGreaterThan(
+    20,
+  )
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
