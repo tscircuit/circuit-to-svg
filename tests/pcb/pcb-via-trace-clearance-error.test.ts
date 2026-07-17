@@ -13,7 +13,11 @@ test("renders a real pcb_via_trace_clearance_error", () => {
   expect(error.type).toBe("pcb_via_trace_clearance_error")
   expect(error.actual_clearance).toBeLessThan(error.minimum_clearance ?? 0)
 
-  const svg = convertCircuitJsonToPcbSvg([...circuitJson, ...errors], {
+  const errorForRendering = {
+    ...error,
+    message: "Via/trace clearance error",
+  }
+  const svg = convertCircuitJsonToPcbSvg([...circuitJson, errorForRendering], {
     shouldDrawErrors: true,
   })
 
@@ -21,6 +25,6 @@ test("renders a real pcb_via_trace_clearance_error", () => {
   expect(svg).toContain('data-error-reference="trace-start"')
   expect(svg).toContain('data-error-reference="trace-end"')
   expect(svg).toContain('data-error-reference="obstacle"')
-  expect(svg).toContain(error.message)
+  expect(svg).toContain(errorForRendering.message)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

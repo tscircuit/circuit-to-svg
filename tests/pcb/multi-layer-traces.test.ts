@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test"
-import type { AnyCircuitElement, LayerRef } from "circuit-json"
+import type { AnyCircuitElement, LayerRef, PcbTrace } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
 const copperLayers = [
@@ -15,6 +15,28 @@ const copperLayers = [
   "bottom",
 ] as const satisfies readonly LayerRef[]
 
+const traces = copperLayers.map<PcbTrace>((layer, index) => ({
+  type: "pcb_trace",
+  pcb_trace_id: `trace_${layer}`,
+  source_trace_id: `source_trace_${layer}`,
+  route: [
+    {
+      route_type: "wire",
+      x: -8,
+      y: -9 + index * 2,
+      width: 0.4,
+      layer,
+    },
+    {
+      route_type: "wire",
+      x: 8,
+      y: -9 + index * 2,
+      width: 0.4,
+      layer,
+    },
+  ],
+}))
+
 const circuitJson: AnyCircuitElement[] = [
   {
     type: "pcb_board",
@@ -22,29 +44,11 @@ const circuitJson: AnyCircuitElement[] = [
     center: { x: 0, y: 0 },
     width: 20,
     height: 20,
+    thickness: 1.6,
     num_layers: 10,
+    material: "fr4",
   },
-  ...copperLayers.map((layer, index) => ({
-    type: "pcb_trace",
-    pcb_trace_id: `trace_${layer}`,
-    source_trace_id: `source_trace_${layer}`,
-    route: [
-      {
-        route_type: "wire",
-        x: -8,
-        y: -9 + index * 2,
-        width: 0.4,
-        layer,
-      },
-      {
-        route_type: "wire",
-        x: 8,
-        y: -9 + index * 2,
-        width: 0.4,
-        layer,
-      },
-    ],
-  })),
+  ...traces,
 ]
 
 test("renders traces across ten copper layers", () => {
