@@ -6,6 +6,7 @@ import type {
   PcbPanel,
   PCBKeepoutRect,
   PCBKeepoutCircle,
+  LayerRef,
 } from "circuit-json"
 import { distance } from "circuit-json"
 import { type INode as SvgObject, stringify } from "svgson"
@@ -90,7 +91,7 @@ export interface PcbSvgOptions {
   shouldDrawRatsNest?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
-  layer?: "top" | "bottom"
+  layer?: LayerRef
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
@@ -113,7 +114,7 @@ export interface PcbSvgOptions {
 
 export interface PcbContext {
   transform: Matrix
-  layer?: "top" | "bottom"
+  layer?: LayerRef
   shouldDrawErrors?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
