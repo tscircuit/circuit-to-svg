@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { createElement } from "react"
 import {
+  colorMap,
   convertCircuitJsonToSchematicSimulationSvg,
   convertCircuitJsonToSimulationGraphSvg,
 } from "lib"
@@ -87,6 +88,9 @@ test("renders all transient voltage graphs", () => {
     simulation_experiment_id: simulationExperimentId,
   })
 
+  expect(svg.match(/^<svg[^>]*>/)?.[0]).toContain(
+    `style="background-color: ${colorMap.schematic.background}"`,
+  )
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
 

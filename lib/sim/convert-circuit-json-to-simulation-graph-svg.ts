@@ -6,6 +6,7 @@ import type {
 } from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
+import { colorMap } from "lib/utils/colors"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
 import { createAxes } from "./simulation-graph-svg/create-axes"
@@ -206,6 +207,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       xmlns: "http://www.w3.org/2000/svg",
       width: outputWidth.toString(),
       height: outputHeight.toString(),
+      style: `background-color: ${colorMap.schematic.background}`,
       viewBox: `0 0 ${formatNumber(outputWidth)} ${formatNumber(outputHeight)}`,
       "data-simulation-experiment-id": simulation_experiment_id,
       ...(experiment?.name && {
