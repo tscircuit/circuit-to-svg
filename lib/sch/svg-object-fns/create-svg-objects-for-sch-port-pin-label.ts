@@ -16,9 +16,17 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   schComponent: SchematicComponent
   transform: Matrix
   circuitJson: AnyCircuitElement[]
+  labelColor?: string
+  labelClassName?: string
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
-  const { schPort, schComponent, transform, circuitJson } = params
+  const {
+    schPort,
+    schComponent,
+    transform,
+    labelColor = colorMap.schematic.pin_number,
+    labelClassName = "pin-number sch-pin-label",
+  } = params
 
   const realPinNumberPos = {
     x: schPort.center.x,
@@ -51,7 +59,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
 
-  let fontSizePx = getSchScreenFontSize(
+  const fontSizePx = getSchScreenFontSize(
     transform,
     isNegated || is_drawn_with_inversion_circle
       ? "negated_pin_number"
@@ -62,11 +70,11 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     name: "text",
     type: "element",
     attributes: {
-      class: "pin-number sch-pin-label",
+      class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
       style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
-      fill: colorMap.schematic.pin_number,
+      fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
         schPort.side_of_component === "bottom"

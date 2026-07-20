@@ -26,7 +26,6 @@ test("custom symbol port label missing", () => {
             schY={0}
             width={17.78}
             height={10.16}
-            strokeWidth={0.254}
             color="#880000"
           />
           <schematiccircle
