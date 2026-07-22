@@ -195,6 +195,8 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
       textValue = schComponent.symbol_display_value ?? ""
     }
 
+    if (!textValue) continue
+
     const dominantBaseline = ninePointAnchorToDominantBaseline[text.anchor]
     svgObjects.push({
       name: "text",
