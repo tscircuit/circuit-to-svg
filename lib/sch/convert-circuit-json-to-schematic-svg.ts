@@ -40,6 +40,13 @@ export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
 }
 
+const DEFAULT_SCHEMATIC_SHEET: SchematicSheet = {
+  type: "schematic_sheet",
+  schematic_sheet_id: "schematic_sheet_default",
+  name: "Main Sheet",
+  sheet_index: 0,
+}
+
 interface Options {
   colorOverrides?: ColorOverrides
   width?: number
@@ -62,6 +69,10 @@ export function convertCircuitJsonToSchematicSvg(
   const schematicSheets = circuitJson.filter(
     (elm): elm is SchematicSheet => elm.type === "schematic_sheet",
   )
+  const hasExplicitSchematicSheet = schematicSheets.length > 0
+  if (!hasExplicitSchematicSheet) {
+    schematicSheets.push(DEFAULT_SCHEMATIC_SHEET)
+  }
   const defaultSheet = getDefaultSchematicSheet(schematicSheets)
   let selectedSheet = defaultSheet
 
@@ -77,14 +88,15 @@ export function convertCircuitJsonToSchematicSvg(
       ) ?? defaultSheet
   }
 
-  const sheetCircuitJson = selectedSheet
-    ? circuitJson.filter(
-        (elm) =>
-          !elm.type.startsWith("schematic_") ||
-          ("schematic_sheet_id" in elm &&
-            elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
-      )
-    : circuitJson
+  const sheetCircuitJson =
+    hasExplicitSchematicSheet && selectedSheet
+      ? circuitJson.filter(
+          (elm) =>
+            !elm.type.startsWith("schematic_") ||
+            ("schematic_sheet_id" in elm &&
+              elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
+        )
+      : [DEFAULT_SCHEMATIC_SHEET, ...circuitJson]
 
   // Get bounds with padding
   const realBounds = getSchematicBoundsFromCircuitJson(sheetCircuitJson)

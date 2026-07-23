@@ -2,6 +2,28 @@ import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 
+test("schematic render includes a sheet by default", () => {
+  const svg = convertCircuitJsonToSchematicSvg([
+    {
+      type: "schematic_component",
+      schematic_component_id: "schematic_component_r1",
+      source_component_id: "source_component_r1",
+      center: { x: 0, y: 0 },
+      is_box_with_pins: true,
+      size: { width: 1.18, height: 1.3 },
+      symbol_name: "boxresistor_right",
+    },
+  ] as AnyCircuitElement[])
+
+  expect(svg).toContain(
+    'class="schematic-sheet" data-circuit-json-type="schematic_sheet" data-schematic-sheet-id="schematic_sheet_default"',
+  )
+  expect(svg).toContain(
+    'data-schematic-rect-id="schematic_sheet_default_outer"',
+  )
+  expect(svg).toContain('data-schematic-component-id="schematic_component_r1"')
+})
+
 test("schematic sheet renders linked subcircuit centered on sheet", () => {
   const circuitJson: AnyCircuitElement[] = [
     {
