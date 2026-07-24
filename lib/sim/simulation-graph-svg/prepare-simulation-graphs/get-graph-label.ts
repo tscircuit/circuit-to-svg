@@ -15,6 +15,9 @@ export function getGraphLabel(
 ): string {
   const prefix = isCurrentGraph(graph) ? "I" : "V"
   if (scopeTraceDisplay?.displayName) return scopeTraceDisplay.displayName
+  if (graph.simulation_parameter_sweep_coordinate && graph.name) {
+    return graph.name
+  }
   if (probe?.name) return `${prefix}(${probe.name})`
 
   const sourceProbeName = getStringProperty(graph, "source_probe_name")

@@ -3,11 +3,11 @@ import { parseSync, stringify } from "svgson"
 import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
 import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
+import type { AcSweepView } from "./sim/normalize-simulation-analysis-results"
 import {
   type CircuitJsonWithSimulation,
+  isSimulationAnalysisResult,
   isSimulationExperiment,
-  isSimulationTransientCurrentGraph,
-  isSimulationTransientVoltageGraph,
 } from "./sim/types"
 import type { SvgObject } from "./svg-object"
 import { getSoftwareUsedString } from "./utils/get-software-used-string"
@@ -22,6 +22,8 @@ interface ConvertSchematicSimulationParams {
   simulation_experiment_id: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
+  simulation_result_ids?: string[]
+  ac_sweep_view?: AcSweepView
   width?: number
   height?: number
   schematicHeightRatio?: number
@@ -44,6 +46,8 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   simulation_experiment_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
+  simulation_result_ids,
+  ac_sweep_view,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   schematicHeightRatio = DEFAULT_SCHEMATIC_RATIO,
@@ -54,9 +58,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
 }: ConvertSchematicSimulationParams): string {
   const schematicElements = circuitJson.filter(
     (element): element is AnyCircuitElement =>
-      !isSimulationExperiment(element) &&
-      !isSimulationTransientCurrentGraph(element) &&
-      !isSimulationTransientVoltageGraph(element),
+      !isSimulationExperiment(element) && !isSimulationAnalysisResult(element),
   )
 
   const clampedRatio = clamp01(schematicHeightRatio)
@@ -80,6 +82,8 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     simulation_experiment_id,
     simulation_transient_current_graph_ids,
     simulation_transient_voltage_graph_ids,
+    simulation_result_ids,
+    ac_sweep_view,
     width,
     height: simulationHeight,
     includeVersion: false,

@@ -1,5 +1,6 @@
 import type {
   AnyCircuitElement,
+  SimulationAnalysisResult,
   SimulationCurrentProbe,
   SimulationExperiment,
   SimulationOscilloscopeTrace,
@@ -8,14 +9,23 @@ import type {
   SimulationVoltageProbe,
 } from "circuit-json"
 
-export type CircuitJsonWithSimulation =
-  | AnyCircuitElement
-  | SimulationExperiment
-  | SimulationTransientCurrentGraph
-  | SimulationTransientVoltageGraph
-  | SimulationCurrentProbe
-  | SimulationVoltageProbe
-  | SimulationOscilloscopeTrace
+export type CircuitJsonWithSimulation = AnyCircuitElement
+export type { SimulationAnalysisResult } from "circuit-json"
+
+export function isSimulationAnalysisResult(
+  circuitElement: Pick<AnyCircuitElement, "type">,
+): circuitElement is SimulationAnalysisResult {
+  return (
+    circuitElement.type === "simulation_transient_voltage_graph" ||
+    circuitElement.type === "simulation_transient_current_graph" ||
+    circuitElement.type === "simulation_dc_operating_point_voltage" ||
+    circuitElement.type === "simulation_dc_operating_point_current" ||
+    circuitElement.type === "simulation_dc_sweep_voltage_graph" ||
+    circuitElement.type === "simulation_dc_sweep_current_graph" ||
+    circuitElement.type === "simulation_ac_sweep_voltage_graph" ||
+    circuitElement.type === "simulation_ac_sweep_current_graph"
+  )
+}
 
 export function isSimulationTransientCurrentGraph(
   value: CircuitJsonWithSimulation,

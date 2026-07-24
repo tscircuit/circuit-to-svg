@@ -21,6 +21,7 @@ interface AxesOptions {
   plotWidth: number
   plotHeight: number
   yAxisTitle: string
+  xAxisTitle: string
   usesScopeTraceDisplay: boolean
 }
 
@@ -34,6 +35,7 @@ export function createAxes({
   plotWidth,
   plotHeight,
   yAxisTitle,
+  xAxisTitle,
   usesScopeTraceDisplay,
 }: AxesOptions): SvgObject {
   const bottom = MARGIN.top + plotHeight
@@ -146,7 +148,7 @@ export function createAxes({
         y: formatNumber(bottom + 48),
         "text-anchor": "middle",
       },
-      [textNode("Time (ms)")],
+      [textNode(xAxisTitle)],
     ),
   )
 
