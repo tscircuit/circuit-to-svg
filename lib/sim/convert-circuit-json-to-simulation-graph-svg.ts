@@ -1,14 +1,19 @@
 import type {
   AnyCircuitElement,
+  SimulationAnalysisResult,
   SimulationExperiment,
-  SimulationTransientCurrentGraph,
-  SimulationTransientVoltageGraph,
 } from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
 import { stringify } from "svgson"
+import {
+  type AcSweepView,
+  getSimulationAnalysisResultId,
+  normalizeSimulationAnalysisResults,
+} from "./normalize-simulation-analysis-results"
+export type { AcSweepView } from "./normalize-simulation-analysis-results"
 import { createAxes } from "./simulation-graph-svg/create-axes"
 import {
   buildAxisInfo,
@@ -42,9 +47,8 @@ import {
 } from "./simulation-graph-svg/simulation-graph-svg-shared"
 import {
   type CircuitJsonWithSimulation,
+  isSimulationAnalysisResult,
   isSimulationExperiment,
-  isSimulationTransientCurrentGraph,
-  isSimulationTransientVoltageGraph,
 } from "./types"
 
 interface ConvertSimulationGraphParams {
@@ -52,6 +56,8 @@ interface ConvertSimulationGraphParams {
   simulation_experiment_id: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
+  simulation_result_ids?: string[]
+  ac_sweep_view?: AcSweepView
   width?: number
   height?: number
   includeVersion?: boolean
@@ -62,6 +68,8 @@ export function convertCircuitJsonToSimulationGraphSvg({
   simulation_experiment_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
+  simulation_result_ids,
+  ac_sweep_view = "magnitude",
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
@@ -73,6 +81,9 @@ export function convertCircuitJsonToSimulationGraphSvg({
     ? new Set(simulation_transient_current_graph_ids)
     : null
   const hasGraphSelection = Boolean(selectedVoltageIds || selectedCurrentIds)
+  const selectedResultIds = simulation_result_ids
+    ? new Set(simulation_result_ids)
+    : null
 
   const experiment = circuitJson.find(
     (element): element is SimulationExperiment =>
@@ -80,34 +91,34 @@ export function convertCircuitJsonToSimulationGraphSvg({
       element.simulation_experiment_id === simulation_experiment_id,
   )
 
-  const voltageGraphs = circuitJson.filter(
-    (element): element is SimulationTransientVoltageGraph =>
-      isSimulationTransientVoltageGraph(element) &&
+  const simulationResults = circuitJson.filter(
+    (element): element is SimulationAnalysisResult =>
+      isSimulationAnalysisResult(element) &&
       element.simulation_experiment_id === simulation_experiment_id &&
+      (!selectedResultIds ||
+        selectedResultIds.has(getSimulationAnalysisResultId(element))) &&
       (!hasGraphSelection ||
-        (selectedVoltageIds?.has(
-          element.simulation_transient_voltage_graph_id,
-        ) ??
-          false)),
+        (element.type === "simulation_transient_voltage_graph" &&
+          (selectedVoltageIds?.has(
+            element.simulation_transient_voltage_graph_id,
+          ) ??
+            false)) ||
+        (element.type === "simulation_transient_current_graph" &&
+          (selectedCurrentIds?.has(
+            element.simulation_transient_current_graph_id,
+          ) ??
+            false))),
   )
-  const currentGraphs = circuitJson.filter(
-    (element): element is SimulationTransientCurrentGraph =>
-      isSimulationTransientCurrentGraph(element) &&
-      element.simulation_experiment_id === simulation_experiment_id &&
-      (!hasGraphSelection ||
-        (selectedCurrentIds?.has(
-          element.simulation_transient_current_graph_id,
-        ) ??
-          false)),
-  )
-  const graphs: SimulationTransientGraph[] = [
-    ...voltageGraphs,
-    ...currentGraphs,
-  ]
+  const normalizedResults = normalizeSimulationAnalysisResults({
+    results: simulationResults,
+    acSweepView: ac_sweep_view,
+    experiment,
+  })
+  const graphs: SimulationTransientGraph[] = normalizedResults.graphs
 
   if (graphs.length === 0) {
     throw new Error(
-      `No simulation_transient_voltage_graph or simulation_transient_current_graph elements found for simulation_experiment_id "${simulation_experiment_id}"`,
+      `No simulation analysis results found for simulation_experiment_id "${simulation_experiment_id}"`,
     )
   }
 
@@ -116,15 +127,23 @@ export function convertCircuitJsonToSimulationGraphSvg({
 
   if (allPoints.length === 0) {
     throw new Error(
-      `simulation transient graph elements for simulation_experiment_id "${simulation_experiment_id}" do not contain any datapoints`,
+      `Simulation results for simulation_experiment_id "${simulation_experiment_id}" do not contain any datapoints`,
     )
   }
 
-  const timeAxis = buildTimeAxisInfo({
-    values: allPoints.map((point) => point.timeMs),
-    graphs,
-    experiment,
-  })
+  const horizontalCoordinates = allPoints.map((point) => point.timeMs)
+  let timeAxis
+  if (normalizedResults.usesLogarithmicXValues) {
+    timeAxis = buildLogarithmicAxisInfo(horizontalCoordinates)
+  } else if (normalizedResults.xAxisTitle === "Time (ms)") {
+    timeAxis = buildTimeAxisInfo({
+      values: horizontalCoordinates,
+      graphs,
+      experiment,
+    })
+  } else {
+    timeAxis = buildAxisInfo(horizontalCoordinates)
+  }
   const valueAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -192,7 +211,8 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotLeft,
       plotWidth,
       plotHeight,
-      yAxisTitle: getYAxisTitle(preparedGraphs),
+      yAxisTitle: normalizedResults.yAxisTitle ?? getYAxisTitle(preparedGraphs),
+      xAxisTitle: normalizedResults.xAxisTitle,
       usesScopeTraceDisplay,
     }),
     usesScopeTraceDisplay
@@ -224,4 +244,14 @@ export function convertCircuitJsonToSimulationGraphSvg({
   )
 
   return stringify(svgObject)
+}
+
+const buildLogarithmicAxisInfo = (logarithmicCoordinates: number[]) => {
+  const axisInfo = buildAxisInfo(logarithmicCoordinates)
+  return {
+    ...axisInfo,
+    tickLabelOverrides: new Map(
+      axisInfo.ticks.map((tick) => [tick, formatNumber(10 ** tick)]),
+    ),
+  }
 }
