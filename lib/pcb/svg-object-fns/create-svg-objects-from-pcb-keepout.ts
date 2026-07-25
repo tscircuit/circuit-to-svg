@@ -7,6 +7,7 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toSvgLength } from "lib/utils/to-svg-length"
 
 const KEEPOUT_PATTERN_ID = "pcb-keepout-pattern"
 const KEEPOUT_PATTERN_SIZE = 20
@@ -186,7 +187,9 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const scaledRadius = toSvgLength(
+        circleKeepout.radius * Math.abs(transform.a),
+      )
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(

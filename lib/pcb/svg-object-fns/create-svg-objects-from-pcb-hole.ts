@@ -2,6 +2,7 @@ import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toSvgLength } from "lib/utils/to-svg-length"
 
 export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
@@ -26,7 +27,7 @@ export function createSvgObjectsFromPcbHole(
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
     const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
-    const radius = scaledDiameter / 2
+    const radius = toSvgLength(scaledDiameter / 2)
 
     if (hole.hole_shape === "circle") {
       const holeElement: SvgObject = {
@@ -375,7 +376,7 @@ export function createSvgObjectsFromPcbHole(
     // Pill shape: two semicircles connected by straight lines
     // If width > height, it's a horizontal pill; if height > width, it's vertical
     const isHorizontal = scaledWidth > scaledHeight
-    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const radius = toSvgLength(Math.min(scaledWidth, scaledHeight) / 2)
     const straightLength = Math.abs(
       isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
     )
@@ -494,7 +495,7 @@ export function createSvgObjectsFromPcbHole(
 
     // Same logic as regular pill: handle horizontal and vertical orientations
     const isHorizontal = scaledWidth > scaledHeight
-    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const radius = toSvgLength(Math.min(scaledWidth, scaledHeight) / 2)
     const straightLength = Math.abs(
       isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
     )

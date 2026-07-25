@@ -8,6 +8,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadDataAttributes } from "./get-pad-data-attributes"
+import { toSvgLength } from "lib/utils/to-svg-length"
 
 type HoleWithRectPadOffsets = {
   hole_offset_x?: number
@@ -274,8 +275,14 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
 
-    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+    // Clamped at the source so everything derived from these radii (the
+    // soldermask mask radius included) stays a valid SVG length.
+    const outerRadius = toSvgLength(
+      Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+    )
+    const innerRadius = toSvgLength(
+      Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+    )
 
     let children: SvgObject[] = [
       {
