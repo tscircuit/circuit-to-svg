@@ -229,7 +229,14 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
+  // A default parameter only covers `undefined`; an unparseable size arrives as
+  // NaN and would be written as font-size="NaN", which is not a valid SVG length
+  // — renderers fall back to their own default or drop the text, so the label
+  // silently changes size or disappears.
+  const rawTransformedFontSize = font_size * scaleFactor
+  const transformedFontSize = Number.isFinite(rawTransformedFontSize)
+    ? rawTransformedFontSize
+    : scaleFactor
 
   let textAnchor = "middle"
   let dominantBaseline = "central"

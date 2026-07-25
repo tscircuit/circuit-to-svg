@@ -186,7 +186,13 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const rawScaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      // A missing or unparseable radius reaches here as null/NaN and would be
+      // written as r="NaN", which is not a valid SVG length — renderers discard
+      // the circle, so the keepout silently disappears from the drawing.
+      const scaledRadius = Number.isFinite(rawScaledRadius)
+        ? rawScaledRadius
+        : 0
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
