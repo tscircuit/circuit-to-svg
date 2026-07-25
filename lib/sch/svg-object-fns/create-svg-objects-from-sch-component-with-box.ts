@@ -29,13 +29,25 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
+  // A missing or unparseable schematic dimension arrives as null/NaN. Every
+  // coordinate below is derived from these two numbers, so letting one through
+  // turns the body rect, the pin lines and the labels into x="NaN" — none of
+  // which is a valid SVG length, so the whole component vanishes from the
+  // drawing. Fall back to 0 so the geometry stays well-formed.
+  const componentWidth = Number.isFinite(schComponent.size.width)
+    ? schComponent.size.width
+    : 0
+  const componentHeight = Number.isFinite(schComponent.size.height)
+    ? schComponent.size.height
+    : 0
+
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - componentWidth / 2,
+    y: schComponent.center.y + componentHeight / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + componentWidth / 2,
+    y: schComponent.center.y - componentHeight / 2,
   })
   const componentScreenWidth =
     componentScreenBottomRight.x - componentScreenTopLeft.x
