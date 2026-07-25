@@ -274,8 +274,15 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
 
-    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+    const rawOuterRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
+    const rawInnerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+
+    // A missing or unparseable diameter reaches here as null/NaN, which would be
+    // written as r="NaN" — not a valid SVG length, so renderers drop the circle
+    // and the drill silently vanishes. Clamp at the source so everything derived
+    // from these radii (soldermask mask radius included) stays a valid length.
+    const outerRadius = Number.isFinite(rawOuterRadius) ? rawOuterRadius : 0
+    const innerRadius = Number.isFinite(rawInnerRadius) ? rawInnerRadius : 0
 
     let children: SvgObject[] = [
       {
