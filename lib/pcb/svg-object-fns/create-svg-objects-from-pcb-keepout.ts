@@ -1,5 +1,6 @@
 import type { PCBKeepoutRect, PCBKeepoutCircle, Point } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import { toSvgLength } from "lib/utils/to-svg-length"
 import {
   applyToPoint,
   compose,
@@ -186,7 +187,9 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const scaledRadius = toSvgLength(
+        circleKeepout.radius * Math.abs(transform.a),
+      )
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(

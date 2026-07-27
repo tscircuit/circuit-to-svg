@@ -7,6 +7,7 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { toSvgLength } from "lib/utils/to-svg-length"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
 import { applyToPoint, type Matrix } from "transformation-matrix"
@@ -37,10 +38,12 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     x: schComponent.center.x + schComponent.size.width / 2,
     y: schComponent.center.y - schComponent.size.height / 2,
   })
-  const componentScreenWidth =
-    componentScreenBottomRight.x - componentScreenTopLeft.x
-  const componentScreenHeight =
-    componentScreenBottomRight.y - componentScreenTopLeft.y
+  const componentScreenWidth = toSvgLength(
+    componentScreenBottomRight.x - componentScreenTopLeft.x,
+  )
+  const componentScreenHeight = toSvgLength(
+    componentScreenBottomRight.y - componentScreenTopLeft.y,
+  )
 
   // Add basic rectangle for component body
   svgObjects.push({

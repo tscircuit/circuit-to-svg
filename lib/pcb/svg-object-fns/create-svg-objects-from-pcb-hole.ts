@@ -1,6 +1,7 @@
 import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { toSvgLength } from "lib/utils/to-svg-length"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbHole(
@@ -26,7 +27,7 @@ export function createSvgObjectsFromPcbHole(
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
     const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
-    const radius = scaledDiameter / 2
+    const radius = toSvgLength(scaledDiameter / 2)
 
     if (hole.hole_shape === "circle") {
       const holeElement: SvgObject = {
