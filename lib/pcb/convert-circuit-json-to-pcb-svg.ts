@@ -59,6 +59,7 @@ import {
   createKeepoutPatternDefs,
 } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import {
   createSvgObjectsForPcbGrid,
   type PcbGridOptions,
@@ -97,6 +98,7 @@ export interface PcbSvgOptions {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   showSolderMask?: boolean
+  showSolderPaste?: boolean
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
@@ -121,6 +123,7 @@ export interface PcbContext {
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   showSolderMask?: boolean
+  showSolderPaste?: boolean
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
@@ -286,6 +289,7 @@ export function convertCircuitJsonToPcbSvg(
     drawPaddingOutsideBoard,
     colorMap,
     showSolderMask: options?.showSolderMask,
+    showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
@@ -470,6 +474,10 @@ function createSvgObjects({
       return createSvgObjectsFromPcbHole(elm, ctx)
     case "pcb_smtpad":
       return createSvgObjectsFromSmtPad(elm, ctx)
+    case "pcb_solder_paste":
+      return ctx.showSolderPaste
+        ? createSvgObjectsFromSolderPaste(elm, ctx)
+        : []
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, ctx)
     case "pcb_silkscreen_rect":
