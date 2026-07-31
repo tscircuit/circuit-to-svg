@@ -71,6 +71,7 @@ import {
 } from "./colors"
 import { createSvgObjectsFromPcbComponent } from "./svg-object-fns/create-svg-objects-from-pcb-component"
 import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-objects-from-pcb-group"
+import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
@@ -97,6 +98,7 @@ export interface PcbSvgOptions {
   drawPaddingOutsideBoard?: boolean
   includeVersion?: boolean
   showSolderMask?: boolean
+  showSolderPaste?: boolean
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
@@ -121,6 +123,7 @@ export interface PcbContext {
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
   showSolderMask?: boolean
+  showSolderPaste?: boolean
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
@@ -286,6 +289,7 @@ export function convertCircuitJsonToPcbSvg(
     drawPaddingOutsideBoard,
     colorMap,
     showSolderMask: options?.showSolderMask,
+    showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
@@ -547,6 +551,10 @@ function createSvgObjects({
     case "pcb_group":
       return ctx.showPcbGroups
         ? createSvgObjectsFromPcbGroup(elm as any, ctx)
+        : []
+    case "pcb_solder_paste":
+      return ctx.showSolderPaste
+        ? (createSvgObjectsFromSolderPaste(elm, ctx) ?? []).filter(Boolean)
         : []
     default:
       return []
