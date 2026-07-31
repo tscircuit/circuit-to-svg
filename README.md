@@ -106,6 +106,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   padding around it. Defaults to `true`.
 - `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
   time. Defaults to `true`.
+- `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults
+  to `false`.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
   - `pcb_trace_error` – errors related to PCB traces
   - `pcb_footprint_overlap_error` – errors for overlapping pads, plated holes, and holes (displays error indicators at each affected element with connecting lines)
