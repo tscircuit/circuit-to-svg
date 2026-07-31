@@ -172,7 +172,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     children: combinedChildren,
   }
 
-  return stringify(svgObject)
+  return stringify(svgObject).replace(/[ \t]+$/gm, "")
 }
 
 function getSvgViewBoxSize(
