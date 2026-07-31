@@ -17,7 +17,8 @@ export function getGraphLabel(
   if (scopeTraceDisplay?.displayName) return scopeTraceDisplay.displayName
   if (
     (graph.simulation_parameter_sweep_coordinate ||
-      graph.simulation_parameter_sweep_coordinates) &&
+      ("simulation_parameter_sweep_coordinates" in graph &&
+        Array.isArray(graph.simulation_parameter_sweep_coordinates))) &&
     graph.name
   ) {
     return graph.name

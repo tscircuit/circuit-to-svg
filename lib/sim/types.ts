@@ -1,23 +1,50 @@
 import type {
   AnyCircuitElement,
-  SimulationAnalysisResult,
+  SimulationAnalysisResult as CircuitJsonSimulationAnalysisResult,
+  SimulationParameterSweep as CircuitJsonSimulationParameterSweep,
   SimulationCurrentProbe,
   SimulationExperiment,
-  SimulationMeasurementResult,
   SimulationOscilloscopeTrace,
+  SimulationParameterSweepCoordinate,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
   SimulationVoltageProbe,
 } from "circuit-json"
 
-export type CircuitJsonWithSimulation = AnyCircuitElement
-export type { SimulationAnalysisResult } from "circuit-json"
+export type SimulationAnalysisResult = CircuitJsonSimulationAnalysisResult & {
+  simulation_parameter_sweep_coordinates?: SimulationParameterSweepCoordinate[]
+}
+
+export type SimulationParameterSweep = CircuitJsonSimulationParameterSweep & {
+  display_parameter_values?: number[]
+  display_parameter_unit?: string
+}
+
+export interface SimulationMeasurementResult {
+  type: "simulation_measurement_result"
+  simulation_measurement_result_id: string
+  simulation_experiment_id: string
+  name: string
+  measurement_values: number[]
+  measurement_unit: string
+  simulation_parameter_sweep_coordinate_sets?: SimulationParameterSweepCoordinate[][]
+}
+
+export type CircuitJsonWithSimulation =
+  | Exclude<
+      AnyCircuitElement,
+      CircuitJsonSimulationAnalysisResult | CircuitJsonSimulationParameterSweep
+    >
+  | SimulationAnalysisResult
+  | SimulationMeasurementResult
+  | SimulationParameterSweep
+
 export type SimulationRenderableResult =
   | SimulationAnalysisResult
   | SimulationMeasurementResult
 
 export function isSimulationAnalysisResult(
-  circuitElement: Pick<AnyCircuitElement, "type">,
+  circuitElement: Pick<CircuitJsonWithSimulation, "type">,
 ): circuitElement is SimulationAnalysisResult {
   return (
     circuitElement.type === "simulation_transient_voltage_graph" ||
@@ -32,7 +59,7 @@ export function isSimulationAnalysisResult(
 }
 
 export function isSimulationMeasurementResult(
-  circuitElement: Pick<AnyCircuitElement, "type">,
+  circuitElement: Pick<CircuitJsonWithSimulation, "type">,
 ): circuitElement is SimulationMeasurementResult {
   return circuitElement.type === "simulation_measurement_result"
 }

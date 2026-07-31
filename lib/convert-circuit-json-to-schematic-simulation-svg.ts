@@ -10,6 +10,7 @@ import {
   type CircuitJsonWithSimulation,
   isSimulationAnalysisResult,
   isSimulationExperiment,
+  isSimulationMeasurementResult,
 } from "./sim/types"
 import type { SvgObject } from "./svg-object"
 import { getSoftwareUsedString } from "./utils/get-software-used-string"
@@ -67,7 +68,9 @@ export function convertCircuitJsonToSchematicSimulationSvg({
 }: ConvertSchematicSimulationParams): string {
   const schematicElements = circuitJson.filter(
     (element): element is AnyCircuitElement =>
-      !isSimulationExperiment(element) && !isSimulationAnalysisResult(element),
+      !isSimulationExperiment(element) &&
+      !isSimulationAnalysisResult(element) &&
+      !isSimulationMeasurementResult(element),
   )
 
   const clampedRatio = clamp01(schematicHeightRatio)

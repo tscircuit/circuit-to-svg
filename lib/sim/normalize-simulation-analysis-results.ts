@@ -1,13 +1,15 @@
 import type {
-  SimulationAnalysisResult,
   SimulationExperiment,
-  SimulationMeasurementResult,
-  SimulationParameterSweep,
   SimulationParameterSweepCoordinate,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
 } from "circuit-json"
-import type { SimulationRenderableResult } from "./types"
+import type {
+  SimulationAnalysisResult,
+  SimulationMeasurementResult,
+  SimulationParameterSweep,
+  SimulationRenderableResult,
+} from "./types"
 
 export type AcSweepView = "magnitude" | "phase"
 
