@@ -76,6 +76,30 @@ export function createSvgObjectsFromSolderPaste(
       },
     ]
   }
+  if (solderPaste.shape === "rotated_pill") {
+    const width = solderPaste.width * Math.abs(transform.a)
+    const height = solderPaste.height * Math.abs(transform.d)
+    const radius = solderPaste.radius * Math.abs(transform.a)
+
+    return [
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-paste",
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
+          x: (-width / 2).toString(),
+          y: (-height / 2).toString(),
+          width: width.toString(),
+          height: height.toString(),
+          rx: radius.toString(),
+          transform: `translate(${x} ${y}) rotate(${-solderPaste.ccw_rotation})`,
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
+        },
+      },
+    ]
+  }
   // Implement circle-shaped SMT pad
   if (solderPaste.shape === "circle") {
     const radius = solderPaste.radius * Math.abs(transform.a)
