@@ -1,9 +1,13 @@
 import type {
   SimulationAnalysisResult,
   SimulationExperiment,
+  SimulationMeasurementResult,
+  SimulationParameterSweep,
+  SimulationParameterSweepCoordinate,
   SimulationTransientCurrentGraph,
   SimulationTransientVoltageGraph,
 } from "circuit-json"
+import type { SimulationRenderableResult } from "./types"
 
 export type AcSweepView = "magnitude" | "phase"
 
@@ -14,6 +18,7 @@ interface NormalizedSimulationResults {
   xAxisTitle: string
   yAxisTitle?: string
   usesLogarithmicXValues: boolean
+  usesLogarithmicYValues: boolean
 }
 
 interface AnalysisGraphCoordinates {
@@ -25,14 +30,170 @@ interface AnalysisGraphCoordinates {
 const getResultName = ({
   simulationResult,
   fallbackName,
+  parameterSweepById,
 }: {
   simulationResult: SimulationAnalysisResult
   fallbackName: string
+  parameterSweepById: Map<string, SimulationParameterSweep>
 }): string => {
   const name = simulationResult.name ?? fallbackName
-  const coordinate = simulationResult.simulation_parameter_sweep_coordinate
-  if (!coordinate) return name
-  return `${name} (${coordinate.parameter_value}${coordinate.parameter_unit})`
+  const coordinates =
+    simulationResult.simulation_parameter_sweep_coordinates ??
+    (simulationResult.simulation_parameter_sweep_coordinate
+      ? [simulationResult.simulation_parameter_sweep_coordinate]
+      : [])
+  if (coordinates.length === 0) return name
+  return `${name} (${coordinates
+    .map((coordinate) => {
+      const displayCoordinate = getDisplayCoordinate({
+        coordinate,
+        parameterSweepById,
+      })
+      return `${displayCoordinate.value}${displayCoordinate.unit}`
+    })
+    .join(", ")})`
+}
+
+const getDisplayCoordinate = ({
+  coordinate,
+  parameterSweepById,
+}: {
+  coordinate: SimulationParameterSweepCoordinate
+  parameterSweepById: Map<string, SimulationParameterSweep>
+}) => {
+  const parameterSweep = parameterSweepById.get(
+    coordinate.simulation_parameter_sweep_id,
+  )
+  return {
+    value:
+      parameterSweep?.display_parameter_values?.[coordinate.sweep_index] ??
+      coordinate.parameter_value,
+    unit: parameterSweep?.display_parameter_unit ?? coordinate.parameter_unit,
+  }
+}
+
+const getMeasurementSeriesLabel = ({
+  measurement,
+  coordinates,
+  parameterSweepById,
+}: {
+  measurement: SimulationMeasurementResult
+  coordinates: SimulationParameterSweepCoordinate[]
+  parameterSweepById: Map<string, SimulationParameterSweep>
+}) => {
+  if (coordinates.length === 0) return measurement.name
+  return coordinates
+    .map((coordinate) => {
+      const displayCoordinate = getDisplayCoordinate({
+        coordinate,
+        parameterSweepById,
+      })
+      return `${displayCoordinate.value}${displayCoordinate.unit}`
+    })
+    .join(", ")
+}
+
+const getMeasurementDisplayLevel = ({
+  measurementValue,
+  usesLogarithmicYValues,
+}: {
+  measurementValue: number
+  usesLogarithmicYValues: boolean
+}) => (usesLogarithmicYValues ? Math.log10(measurementValue) : measurementValue)
+
+const normalizeMeasurementResult = ({
+  measurement,
+  parameterSweepById,
+  usesLogarithmicXValues,
+  usesLogarithmicYValues,
+}: {
+  measurement: SimulationMeasurementResult
+  parameterSweepById: Map<string, SimulationParameterSweep>
+  usesLogarithmicXValues: boolean
+  usesLogarithmicYValues: boolean
+}) => {
+  const coordinateSets = measurement.simulation_parameter_sweep_coordinate_sets
+  if (!coordinateSets) {
+    return [
+      {
+        type: "simulation_transient_voltage_graph" as const,
+        simulation_transient_voltage_graph_id:
+          measurement.simulation_measurement_result_id,
+        simulation_experiment_id: measurement.simulation_experiment_id,
+        name: measurement.name,
+        voltage_levels: measurement.measurement_values.map((measurementValue) =>
+          getMeasurementDisplayLevel({
+            measurementValue,
+            usesLogarithmicYValues,
+          }),
+        ),
+        ...getTransientGraphCoordinates(
+          measurement.measurement_values.map((_, index) => index),
+        ),
+      },
+    ]
+  }
+
+  const seriesByCoordinatePrefix = new Map<
+    string,
+    {
+      horizontalCoordinates: number[]
+      measuredLevels: number[]
+      prefixCoordinates: SimulationParameterSweepCoordinate[]
+    }
+  >()
+  for (
+    let measurementIndex = 0;
+    measurementIndex < measurement.measurement_values.length;
+    measurementIndex++
+  ) {
+    const coordinates = coordinateSets[measurementIndex] ?? []
+    const xCoordinate = coordinates.at(-1)
+    const parameterValue = xCoordinate
+      ? getDisplayCoordinate({
+          coordinate: xCoordinate,
+          parameterSweepById,
+        }).value
+      : 0
+    const horizontalCoordinate = usesLogarithmicXValues
+      ? Math.log10(parameterValue)
+      : parameterValue
+    const prefixCoordinates = coordinates.slice(0, -1)
+    const seriesKey = prefixCoordinates
+      .map(
+        (coordinate) =>
+          `${coordinate.simulation_parameter_sweep_id}:${coordinate.sweep_index}`,
+      )
+      .join("|")
+    const series = seriesByCoordinatePrefix.get(seriesKey) ?? {
+      horizontalCoordinates: [],
+      measuredLevels: [],
+      prefixCoordinates,
+    }
+    series.horizontalCoordinates.push(horizontalCoordinate)
+    series.measuredLevels.push(
+      getMeasurementDisplayLevel({
+        measurementValue: measurement.measurement_values[measurementIndex]!,
+        usesLogarithmicYValues,
+      }),
+    )
+    seriesByCoordinatePrefix.set(seriesKey, series)
+  }
+
+  return Array.from(seriesByCoordinatePrefix.values()).map(
+    (series, seriesIndex) => ({
+      type: "simulation_transient_voltage_graph" as const,
+      simulation_transient_voltage_graph_id: `${measurement.simulation_measurement_result_id}_${seriesIndex}`,
+      simulation_experiment_id: measurement.simulation_experiment_id,
+      name: getMeasurementSeriesLabel({
+        measurement,
+        coordinates: series.prefixCoordinates,
+        parameterSweepById,
+      }),
+      voltage_levels: series.measuredLevels,
+      ...getTransientGraphCoordinates(series.horizontalCoordinates),
+    }),
+  )
 }
 
 const getTransientGraphCoordinates = (horizontalCoordinates: number[]) => {
@@ -60,8 +221,11 @@ const getTransientSimulationResultId = (
     : simulationResult.simulation_transient_current_graph_id
 
 export const getSimulationAnalysisResultId = (
-  simulationResult: SimulationAnalysisResult,
+  simulationResult: SimulationRenderableResult,
 ): string => {
+  if (simulationResult.type === "simulation_measurement_result") {
+    return simulationResult.simulation_measurement_result_id
+  }
   switch (simulationResult.type) {
     case "simulation_transient_voltage_graph":
       return simulationResult.simulation_transient_voltage_graph_id
@@ -150,16 +314,21 @@ const normalizeSimulationResult = ({
   simulationResult,
   acSweepView,
   usesLogarithmicXValues,
+  parameterSweepById,
 }: {
   simulationResult: SimulationAnalysisResult
   acSweepView: AcSweepView
   usesLogarithmicXValues: boolean
+  parameterSweepById: Map<string, SimulationParameterSweep>
 }): SimulationTransientVoltageGraph | SimulationTransientCurrentGraph => {
   if (
     simulationResult.type === "simulation_transient_voltage_graph" ||
     simulationResult.type === "simulation_transient_current_graph"
   ) {
-    if (!simulationResult.simulation_parameter_sweep_coordinate) {
+    if (
+      !simulationResult.simulation_parameter_sweep_coordinate &&
+      !simulationResult.simulation_parameter_sweep_coordinates?.length
+    ) {
       return simulationResult
     }
     return {
@@ -169,6 +338,7 @@ const normalizeSimulationResult = ({
         fallbackName:
           simulationResult.name ??
           getTransientSimulationResultId(simulationResult),
+        parameterSweepById,
       }),
     }
   }
@@ -184,9 +354,12 @@ const normalizeSimulationResult = ({
     simulation_experiment_id: simulationResult.simulation_experiment_id,
     simulation_parameter_sweep_coordinate:
       simulationResult.simulation_parameter_sweep_coordinate,
+    simulation_parameter_sweep_coordinates:
+      simulationResult.simulation_parameter_sweep_coordinates,
     name: getResultName({
       simulationResult,
       fallbackName: simulationResultId,
+      parameterSweepById,
     }),
     color: simulationResult.color,
     ...getTransientGraphCoordinates(horizontalCoordinates),
@@ -230,37 +403,115 @@ const getXAxisTitle = ({
   return "Time (ms)"
 }
 
+const shouldUseLogarithmicMeasurementXAxis = (
+  parameterSweep?: SimulationParameterSweep,
+) => {
+  const values =
+    parameterSweep?.display_parameter_values ??
+    parameterSweep?.parameter_values ??
+    []
+  if (values.length < 3 || values.some((value) => value <= 0)) return false
+  return Math.max(...values) / Math.min(...values) >= 100
+}
+
+const shouldUseLogarithmicValues = (values: readonly number[]) =>
+  values.length >= 3 &&
+  values.every((value) => value > 0) &&
+  Math.max(...values) / Math.min(...values) >= 100
+
 export const normalizeSimulationAnalysisResults = ({
   results,
   acSweepView,
   experiment,
+  parameterSweeps = [],
 }: {
-  results: SimulationAnalysisResult[]
+  results: SimulationRenderableResult[]
   acSweepView: AcSweepView
   experiment?: SimulationExperiment
+  parameterSweeps?: SimulationParameterSweep[]
 }): NormalizedSimulationResults => {
   const simulationResultType = results[0]?.type
   const isAcSweep =
     simulationResultType?.startsWith("simulation_ac_sweep_") ?? false
-  const usesLogarithmicXValues =
-    isAcSweep && experiment?.ac_sweep_type !== "linear"
 
-  const graphs = results.map((simulationResult) =>
-    normalizeSimulationResult({
-      simulationResult,
-      acSweepView,
-      usesLogarithmicXValues,
-    }),
+  const parameterSweepById = new Map(
+    parameterSweeps.map((parameterSweep) => [
+      parameterSweep.simulation_parameter_sweep_id,
+      parameterSweep,
+    ]),
+  )
+  const measurementResults = results.filter(
+    (result): result is SimulationMeasurementResult =>
+      result.type === "simulation_measurement_result",
+  )
+  const measurementXAxisSweep =
+    measurementResults[0]?.simulation_parameter_sweep_coordinate_sets?.[0]?.at(
+      -1,
+    )
+  const measurementXAxisParameter = measurementXAxisSweep
+    ? parameterSweepById.get(
+        measurementXAxisSweep.simulation_parameter_sweep_id,
+      )
+    : undefined
+  const usesLogarithmicXValues =
+    (isAcSweep && experiment?.ac_sweep_type !== "linear") ||
+    shouldUseLogarithmicMeasurementXAxis(measurementXAxisParameter)
+  const usesLogarithmicYValues = shouldUseLogarithmicValues(
+    measurementResults.flatMap((result) => result.measurement_values),
+  )
+  const graphs: NormalizedSimulationResults["graphs"] = []
+  for (const simulationResult of results) {
+    if (simulationResult.type === "simulation_measurement_result") {
+      graphs.push(
+        ...normalizeMeasurementResult({
+          measurement: simulationResult,
+          parameterSweepById,
+          usesLogarithmicXValues,
+          usesLogarithmicYValues,
+        }),
+      )
+    } else {
+      graphs.push(
+        normalizeSimulationResult({
+          simulationResult,
+          acSweepView,
+          usesLogarithmicXValues,
+          parameterSweepById,
+        }),
+      )
+    }
+  }
+  const measurementUnits = new Set(
+    measurementResults.map((result) => result.measurement_unit),
+  )
+  const measurementNames = new Set(
+    measurementResults.map((result) => result.name),
   )
 
   return {
     graphs,
-    xAxisTitle: getXAxisTitle({
-      simulationResultType,
-      experiment,
-    }),
+    xAxisTitle:
+      simulationResultType === "simulation_measurement_result"
+        ? measurementXAxisParameter
+          ? `${measurementXAxisParameter.name ?? measurementXAxisParameter.parameter_type} (${measurementXAxisParameter.display_parameter_unit ?? measurementXAxisParameter.parameter_unit})`
+          : "Measurement"
+        : getXAxisTitle({
+            simulationResultType,
+            experiment,
+          }),
     yAxisTitle:
-      isAcSweep && acSweepView === "phase" ? "Phase (deg)" : undefined,
+      simulationResultType === "simulation_measurement_result"
+        ? measurementUnits.size === 1
+          ? `${
+              measurementNames.size === 1
+                ? measurementResults[0]?.name
+                : "Measurement"
+            } (${measurementResults[0]?.measurement_unit})`
+          : "Measurement"
+        : isAcSweep && acSweepView === "phase"
+          ? "Phase (deg)"
+          : undefined,
     usesLogarithmicXValues,
+    usesLogarithmicYValues,
   }
 }

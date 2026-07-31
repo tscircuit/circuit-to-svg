@@ -32,7 +32,68 @@ export function createGraphPoints(
     })
   }
 
-  return points
+  return downsampleGraphPoints(points)
+}
+
+const MAX_RENDERED_GRAPH_POINTS = 4_000
+const TARGET_DOWNSAMPLE_BUCKET_COUNT = 1_000
+
+type GraphPoint = {
+  timeMs: number
+  rawValue: number
+  displayValue: number
+}
+
+function downsampleGraphPoints(points: GraphPoint[]): GraphPoint[] {
+  if (points.length <= MAX_RENDERED_GRAPH_POINTS) return points
+
+  const bucketSize = Math.ceil(points.length / TARGET_DOWNSAMPLE_BUCKET_COUNT)
+  const downsampledPoints: GraphPoint[] = []
+
+  for (
+    let bucketStart = 0;
+    bucketStart < points.length;
+    bucketStart += bucketSize
+  ) {
+    const bucketEnd = Math.min(points.length, bucketStart + bucketSize)
+    let minimumIndex = bucketStart
+    let maximumIndex = bucketStart
+
+    for (
+      let pointIndex = bucketStart + 1;
+      pointIndex < bucketEnd;
+      pointIndex++
+    ) {
+      if (
+        (points[pointIndex]?.displayValue ?? Number.POSITIVE_INFINITY) <
+        (points[minimumIndex]?.displayValue ?? Number.POSITIVE_INFINITY)
+      ) {
+        minimumIndex = pointIndex
+      }
+      if (
+        (points[pointIndex]?.displayValue ?? Number.NEGATIVE_INFINITY) >
+        (points[maximumIndex]?.displayValue ?? Number.NEGATIVE_INFINITY)
+      ) {
+        maximumIndex = pointIndex
+      }
+    }
+
+    const retainedIndices = [
+      bucketStart,
+      minimumIndex,
+      maximumIndex,
+      bucketEnd - 1,
+    ].sort((left, right) => left - right)
+
+    for (const pointIndex of retainedIndices) {
+      const point = points[pointIndex]
+      if (point && downsampledPoints[downsampledPoints.length - 1] !== point) {
+        downsampledPoints.push(point)
+      }
+    }
+  }
+
+  return downsampledPoints
 }
 
 function createDisplayValueTransform(

@@ -2,8 +2,10 @@ import type { AnyCircuitElement } from "circuit-json"
 import { parseSync, stringify } from "svgson"
 import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
-import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
-import type { AcSweepView } from "./sim/normalize-simulation-analysis-results"
+import {
+  type ConvertSimulationGraphParams,
+  convertCircuitJsonToSimulationGraphSvg,
+} from "./sim/convert-circuit-json-to-simulation-graph-svg"
 import {
   type CircuitJsonWithSimulation,
   isSimulationAnalysisResult,
@@ -17,13 +19,12 @@ import {
   translateNestedSvg,
 } from "./utils/svg-object-utils"
 
-interface ConvertSchematicSimulationParams {
+interface ConvertSchematicSimulationParams
+  extends Omit<
+    ConvertSimulationGraphParams,
+    "circuitJson" | "height" | "includeVersion" | "width"
+  > {
   circuitJson: CircuitJsonWithSimulation[]
-  simulation_experiment_id: string
-  simulation_transient_current_graph_ids?: string[]
-  simulation_transient_voltage_graph_ids?: string[]
-  simulation_result_ids?: string[]
-  ac_sweep_view?: AcSweepView
   width?: number
   height?: number
   schematicHeightRatio?: number
@@ -47,6 +48,14 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
+  series_colors,
+  x_axis_max,
+  x_axis_min,
+  x_axis_tick_values,
+  y_axis_max,
+  y_axis_min,
+  y_axis_tick_values,
+  y_axis_title,
   ac_sweep_view,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
@@ -83,6 +92,14 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     simulation_transient_current_graph_ids,
     simulation_transient_voltage_graph_ids,
     simulation_result_ids,
+    series_colors,
+    x_axis_max,
+    x_axis_min,
+    x_axis_tick_values,
+    y_axis_max,
+    y_axis_min,
+    y_axis_tick_values,
+    y_axis_title,
     ac_sweep_view,
     width,
     height: simulationHeight,

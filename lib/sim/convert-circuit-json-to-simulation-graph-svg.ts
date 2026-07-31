@@ -1,7 +1,7 @@
 import type {
   AnyCircuitElement,
-  SimulationAnalysisResult,
   SimulationExperiment,
+  SimulationParameterSweep,
 } from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
@@ -47,16 +47,26 @@ import {
 } from "./simulation-graph-svg/simulation-graph-svg-shared"
 import {
   type CircuitJsonWithSimulation,
+  type SimulationRenderableResult,
   isSimulationAnalysisResult,
   isSimulationExperiment,
+  isSimulationMeasurementResult,
 } from "./types"
 
-interface ConvertSimulationGraphParams {
+export interface ConvertSimulationGraphParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
+  series_colors?: string[]
+  x_axis_max?: number
+  x_axis_min?: number
+  x_axis_tick_values?: number[]
+  y_axis_max?: number
+  y_axis_min?: number
+  y_axis_tick_values?: number[]
+  y_axis_title?: string
   ac_sweep_view?: AcSweepView
   width?: number
   height?: number
@@ -69,6 +79,14 @@ export function convertCircuitJsonToSimulationGraphSvg({
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
+  series_colors,
+  x_axis_max,
+  x_axis_min,
+  x_axis_tick_values,
+  y_axis_max,
+  y_axis_min,
+  y_axis_tick_values,
+  y_axis_title,
   ac_sweep_view = "magnitude",
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
@@ -91,9 +109,10 @@ export function convertCircuitJsonToSimulationGraphSvg({
       element.simulation_experiment_id === simulation_experiment_id,
   )
 
-  const simulationResults = circuitJson.filter(
-    (element): element is SimulationAnalysisResult =>
-      isSimulationAnalysisResult(element) &&
+  const matchingSimulationResults = circuitJson.filter(
+    (element): element is SimulationRenderableResult =>
+      (isSimulationAnalysisResult(element) ||
+        isSimulationMeasurementResult(element)) &&
       element.simulation_experiment_id === simulation_experiment_id &&
       (!selectedResultIds ||
         selectedResultIds.has(getSimulationAnalysisResultId(element))) &&
@@ -109,10 +128,26 @@ export function convertCircuitJsonToSimulationGraphSvg({
           ) ??
             false))),
   )
+  const hasExplicitResultSelection = Boolean(
+    selectedResultIds || hasGraphSelection,
+  )
+  const hasMeasurementResults = matchingSimulationResults.some(
+    isSimulationMeasurementResult,
+  )
+  const simulationResults =
+    !hasExplicitResultSelection && hasMeasurementResults
+      ? matchingSimulationResults.filter(isSimulationMeasurementResult)
+      : matchingSimulationResults
+  const parameterSweeps = circuitJson.filter(
+    (element): element is SimulationParameterSweep =>
+      element.type === "simulation_parameter_sweep" &&
+      element.simulation_experiment_id === simulation_experiment_id,
+  )
   const normalizedResults = normalizeSimulationAnalysisResults({
     results: simulationResults,
     acSweepView: ac_sweep_view,
     experiment,
+    parameterSweeps,
   })
   const graphs: SimulationTransientGraph[] = normalizedResults.graphs
 
@@ -122,7 +157,14 @@ export function convertCircuitJsonToSimulationGraphSvg({
     )
   }
 
-  const preparedGraphs = prepareSimulationGraphs(graphs, circuitJson)
+  const preparedGraphs = prepareSimulationGraphs(graphs, circuitJson).map(
+    (graph, graphIndex) => ({
+      ...graph,
+      ...(series_colors?.length && {
+        color: series_colors[graphIndex % series_colors.length],
+      }),
+    }),
+  )
   const allPoints = preparedGraphs.flatMap((entry) => entry.points)
 
   if (allPoints.length === 0) {
@@ -132,22 +174,48 @@ export function convertCircuitJsonToSimulationGraphSvg({
   }
 
   const horizontalCoordinates = allPoints.map((point) => point.timeMs)
-  let timeAxis
-  if (normalizedResults.usesLogarithmicXValues) {
-    timeAxis = buildLogarithmicAxisInfo(horizontalCoordinates)
-  } else if (normalizedResults.xAxisTitle === "Time (ms)") {
-    timeAxis = buildTimeAxisInfo({
-      values: horizontalCoordinates,
-      graphs,
-      experiment,
-    })
-  } else {
-    timeAxis = buildAxisInfo(horizontalCoordinates)
-  }
-  const valueAxis = buildAxisInfo(
-    allPoints.map((point) => point.displayValue),
-    true,
-  )
+  const timeAxis = normalizedResults.usesLogarithmicXValues
+    ? buildLogarithmicAxisInfo({
+        logarithmicCoordinates: horizontalCoordinates,
+        maximum: getLogarithmicCoordinate(x_axis_max, "X"),
+        minimum: getLogarithmicCoordinate(x_axis_min, "X"),
+        tickValues: x_axis_tick_values?.map((tickValue) =>
+          getRequiredLogarithmicCoordinate(tickValue, "X"),
+        ),
+      })
+    : normalizedResults.xAxisTitle === "Time (ms)"
+      ? applyAxisOverrides({
+          axisInfo: buildTimeAxisInfo({
+            values: horizontalCoordinates,
+            graphs,
+            experiment,
+          }),
+          maximum: x_axis_max,
+          minimum: x_axis_min,
+          tickValues: x_axis_tick_values,
+        })
+      : applyAxisOverrides({
+          axisInfo: buildAxisInfo(horizontalCoordinates),
+          maximum: x_axis_max,
+          minimum: x_axis_min,
+          tickValues: x_axis_tick_values,
+        })
+  const displayValues = allPoints.map((point) => point.displayValue)
+  const valueAxis = normalizedResults.usesLogarithmicYValues
+    ? buildLogarithmicAxisInfo({
+        logarithmicCoordinates: displayValues,
+        maximum: getLogarithmicCoordinate(y_axis_max, "Y"),
+        minimum: getLogarithmicCoordinate(y_axis_min, "Y"),
+        tickValues: y_axis_tick_values?.map((tickValue) =>
+          getRequiredLogarithmicCoordinate(tickValue, "Y"),
+        ),
+      })
+    : applyAxisOverrides({
+        axisInfo: buildAxisInfo(displayValues, true),
+        maximum: y_axis_max,
+        minimum: y_axis_min,
+        tickValues: y_axis_tick_values,
+      })
   const usesScopeTraceDisplay = preparedGraphs.some(
     (entry) => entry.usesScopeTraceDisplay,
   )
@@ -211,7 +279,10 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotLeft,
       plotWidth,
       plotHeight,
-      yAxisTitle: normalizedResults.yAxisTitle ?? getYAxisTitle(preparedGraphs),
+      yAxisTitle:
+        y_axis_title ??
+        normalizedResults.yAxisTitle ??
+        getYAxisTitle(preparedGraphs),
       xAxisTitle: normalizedResults.xAxisTitle,
       usesScopeTraceDisplay,
     }),
@@ -246,12 +317,130 @@ export function convertCircuitJsonToSimulationGraphSvg({
   return stringify(svgObject)
 }
 
-const buildLogarithmicAxisInfo = (logarithmicCoordinates: number[]) => {
-  const axisInfo = buildAxisInfo(logarithmicCoordinates)
+const buildLogarithmicAxisInfo = ({
+  logarithmicCoordinates,
+  maximum,
+  minimum,
+  tickValues,
+}: {
+  logarithmicCoordinates: number[]
+  maximum?: number
+  minimum?: number
+  tickValues?: number[]
+}) => {
+  const hasAxisOverrides =
+    maximum !== undefined || minimum !== undefined || tickValues !== undefined
+  const axisInfo = applyAxisOverrides({
+    axisInfo: buildAxisInfo(logarithmicCoordinates),
+    maximum,
+    minimum,
+    tickValues,
+  })
+  const ticks =
+    tickValues ??
+    (hasAxisOverrides
+      ? getLogarithmicTicks({
+          minimum: axisInfo.domainMin,
+          maximum: axisInfo.domainMax,
+        })
+      : axisInfo.ticks)
   return {
     ...axisInfo,
+    ticks,
     tickLabelOverrides: new Map(
-      axisInfo.ticks.map((tick) => [tick, formatNumber(10 ** tick)]),
+      ticks.map((tick) => [
+        tick,
+        hasAxisOverrides && !isLogarithmicMajorTick(tick)
+          ? ""
+          : formatNumber(10 ** tick),
+      ]),
     ),
   }
 }
+
+const applyAxisOverrides = ({
+  axisInfo,
+  maximum,
+  minimum,
+  tickValues,
+}: {
+  axisInfo: ReturnType<typeof buildAxisInfo>
+  maximum?: number
+  minimum?: number
+  tickValues?: number[]
+}) => {
+  const domainMin = minimum ?? axisInfo.domainMin
+  const domainMax = maximum ?? axisInfo.domainMax
+  if (
+    !Number.isFinite(domainMin) ||
+    !Number.isFinite(domainMax) ||
+    domainMax <= domainMin
+  ) {
+    throw new Error(
+      "Simulation graph axis bounds must be finite and increasing",
+    )
+  }
+
+  const ticks = (tickValues ?? axisInfo.ticks).filter(
+    (tickValue) => tickValue >= domainMin && tickValue <= domainMax,
+  )
+  if (!ticks.some((tickValue) => Math.abs(tickValue - domainMin) < 1e-12)) {
+    ticks.unshift(domainMin)
+  }
+  if (!ticks.some((tickValue) => Math.abs(tickValue - domainMax) < 1e-12)) {
+    ticks.push(domainMax)
+  }
+
+  return {
+    ...axisInfo,
+    domainMin,
+    domainMax,
+    ticks: Array.from(new Set(ticks)).sort((left, right) => left - right),
+  }
+}
+
+const getLogarithmicCoordinate = (
+  axisValue: number | undefined,
+  axisName: "X" | "Y",
+) =>
+  axisValue === undefined
+    ? undefined
+    : getRequiredLogarithmicCoordinate(axisValue, axisName)
+
+const getRequiredLogarithmicCoordinate = (
+  axisValue: number,
+  axisName: "X" | "Y",
+) => {
+  if (!Number.isFinite(axisValue) || axisValue <= 0) {
+    throw new Error(
+      `Logarithmic ${axisName}-axis values must be positive; received ${axisValue}`,
+    )
+  }
+  return Math.log10(axisValue)
+}
+
+const getLogarithmicTicks = ({
+  maximum,
+  minimum,
+}: {
+  maximum: number
+  minimum: number
+}) => {
+  const ticks: number[] = []
+  for (
+    let exponent = Math.floor(minimum);
+    exponent <= Math.ceil(maximum);
+    exponent++
+  ) {
+    for (let multiplier = 1; multiplier <= 9; multiplier++) {
+      const tickValue = Math.log10(multiplier * 10 ** exponent)
+      if (tickValue >= minimum - 1e-12 && tickValue <= maximum + 1e-12) {
+        ticks.push(tickValue)
+      }
+    }
+  }
+  return ticks
+}
+
+const isLogarithmicMajorTick = (axisValue: number) =>
+  Math.abs(axisValue - Math.round(axisValue)) < 1e-12
