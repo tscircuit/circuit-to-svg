@@ -213,7 +213,9 @@ export function convertCircuitJsonToPcbSvg(
     boardMaxX,
     boardMaxY,
     hasBoardBounds,
-  } = getComprehensivePcbBounds(circuitJson)
+  } = getComprehensivePcbBounds(circuitJson, {
+    includeCourtyards: options?.showCourtyards,
+  })
 
   const { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY, padding } =
     getViewportBounds({
