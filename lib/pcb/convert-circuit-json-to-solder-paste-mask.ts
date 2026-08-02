@@ -15,9 +15,11 @@ import { DEFAULT_PCB_COLOR_MAP } from "./colors"
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { createSvgObjectsFromSmtPadSolderPaste } from "./svg-object-fns/create-svg-objects-from-smtpad-solder-paste"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
+  "pcb_smtpad",
   "pcb_solder_paste",
 ]
 
@@ -38,12 +40,16 @@ export function convertCircuitJsonToSolderPasteMask(
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
-  // Filter to include only pcb_board and pcb_solder_paste elements for the specified layer
+  // Include explicit paste and pads that can provide paste as a fallback.
   const filteredCircuitJson = circuitJson.filter(
     (elm) =>
       elm.type === "pcb_board" ||
       elm.type === "pcb_panel" ||
-      (elm.type === "pcb_solder_paste" && elm.layer === options.layer),
+      (elm.type === "pcb_solder_paste" && elm.layer === options.layer) ||
+      (elm.type === "pcb_smtpad" &&
+        elm.layer === options.layer &&
+        "solderpaste_margin" in elm &&
+        typeof elm.solderpaste_margin === "number"),
   )
 
   // Process filtered elements to determine bounds
@@ -68,6 +74,12 @@ export function convertCircuitJsonToSolderPasteMask(
       }
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)
+    } else if (item.type === "pcb_smtpad") {
+      if (item.shape === "polygon") {
+        updateBoundsToIncludeOutline(item.points)
+      } else if ("x" in item && "y" in item) {
+        updateBounds({ x: item.x, y: item.y }, 0, 0)
+      }
     }
   }
 
@@ -99,6 +111,7 @@ export function convertCircuitJsonToSolderPasteMask(
     transform,
     layer: options.layer,
     colorMap: DEFAULT_PCB_COLOR_MAP,
+    circuitJson,
   }
 
   // Sort elements by OBJECT_ORDER and convert to SVG objects
@@ -203,6 +216,8 @@ function createSvgObjects({ elm, ctx }: CreateSvgObjectsParams): SvgObject[] {
       return createSvgObjectsFromPcbBoard(elm, ctx)
     case "pcb_solder_paste":
       return createSvgObjectsFromSolderPaste(elm, ctx)
+    case "pcb_smtpad":
+      return createSvgObjectsFromSmtPadSolderPaste(elm, ctx)
     default:
       return []
   }

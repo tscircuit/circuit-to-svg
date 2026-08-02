@@ -78,6 +78,7 @@ import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
+import { createSvgObjectsFromSmtPadSolderPaste } from "./svg-object-fns/create-svg-objects-from-smtpad-solder-paste"
 interface PointObjectNotation {
   x: number
   y: number
@@ -473,7 +474,12 @@ function createSvgObjects({
     case "pcb_hole":
       return createSvgObjectsFromPcbHole(elm, ctx)
     case "pcb_smtpad":
-      return createSvgObjectsFromSmtPad(elm, ctx)
+      return [
+        ...createSvgObjectsFromSmtPad(elm, ctx),
+        ...(ctx.showSolderPaste
+          ? createSvgObjectsFromSmtPadSolderPaste(elm, ctx)
+          : []),
+      ]
     case "pcb_solder_paste":
       return ctx.showSolderPaste
         ? createSvgObjectsFromSolderPaste(elm, ctx)
