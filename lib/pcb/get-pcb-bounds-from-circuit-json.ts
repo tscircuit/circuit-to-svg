@@ -27,13 +27,8 @@ export interface PcbBounds {
   hasBoardBounds: boolean
 }
 
-export interface PcbBoundsOptions {
-  includeCourtyards?: boolean
-}
-
 export function getComprehensivePcbBounds(
   circuitJson: AnyCircuitElement[],
-  options: PcbBoundsOptions = {},
 ): PcbBounds {
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
@@ -83,10 +78,7 @@ export function getComprehensivePcbBounds(
           height: circuitJsonElm.height,
         })
       }
-    } else if (
-      circuitJsonElm.type === "pcb_courtyard_rect" &&
-      options.includeCourtyards
-    ) {
+    } else if (circuitJsonElm.type === "pcb_courtyard_rect") {
       updateBounds({
         center: circuitJsonElm.center,
         width: circuitJsonElm.width,

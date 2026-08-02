@@ -8,9 +8,7 @@ test("repro: include rectangular courtyard in PCB bounds", () => {
   const rectangularCourtyard = circuitJson.filter(
     (element) => element.type === "pcb_courtyard_rect",
   ) as AnyCircuitElement[]
-  const bounds = getComprehensivePcbBounds(rectangularCourtyard, {
-    includeCourtyards: true,
-  })
+  const bounds = getComprehensivePcbBounds(rectangularCourtyard)
 
   expect(bounds.minX).toBeCloseTo(-4.31, 6)
   expect(bounds.maxX).toBeCloseTo(4.31, 6)

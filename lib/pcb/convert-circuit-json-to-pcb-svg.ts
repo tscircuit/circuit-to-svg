@@ -203,6 +203,10 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
+  const circuitJsonForBounds = options?.showCourtyards
+    ? circuitJson
+    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
+
   const {
     minX,
     minY,
@@ -213,9 +217,7 @@ export function convertCircuitJsonToPcbSvg(
     boardMaxX,
     boardMaxY,
     hasBoardBounds,
-  } = getComprehensivePcbBounds(circuitJson, {
-    includeCourtyards: options?.showCourtyards,
-  })
+  } = getComprehensivePcbBounds(circuitJsonForBounds)
 
   const { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY, padding } =
     getViewportBounds({
