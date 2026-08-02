@@ -5,12 +5,8 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 import { offsetPolygonOutline } from "../offset-polygon-outline"
 
-type PcbSmtPadWithSolderPasteMargin = PcbSmtPad & {
-  solderpaste_margin?: number
-}
-
 export const createSvgObjectsFromSmtPadSolderPaste = (
-  pad: PcbSmtPadWithSolderPasteMargin,
+  pad: PcbSmtPad,
   ctx: PcbContext,
 ): SvgObject[] => {
   const margin = pad.solderpaste_margin

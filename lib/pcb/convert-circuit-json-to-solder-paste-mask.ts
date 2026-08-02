@@ -48,7 +48,6 @@ export function convertCircuitJsonToSolderPasteMask(
       (elm.type === "pcb_solder_paste" && elm.layer === options.layer) ||
       (elm.type === "pcb_smtpad" &&
         elm.layer === options.layer &&
-        "solderpaste_margin" in elm &&
         typeof elm.solderpaste_margin === "number"),
   )
 
