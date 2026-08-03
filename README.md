@@ -90,6 +90,13 @@ import { convertCircuitJsonToPcbSvg } from 'circuit-to-svg'
 const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   matchBoardAspectRatio: true,
   backgroundColor: '#1e1e1e',
+  showCourtyards: true,
+  colorOverrides: {
+    courtyard: {
+      top: '#ff00ff',
+      bottom: '#26e9ff',
+    },
+  },
 })
 ```
 
@@ -106,6 +113,14 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   padding around it. Defaults to `true`.
 - `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
   time. Defaults to `true`.
+- `showCourtyards` – if `true`, render courtyard rectangles, polygons, outlines,
+  and circles. Top courtyards are magenta and bottom courtyards are cyan by
+  default. Defaults to `false`.
+- `colorOverrides` – override portions of the PCB color palette. Use
+  `courtyard.top` and `courtyard.bottom` to customize the colors independently.
+  Rendered courtyards also expose `pcb-courtyard-top` or
+  `pcb-courtyard-bottom` classes and a corresponding `data-pcb-layer`
+  attribute for CSS and downstream processing.
 - `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults
   to `false`.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
