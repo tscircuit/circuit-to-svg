@@ -1,15 +1,17 @@
 import {
-  distance,
   type PCBVia,
   type PcbBoard,
+  type PcbCopperPour,
   type PcbTrace,
   type Point,
+  distance,
 } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
-import { layerNameToColor } from "../layer-name-to-color"
+import { clipPcbTraceSegmentAtCopperPourBoundary } from "../clip-pcb-trace-segment-at-copper-pour-boundary"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
+import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 
 export function createSvgObjectsFromPcbTrace(
@@ -23,9 +25,31 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  for (const segment of getPcbTraceSegments(trace.route)) {
+  for (const originalSegment of getPcbTraceSegments(trace.route)) {
+    let segment = originalSegment
+
     if (segment.isInsideCopperPour) {
       continue
+    }
+
+    if (
+      segment.copperPourId &&
+      segment.startIsInsideCopperPour !== segment.endIsInsideCopperPour
+    ) {
+      const copperPour = ctx.circuitJson?.find(
+        (element): element is PcbCopperPour =>
+          element.type === "pcb_copper_pour" &&
+          element.pcb_copper_pour_id === segment.copperPourId,
+      )
+
+      if (copperPour) {
+        const clippedSegment = clipPcbTraceSegmentAtCopperPourBoundary(
+          segment,
+          copperPour,
+        )
+        if (!clippedSegment) continue
+        segment = clippedSegment
+      }
     }
 
     const startPoint = applyToPoint(transform, [

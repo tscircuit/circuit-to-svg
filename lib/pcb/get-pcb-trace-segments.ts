@@ -1,8 +1,8 @@
 import {
-  distance,
   type LayerRef,
   type PcbTrace,
   type Point,
+  distance,
 } from "circuit-json"
 
 export type PcbTraceRoutePoint = PcbTrace["route"][number]
@@ -13,6 +13,9 @@ export interface PcbTraceSegment {
   layer: LayerRef
   width: number
   isInsideCopperPour: boolean
+  startIsInsideCopperPour: boolean
+  endIsInsideCopperPour: boolean
+  copperPourId?: string
 }
 
 export function getPcbTracePoints(point: PcbTraceRoutePoint): readonly Point[] {
@@ -52,12 +55,22 @@ export function getPcbTraceSegments(
 
     if (isSamePoint(startAnchor, endAnchor)) continue
 
+    const startIsInsideCopperPour = isInsideCopperPour(start)
+    const endIsInsideCopperPour = isInsideCopperPour(end)
+
     segments.push({
       start: startAnchor,
       end: endAnchor,
       layer,
       width: "width" in start ? start.width : "width" in end ? end.width : 0,
-      isInsideCopperPour: isInsideCopperPour(start) && isInsideCopperPour(end),
+      isInsideCopperPour: startIsInsideCopperPour && endIsInsideCopperPour,
+      startIsInsideCopperPour,
+      endIsInsideCopperPour,
+      copperPourId: startIsInsideCopperPour
+        ? getCopperPourId(start)
+        : endIsInsideCopperPour
+          ? getCopperPourId(end)
+          : undefined,
     })
   }
 
@@ -71,6 +84,8 @@ export function getPcbTraceSegments(
         layer,
         width: point.width,
         isInsideCopperPour: false,
+        startIsInsideCopperPour: false,
+        endIsInsideCopperPour: false,
       })
     }
   }
@@ -82,6 +97,11 @@ function isInsideCopperPour(point: PcbTraceRoutePoint): boolean {
   return (
     "is_inside_copper_pour" in point && point.is_inside_copper_pour === true
   )
+}
+
+function getCopperPourId(point: PcbTraceRoutePoint): string | undefined {
+  if (!("copper_pour_id" in point)) return undefined
+  return point.copper_pour_id
 }
 
 function isSamePoint(a: Point, b: Point): boolean {
