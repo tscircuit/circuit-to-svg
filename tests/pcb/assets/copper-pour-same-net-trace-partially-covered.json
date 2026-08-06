@@ -1,0 +1,88 @@
+[
+  {
+    "type": "source_net",
+    "source_net_id": "source_net_0",
+    "name": "GND",
+    "member_source_group_ids": []
+  },
+  {
+    "type": "source_net",
+    "source_net_id": "source_net_1",
+    "name": "SIG",
+    "member_source_group_ids": []
+  },
+  {
+    "type": "source_trace",
+    "source_trace_id": "source_trace_0",
+    "connected_source_port_ids": [],
+    "connected_source_net_ids": ["source_net_0"]
+  },
+  {
+    "type": "source_trace",
+    "source_trace_id": "source_trace_1",
+    "connected_source_port_ids": [],
+    "connected_source_net_ids": ["source_net_1"]
+  },
+  {
+    "type": "pcb_board",
+    "pcb_board_id": "pcb_board_0",
+    "center": { "x": 0, "y": 0 },
+    "thickness": 1.4,
+    "num_layers": 2,
+    "width": 10,
+    "height": 8,
+    "material": "fr4"
+  },
+  {
+    "type": "pcb_trace",
+    "pcb_trace_id": "pcb_trace_0",
+    "source_trace_id": "source_trace_0",
+    "route": [
+      { "route_type": "wire", "x": -4.5, "y": 0, "width": 0.2, "layer": "top" },
+      { "route_type": "wire", "x": 4.5, "y": 0, "width": 0.2, "layer": "top" }
+    ]
+  },
+  {
+    "type": "pcb_trace",
+    "pcb_trace_id": "pcb_trace_1",
+    "source_trace_id": "source_trace_1",
+    "route": [
+      {
+        "route_type": "wire",
+        "x": -4.5,
+        "y": 1.5,
+        "width": 0.2,
+        "layer": "top"
+      },
+      { "route_type": "wire", "x": 4.5, "y": 1.5, "width": 0.2, "layer": "top" }
+    ]
+  },
+  {
+    "type": "pcb_copper_pour",
+    "pcb_copper_pour_id": "pcb_copper_pour_0",
+    "shape": "brep",
+    "layer": "top",
+    "source_net_id": "source_net_0",
+    "covered_with_solder_mask": true,
+    "brep_shape": {
+      "outer_ring": {
+        "vertices": [
+          { "x": -2.5, "y": -2.5 },
+          { "x": -2.5, "y": 2.5 },
+          { "x": 2.5, "y": 2.5 },
+          { "x": 2.5, "y": -2.5 }
+        ]
+      },
+      "inner_rings": [
+        {
+          "vertices": [
+            { "x": -0.75, "y": -0.75 },
+            { "x": -0.75, "y": 0.75 },
+            { "x": 0.75, "y": 0.75 },
+            { "x": 0.75, "y": -0.75 }
+          ]
+        }
+      ]
+    }
+  }
+]
