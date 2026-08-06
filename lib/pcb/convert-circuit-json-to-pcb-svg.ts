@@ -103,6 +103,12 @@ export interface PcbSvgOptions {
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  /**
+   * Hide the portions of traces that are inside a copper pour of the same
+   * net, so opaque trace strokes don't show through the semi-transparent
+   * pour fill. Defaults to false.
+   */
+  clipTracesInsideSameNetPours?: boolean
   viewport?: {
     minX: number
     minY: number
@@ -128,6 +134,7 @@ export interface PcbContext {
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
+  clipTracesInsideSameNetPours?: boolean
   /**
    * Populated while rendering traces: mask ids referenced by trace strokes to
    * hide the portions inside same-net copper pours. Used to emit mask defs.
@@ -299,6 +306,7 @@ export function convertCircuitJsonToPcbSvg(
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
+    clipTracesInsideSameNetPours: options?.clipTracesInsideSameNetPours,
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
 

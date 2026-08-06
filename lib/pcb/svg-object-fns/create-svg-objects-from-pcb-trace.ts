@@ -27,9 +27,10 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  const traceNetIds = ctx.circuitJson
-    ? getSourceNetIdsForPcbTrace(trace, ctx.circuitJson)
-    : new Set<string>()
+  const traceNetIds =
+    ctx.clipTracesInsideSameNetPours && ctx.circuitJson
+      ? getSourceNetIdsForPcbTrace(trace, ctx.circuitJson)
+      : new Set<string>()
   const pourMaskIdByLayer = new Map<string, string | undefined>()
 
   for (const segment of getPcbTraceSegments(trace.route)) {
@@ -59,7 +60,7 @@ export function createSvgObjectsFromPcbTrace(
     if (!pourMaskIdByLayer.has(layer)) {
       pourMaskIdByLayer.set(
         layer,
-        ctx.circuitJson
+        ctx.clipTracesInsideSameNetPours && ctx.circuitJson
           ? getCopperPourTraceMaskIdForLayer({
               traceNetIds,
               layer,
