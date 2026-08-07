@@ -130,7 +130,7 @@ export interface PcbContext {
   circuitJson?: AnyCircuitElement[]
   /**
    * Populated while rendering traces: mask ids referenced by trace strokes to
-   * hide the portions inside same-net copper pours. Used to emit mask defs.
+   * hide the portions covered by copper pours. Used to emit mask defs.
    */
   usedCopperPourTraceMaskIds?: Set<string>
 }

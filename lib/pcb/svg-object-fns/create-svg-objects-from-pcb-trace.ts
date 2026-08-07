@@ -13,10 +13,7 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
 import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
-import {
-  getCopperPourTraceMaskIdForLayer,
-  getSourceNetIdsForPcbTrace,
-} from "../copper-pour-trace-mask"
+import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -29,9 +26,6 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  const traceNetIds = ctx.circuitJson
-    ? getSourceNetIdsForPcbTrace(trace, ctx.circuitJson)
-    : new Set<string>()
   const pourMaskIdByLayer = new Map<string, string | undefined>()
 
   for (const originalSegment of getPcbTraceSegments(trace.route)) {
@@ -85,7 +79,6 @@ export function createSvgObjectsFromPcbTrace(
         layer,
         ctx.circuitJson
           ? getCopperPourTraceMaskIdForLayer({
-              traceNetIds,
               layer,
               circuitJson: ctx.circuitJson,
             })

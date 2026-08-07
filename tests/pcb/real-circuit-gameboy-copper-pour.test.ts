@@ -45,6 +45,13 @@ test.each(["top", "bottom"] satisfies LayerRef[])(
       includeVersion: false,
     })
 
+    const renderedTraceCount = svg.match(/class="pcb-trace"/g)?.length ?? 0
+    const maskedTraceCount =
+      svg.match(/class="pcb-trace"[^>]*mask="url\(#copper-pour-trace-mask-/g)
+        ?.length ?? 0
+    expect(renderedTraceCount).toBeGreaterThan(0)
+    expect(maskedTraceCount).toBe(renderedTraceCount)
+
     expect(svg).toMatchSvgSnapshot(
       import.meta.path,
       `real-circuit-gameboy-${layer}-layer`,
