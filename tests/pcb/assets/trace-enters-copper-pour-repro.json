@@ -1,0 +1,100 @@
+[
+  {
+    "type": "source_net",
+    "source_net_id": "source_net_ground",
+    "name": "GND",
+    "member_source_group_ids": []
+  },
+  {
+    "type": "source_net",
+    "source_net_id": "source_net_signal",
+    "name": "SIGNAL",
+    "member_source_group_ids": []
+  },
+  {
+    "type": "source_trace",
+    "source_trace_id": "source_trace_ground",
+    "connected_source_port_ids": [],
+    "connected_source_net_ids": ["source_net_ground"]
+  },
+  {
+    "type": "source_trace",
+    "source_trace_id": "source_trace_signal",
+    "connected_source_port_ids": [],
+    "connected_source_net_ids": ["source_net_signal"]
+  },
+  {
+    "type": "pcb_board",
+    "pcb_board_id": "pcb_board_0",
+    "center": { "x": 0, "y": 0 },
+    "thickness": 1.4,
+    "num_layers": 2,
+    "width": 10,
+    "height": 6,
+    "material": "fr4"
+  },
+  {
+    "type": "pcb_trace",
+    "pcb_trace_id": "pcb_trace_ground",
+    "source_trace_id": "source_trace_ground",
+    "route": [
+      {
+        "route_type": "wire",
+        "x": -4.5,
+        "y": 0,
+        "width": 0.2,
+        "layer": "top"
+      },
+      {
+        "route_type": "wire",
+        "x": 0,
+        "y": 0,
+        "width": 0.2,
+        "layer": "top",
+        "is_inside_copper_pour": true,
+        "copper_pour_id": "pcb_copper_pour_ground"
+      },
+      {
+        "route_type": "wire",
+        "x": 2,
+        "y": 0,
+        "width": 0.2,
+        "layer": "top",
+        "is_inside_copper_pour": true,
+        "copper_pour_id": "pcb_copper_pour_ground"
+      }
+    ]
+  },
+  {
+    "type": "pcb_trace",
+    "pcb_trace_id": "pcb_trace_signal",
+    "source_trace_id": "source_trace_signal",
+    "route": [
+      {
+        "route_type": "wire",
+        "x": -4.5,
+        "y": 1.2,
+        "width": 0.2,
+        "layer": "top"
+      },
+      {
+        "route_type": "wire",
+        "x": 4.5,
+        "y": 1.2,
+        "width": 0.2,
+        "layer": "top"
+      }
+    ]
+  },
+  {
+    "type": "pcb_copper_pour",
+    "pcb_copper_pour_id": "pcb_copper_pour_ground",
+    "shape": "rect",
+    "layer": "top",
+    "source_net_id": "source_net_ground",
+    "center": { "x": 0, "y": 0 },
+    "width": 5,
+    "height": 4,
+    "covered_with_solder_mask": true
+  }
+]
