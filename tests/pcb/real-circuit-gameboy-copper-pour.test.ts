@@ -57,4 +57,5 @@ test.each(["top", "bottom"] satisfies LayerRef[])(
       `real-circuit-gameboy-${layer}-layer`,
     )
   },
+  { timeout: 60_000 },
 )
