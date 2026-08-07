@@ -277,42 +277,54 @@ export function createSvgObjectsFromPcbPlatedHole(
     const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
     const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
 
-    let children: SvgObject[] = [
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-outer",
-          fill: colorMap.copper.top,
-          cx: x.toString(),
-          cy: y.toString(),
-          r: outerRadius.toString(),
-          "data-type": "pcb_plated_hole",
-          "data-pcb-layer": layer,
-        },
-        value: "",
-        children: [],
-      },
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-inner",
-          fill: colorMap.drill,
+    // A non-finite diameter (e.g. an unparseable `outer_diameter`/`hole_diameter`
+    // arriving as NaN) would stringify to r="NaN", which is not a valid SVG
+    // length — renderers discard the whole <circle>. Build only the circles
+    // whose radius is finite instead of emitting broken markup. See
+    // tscircuit/circuit-to-svg#634.
+    const outerCircle: SvgObject | null = Number.isFinite(outerRadius)
+      ? {
+          name: "circle",
+          type: "element",
+          attributes: {
+            class: "pcb-hole-outer",
+            fill: colorMap.copper.top,
+            cx: x.toString(),
+            cy: y.toString(),
+            r: outerRadius.toString(),
+            "data-type": "pcb_plated_hole",
+            "data-pcb-layer": layer,
+          },
+          value: "",
+          children: [],
+        }
+      : null
+    const innerCircle: SvgObject | null = Number.isFinite(innerRadius)
+      ? {
+          name: "circle",
+          type: "element",
+          attributes: {
+            class: "pcb-hole-inner",
+            fill: colorMap.drill,
 
-          cx: x.toString(),
-          cy: y.toString(),
-          r: innerRadius.toString(),
-          "data-type": "pcb_plated_hole_drill",
-          "data-pcb-layer": "drill",
-        },
-        value: "",
-        children: [],
-      },
-    ]
+            cx: x.toString(),
+            cy: y.toString(),
+            r: innerRadius.toString(),
+            "data-type": "pcb_plated_hole_drill",
+            "data-pcb-layer": "drill",
+          },
+          value: "",
+          children: [],
+        }
+      : null
 
-    // Add soldermask if needed
-    if (shouldShowSolderMask) {
+    let children: SvgObject[] = [outerCircle, innerCircle].filter(
+      (c): c is SvgObject => c !== null,
+    )
+
+    // Add soldermask if needed. The mask geometry is derived from outerRadius,
+    // so skip it when outerRadius is non-finite (it would emit r="NaN" too).
+    if (shouldShowSolderMask && Number.isFinite(outerRadius)) {
       const maskRadius = outerRadius + soldermaskMargin
 
       // For negative margins, create a ring effect
@@ -351,8 +363,8 @@ export function createSvgObjectsFromPcbPlatedHole(
             value: "",
             children: [],
           },
-          // 3. Draw the drill hole on top
-          children[1] as SvgObject, // Original inner hole
+          // 3. Draw the drill hole on top (omitted if its radius is non-finite)
+          ...(innerCircle ? [innerCircle] : []),
         ]
       } else {
         // For positive margins, draw substrate cutout
