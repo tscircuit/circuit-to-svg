@@ -59,7 +59,10 @@ import {
   createKeepoutPatternDefs,
 } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
-import { createCopperPourTraceMaskDefs } from "./copper-pour-trace-mask"
+import {
+  createCopperPourTraceMaskDefs,
+  groupCopperPourMaskedTraceObjects,
+} from "./copper-pour-trace-mask"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import {
   createSvgObjectsForPcbGrid,
@@ -324,7 +327,9 @@ export function convertCircuitJsonToPcbSvg(
     unsortedSvgObjects = [...unsortedSvgObjects, ...ratsNestObjects]
   }
 
-  const svgObjects = sortSvgObjectsByPcbLayer(unsortedSvgObjects)
+  const svgObjects = groupCopperPourMaskedTraceObjects(
+    sortSvgObjectsByPcbLayer(unsortedSvgObjects),
+  )
 
   const children: SvgObject[] = [
     {
