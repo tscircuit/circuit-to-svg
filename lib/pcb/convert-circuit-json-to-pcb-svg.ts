@@ -59,6 +59,7 @@ import {
   createKeepoutPatternDefs,
 } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createCopperPourTraceMaskDefs } from "./copper-pour-trace-mask"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import {
   createSvgObjectsForPcbGrid,
@@ -102,6 +103,12 @@ export interface PcbSvgOptions {
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  /**
+   * Hide the portions of traces that are inside a copper pour of the same
+   * net, so opaque trace strokes don't show through the semi-transparent
+   * pour fill. Defaults to false.
+   */
+  clipTracesInsideSameNetPours?: boolean
   viewport?: {
     minX: number
     minY: number
@@ -127,6 +134,12 @@ export interface PcbContext {
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
+  clipTracesInsideSameNetPours?: boolean
+  /**
+   * Populated while rendering traces: mask ids referenced by trace strokes to
+   * hide the portions inside same-net copper pours. Used to emit mask defs.
+   */
+  usedCopperPourTraceMaskIds?: Set<string>
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -297,6 +310,8 @@ export function convertCircuitJsonToPcbSvg(
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
+    clipTracesInsideSameNetPours: options?.clipTracesInsideSameNetPours,
+    usedCopperPourTraceMaskIds: new Set<string>(),
   }
 
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>
@@ -355,6 +370,17 @@ export function convertCircuitJsonToPcbSvg(
         colorMap.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout!,
       ),
     )
+  }
+
+  const copperPourTraceMaskDefs = createCopperPourTraceMaskDefs({
+    circuitJson,
+    transform,
+    svgWidth,
+    svgHeight,
+    usedMaskIds: ctx.usedCopperPourTraceMaskIds!,
+  })
+  if (copperPourTraceMaskDefs) {
+    children.push(copperPourTraceMaskDefs)
   }
 
   children.push({

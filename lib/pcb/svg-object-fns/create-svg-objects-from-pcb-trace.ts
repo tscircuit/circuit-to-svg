@@ -11,6 +11,10 @@ import { layerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
+import {
+  getCopperPourTraceMaskIdForLayer,
+  getSourceNetIdsForPcbTrace,
+} from "../copper-pour-trace-mask"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -22,6 +26,12 @@ export function createSvgObjectsFromPcbTrace(
 
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
+
+  const traceNetIds =
+    ctx.clipTracesInsideSameNetPours && ctx.circuitJson
+      ? getSourceNetIdsForPcbTrace(trace, ctx.circuitJson)
+      : new Set<string>()
+  const pourMaskIdByLayer = new Map<string, string | undefined>()
 
   for (const segment of getPcbTraceSegments(trace.route)) {
     if (segment.isInsideCopperPour) {
@@ -47,6 +57,26 @@ export function createSvgObjectsFromPcbTrace(
       ? (segment.width * Math.abs(transform.a)).toString()
       : "0.3"
 
+    if (!pourMaskIdByLayer.has(layer)) {
+      pourMaskIdByLayer.set(
+        layer,
+        ctx.clipTracesInsideSameNetPours && ctx.circuitJson
+          ? getCopperPourTraceMaskIdForLayer({
+              traceNetIds,
+              layer,
+              circuitJson: ctx.circuitJson,
+            })
+          : undefined,
+      )
+    }
+    const pourMaskId = pourMaskIdByLayer.get(layer)
+    const pourMaskAttributes: Record<string, string> = pourMaskId
+      ? { mask: `url(#${pourMaskId})` }
+      : {}
+    if (pourMaskId) {
+      ctx.usedCopperPourTraceMaskIds?.add(pourMaskId)
+    }
+
     if (showSolderMask) {
       const maskObject: SvgObject = {
         name: "path",
@@ -64,6 +94,7 @@ export function createSvgObjectsFromPcbTrace(
           "shape-rendering": "crispEdges",
           "data-type": "pcb_trace_soldermask",
           "data-pcb-layer": layer,
+          ...pourMaskAttributes,
         },
       }
 
@@ -85,6 +116,7 @@ export function createSvgObjectsFromPcbTrace(
           "shape-rendering": "crispEdges",
           "data-type": showSolderMask ? "pcb_soldermask" : "pcb_trace",
           "data-pcb-layer": layer,
+          ...pourMaskAttributes,
         },
       }
 
