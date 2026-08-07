@@ -129,3 +129,71 @@ export function createCopperPourTraceMaskDefs({
     },
   }
 }
+
+/**
+ * Applies each layer mask once and merges trace segments that share the same
+ * presentation attributes into compound paths. Browsers can then composite
+ * a small trace layer in one pass instead of masking hundreds of individual
+ * nodes on dense boards.
+ */
+export function groupCopperPourMaskedTraceObjects(
+  objects: SvgObject[],
+): SvgObject[] {
+  const result: SvgObject[] = []
+  const groupsByMask = new Map<
+    string,
+    {
+      object: SvgObject
+      pathsByAttributes: Map<string, SvgObject>
+    }
+  >()
+
+  for (const object of objects) {
+    const dataType = object.attributes?.["data-type"]
+    const mask = object.attributes?.mask
+    const isTrace =
+      dataType === "pcb_trace" || dataType === "pcb_trace_soldermask"
+
+    if (!isTrace || !mask?.includes("#copper-pour-trace-mask-")) {
+      result.push(object)
+      continue
+    }
+
+    let group = groupsByMask.get(mask)
+    if (!group) {
+      const groupObject: SvgObject = {
+        name: "g",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-trace-mask-group",
+          mask,
+        },
+      }
+      group = {
+        object: groupObject,
+        pathsByAttributes: new Map<string, SvgObject>(),
+      }
+      groupsByMask.set(mask, group)
+      result.push(groupObject)
+    }
+
+    const { mask: _mask, d = "", ...attributes } = object.attributes
+    const attributesKey = JSON.stringify(attributes)
+    const existingPath = group.pathsByAttributes.get(attributesKey)
+    if (existingPath) {
+      existingPath.attributes.d += ` ${d}`
+      continue
+    }
+
+    const mergedPath = {
+      ...object,
+      attributes: { ...attributes, d },
+    }
+    group.pathsByAttributes.set(attributesKey, mergedPath)
+    group.object.children.push(mergedPath)
+  }
+
+  return result
+}
