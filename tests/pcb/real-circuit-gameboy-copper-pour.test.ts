@@ -10,6 +10,9 @@ const gameboyPcb = gameboyPcbJson as AnyCircuitElement[]
 const gameboyTraces = gameboyPcb.filter(
   (element): element is PcbTrace => element.type === "pcb_trace",
 )
+const groundRoutedTraceCount = gameboyTraces.filter((trace) =>
+  trace.pcb_trace_id.startsWith("source_net_0_"),
+).length
 
 test.each(["top", "bottom"] satisfies LayerRef[])(
   "renders abse/gameboy ground pours without covered %s-layer traces",
@@ -30,6 +33,7 @@ test.each(["top", "bottom"] satisfies LayerRef[])(
     ).length
 
     expect(gameboyTraces).toHaveLength(253)
+    expect(groundRoutedTraceCount).toBe(47)
     expect(markedRoutePointCount).toBe(290)
     expect(layerPourCount).toBe(layer === "top" ? 63 : 30)
 
