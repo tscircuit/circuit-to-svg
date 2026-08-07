@@ -78,6 +78,13 @@ export function getComprehensivePcbBounds(
           height: circuitJsonElm.height,
         })
       }
+    } else if (circuitJsonElm.type === "pcb_courtyard_rect") {
+      updateBounds({
+        center: circuitJsonElm.center,
+        width: circuitJsonElm.width,
+        height: circuitJsonElm.height,
+        ccwRotationDegrees: circuitJsonElm.ccw_rotation,
+      })
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       const pad = circuitJsonElm
       if (pad.shape === "rect" || pad.shape === "pill") {
