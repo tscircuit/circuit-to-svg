@@ -59,6 +59,7 @@ import {
   createKeepoutPatternDefs,
 } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
+import { createCopperPourTraceMaskDefs } from "./copper-pour-trace-mask"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import {
   createSvgObjectsForPcbGrid,
@@ -127,6 +128,11 @@ export interface PcbContext {
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
   circuitJson?: AnyCircuitElement[]
+  /**
+   * Populated while rendering traces: mask ids referenced by trace strokes to
+   * hide the portions covered by copper pours. Used to emit mask defs.
+   */
+  usedCopperPourTraceMaskIds?: Set<string>
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -297,6 +303,7 @@ export function convertCircuitJsonToPcbSvg(
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
     circuitJson,
+    usedCopperPourTraceMaskIds: new Set<string>(),
   }
 
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>
@@ -355,6 +362,17 @@ export function convertCircuitJsonToPcbSvg(
         colorMap.keepout ?? DEFAULT_PCB_COLOR_MAP.keepout!,
       ),
     )
+  }
+
+  const copperPourTraceMaskDefs = createCopperPourTraceMaskDefs({
+    circuitJson,
+    transform,
+    svgWidth,
+    svgHeight,
+    usedMaskIds: ctx.usedCopperPourTraceMaskIds!,
+  })
+  if (copperPourTraceMaskDefs) {
+    children.push(copperPourTraceMaskDefs)
   }
 
   children.push({

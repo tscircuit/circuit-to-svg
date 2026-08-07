@@ -1,16 +1,19 @@
 import {
-  distance,
   type PCBVia,
   type PcbBoard,
+  type PcbCopperPour,
   type PcbTrace,
   type Point,
+  distance,
 } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
-import { layerNameToColor } from "../layer-name-to-color"
+import { clipPcbTraceSegmentAtCopperPourBoundary } from "../clip-pcb-trace-segment-at-copper-pour-boundary"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPcbTraceSegments } from "../get-pcb-trace-segments"
+import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
+import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -23,9 +26,33 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  for (const segment of getPcbTraceSegments(trace.route)) {
+  const pourMaskIdByLayer = new Map<string, string | undefined>()
+
+  for (const originalSegment of getPcbTraceSegments(trace.route)) {
+    let segment = originalSegment
+
     if (segment.isInsideCopperPour) {
       continue
+    }
+
+    if (
+      segment.copperPourId &&
+      segment.startIsInsideCopperPour !== segment.endIsInsideCopperPour
+    ) {
+      const copperPour = ctx.circuitJson?.find(
+        (element): element is PcbCopperPour =>
+          element.type === "pcb_copper_pour" &&
+          element.pcb_copper_pour_id === segment.copperPourId,
+      )
+
+      if (copperPour) {
+        const clippedSegment = clipPcbTraceSegmentAtCopperPourBoundary(
+          segment,
+          copperPour,
+        )
+        if (!clippedSegment) continue
+        segment = clippedSegment
+      }
     }
 
     const startPoint = applyToPoint(transform, [
@@ -47,6 +74,25 @@ export function createSvgObjectsFromPcbTrace(
       ? (segment.width * Math.abs(transform.a)).toString()
       : "0.3"
 
+    if (!pourMaskIdByLayer.has(layer)) {
+      pourMaskIdByLayer.set(
+        layer,
+        ctx.circuitJson
+          ? getCopperPourTraceMaskIdForLayer({
+              layer,
+              circuitJson: ctx.circuitJson,
+            })
+          : undefined,
+      )
+    }
+    const pourMaskId = pourMaskIdByLayer.get(layer)
+    const pourMaskAttributes: Record<string, string> = pourMaskId
+      ? { mask: `url(#${pourMaskId})` }
+      : {}
+    if (pourMaskId) {
+      ctx.usedCopperPourTraceMaskIds?.add(pourMaskId)
+    }
+
     if (showSolderMask) {
       const maskObject: SvgObject = {
         name: "path",
@@ -64,6 +110,7 @@ export function createSvgObjectsFromPcbTrace(
           "shape-rendering": "crispEdges",
           "data-type": "pcb_trace_soldermask",
           "data-pcb-layer": layer,
+          ...pourMaskAttributes,
         },
       }
 
@@ -85,6 +132,7 @@ export function createSvgObjectsFromPcbTrace(
           "shape-rendering": "crispEdges",
           "data-type": showSolderMask ? "pcb_soldermask" : "pcb_trace",
           "data-pcb-layer": layer,
+          ...pourMaskAttributes,
         },
       }
 
