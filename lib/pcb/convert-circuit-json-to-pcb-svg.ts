@@ -216,17 +216,31 @@ export function convertCircuitJsonToPcbSvg(
     ? circuitJson
     : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
 
-  const {
-    minX,
-    minY,
-    maxX,
-    maxY,
-    boardMinX,
-    boardMinY,
-    boardMaxX,
-    boardMaxY,
-    hasBoardBounds,
-  } = getComprehensivePcbBounds(circuitJsonForBounds)
+  const pcbBounds = getComprehensivePcbBounds(circuitJsonForBounds)
+  const { boardMinX, boardMinY, boardMaxX, boardMaxY, hasBoardBounds } =
+    pcbBounds
+
+  // getComprehensivePcbBounds returns non-finite bounds (Infinity) when nothing
+  // contributes PCB bounds. That happens for an empty circuit or for one that
+  // only has source/schematic elements (a schematic-only design or circuit JSON
+  // captured before PCB layout). Those infinities flow into the scale/translate
+  // transform below and turn every projected coordinate into NaN, so the SVG
+  // ends up with an invalid pcb-boundary rect whose x/y/width/height are "NaN".
+  // Fall back to a small finite box the way getSchematicBoundsFromCircuitJson
+  // does for the empty schematic so the PCB SVG stays valid.
+  let { minX, minY, maxX, maxY } = pcbBounds
+  if (
+    !pcbBounds.hasBounds ||
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
+    minX = -1
+    minY = -1
+    maxX = 1
+    maxY = 1
+  }
 
   const { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY, padding } =
     getViewportBounds({
