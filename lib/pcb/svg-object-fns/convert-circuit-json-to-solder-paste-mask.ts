@@ -100,6 +100,28 @@ export function createSvgObjectsFromSolderPaste(
       },
     ]
   }
+  // Implement oval (elliptical) solder paste
+  if (solderPaste.shape === "oval") {
+    const width = solderPaste.width * Math.abs(transform.a)
+    const height = solderPaste.height * Math.abs(transform.d)
+
+    return [
+      {
+        name: "ellipse",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-paste",
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
+          cx: x.toString(),
+          cy: y.toString(),
+          rx: (width / 2).toString(),
+          ry: (height / 2).toString(),
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
+        },
+      },
+    ]
+  }
   // Implement circle-shaped SMT pad
   if (solderPaste.shape === "circle") {
     const radius = solderPaste.radius * Math.abs(transform.a)
