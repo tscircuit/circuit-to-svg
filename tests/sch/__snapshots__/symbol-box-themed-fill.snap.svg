@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="tscircuit-schematic" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(300,0,0,-300,600,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+              
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g class="sch-component" data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_1"><rect class="component-overlay sch-component-overlay" x="300" y="150" width="600" height="300" fill="transparent"/><path class="sch-component-symbol-path" d="M 300 450 L 900 450 L 900 150 L 300 150 Z" stroke="rgb(132, 0, 0)" fill="none" stroke-width="6px" stroke-linecap="round"/><rect class="sch-component-symbol-box" x="300" y="450" width="600" height="300" stroke-width="6px" fill="rgb(255, 255, 194)" stroke="rgb(132, 0, 0)"/><circle class="component-pin sch-component-pin" cx="300" cy="300" r="6px" stroke-width="6px" fill="none" stroke="rgb(132, 0, 0)"/><circle class="component-pin sch-component-pin" cx="900" cy="300" r="6px" stroke-width="6px" fill="none" stroke="rgb(132, 0, 0)"/></g><g class="schematic-port-hover sch-port-hover" data-schematic-port-id="source_port_1"><circle cx="300" cy="300" r="12" fill="red" opacity="0"/></g><g class="schematic-port-hover sch-port-hover" data-schematic-port-id="source_port_2"><circle cx="900" cy="300" r="12" fill="red" opacity="0"/></g></svg>
