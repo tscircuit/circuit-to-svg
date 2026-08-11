@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
+              .assembly-component {
+                fill: none;
+                stroke: #000;
+              }
+              .assembly-board {
+                fill: #f2f2f2;
+                stroke: rgb(0,0,0);
+                stroke-opacity: 0.8;
+              }
+              .assembly-component-label {
+                fill: #000;
+                font-family: Arial, serif;
+                font-weight: bold;
+                dominant-baseline: middle;
+                text-anchor: middle;
+              }
+              .assembly-boundary {
+                fill: none;
+                stroke: #fff;
+                stroke-width: 0.2;
+              }
+            </style><rect fill="#fff" x="0" y="0" width="800" height="600"/><rect class="assembly-boundary" x="25" y="175" width="750" height="250"/><path class="pcb-board" d="M 25 425 L 775 425 L 775 175 L 25 175 Z" fill="none" stroke="rgb(0,0,0)" stroke-opacity="0.8" stroke-width="5"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="139.375" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="185" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="364.375" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="410" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="589.375" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><rect class="assembly-pad" fill="rgb(210, 210, 210)" x="635" y="282.5" width="25.624999999999996" height="35" data-layer="top"/><g transform="translate(175, 300) scale(1, -1)"><path class="assembly-component" d="M-35.624999999999986,-17.5 L35.624999999999986,-17.5 L35.624999999999986,17.5 L-35.624999999999986,17.5 Z" stroke-width="0.80" transform="rotate(0)" stroke-dasharray=""/><text x="0" y="0" class="assembly-component-label" text-anchor="middle" dy="0" style="pointer-events: none" font-size="14.0px" transform="scale(1, -1)"><tspan x="0" dy="-.5em" class="assembly-component-name">R1</tspan><tspan x="0" dy="1em" class="assembly-component-value">4.7kΩ</tspan></text></g><g transform="translate(400, 300) scale(1, -1)"><path class="assembly-component" d="M-35.62499999999999,-17.5 L35.62499999999999,-17.5 L35.62499999999999,17.5 L-35.62499999999999,17.5 Z" stroke-width="0.80" transform="rotate(0)" stroke-dasharray=""/><text x="0" y="0" class="assembly-component-label" text-anchor="middle" dy="0" style="pointer-events: none" font-size="14.0px" transform="scale(1, -1)"><tspan x="0" dy="-.5em" class="assembly-component-name">C1</tspan><tspan x="0" dy="1em" class="assembly-component-value">0.1uF</tspan></text></g><g transform="translate(625, 300) scale(1, -1)"><path class="assembly-component" d="M-35.624999999999986,-17.5 L35.624999999999986,-17.5 L35.624999999999986,17.5 L-35.624999999999986,17.5 Z" stroke-width="0.80" transform="rotate(0)" stroke-dasharray=""/><text x="0" y="0" class="assembly-component-label" text-anchor="middle" dy="0" style="pointer-events: none" font-size="14.0px" transform="scale(1, -1)"><tspan x="0" dy="-.5em" class="assembly-component-name">L1</tspan><tspan x="0" dy="1em" class="assembly-component-value">2.2µH</tspan></text></g></svg>

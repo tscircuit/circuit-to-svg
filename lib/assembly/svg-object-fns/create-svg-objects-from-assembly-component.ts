@@ -1,18 +1,19 @@
 import type {
-  PcbComponent,
-  LayerRef,
-  Point,
   AnyCircuitElement,
+  LayerRef,
+  PcbComponent,
+  Point,
 } from "circuit-json"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
   elm: AnyCircuitElement
   portPosition: { x: number; y: number }
   name: string
+  value?: string
   arePinsInterchangeable?: boolean
 }
 
@@ -28,7 +29,7 @@ export function createSvgObjectsFromAssemblyComponent(
   params: AssemblyComponentParams,
   ctx: AssemblySvgContext,
 ): SvgObject | null {
-  const { elm, portPosition, name, arePinsInterchangeable } = params
+  const { elm, portPosition, name, value, arePinsInterchangeable } = params
   const { transform } = ctx
   const { center, width, height, rotation = 0, layer = "top" } = elm as any
   if (!center || typeof width !== "number" || typeof height !== "number")
@@ -44,7 +45,13 @@ export function createSvgObjectsFromAssemblyComponent(
 
   const children: SvgObject[] = [
     createComponentPath(scaledWidth, scaledHeight, rotation, layer),
-    createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
+    createComponentLabel(
+      scaledWidth,
+      scaledHeight,
+      name ?? "",
+      value,
+      transform,
+    ),
   ]
 
   if (!arePinsInterchangeable) {
@@ -101,6 +108,7 @@ function createComponentLabel(
   scaledWidth: number,
   scaledHeight: number,
   name: string,
+  value: string | undefined,
   transform: Matrix,
 ): SvgObject {
   // Use the smaller dimension as the scale factor
@@ -109,7 +117,7 @@ function createComponentLabel(
   // Adjusted font sizing with smaller scale for small components
   const minFontSize = 3
   const maxFontSize = 58
-  const fontScale = 0.8 // Smaller scale for small components
+  const fontScale = value ? 0.4 : 0.8
   const fontSize = Math.min(
     maxFontSize,
     Math.max(minFontSize, size * fontScale),
@@ -126,15 +134,46 @@ function createComponentLabel(
       y: "0",
       class: "assembly-component-label",
       "text-anchor": "middle",
-      dy: ".10em",
+      dy: value ? "0" : ".10em",
       style: "pointer-events: none",
       "font-size": `${fontSize.toFixed(1)}px`,
       transform: isTall ? "rotate(90) scale(1, -1)" : "scale(1, -1)",
     },
+    children: value
+      ? [
+          createLabelLine(name, "assembly-component-name", "-.5em"),
+          createLabelLine(value, "assembly-component-value", "1em"),
+        ]
+      : [
+          {
+            type: "text",
+            value: name || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
+    value: "",
+  }
+}
+
+function createLabelLine(
+  text: string,
+  className: string,
+  dy: string,
+): SvgObject {
+  return {
+    name: "tspan",
+    type: "element",
+    attributes: {
+      x: "0",
+      dy,
+      class: className,
+    },
     children: [
       {
         type: "text",
-        value: name || "",
+        value: text,
         name: "",
         attributes: {},
         children: [],

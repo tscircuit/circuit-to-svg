@@ -1,6 +1,7 @@
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject, stringify } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point } from "circuit-json"
+import { formatSiUnit } from "format-si-unit"
+import { type INode as SvgObject, stringify } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -8,14 +9,14 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -204,6 +205,7 @@ function createSvgObjects(
             elm,
             portPosition: { x: firstPort.x, y: firstPort.y },
             name: sourceComponent.name,
+            value: getAssemblyComponentValue(sourceComponent),
             arePinsInterchangeable,
           },
           ctx,
@@ -222,6 +224,36 @@ function createSvgObjects(
 
     default:
       return []
+  }
+}
+
+function getAssemblyComponentValue(
+  sourceComponent: Extract<AnyCircuitElement, { type: "source_component" }>,
+): string | undefined {
+  switch (sourceComponent.ftype) {
+    case "simple_resistor": {
+      if (sourceComponent.display_resistance !== undefined) {
+        return sourceComponent.display_resistance
+      }
+      if (typeof sourceComponent.resistance !== "number") return undefined
+      return `${formatSiUnit(sourceComponent.resistance)}Ω`
+    }
+    case "simple_capacitor": {
+      if (sourceComponent.display_capacitance !== undefined) {
+        return sourceComponent.display_capacitance
+      }
+      if (typeof sourceComponent.capacitance !== "number") return undefined
+      return `${formatSiUnit(sourceComponent.capacitance)}F`
+    }
+    case "simple_inductor": {
+      if (sourceComponent.display_inductance !== undefined) {
+        return sourceComponent.display_inductance
+      }
+      if (typeof sourceComponent.inductance !== "number") return undefined
+      return `${formatSiUnit(sourceComponent.inductance)}H`
+    }
+    default:
+      return undefined
   }
 }
 
