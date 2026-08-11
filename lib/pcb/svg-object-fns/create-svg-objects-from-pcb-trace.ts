@@ -1,5 +1,6 @@
 import {
   type PCBVia,
+  type LayerRef,
   type PcbBoard,
   type PcbCopperPour,
   type PcbTrace,
@@ -10,7 +11,11 @@ import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { clipPcbTraceSegmentAtCopperPourBoundary } from "../clip-pcb-trace-segment-at-copper-pour-boundary"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getPcbTraceSegments } from "../get-pcb-trace-segments"
+import {
+  getPcbTraceSegments,
+  type PcbTraceSegment,
+} from "../get-pcb-trace-segments"
+import { getInterpolatedTracePolygon } from "../get-interpolated-trace-polygon"
 import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
@@ -27,6 +32,7 @@ export function createSvgObjectsFromPcbTrace(
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
   const pourMaskIdByLayer = new Map<string, string | undefined>()
+  const drawableSegments: PcbTraceSegment[] = []
 
   for (const originalSegment of getPcbTraceSegments(trace.route)) {
     let segment = originalSegment
@@ -55,25 +61,14 @@ export function createSvgObjectsFromPcbTrace(
       }
     }
 
-    const startPoint = applyToPoint(transform, [
-      segment.start.x,
-      segment.start.y,
-    ])
-    const endPoint = applyToPoint(transform, [segment.end.x, segment.end.y])
     const layer = segment.layer
     if (!layer) continue
     if (layerFilter && layer !== layerFilter) continue
 
-    const copperColor = layerNameToColor(layer, colorMap)
-    const maskColor =
-      colorMap.soldermaskWithCopperUnderneath[
-        layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
-      ]
+    drawableSegments.push(segment)
+  }
 
-    const width = segment.width
-      ? (segment.width * Math.abs(transform.a)).toString()
-      : "0.3"
-
+  const getPourMaskAttributes = (layer: LayerRef): Record<string, string> => {
     if (!pourMaskIdByLayer.has(layer)) {
       pourMaskIdByLayer.set(
         layer,
@@ -86,57 +81,109 @@ export function createSvgObjectsFromPcbTrace(
       )
     }
     const pourMaskId = pourMaskIdByLayer.get(layer)
-    const pourMaskAttributes: Record<string, string> = pourMaskId
-      ? { mask: `url(#${pourMaskId})` }
-      : {}
     if (pourMaskId) {
       ctx.usedCopperPourTraceMaskIds?.add(pourMaskId)
+      return { mask: `url(#${pourMaskId})` }
     }
+    return {}
+  }
 
-    if (showSolderMask) {
-      const maskObject: SvgObject = {
+  if (trace.route_thickness_mode === "interpolated") {
+    for (const segments of getConnectedTraceSegmentGroups(drawableSegments)) {
+      const layer = segments[0]?.layer
+      if (!layer) continue
+      const d = getInterpolatedTracePathData(segments, transform)
+      if (!d) continue
+
+      const copperColor = layerNameToColor(layer, colorMap)
+      const maskColor =
+        colorMap.soldermaskWithCopperUnderneath[
+          layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+        ]
+
+      svgObjects.push({
         name: "path",
         type: "element",
         value: "",
         children: [],
         attributes: {
-          class: "pcb-soldermask",
-          stroke: maskColor,
-          fill: "none",
-          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-          "stroke-width": width,
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
-          "shape-rendering": "crispEdges",
-          "data-type": "pcb_trace_soldermask",
+          class: showSolderMask ? "pcb-soldermask" : "pcb-trace",
+          fill: showSolderMask ? maskColor : copperColor,
+          stroke: "none",
+          d,
+          "shape-rendering": "geometricPrecision",
+          "data-type": showSolderMask ? "pcb_trace_soldermask" : "pcb_trace",
           "data-pcb-layer": layer,
-          ...pourMaskAttributes,
+          ...getPourMaskAttributes(layer),
         },
-      }
+      })
+    }
+  } else {
+    for (const segment of drawableSegments) {
+      const startPoint = applyToPoint(transform, [
+        segment.start.x,
+        segment.start.y,
+      ])
+      const endPoint = applyToPoint(transform, [segment.end.x, segment.end.y])
+      const layer = segment.layer
 
-      svgObjects.push(maskObject)
-    } else {
-      const maskOnlyObject: SvgObject = {
-        name: "path",
-        type: "element",
-        value: "",
-        children: [],
-        attributes: {
-          class: "pcb-trace",
-          stroke: copperColor,
-          fill: "none",
-          d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
-          "stroke-width": width,
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
-          "shape-rendering": "crispEdges",
-          "data-type": showSolderMask ? "pcb_soldermask" : "pcb_trace",
-          "data-pcb-layer": layer,
-          ...pourMaskAttributes,
-        },
-      }
+      const copperColor = layerNameToColor(layer, colorMap)
+      const maskColor =
+        colorMap.soldermaskWithCopperUnderneath[
+          layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+        ]
 
-      svgObjects.push(maskOnlyObject)
+      const width = segment.width
+        ? (segment.width * Math.abs(transform.a)).toString()
+        : "0.3"
+
+      const pourMaskAttributes = getPourMaskAttributes(layer)
+
+      if (showSolderMask) {
+        const maskObject: SvgObject = {
+          name: "path",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-soldermask",
+            stroke: maskColor,
+            fill: "none",
+            d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+            "stroke-width": width,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "shape-rendering": "crispEdges",
+            "data-type": "pcb_trace_soldermask",
+            "data-pcb-layer": layer,
+            ...pourMaskAttributes,
+          },
+        }
+
+        svgObjects.push(maskObject)
+      } else {
+        const maskOnlyObject: SvgObject = {
+          name: "path",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            class: "pcb-trace",
+            stroke: copperColor,
+            fill: "none",
+            d: `M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`,
+            "stroke-width": width,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "shape-rendering": "crispEdges",
+            "data-type": "pcb_trace",
+            "data-pcb-layer": layer,
+            ...pourMaskAttributes,
+          },
+        }
+
+        svgObjects.push(maskOnlyObject)
+      }
     }
   }
 
@@ -153,6 +200,68 @@ export function createSvgObjectsFromPcbTrace(
   }
 
   return svgObjects
+}
+
+function getConnectedTraceSegmentGroups(
+  segments: PcbTraceSegment[],
+): PcbTraceSegment[][] {
+  const groups: PcbTraceSegment[][] = []
+
+  for (const segment of segments) {
+    const currentGroup = groups[groups.length - 1]
+    const previousSegment = currentGroup?.[currentGroup.length - 1]
+    if (
+      currentGroup &&
+      previousSegment?.layer === segment.layer &&
+      areSamePosition(previousSegment.end, segment.start)
+    ) {
+      currentGroup.push(segment)
+    } else {
+      groups.push([segment])
+    }
+  }
+
+  return groups
+}
+
+function getInterpolatedTracePathData(
+  segments: PcbTraceSegment[],
+  transform: PcbContext["transform"],
+): string {
+  const firstSegment = segments[0]
+  if (!firstSegment) return ""
+
+  const centerLine = [
+    {
+      x: distance.parse(firstSegment.start.x),
+      y: distance.parse(firstSegment.start.y),
+      width: firstSegment.startWidth,
+    },
+    ...segments.map((segment) => ({
+      x: distance.parse(segment.end.x),
+      y: distance.parse(segment.end.y),
+      width: segment.endWidth,
+    })),
+  ]
+  const polygon = getInterpolatedTracePolygon(centerLine)
+  const transformedPolygon = polygon.map((point) =>
+    applyToPoint(transform, [point.x, point.y]),
+  )
+  const [firstPoint, ...remainingPoints] = transformedPolygon
+  if (!firstPoint) return ""
+
+  return [
+    `M ${firstPoint[0]} ${firstPoint[1]}`,
+    ...remainingPoints.map((point) => `L ${point[0]} ${point[1]}`),
+    "Z",
+  ].join(" ")
+}
+
+function areSamePosition(a: Point, b: Point): boolean {
+  return (
+    distance.parse(a.x) === distance.parse(b.x) &&
+    distance.parse(a.y) === distance.parse(b.y)
+  )
 }
 
 function createSyntheticViaFromRoutePoint(
