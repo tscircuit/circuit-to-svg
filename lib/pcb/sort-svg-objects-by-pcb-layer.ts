@@ -28,6 +28,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_silkscreen_oval: 50,
   pcb_silkscreen_pill: 50,
   pcb_component: 60,
+  pcb_pad_pin_number: 65,
   pcb_fabrication_note_text: 70,
   pcb_fabrication_note_path: 70,
   pcb_fabrication_note_rect: 70,

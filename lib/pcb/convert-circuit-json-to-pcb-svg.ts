@@ -82,6 +82,7 @@ import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
+import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 interface PointObjectNotation {
   x: number
   y: number
@@ -106,6 +107,8 @@ export interface PcbSvgOptions {
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
+  /** Show small pin numbers centered inside PCB pads. */
+  showPinNumbers?: boolean
   viewport?: {
     minX: number
     minY: number
@@ -130,6 +133,7 @@ export interface PcbContext {
   showSolderPaste?: boolean
   showPcbNotes?: boolean
   showAnchorOffsets?: boolean
+  showPinNumbers?: boolean
   circuitJson?: AnyCircuitElement[]
   /**
    * Populated while rendering traces: mask ids referenced by trace strokes to
@@ -305,6 +309,7 @@ export function convertCircuitJsonToPcbSvg(
     showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
     showAnchorOffsets: options?.showAnchorOffsets,
+    showPinNumbers: options?.showPinNumbers,
     circuitJson,
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
@@ -496,11 +501,17 @@ function createSvgObjects({
     case "pcb_copper_pour":
       return createSvgObjectsFromPcbCopperPour(elm as any, ctx)
     case "pcb_plated_hole":
-      return createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean)
+      return [
+        ...createSvgObjectsFromPcbPlatedHole(elm, ctx).filter(Boolean),
+        ...createSvgObjectFromPcbPadPinNumber(elm, ctx),
+      ]
     case "pcb_hole":
       return createSvgObjectsFromPcbHole(elm, ctx)
     case "pcb_smtpad":
-      return createSvgObjectsFromSmtPad(elm, ctx)
+      return [
+        ...createSvgObjectsFromSmtPad(elm, ctx),
+        ...createSvgObjectFromPcbPadPinNumber(elm, ctx),
+      ]
     case "pcb_solder_paste":
       return ctx.showSolderPaste
         ? createSvgObjectsFromSolderPaste(elm, ctx)
