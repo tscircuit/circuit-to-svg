@@ -12,6 +12,8 @@ export interface PcbTraceSegment {
   end: Point
   layer: LayerRef
   width: number
+  startWidth: number
+  endWidth: number
   isInsideCopperPour: boolean
   startIsInsideCopperPour: boolean
   endIsInsideCopperPour: boolean
@@ -57,12 +59,16 @@ export function getPcbTraceSegments(
 
     const startIsInsideCopperPour = isInsideCopperPour(start)
     const endIsInsideCopperPour = isInsideCopperPour(end)
+    const startWidth = getTracePointWidth(start) ?? getTracePointWidth(end) ?? 0
+    const endWidth = getTracePointWidth(end) ?? startWidth
 
     segments.push({
       start: startAnchor,
       end: endAnchor,
       layer,
-      width: "width" in start ? start.width : "width" in end ? end.width : 0,
+      width: startWidth,
+      startWidth,
+      endWidth,
       isInsideCopperPour: startIsInsideCopperPour && endIsInsideCopperPour,
       startIsInsideCopperPour,
       endIsInsideCopperPour,
@@ -83,6 +89,8 @@ export function getPcbTraceSegments(
         end: point.end,
         layer,
         width: point.width,
+        startWidth: point.width,
+        endWidth: point.width,
         isInsideCopperPour: false,
         startIsInsideCopperPour: false,
         endIsInsideCopperPour: false,
@@ -91,6 +99,10 @@ export function getPcbTraceSegments(
   }
 
   return segments
+}
+
+function getTracePointWidth(point: PcbTraceRoutePoint): number | undefined {
+  return "width" in point ? distance.parse(point.width) : undefined
 }
 
 function isInsideCopperPour(point: PcbTraceRoutePoint): boolean {

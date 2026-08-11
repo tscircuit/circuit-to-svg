@@ -35,15 +35,28 @@ export function clipPcbTraceSegmentAtCopperPourBoundary(
     numericEnd,
     intersectionFraction,
   )
+  const intersectionWidth = interpolateNumber(
+    segment.startWidth,
+    segment.endWidth,
+    intersectionFraction,
+  )
   const clippedSegment = {
     ...segment,
     start: startIsInsideCopperPour ? intersection : start,
     end: endIsInsideCopperPour ? intersection : end,
+    startWidth: startIsInsideCopperPour
+      ? intersectionWidth
+      : segment.startWidth,
+    endWidth: endIsInsideCopperPour ? intersectionWidth : segment.endWidth,
   }
 
   return areSamePoint(clippedSegment.start, clippedSegment.end)
     ? null
     : clippedSegment
+}
+
+function interpolateNumber(start: number, end: number, fraction: number) {
+  return start + (end - start) * fraction
 }
 
 function getBoundaryRings(pour: PcbCopperPour): RingPoint[][] {
