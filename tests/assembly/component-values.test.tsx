@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { convertCircuitJsonToAssemblySvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("assembly component labels include passive values", () => {
+test("assembly component values are opt-in", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
@@ -14,7 +14,12 @@ test("assembly component labels include passive values", () => {
   )
 
   const circuitJson = circuit.getCircuitJson()
-  const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson as any)
+  const defaultAssemblySvg = convertCircuitJsonToAssemblySvg(circuitJson as any)
+  expect(defaultAssemblySvg).not.toContain("assembly-component-value")
+
+  const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson as any, {
+    showComponentValues: true,
+  })
 
   expect(assemblySvg).toContain(">4.7kΩ<")
   expect(assemblySvg).toContain(">0.1uF<")
@@ -33,7 +38,9 @@ test("assembly component labels include passive values", () => {
     }
   }
 
-  const fallbackValueSvg = convertCircuitJsonToAssemblySvg(circuitJson as any)
+  const fallbackValueSvg = convertCircuitJsonToAssemblySvg(circuitJson as any, {
+    showComponentValues: true,
+  })
   expect(fallbackValueSvg).toContain(">4.7kΩ<")
   expect(fallbackValueSvg).toContain(">100nF<")
   expect(fallbackValueSvg).toContain(">2.2µH<")

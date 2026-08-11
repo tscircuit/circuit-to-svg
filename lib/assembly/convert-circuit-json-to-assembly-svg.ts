@@ -31,6 +31,7 @@ interface Options {
   height?: number
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
+  showComponentValues?: boolean
 }
 
 export interface AssemblySvgContext {
@@ -89,7 +90,9 @@ export function convertCircuitJsonToAssemblySvg(
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, ctx, soup))
+    .flatMap((item) =>
+      createSvgObjects(item, ctx, soup, options?.showComponentValues ?? false),
+    )
 
   const softwareUsedString = getSoftwareUsedString(soup)
   const version = CIRCUIT_TO_SVG_VERSION
@@ -181,6 +184,7 @@ function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
   soup: AnyCircuitElement[],
+  showComponentValues: boolean,
 ): SvgObject[] {
   const sourceComponents = su(soup).source_component.list()
 
@@ -205,7 +209,9 @@ function createSvgObjects(
             elm,
             portPosition: { x: firstPort.x, y: firstPort.y },
             name: sourceComponent.name,
-            value: getAssemblyComponentValue(sourceComponent),
+            value: showComponentValues
+              ? getAssemblyComponentValue(sourceComponent)
+              : undefined,
             arePinsInterchangeable,
           },
           ctx,

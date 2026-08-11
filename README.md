@@ -130,6 +130,7 @@ import { convertCircuitJsonToAssemblySvg } from 'circuit-to-svg'
 
 const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson, {
   includeVersion: false,
+  showComponentValues: true,
 })
 ```
 
@@ -140,6 +141,8 @@ const assemblySvg = convertCircuitJsonToAssemblySvg(circuitJson, {
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
+- `showComponentValues` – if `true`, show resistor, capacitor, and inductor
+  values below their reference designators. Defaults to `false`.
 
 ## convertCircuitJsonToPinoutSvg
 
