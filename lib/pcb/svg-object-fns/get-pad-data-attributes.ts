@@ -5,6 +5,7 @@ type PadLike = {
   pcb_smtpad_id?: string
   pcb_plated_hole_id?: string
   source_port_id?: string
+  port_hints?: string[]
 }
 
 type DataAttributes = Record<string, string>
@@ -48,6 +49,29 @@ export function getPadDataAttributes(
   }
 
   return dataAttributes
+}
+
+export function getPadPinNumber(
+  element: PadLike,
+  circuitJson: AnyCircuitElement[] | undefined,
+): string | undefined {
+  if (circuitJson) {
+    const sourcePortId = getSourcePortId(element, circuitJson)
+    const sourcePort = circuitJson.find(
+      (elm) =>
+        elm.type === "source_port" && elm.source_port_id === sourcePortId,
+    )
+
+    if (sourcePort?.type === "source_port" && sourcePort.pin_number != null) {
+      return sourcePort.pin_number.toString()
+    }
+  }
+
+  const portHint = element.port_hints?.find((hint) => hint.trim().length > 0)
+  if (!portHint) return undefined
+
+  const pinNumberMatch = portHint.match(/^pin(\d+)$/i)
+  return pinNumberMatch?.[1] ?? portHint
 }
 
 function getSourcePortId(
