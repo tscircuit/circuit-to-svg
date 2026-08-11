@@ -107,8 +107,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   padding around it. Defaults to `true`.
 - `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
   time. Defaults to `true`.
-- `showPinNumbers` – if `true`, annotate PCB pads with small gray pin numbers,
-  similar to KiCad's PCB editor. Defaults to `false`.
+- `showPinNumbers` – if `true`, annotate PCB pads with small gray pin numbers.
+  Defaults to `false`.
 - `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults
   to `false`.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:

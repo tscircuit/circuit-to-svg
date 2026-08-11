@@ -107,7 +107,7 @@ export interface PcbSvgOptions {
   showPcbNotes?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
-  /** Show small, KiCad-style pin numbers centered inside PCB pads. */
+  /** Show small pin numbers centered inside PCB pads. */
   showPinNumbers?: boolean
   viewport?: {
     minX: number
