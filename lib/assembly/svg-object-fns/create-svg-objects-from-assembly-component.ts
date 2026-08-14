@@ -5,8 +5,7 @@ import type {
   AnyCircuitElement,
 } from "circuit-json"
 import type { INode as SvgObject } from "svgson"
-import { type Matrix, applyToPoint } from "transformation-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import { applyToPoint } from "transformation-matrix"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
@@ -44,7 +43,7 @@ export function createSvgObjectsFromAssemblyComponent(
 
   const children: SvgObject[] = [
     createComponentPath(scaledWidth, scaledHeight, rotation, layer),
-    createComponentLabel(scaledWidth, scaledHeight, name ?? "", transform),
+    createComponentLabel(scaledWidth, scaledHeight, name ?? ""),
   ]
 
   if (!arePinsInterchangeable) {
@@ -101,22 +100,25 @@ function createComponentLabel(
   scaledWidth: number,
   scaledHeight: number,
   name: string,
-  transform: Matrix,
 ): SvgObject {
-  // Use the smaller dimension as the scale factor
-  const size = Math.min(scaledWidth, scaledHeight)
-
-  // Adjusted font sizing with smaller scale for small components
   const minFontSize = 3
   const maxFontSize = 58
-  const fontScale = 0.8 // Smaller scale for small components
+  const averageCharacterWidthRatio = 0.65
+  const isTall = scaledHeight > scaledWidth
+  const availableLabelLength =
+    (isTall ? scaledHeight : scaledWidth) * 0.85
+  const availableLabelHeight =
+    (isTall ? scaledWidth : scaledHeight) * 0.8
+  const characterCount = Math.max(name.length, 1)
+  const fontSizeForLabelLength =
+    availableLabelLength / (characterCount * averageCharacterWidthRatio)
   const fontSize = Math.min(
     maxFontSize,
-    Math.max(minFontSize, size * fontScale),
+    Math.max(
+      minFontSize,
+      Math.min(availableLabelHeight, fontSizeForLabelLength),
+    ),
   )
-
-  // Determine if component is tall (height significantly larger than width)
-  const isTall = scaledHeight > scaledWidth
 
   return {
     name: "text",

@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { convertCircuitJsonToAssemblySvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("repro: long assembly reference label exceeds its component body", () => {
+test("assembly reference label fits inside its component body", () => {
   const { circuit } = getTestFixture()
 
   circuit.add(
@@ -12,7 +12,7 @@ test("repro: long assembly reference label exceeds its component body", () => {
   )
 
   const assemblySvg = convertCircuitJsonToAssemblySvg(
-    circuit.getCircuitJson() as any,
+    circuit.getCircuitJson(),
     {},
   )
   const labelFontSize = Number(
@@ -21,7 +21,7 @@ test("repro: long assembly reference label exceeds its component body", () => {
     )?.[1],
   )
 
-  expect(labelFontSize).toBe(58)
+  expect(labelFontSize).toBeLessThan(30)
   expect(assemblySvg).toContain("U_DEBUGGER")
   expect(assemblySvg).toMatchSvgSnapshot(import.meta.path)
 })
