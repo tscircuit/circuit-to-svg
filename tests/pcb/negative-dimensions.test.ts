@@ -65,6 +65,7 @@ test("negative dimensions emit positive SVG lengths for schematic components (#6
       source_component_id: "chip1",
       center: { x: 0, y: 0 },
       size: { width: -4, height: -3 },
+      is_box_with_pins: true,
     },
   ]
 
