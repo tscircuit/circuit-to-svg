@@ -12,6 +12,7 @@ test("non-finite via and plated-hole diameters render without NaN (#634)", () =>
       height: 20,
       thickness: 1.6,
       num_layers: 2,
+      material: "fr4",
     },
     {
       type: "pcb_via",
