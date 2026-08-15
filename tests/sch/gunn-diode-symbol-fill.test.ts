@@ -31,6 +31,7 @@ test("schematic symbols with filled paths preserve path fill (#418)", () => {
       center: { x: 0, y: 0 },
       size: { width: 1.2, height: 0.8 },
       symbol_name: "gunn_diode_horz",
+      is_box_with_pins: true,
     },
     {
       type: "schematic_port",
