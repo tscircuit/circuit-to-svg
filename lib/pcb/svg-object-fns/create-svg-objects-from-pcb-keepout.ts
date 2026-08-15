@@ -131,8 +131,8 @@ export function createSvgObjectsFromPcbKeepout(
         rectKeepout.center.x,
         rectKeepout.center.y,
       ])
-      const scaledWidth = rectKeepout.width * Math.abs(transform.a)
-      const scaledHeight = rectKeepout.height * Math.abs(transform.d)
+      const scaledWidth = Math.abs(rectKeepout.width * transform.a)
+      const scaledHeight = Math.abs(rectKeepout.height * transform.d)
       const baseTransform = matrixToString(compose(translate(cx, cy)))
 
       const backgroundAttributes = {
@@ -186,7 +186,7 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const scaledRadius = Math.abs(circleKeepout.radius * transform.a)
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(

@@ -5,10 +5,10 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
   const { transform, colorMap } = ctx
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-  const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-  const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-  const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+  const scaledOuterWidth = Math.abs(hole.outer_diameter * transform.a)
+  const scaledOuterHeight = Math.abs(hole.outer_diameter * transform.a)
+  const scaledHoleWidth = Math.abs(hole.hole_diameter * transform.a)
+  const scaledHoleHeight = Math.abs(hole.hole_diameter * transform.a)
 
   const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
   const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2

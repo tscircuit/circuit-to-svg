@@ -29,18 +29,24 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
-  const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+  const halfWidth = Math.abs(schComponent.size.width) / 2
+  const halfHeight = Math.abs(schComponent.size.height) / 2
+
+  const p1 = applyToPoint(transform, {
+    x: schComponent.center.x - halfWidth,
+    y: schComponent.center.y + halfHeight,
   })
-  const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+  const p2 = applyToPoint(transform, {
+    x: schComponent.center.x + halfWidth,
+    y: schComponent.center.y - halfHeight,
   })
-  const componentScreenWidth =
-    componentScreenBottomRight.x - componentScreenTopLeft.x
-  const componentScreenHeight =
-    componentScreenBottomRight.y - componentScreenTopLeft.y
+
+  const componentScreenTopLeft = {
+    x: Math.min(p1.x, p2.x),
+    y: Math.min(p1.y, p2.y),
+  }
+  const componentScreenWidth = Math.abs(p2.x - p1.x)
+  const componentScreenHeight = Math.abs(p2.y - p1.y)
 
   // Add basic rectangle for component body
   svgObjects.push({
