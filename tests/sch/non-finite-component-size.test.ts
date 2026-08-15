@@ -16,6 +16,7 @@ test("non-finite schematic component size renders well-formed SVG without NaN (#
       source_component_id: "chip1",
       center: { x: 0, y: 0 },
       size: { width: Number.NaN, height: Number.NaN },
+      is_box_with_pins: true,
     },
   ]
 
