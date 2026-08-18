@@ -118,6 +118,10 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   - `pcb_via_trace_clearance_error` – clearance errors between vias and traces
   
   Defaults to `false`.
+- `shouldDrawWarnings` – if `true`, display yellow component highlights and
+  warning messages for supported warning elements in the circuit JSON. Supports
+  `pcb_connector_not_in_accessible_orientation_warning` and
+  `pcb_manual_edit_conflict_warning`. Defaults to `false`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
