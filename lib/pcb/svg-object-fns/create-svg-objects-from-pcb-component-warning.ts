@@ -43,19 +43,29 @@ export function createSvgObjectsFromPcbComponentWarning(
 
   if (!component) return []
 
-  const topLeft = applyToPoint(ctx.transform, {
-    x: component.center.x - component.width / 2,
-    y: component.center.y - component.height / 2,
-  })
-  const bottomRight = applyToPoint(ctx.transform, {
-    x: component.center.x + component.width / 2,
-    y: component.center.y + component.height / 2,
-  })
+  const rotationRadians = ((component.rotation ?? 0) * Math.PI) / 180
+  const cos = Math.cos(rotationRadians)
+  const sin = Math.sin(rotationRadians)
+  const halfWidth = component.width / 2
+  const halfHeight = component.height / 2
+  const corners = [
+    { x: -halfWidth, y: -halfHeight },
+    { x: halfWidth, y: -halfHeight },
+    { x: halfWidth, y: halfHeight },
+    { x: -halfWidth, y: halfHeight },
+  ].map((corner) =>
+    applyToPoint(ctx.transform, {
+      x: component.center.x + corner.x * cos - corner.y * sin,
+      y: component.center.y + corner.x * sin + corner.y * cos,
+    }),
+  )
 
-  const x = Math.min(topLeft.x, bottomRight.x)
-  const y = Math.min(topLeft.y, bottomRight.y)
-  const width = Math.abs(bottomRight.x - topLeft.x)
-  const height = Math.abs(bottomRight.y - topLeft.y)
+  const x = Math.min(...corners.map((corner) => corner.x))
+  const y = Math.min(...corners.map((corner) => corner.y))
+  const maxX = Math.max(...corners.map((corner) => corner.x))
+  const maxY = Math.max(...corners.map((corner) => corner.y))
+  const width = maxX - x
+  const height = maxY - y
   const centerX = x + width / 2
 
   return annotateWarning(
