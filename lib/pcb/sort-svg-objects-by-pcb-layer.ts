@@ -43,6 +43,8 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_component_outside_board_error: 80,
   pcb_pad_trace_clearance_error: 80,
   pcb_via_trace_clearance_error: 80,
+  pcb_connector_not_in_accessible_orientation_warning: 80,
+  pcb_manual_edit_conflict_warning: 80,
   pcb_rats_nest: 85,
 }
 

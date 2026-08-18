@@ -83,6 +83,7 @@ import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
+import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
 interface PointObjectNotation {
   x: number
   y: number
@@ -93,6 +94,8 @@ export interface PcbSvgOptions {
   width?: number
   height?: number
   shouldDrawErrors?: boolean
+  /** Draw supported PCB warning elements as yellow component highlights. */
+  shouldDrawWarnings?: boolean
   showErrorsInTextOverlay?: boolean
   shouldDrawRatsNest?: boolean
   showCourtyards?: boolean
@@ -125,6 +128,7 @@ export interface PcbContext {
   transform: Matrix
   layer?: LayerRef
   shouldDrawErrors?: boolean
+  shouldDrawWarnings?: boolean
   showCourtyards?: boolean
   showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
@@ -301,6 +305,7 @@ export function convertCircuitJsonToPcbSvg(
     transform,
     layer,
     shouldDrawErrors: options?.shouldDrawErrors,
+    shouldDrawWarnings: options?.shouldDrawWarnings,
     showCourtyards: options?.showCourtyards,
     showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
@@ -494,6 +499,9 @@ function createSvgObjects({
         circuitJson,
         ctx,
       ).filter(Boolean)
+    case "pcb_connector_not_in_accessible_orientation_warning":
+    case "pcb_manual_edit_conflict_warning":
+      return createSvgObjectsFromPcbComponentWarning(elm, circuitJson, ctx)
     case "pcb_component":
       return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
