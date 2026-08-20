@@ -1,5 +1,3 @@
-import type { Point, SchematicSheet } from "circuit-json"
-
 const KICAD_RESISTOR_PIN_SPAN_MM = 10.16
 const TSCIRCUIT_RESISTOR_PIN_SPAN = 1.1
 export const SCHEMATIC_UNIT_TO_MM =
@@ -25,18 +23,14 @@ export interface SchematicSheetLayout {
   innerMaxY: number
 }
 
-export type SchematicSheetWithCenter = SchematicSheet & {
-  center?: Point
-}
-
 /**
- * Geometry of a schematic sheet's frame. Core centers each sheet around its
- * occupied schematic bounds, while sheets without a center remain at the origin.
+ * Geometry of a schematic sheet's frame. Each sheet is laid out independently in
+ * its own coordinate space (around the origin) and rendered one sheet per view
+ * (single-sheet or stacked), so the frame is always centered at the origin - it
+ * is not tiled by sheet_index.
  */
-export function getSchematicSheetLayout(
-  schematicSheet?: SchematicSheetWithCenter,
-): SchematicSheetLayout {
-  const center = schematicSheet?.center ?? { x: 0, y: 0 }
+export function getSchematicSheetLayout(): SchematicSheetLayout {
+  const center = { x: 0, y: 0 }
   const minX = center.x - DEFAULT_SCHEMATIC_SHEET_WIDTH / 2
   const maxX = center.x + DEFAULT_SCHEMATIC_SHEET_WIDTH / 2
   const minY = center.y - DEFAULT_SCHEMATIC_SHEET_HEIGHT / 2

@@ -94,7 +94,6 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
       `Sheet ${sheet.sheet_index ?? index + 1}`
 
     const labelPosition = getSheetLabelPosition({
-      schematicSheet: sheet,
       transformStr: sheetNode.attributes?.["data-real-to-screen-transform"],
       panelTop,
       labelHeight,
@@ -177,12 +176,10 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
  * unavailable.
  */
 function getSheetLabelPosition({
-  schematicSheet,
   transformStr,
   panelTop,
   labelHeight,
 }: {
-  schematicSheet: SchematicSheet
   transformStr: string | undefined
   panelTop: number
   labelHeight: number
@@ -194,7 +191,7 @@ function getSheetLabelPosition({
     return { x: 4, y }
   }
 
-  const layout = getSchematicSheetLayout(schematicSheet)
+  const layout = getSchematicSheetLayout()
   const frameLeft = applyToPoint(fromString(transformStr), {
     x: layout.minX,
     y: layout.maxY,
