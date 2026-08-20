@@ -1,19 +1,17 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
-import { convertCircuitJsonToSchematicSvg } from "lib"
+import { convertCircuitJsonToStackedSchematicSheetsSvg } from "lib"
 import speakerCircuitJson from "./assets/esp32-bluetooth-speaker.json"
 
 const speakerCircuit = speakerCircuitJson as AnyCircuitElement[]
-const BATTERY_POWER_SHEET_INDEX = 2
 const EXPECTED_ELEMENT_COUNT = 2450
 const SNAPSHOT_WIDTH = 1200
-const SNAPSHOT_HEIGHT = 600
+const SNAPSHOT_HEIGHT = 848
 
-test("renders the uploaded speaker battery sheet inside its frame", () => {
+test("renders all uploaded speaker schematic sheets inside their frames", () => {
   expect(speakerCircuit).toHaveLength(EXPECTED_ELEMENT_COUNT)
 
-  const svg = convertCircuitJsonToSchematicSvg(speakerCircuit, {
-    schematicSheetIndex: BATTERY_POWER_SHEET_INDEX,
+  const svg = convertCircuitJsonToStackedSchematicSheetsSvg(speakerCircuit, {
     width: SNAPSHOT_WIDTH,
     height: SNAPSHOT_HEIGHT,
   })
