@@ -1,22 +1,28 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToStackedSchematicSheetsSvg } from "lib/index"
-import { getSchematicSheetLayout } from "lib/sch/schematic-sheet-utils"
+import {
+  type SchematicSheetWithCenter,
+  getSchematicSheetLayout,
+} from "lib/sch/schematic-sheet-utils"
 
-/**
- * The sheet frame is centered at the origin, but a sheet's content does not have
- * to be perfectly centered. Here Sheet 2's resistor sits at x = -5 (off-center).
- * Because the A4 frame spans roughly x ∈ [-16, 16] around the origin, the
- * component is still comfortably inside its frame - just shifted left of center.
- *
- * In the stacked snapshot Sheet 1's resistor is centered while Sheet 2's resistor
- * is left-of-center but still within the frame.
- */
-test("off-center sheet content still renders inside the origin-centered frame", () => {
-  const layout = getSchematicSheetLayout()
-  // A resistor at x = -5 is within the frame's horizontal extent.
-  expect(layout.minX).toBeLessThan(-5)
-  expect(layout.maxX).toBeGreaterThan(-5)
+const OFFSET_SHEET_CENTER_X = -15.75
+const RESISTOR_WIDTH = 1.18
+
+test("sheet center keeps offset content inside its frame", () => {
+  const offsetSheet: SchematicSheetWithCenter = {
+    type: "schematic_sheet",
+    schematic_sheet_id: "schematic_sheet_2",
+    sheet_index: 1,
+    center: { x: OFFSET_SHEET_CENTER_X, y: 0 },
+  }
+  const layout = getSchematicSheetLayout(offsetSheet)
+  const resistorMinX = OFFSET_SHEET_CENTER_X - RESISTOR_WIDTH / 2
+  const resistorMaxX = OFFSET_SHEET_CENTER_X + RESISTOR_WIDTH / 2
+
+  expect(layout.center).toEqual({ x: OFFSET_SHEET_CENTER_X, y: 0 })
+  expect(layout.innerMinX).toBeLessThan(resistorMinX)
+  expect(layout.innerMaxX).toBeGreaterThan(resistorMaxX)
 
   const svg = convertCircuitJsonToStackedSchematicSheetsSvg(
     createMultiSheetCircuitJson(),
@@ -25,10 +31,6 @@ test("off-center sheet content still renders inside the origin-centered frame", 
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
 
-/**
- * Two sheets: Sheet 1's resistor at the origin, Sheet 2's resistor offset to
- * x = -5 (but still within its frame).
- */
 function createMultiSheetCircuitJson(): AnyCircuitElement[] {
   return [
     {
@@ -44,6 +46,7 @@ function createMultiSheetCircuitJson(): AnyCircuitElement[] {
       name: "Sheet 2",
       display_name: "Sheet 2",
       sheet_index: 1,
+      center: { x: OFFSET_SHEET_CENTER_X, y: 0 },
     } as AnyCircuitElement,
     {
       type: "source_component",
@@ -112,14 +115,13 @@ function createMultiSheetCircuitJson(): AnyCircuitElement[] {
       schematic_component_id: "schematic_component_r1",
       schematic_sheet_id: "schematic_sheet_1",
     },
-    // Sheet 2 resistor offset to x = -5 (off-center but inside the frame).
     {
       type: "schematic_component",
       schematic_component_id: "schematic_component_r2",
       source_component_id: "source_component_r2",
-      center: { x: -5, y: 0 },
+      center: { x: OFFSET_SHEET_CENTER_X, y: 0 },
       is_box_with_pins: true,
-      size: { width: 1.18, height: 1.3 },
+      size: { width: RESISTOR_WIDTH, height: 1.3 },
       symbol_name: "boxresistor_right",
       schematic_sheet_id: "schematic_sheet_2",
     },
@@ -127,7 +129,7 @@ function createMultiSheetCircuitJson(): AnyCircuitElement[] {
       type: "schematic_port",
       schematic_port_id: "schematic_port_r2_1",
       source_port_id: "source_port_r2_1",
-      center: { x: -5.5, y: 0 },
+      center: { x: OFFSET_SHEET_CENTER_X - 0.5, y: 0 },
       facing_direction: "left",
       schematic_component_id: "schematic_component_r2",
       schematic_sheet_id: "schematic_sheet_2",
@@ -136,7 +138,7 @@ function createMultiSheetCircuitJson(): AnyCircuitElement[] {
       type: "schematic_port",
       schematic_port_id: "schematic_port_r2_2",
       source_port_id: "source_port_r2_2",
-      center: { x: -4.5, y: 0 },
+      center: { x: OFFSET_SHEET_CENTER_X + 0.5, y: 0 },
       facing_direction: "right",
       schematic_component_id: "schematic_component_r2",
       schematic_sheet_id: "schematic_sheet_2",
