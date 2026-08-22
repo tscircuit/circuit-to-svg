@@ -499,6 +499,20 @@ function createSvgObjects({
             debugObject: elm,
             transform: ctx.transform,
             style: ctx.debugObjectStyle!,
+            labelStackIndex:
+              elm.shape === "rect"
+                ? circuitJson
+                    .slice(0, circuitJson.indexOf(elm))
+                    .filter(
+                      (other) =>
+                        other.type === "pcb_debug_object" &&
+                        other.shape === "rect" &&
+                        other.center.x === elm.center.x &&
+                        other.center.y === elm.center.y &&
+                        other.size.width === elm.size.width &&
+                        other.size.height === elm.size.height,
+                    ).length
+                : 0,
           })
         : []
     case "pcb_trace_error":

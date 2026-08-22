@@ -66,10 +66,12 @@ export function createSvgObjectsFromPcbDebugObject({
   debugObject,
   transform,
   style,
+  labelStackIndex = 0,
 }: {
   debugObject: PcbDebugObject
   transform: Matrix
   style: PcbDebugObjectStyle
+  labelStackIndex?: number
 }): SvgObject[] {
   const commonAttributes = getCommonAttributes(debugObject)
   const strokeAttributes = {
@@ -116,7 +118,10 @@ export function createSvgObjectsFromPcbDebugObject({
           ...createLabel({
             label: debugObject.label,
             x: left,
-            y: top - style.labelGap,
+            y:
+              top -
+              style.labelGap -
+              labelStackIndex * (style.fontSize + style.labelGap),
             style,
           }),
         ],
