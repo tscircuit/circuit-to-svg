@@ -46,6 +46,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_connector_not_in_accessible_orientation_warning: 80,
   pcb_manual_edit_conflict_warning: 80,
   pcb_rats_nest: 85,
+  pcb_debug_object: 90,
 }
 
 const DEFAULT_TYPE_PRIORITY = 100

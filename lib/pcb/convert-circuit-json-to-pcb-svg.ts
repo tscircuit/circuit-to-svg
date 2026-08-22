@@ -84,6 +84,7 @@ import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
+import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
 interface PointObjectNotation {
   x: number
   y: number
@@ -108,6 +109,8 @@ export interface PcbSvgOptions {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  /** Draw pcb_debug_object overlays. Defaults to false. */
+  showDebugObjects?: boolean
   grid?: PcbGridOptions
   showAnchorOffsets?: boolean
   /** Show small pin numbers centered inside PCB pads. */
@@ -136,6 +139,14 @@ export interface PcbContext {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  showDebugObjects?: boolean
+  debugObjectStyle?: {
+    fontSize: number
+    strokeWidth: number
+    dashLength: number
+    labelGap: number
+    pointRadius: number
+  }
   showAnchorOffsets?: boolean
   showPinNumbers?: boolean
   circuitJson?: AnyCircuitElement[]
@@ -301,6 +312,10 @@ export function convertCircuitJsonToPcbSvg(
     scale(scaleFactor, -scaleFactor), // Flip in y-direction
   )
 
+  const viewportScale = Math.min(svgWidth, svgHeight)
+  const debugStrokeWidth = Math.max(1, Math.min(2, viewportScale * 0.002))
+  const debugFontSize = Math.max(10, Math.min(18, viewportScale * 0.02))
+
   const ctx: PcbContext = {
     transform,
     layer,
@@ -313,6 +328,14 @@ export function convertCircuitJsonToPcbSvg(
     showSolderMask: options?.showSolderMask,
     showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
+    showDebugObjects: options?.showDebugObjects,
+    debugObjectStyle: {
+      fontSize: debugFontSize,
+      strokeWidth: debugStrokeWidth,
+      dashLength: debugStrokeWidth * 4,
+      labelGap: debugFontSize * 0.35,
+      pointRadius: debugStrokeWidth * 3,
+    },
     showAnchorOffsets: options?.showAnchorOffsets,
     showPinNumbers: options?.showPinNumbers,
     circuitJson,
@@ -470,6 +493,28 @@ function createSvgObjects({
   ctx,
 }: CreateSvgObjectsParams): SvgObject[] {
   switch (elm.type) {
+    case "pcb_debug_object":
+      return ctx.showDebugObjects
+        ? createSvgObjectsFromPcbDebugObject({
+            debugObject: elm,
+            transform: ctx.transform,
+            style: ctx.debugObjectStyle!,
+            labelStackIndex:
+              elm.shape === "rect"
+                ? circuitJson
+                    .slice(0, circuitJson.indexOf(elm))
+                    .filter(
+                      (other) =>
+                        other.type === "pcb_debug_object" &&
+                        other.shape === "rect" &&
+                        other.center.x === elm.center.x &&
+                        other.center.y === elm.center.y &&
+                        other.size.width === elm.size.width &&
+                        other.size.height === elm.size.height,
+                    ).length
+                : 0,
+          })
+        : []
     case "pcb_trace_error":
       return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
         Boolean,
