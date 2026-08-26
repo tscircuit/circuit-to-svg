@@ -80,59 +80,78 @@ test("font-size overrides do not change vertical label rotation", () => {
 })
 
 test("schematic pin-label font-size overrides", () => {
+  const makeComparisonComponent = ({
+    id,
+    x,
+    fontSize,
+    title,
+  }: {
+    id: string
+    x: number
+    fontSize?: number
+    title: string
+  }): AnyCircuitElement[] => {
+    const schematicComponentId = `schematic_component_${id}`
+
+    return [
+      {
+        type: "schematic_component",
+        schematic_component_id: schematicComponentId,
+        center: { x, y: 0 },
+        size: { width: 2.6, height: 2.2 },
+        is_box_with_pins: true,
+      },
+      ...[
+        { id: "input", y: 0.45, label: "LONG_INPUT_LABEL" },
+        { id: "active_low", y: 0, label: "N_ACTIVE_LOW" },
+        { id: "output", y: -0.45, label: "OUTPUT_LABEL" },
+      ].map(({ id: portId, y, label }) => ({
+        type: "schematic_port" as const,
+        schematic_port_id: `schematic_port_${id}_${portId}`,
+        source_port_id: `source_port_${id}_${portId}`,
+        schematic_component_id: schematicComponentId,
+        center: { x: x - 1.7, y },
+        side_of_component: "left" as const,
+        distance_from_component_edge: 0.4,
+        display_pin_label: label,
+        display_pin_label_font_size: fontSize,
+      })),
+      {
+        type: "schematic_port",
+        schematic_port_id: `schematic_port_${id}_vertical`,
+        source_port_id: `source_port_${id}_vertical`,
+        schematic_component_id: schematicComponentId,
+        center: { x: x + 0.65, y: 1.5 },
+        side_of_component: "top",
+        distance_from_component_edge: 0.4,
+        display_pin_label: "VERTICAL_LABEL",
+        display_pin_label_font_size: fontSize,
+      },
+      {
+        type: "schematic_text",
+        schematic_text_id: `schematic_text_${id}`,
+        text: title,
+        font_size: 0.18,
+        position: { x, y: -1.45 },
+        rotation: 0,
+        anchor: "center",
+        color: "#006464",
+      },
+    ]
+  }
+
   const circuitJson: AnyCircuitElement[] = [
-    {
-      type: "source_component",
-      source_component_id: "source_component_1",
-      name: "U1",
-      ftype: "simple_chip",
-    },
-    {
-      type: "schematic_component",
-      schematic_component_id: "schematic_component_1",
-      source_component_id: "source_component_1",
-      center: { x: 0, y: 0 },
-      size: { width: 3, height: 3.2 },
-      is_box_with_pins: true,
-    },
-    ...[
-      {
-        id: "default",
-        center: { x: -1.9, y: 0.8 },
-        side: "left" as const,
-        label: "DEFAULT",
-      },
-      {
-        id: "small",
-        center: { x: -1.9, y: -0.8 },
-        side: "left" as const,
-        label: "SMALL",
-        fontSize: 0.09,
-      },
-      {
-        id: "negated",
-        center: { x: -1.9, y: 0 },
-        side: "left" as const,
-        label: "N_NEGATED",
-      },
-      {
-        id: "vertical",
-        center: { x: 0.8, y: 2 },
-        side: "top" as const,
-        label: "VERTICAL",
-        fontSize: 0.08,
-      },
-    ].map(({ id, center, side, label, fontSize }) => ({
-      type: "schematic_port" as const,
-      schematic_port_id: `schematic_port_${id}`,
-      source_port_id: `source_port_${id}`,
-      schematic_component_id: "schematic_component_1",
-      center,
-      side_of_component: side,
-      distance_from_component_edge: 0.4,
-      display_pin_label: label,
-      display_pin_label_font_size: fontSize,
-    })),
+    ...makeComparisonComponent({
+      id: "default",
+      x: -2.3,
+      title: "DEFAULT 0.15mm",
+    }),
+    ...makeComparisonComponent({
+      id: "override",
+      x: 2.3,
+      fontSize: 0.12,
+      title: "OVERRIDE 0.12mm",
+    }),
   ]
 
   expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
