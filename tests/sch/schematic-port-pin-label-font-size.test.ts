@@ -93,7 +93,7 @@ test("schematic pin-label font-size overrides", () => {
   }): AnyCircuitElement[] => {
     const schematicComponentId = `schematic_component_${id}`
     // C113367 (PAM8302AASCR) geometry, shown at its crowded imported scale.
-    const scale = 0.5
+    const scale = 0.65
     const offsetPoint = ({ x: pointX, y }: { x: number; y: number }) => ({
       x: x + pointX * scale,
       y: y * scale,
@@ -148,14 +148,21 @@ test("schematic pin-label font-size overrides", () => {
         { x: -0.84, y: -1.47 },
       ],
     ]
-    const crowdedPortIds = new Set(["in_neg", "in_pos", "vo_pos", "vo_neg"])
+    const crowdedPortIds = new Set([
+      "in_neg",
+      "in_pos",
+      "vo_pos",
+      "vo_neg",
+      "vdd",
+      "gnd",
+    ])
 
     return [
       {
         type: "schematic_component",
         schematic_component_id: schematicComponentId,
         center: { x, y: 0 },
-        size: { width: 1.68, height: 1.89 },
+        size: { width: 2.184, height: 2.457 },
         is_box_with_pins: false,
       },
       ...ports.map(({ id: portId, x: portX, y, side, label }) => ({
@@ -208,7 +215,7 @@ test("schematic pin-label font-size overrides", () => {
         schematic_text_id: `schematic_text_${id}`,
         text: title,
         font_size: 0.18,
-        position: { x, y: -1.25 },
+        position: { x, y: -1.55 },
         rotation: 0,
         anchor: "center",
         color: "#006464",
@@ -219,12 +226,12 @@ test("schematic pin-label font-size overrides", () => {
   const circuitJson: AnyCircuitElement[] = [
     ...makeAffectedEasyEdaSymbol({
       id: "default",
-      x: -1.45,
+      x: -1.8,
       title: "C113367 · DEFAULT 0.15mm",
     }),
     ...makeAffectedEasyEdaSymbol({
       id: "override",
-      x: 1.45,
+      x: 1.8,
       fontSize: 0.1,
       title: "C113367 · CROWDED PINS 0.10mm",
     }),
