@@ -166,19 +166,13 @@ function getSchematicGraphicSvgSource(
   schematicGraphic: SchematicGraphic,
   errorPrefix: string,
 ): { content: string; label: "asset.url" | "svg_content" } {
-  // The cast keeps the renderer tolerant of Circuit JSON emitted before asset
-  // became required. New producers should always provide the canonical asset.
-  const asset = (
-    schematicGraphic as {
-      asset?: SchematicGraphic["asset"]
-    }
-  ).asset
+  const { asset } = schematicGraphic
 
   if (!asset) {
     if (schematicGraphic.svg_content !== undefined) {
       return { content: schematicGraphic.svg_content, label: "svg_content" }
     }
-    throw new Error(`${errorPrefix}: asset is required`)
+    throw new Error(`${errorPrefix}: asset or svg_content is required`)
   }
 
   if (getMediaType(asset.mimetype) !== "image/svg+xml") {
