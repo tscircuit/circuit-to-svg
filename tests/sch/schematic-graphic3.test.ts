@@ -1,19 +1,24 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToSchematicSvg } from "lib/index"
-import { svgAsset } from "./schematic-graphic-test-helpers"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import {
+  decodeSvgDataUrl,
+  getEmbeddedImage,
+} from "./schematic-graphic-test-helpers"
 
-test("renders a base64 SVG asset without svg_content", () => {
-  const svg = convertCircuitJsonToSchematicSvg([
-    {
+test("encodes svg_content as an opaque UTF-8 SVG data URL", () => {
+  const svgContent =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><text>Temperature — 温度 🌡️</text></svg>'
+  const graphic = createSvgObjectFromSchematicGraphic({
+    schematicGraphic: {
       type: "schematic_graphic",
-      schematic_graphic_id: "schematic_graphic_base64",
-      asset: svgAsset(
-        '<svg viewBox="0 0 10 10"><text>BASE64 ASSET — 温度</text></svg>',
-        "base64",
-      ),
+      schematic_graphic_id: "schematic_graphic_content_only",
+      svg_content: svgContent,
     },
-  ])
+    viewport: { x: 10, y: 20, width: 300, height: 200 },
+  })
+  const image = getEmbeddedImage(graphic)
 
-  expect(svg).toContain("BASE64 ASSET — 温度")
-  expect(svg).not.toContain("data:image/svg+xml")
+  expect(image.attributes.href).toStartWith("data:image/svg+xml;base64,")
+  expect(decodeSvgDataUrl(image.attributes.href!)).toBe(svgContent)
+  expect(image.children).toEqual([])
 })

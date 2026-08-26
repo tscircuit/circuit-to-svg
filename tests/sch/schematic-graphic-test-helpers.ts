@@ -49,12 +49,12 @@ export function getRenderedGraphicViewport(svg: string): {
 } {
   const graphic = findElement(parseSync(svg), "data-schematic-graphic-id")
   if (!graphic) throw new Error("Expected rendered schematic graphic")
-  const nestedSvg = getNestedSvg(graphic)
+  const image = getEmbeddedImage(graphic)
   return {
-    x: Number(nestedSvg.attributes.x),
-    y: Number(nestedSvg.attributes.y),
-    width: Number(nestedSvg.attributes.width),
-    height: Number(nestedSvg.attributes.height),
+    x: Number(image.attributes.x),
+    y: Number(image.attributes.y),
+    width: Number(image.attributes.width),
+    height: Number(image.attributes.height),
   }
 }
 
@@ -86,80 +86,21 @@ export function findElement(
   return undefined
 }
 
-export function findElements(node: INode, attributeName: string): INode[] {
-  return [
-    ...(node.attributes[attributeName] !== undefined ? [node] : []),
-    ...node.children.flatMap((child) => findElements(child, attributeName)),
-  ]
+export function getEmbeddedImage(graphic: INode): INode {
+  const image = graphic.children.find((child) => child.name === "image")
+  if (!image) throw new Error("Expected schematic graphic to contain an image")
+  return image
 }
 
-export function findElementWithName(
-  node: INode,
-  name: string,
-): INode | undefined {
-  if (node.name === name) return node
-  for (const child of node.children) {
-    const match = findElementWithName(child, name)
-    if (match) return match
-  }
-  return undefined
-}
+export function decodeSvgDataUrl(dataUrl: string): string {
+  const match = dataUrl.match(/^data:image\/svg\+xml(?:;[^,]*)?,(.*)$/is)
+  if (!match) throw new Error("Expected an SVG data URL")
 
-export function getNestedSvg(graphic: INode): INode {
-  const nestedSvg = graphic.children.find((child) => child.name === "svg")
-  if (!nestedSvg)
-    throw new Error("Expected schematic graphic to contain an SVG")
-  return nestedSvg
-}
-
-export function getGraphicNamespace(graphic: INode): string {
-  const namespace = graphic.attributes.class
-    ?.split(/\s+/)
-    .find((className) => className !== "schematic-graphic")
-  if (!namespace) throw new Error("Expected schematic graphic namespace class")
-  return namespace
-}
-
-export function collectAttributeValues(
-  node: INode,
-  attributeName: string,
-): string[] {
-  return [
-    ...(node.attributes[attributeName]
-      ? [node.attributes[attributeName]!]
-      : []),
-    ...node.children.flatMap((child) =>
-      collectAttributeValues(child, attributeName),
-    ),
-  ]
-}
-
-export function collectTextFromElements(
-  node: INode,
-  elementName: string,
-): string {
-  return [
-    ...(node.name === elementName ? [getNodeText(node)] : []),
-    ...node.children.map((child) =>
-      collectTextFromElements(child, elementName),
-    ),
-  ].join("")
-}
-
-export function getNodeText(node: INode): string {
-  return [
-    ...(node.type === "text" ? [node.value] : []),
-    ...node.children.map(getNodeText),
-  ].join("")
-}
-
-export function stringifyTree(node: INode): string {
-  const attributes = Object.entries(node.attributes)
-    .map(([name, value]) => `${name}="${value}"`)
-    .join(" ")
-  return `<${node.name}${attributes ? ` ${attributes}` : ""}>${node.children
-    .map(stringifyTree)
-    .join("")}</${node.name}>`
+  const payload = match[1]!
+  const metadata = dataUrl.slice(0, dataUrl.indexOf(",")).toLowerCase()
+  return metadata.endsWith(";base64")
+    ? Buffer.from(payload, "base64").toString("utf8")
+    : decodeURIComponent(payload)
 }
 
 export function readPixel(

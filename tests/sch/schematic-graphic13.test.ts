@@ -1,31 +1,39 @@
+import { Resvg } from "@resvg/resvg-js"
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
-import { parseSync } from "svgson"
-import {
-  findElement,
-  getNestedSvg,
-  schematicGraphic,
-} from "./schematic-graphic-test-helpers"
+import { readPixel, schematicGraphic } from "./schematic-graphic-test-helpers"
 
-test("a schematic graphic without an explicit sheet fills the output viewport", () => {
+test("embedded images isolate source classes and repeated IDs", () => {
   const svg = convertCircuitJsonToSchematicSvg(
     [
       schematicGraphic({
-        id: "schematic_graphic_standalone",
-        svgContent:
-          '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg>',
+        id: "schematic_graphic_red",
+        svgContent: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1">
+          <defs><linearGradient id="paint"><stop stop-color="#ff0000"/></linearGradient></defs>
+          <style>.boundary { fill: url(#paint) }</style>
+          <rect class="boundary" width="2" height="1"/>
+        </svg>`,
+      }),
+      schematicGraphic({
+        id: "schematic_graphic_blue",
+        svgContent: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1">
+          <defs><linearGradient id="paint"><stop stop-color="#0000ff"/></linearGradient></defs>
+          <style>.boundary { fill: url(#paint) }</style>
+          <rect class="boundary" x="1" width="1" height="1"/>
+        </svg>`,
       }),
     ],
-    { width: 320, height: 180 },
+    { width: 200, height: 100 },
   )
 
-  const root = parseSync(svg)
-  const graphic = findElement(root, "data-schematic-graphic-id")
-  if (!graphic) throw new Error("Expected rendered schematic graphic")
-  const nestedSvg = getNestedSvg(graphic)
+  const rendered = new Resvg(svg, {
+    font: { loadSystemFonts: false },
+  }).render()
 
-  expect(nestedSvg.attributes.x).toBe("0")
-  expect(nestedSvg.attributes.y).toBe("0")
-  expect(nestedSvg.attributes.width).toBe("320")
-  expect(nestedSvg.attributes.height).toBe("180")
+  expect(readPixel(rendered.pixels, rendered.width, 50, 50)).toEqual([
+    255, 0, 0, 255,
+  ])
+  expect(readPixel(rendered.pixels, rendered.width, 150, 50)).toEqual([
+    0, 0, 255, 255,
+  ])
 })

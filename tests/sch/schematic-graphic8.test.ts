@@ -1,52 +1,72 @@
-import { Resvg } from "@resvg/resvg-js"
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
-import { parseSync } from "svgson"
 import {
-  findElement,
-  getNestedSvg,
-  readPixel,
+  getRenderedGraphicViewport,
   schematicGraphic,
+  schematicSheet,
 } from "./schematic-graphic-test-helpers"
 
-test("source root overrides cannot escape the fitted viewport", () => {
-  const svg = convertCircuitJsonToSchematicSvg(
-    [
-      schematicGraphic({
-        id: "schematic_graphic_root_fit",
-        svgContent: `<svg viewBox="0 0 100 50" transform="translate(500 500) scale(20)"
-          style="width:9999px!important;height:9999px!important;transform:translate(200px, 200px) scale(50)!important;position:fixed!important;inset:0!important">
-          <style>svg { width: 9999px !important; height: 9999px !important; transform: scale(50) !important }</style>
-          <rect width="50" height="50" fill="#ff0000"/>
-          <rect x="50" width="50" height="50" fill="#0000ff"/>
-        </svg>`,
-      }),
-    ],
-    { width: 200, height: 100 },
+test("centers and clamps optional dimensions within the graphic viewport", () => {
+  const renderStandalone = (dimensions?: { width?: number; height?: number }) =>
+    convertCircuitJsonToSchematicSvg(
+      [
+        schematicGraphic({
+          id: "schematic_graphic_sizing",
+          svgContent:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><rect width="2" height="1"/></svg>',
+          ...dimensions,
+        }),
+      ],
+      { width: 320, height: 180 },
+    )
+
+  expect(getRenderedGraphicViewport(renderStandalone({ width: 2 }))).toEqual({
+    x: 100,
+    y: 0,
+    width: 120,
+    height: 180,
+  })
+  expect(getRenderedGraphicViewport(renderStandalone({ height: 1 }))).toEqual({
+    x: 0,
+    y: 60,
+    width: 320,
+    height: 60,
+  })
+  expect(
+    getRenderedGraphicViewport(renderStandalone({ width: 2, height: 1 })),
+  ).toEqual({ x: 100, y: 60, width: 120, height: 60 })
+  expect(getRenderedGraphicViewport(renderStandalone())).toEqual({
+    x: 0,
+    y: 0,
+    width: 320,
+    height: 180,
+  })
+
+  const renderSheet = (dimensions?: { width?: number; height?: number }) =>
+    convertCircuitJsonToSchematicSvg(
+      [
+        schematicSheet("schematic_sheet_sizing", 0),
+        schematicGraphic({
+          id: "schematic_graphic_sizing",
+          sheetId: "schematic_sheet_sizing",
+          svgContent:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><rect width="2" height="1"/></svg>',
+          ...dimensions,
+        }),
+      ],
+      { width: 1200, height: 848 },
+    )
+  const defaultSheetSvg = renderSheet()
+  const clampedSheetSvg = renderSheet({ width: 1_000, height: 1_000 })
+
+  expect(getRenderedGraphicViewport(defaultSheetSvg)).toEqual({
+    x: 44.946094,
+    y: 37.202853,
+    width: 1110.107812,
+    height: 773.594294,
+  })
+  expect(getRenderedGraphicViewport(clampedSheetSvg)).toEqual(
+    getRenderedGraphicViewport(defaultSheetSvg),
   )
-  const graphic = findElement(parseSync(svg), "data-schematic-graphic-id")
-  if (!graphic) throw new Error("Expected rendered schematic graphic")
-  const nestedSvg = getNestedSvg(graphic)
-
-  expect(nestedSvg.name).toBe("svg")
-  expect(nestedSvg.attributes.transform).toBeUndefined()
-  expect(nestedSvg.attributes.x).toBe("0")
-  expect(nestedSvg.attributes.y).toBe("0")
-  expect(nestedSvg.attributes.width).toBe("200")
-  expect(nestedSvg.attributes.height).toBe("100")
-  expect(nestedSvg.attributes.overflow).toBe("hidden")
-  expect(graphic.attributes["pointer-events"]).toBe("none")
-  expect(nestedSvg.attributes.style).toContain("width:200px!important")
-  expect(nestedSvg.attributes.style).toContain("height:100px!important")
-  expect(nestedSvg.attributes.style).toContain("transform:none!important")
-
-  const rendered = new Resvg(svg, {
-    font: { loadSystemFonts: false },
-  }).render()
-  expect(readPixel(rendered.pixels, rendered.width, 50, 50)).toEqual([
-    255, 0, 0, 255,
-  ])
-  expect(readPixel(rendered.pixels, rendered.width, 150, 50)).toEqual([
-    0, 0, 255, 255,
-  ])
+  expect(clampedSheetSvg).toBe(defaultSheetSvg)
 })

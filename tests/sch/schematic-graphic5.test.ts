@@ -1,9 +1,15 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import {
+  decodeSvgDataUrl,
+  getEmbeddedImage,
+} from "./schematic-graphic-test-helpers"
 
-test("uses svg_content when a non-inline SVG asset has been resolved by the caller", () => {
-  const svg = convertCircuitJsonToSchematicSvg([
-    {
+test("embeds svg_content materialized for an external asset", () => {
+  const svgContent =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M0 0L10 10"/></svg>'
+  const graphic = createSvgObjectFromSchematicGraphic({
+    schematicGraphic: {
       type: "schematic_graphic",
       schematic_graphic_id: "schematic_graphic_resolved_asset",
       asset: {
@@ -11,10 +17,13 @@ test("uses svg_content when a non-inline SVG asset has been resolved by the call
         url: "https://example.com/system.svg",
         mimetype: "image/svg+xml",
       },
-      svg_content: '<svg viewBox="0 0 10 10"><text>RESOLVED SVG</text></svg>',
+      svg_content: svgContent,
     },
-  ])
+    viewport: { x: 0, y: 0, width: 100, height: 100 },
+  })
+  const href = getEmbeddedImage(graphic).attributes.href!
 
-  expect(svg).toContain("RESOLVED SVG")
-  expect(svg).not.toContain("https://example.com/system.svg")
+  expect(href).toStartWith("data:image/svg+xml;base64,")
+  expect(href).not.toContain("https://example.com/system.svg")
+  expect(decodeSvgDataUrl(href)).toBe(svgContent)
 })

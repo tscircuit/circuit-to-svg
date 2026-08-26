@@ -1,34 +1,27 @@
 import { expect, test } from "bun:test"
-import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { parseSync } from "svgson"
 import {
-  collectAttributeValues,
-  getNestedSvg,
-  stringifyTree,
-  svgAsset,
+  decodeSvgDataUrl,
+  findElement,
+  getEmbeddedImage,
 } from "./schematic-graphic-test-helpers"
 
-test("preserves embedded static raster images but strips active and external images", () => {
-  const pngDataUrl =
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-  const sourceSvg = `<svg viewBox="0 0 10 10">
-    <image id="safe" href="${pngDataUrl}"/>
-    <image id="external" href="https://example.com/logo.png"/>
-    <image id="active" href="data:image/svg+xml;base64,PHN2Zy8+"/>
-    <image id="animated" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="/>
-  </svg>`
-  const graphic = createSvgObjectFromSchematicGraphic({
-    schematicGraphic: {
+test("keeps parser-invalid and active SVG markup opaque inside the image href", () => {
+  const opaqueSource = '<svg><script>alert("opaque")</script><g'
+  const svg = convertCircuitJsonToSchematicSvg([
+    {
       type: "schematic_graphic",
-      schematic_graphic_id: "schematic_graphic_embedded_images",
-      asset: svgAsset(sourceSvg),
+      schematic_graphic_id: "schematic_graphic_opaque_source",
+      svg_content: opaqueSource,
     },
-    viewport: { x: 0, y: 0, width: 100, height: 100 },
-  })
-  const nestedSvg = getNestedSvg(graphic)
-  const hrefs = collectAttributeValues(nestedSvg, "href")
+  ])
 
-  expect(hrefs).toEqual([pngDataUrl])
-  expect(stringifyTree(nestedSvg)).not.toContain("https://example.com")
-  expect(stringifyTree(nestedSvg)).not.toContain("data:image/svg+xml")
-  expect(stringifyTree(nestedSvg)).not.toContain("data:image/gif")
+  const graphic = findElement(parseSync(svg), "data-schematic-graphic-id")
+  if (!graphic) throw new Error("Expected rendered schematic graphic")
+  const image = getEmbeddedImage(graphic)
+
+  expect(decodeSvgDataUrl(image.attributes.href!)).toBe(opaqueSource)
+  expect(svg).not.toContain("<script")
+  expect(svg).not.toContain("<g<")
 })
