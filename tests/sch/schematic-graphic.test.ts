@@ -12,9 +12,9 @@ const systemBlockDiagramSvg = readFileSync(
   "utf8",
 )
 
-const tscircuitAlphabetFontPath = fileURLToPath(
+const rasterTestFontPath = fileURLToPath(
   new URL(
-    "../../node_modules/@tscircuit/alphabet/dist/TscircuitAlphabet.ttf",
+    "../../node_modules/three/examples/fonts/ttf/kenpixel.ttf",
     import.meta.url,
   ),
 )
@@ -401,7 +401,7 @@ test(
         schematicGraphic({
           id: "schematic_graphic_resvg_text",
           svgContent: `<svg viewBox="0 0 360 120">
-          <text x="20" y="78" font-family="TscircuitAlphabet" font-size="52" fill="#ff00ff">TEXT</text>
+          <text x="20" y="78" font-family="KenPixel" font-size="52" fill="#ff00ff">TEXT</text>
         </svg>`,
         }),
       ],
@@ -411,8 +411,8 @@ test(
     const rendered = new Resvg(svg, {
       font: {
         loadSystemFonts: false,
-        fontFiles: [tscircuitAlphabetFontPath],
-        defaultFontFamily: "TscircuitAlphabet",
+        fontFiles: [rasterTestFontPath],
+        defaultFontFamily: "KenPixel",
       },
     }).render()
     let magentaPixelCount = 0
