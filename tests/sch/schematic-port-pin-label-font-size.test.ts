@@ -99,14 +99,70 @@ test("schematic pin-label font-size overrides", () => {
       y: y * scale,
     })
     const ports = [
-      { id: "sd", x: -1.68, y: 1.05, side: "left", label: "N_SD" },
-      { id: "in_neg", x: -1.68, y: 0.21, side: "left", label: "IN_NEG" },
-      { id: "in_pos", x: -1.68, y: -0.63, side: "left", label: "IN_POS" },
-      { id: "gnd", x: 0, y: -1.89, side: "bottom", label: "GND" },
-      { id: "vo_pos", x: 1.68, y: -0.21, side: "right", label: "VO_POS" },
-      { id: "vdd", x: 0, y: 1.47, side: "top", label: "VDD" },
-      { id: "vo_neg", x: 1.68, y: -1.05, side: "right", label: "VO_NEG" },
-      { id: "nc", x: -1.68, y: -1.47, side: "left", label: "NC" },
+      {
+        id: "sd",
+        pinNumber: 1,
+        x: -1.68,
+        y: 1.05,
+        side: "left",
+        label: "N_SD",
+      },
+      {
+        id: "in_neg",
+        pinNumber: 4,
+        x: -1.68,
+        y: 0.21,
+        side: "left",
+        label: "IN_NEG",
+      },
+      {
+        id: "in_pos",
+        pinNumber: 3,
+        x: -1.68,
+        y: -0.63,
+        side: "left",
+        label: "IN_POS",
+      },
+      {
+        id: "gnd",
+        pinNumber: 7,
+        x: 0,
+        y: -1.89,
+        side: "bottom",
+        label: "GND",
+      },
+      {
+        id: "vo_pos",
+        pinNumber: 5,
+        x: 1.68,
+        y: -0.21,
+        side: "right",
+        label: "VO_POS",
+      },
+      {
+        id: "vdd",
+        pinNumber: 6,
+        x: 0,
+        y: 1.47,
+        side: "top",
+        label: "VDD",
+      },
+      {
+        id: "vo_neg",
+        pinNumber: 8,
+        x: 1.68,
+        y: -1.05,
+        side: "right",
+        label: "VO_NEG",
+      },
+      {
+        id: "nc",
+        pinNumber: 2,
+        x: -1.68,
+        y: -1.47,
+        side: "left",
+        label: "NC",
+      },
     ] as const
     const symbolPaths = [
       [
@@ -165,7 +221,7 @@ test("schematic pin-label font-size overrides", () => {
         size: { width: 2.184, height: 2.457 },
         is_box_with_pins: false,
       },
-      ...ports.map(({ id: portId, x: portX, y, side, label }) => ({
+      ...ports.map(({ id: portId, pinNumber, x: portX, y, side, label }) => ({
         type: "schematic_port" as const,
         schematic_port_id: `schematic_port_${id}_${portId}`,
         source_port_id: `source_port_${id}_${portId}`,
@@ -173,6 +229,7 @@ test("schematic pin-label font-size overrides", () => {
         center: offsetPoint({ x: portX, y }),
         side_of_component: side,
         distance_from_component_edge: 0.84 * scale,
+        pin_number: pinNumber,
         display_pin_label: label,
         display_pin_label_font_size: crowdedPortIds.has(portId)
           ? fontSize
@@ -209,6 +266,19 @@ test("schematic pin-label font-size overrides", () => {
         is_filled: false,
         is_dashed: false,
         stroke_color: "#880000",
+      })),
+      ...[
+        { text: "+", x: 1.512, y: -0.042 },
+        { text: "-", x: 1.596, y: -0.966 },
+      ].map(({ text, x: textX, y }, textIndex) => ({
+        type: "schematic_text" as const,
+        schematic_text_id: `schematic_text_${id}_polarity_${textIndex}`,
+        text,
+        font_size: 0.2,
+        position: offsetPoint({ x: textX, y }),
+        rotation: 0,
+        anchor: "left" as const,
+        color: "#0000FF",
       })),
       {
         type: "schematic_text",
