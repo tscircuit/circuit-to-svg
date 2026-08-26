@@ -122,6 +122,14 @@ function validateSvgDataUrl(dataUrl: string, errorPrefix: string): void {
   }
 
   // Check percent escapes without retaining or parsing the decoded document.
+  // A raw hash starts the URL fragment and truncates the data payload before a
+  // renderer sees it, so SVG color/reference hashes must be percent-encoded.
+  if (payload.includes("#")) {
+    throw new Error(
+      `${errorPrefix}: asset.url must percent-encode "#" in a non-base64 SVG data URL`,
+    )
+  }
+
   try {
     decodeURIComponent(payload)
   } catch (cause) {
