@@ -34,7 +34,7 @@ export function getSchematicBoundsFromCircuitJson(
   // Find the bounds
   for (const item of circuitJson) {
     if (item.type === "schematic_sheet") {
-      const layout = getSchematicSheetLayout()
+      const layout = getSchematicSheetLayout(item.sheet_size)
       updateBounds(
         layout.center,
         { width: layout.width, height: layout.height },
