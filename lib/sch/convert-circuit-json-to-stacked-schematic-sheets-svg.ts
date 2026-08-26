@@ -1,4 +1,8 @@
-import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicSheet,
+  SchematicSheetSize,
+} from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap } from "lib/utils/colors"
 import {
@@ -187,9 +191,9 @@ function getSheetLabelPosition({
   transformStr: string | undefined
   panelTop: number
   labelHeight: number
-  sheetSize: SchematicSheet["sheet_size"]
-  sheetWidth: SchematicSheet["sheet_width"]
-  sheetHeight: SchematicSheet["sheet_height"]
+  sheetSize: SchematicSheetSize | undefined
+  sheetWidth: number | undefined
+  sheetHeight: number | undefined
 }): { x: number; y: number } {
   // Baseline near the bottom of the band, leaving a gap below before the frame.
   const y = panelTop - labelHeight * 0.28
