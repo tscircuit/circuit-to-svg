@@ -16,4 +16,4 @@
     L 567.74424772418,438.7212386208531
     L 567.74424772418,178.6968676080428
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="6.451150455164px"/><text class="net-label-text sch-net-label-text" data-circuit-json-type="schematic_net_label" data-schematic-net-label-id="schematic_net_label_0" x="600" y="190.30893842733798" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="58.060354096476px" transform="rotate(90 600 190.30893842733798)">U2_DSG</text></svg>
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="6.451150455164px"/><text class="net-label-text sch-net-label-text" data-circuit-json-type="schematic_net_label" data-schematic-net-label-id="schematic_net_label_0" x="600" y="190.30893842733798" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="58.060354096476px" transform="rotate(-90 600 190.30893842733798)">U2_DSG</text></svg>

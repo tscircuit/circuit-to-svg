@@ -177,7 +177,7 @@ export const createSvgObjectsForSchNetLabel = ({
 
   const textAnchor = {
     left: "start",
-    top: "start",
+    top: "end",
     bottom: "start",
     right: "end",
   }[schNetLabel.anchor_side]
@@ -185,7 +185,7 @@ export const createSvgObjectsForSchNetLabel = ({
   const textTransformString = {
     left: "",
     right: "",
-    top: `rotate(90 ${screenTextPos.x} ${screenTextPos.y})`,
+    top: `rotate(-90 ${screenTextPos.x} ${screenTextPos.y})`,
     bottom: `rotate(-90 ${screenTextPos.x} ${screenTextPos.y})`,
   }[schNetLabel.anchor_side]
 

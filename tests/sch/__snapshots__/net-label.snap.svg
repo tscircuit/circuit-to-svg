@@ -30,7 +30,7 @@
     L 353.67878614376,270.16890924710384
     L 353.67878614376,219.31004866881955
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.1471514457480003px"/><text class="net-label-text sch-net-label-text" x="364.4145433725" y="223.17492127116594" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="19.324363011732px" transform="rotate(90 364.4145433725 223.17492127116594)">VCC</text><path class="net-label sch-net-label" d="
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.1471514457480003px"/><text class="net-label-text sch-net-label-text" x="364.4145433725" y="223.17492127116594" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="19.324363011732px" transform="rotate(-90 364.4145433725 223.17492127116594)">VCC</text><path class="net-label sch-net-label" d="
     M 471.7721156599,213.51273976529995
     L 461.03635843116,207.71543086178036
     L 461.03635843116,154.70941883774805
@@ -93,7 +93,7 @@
     L 783.10907529336,265.98912109938107
     L 783.10907529336,166.83366733473844
     Z
-  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.1471514457480003px"/><text class="net-label-text sch-net-label-text" x="793.8448325221" y="170.69853993708483" fill="rgb(132, 0, 0)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="19.324363011732px" transform="rotate(90 793.8448325221 170.69853993708483)">CENTER3</text><path class="net-label sch-net-label" d="
+  " fill="rgba(255, 255, 255, 0.6)" stroke="rgb(132, 0, 0)" stroke-width="2.1471514457480003px"/><text class="net-label-text sch-net-label-text" x="793.8448325221" y="170.69853993708483" fill="rgb(132, 0, 0)" text-anchor="end" dominant-baseline="central" font-family="sans-serif" font-variant-numeric="tabular-nums" font-size="19.324363011732px" transform="rotate(-90 793.8448325221 170.69853993708483)">CENTER3</text><path class="net-label sch-net-label" d="
     M 793.8448325221,158.63154881198108
     L 783.10907529336,152.83423990846148
     L 783.10907529336,53.67878614381884

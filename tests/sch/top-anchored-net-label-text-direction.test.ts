@@ -20,6 +20,6 @@ test("top-anchored net label text direction", () => {
     /class="net-label-text sch-net-label-text"[^>]*transform="rotate\(([-\d.]+)/,
   )
 
-  expect(Number(rotationMatch?.[1])).toBe(90)
+  expect(Number(rotationMatch?.[1])).toBe(-90)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
