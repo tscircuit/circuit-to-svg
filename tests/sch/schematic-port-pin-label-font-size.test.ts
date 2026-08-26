@@ -80,7 +80,7 @@ test("font-size overrides do not change vertical label rotation", () => {
 })
 
 test("schematic pin-label font-size overrides", () => {
-  const makeComparisonComponent = ({
+  const makeAffectedEasyEdaSymbol = ({
     id,
     x,
     fontSize,
@@ -92,47 +92,123 @@ test("schematic pin-label font-size overrides", () => {
     title: string
   }): AnyCircuitElement[] => {
     const schematicComponentId = `schematic_component_${id}`
+    // C113367 (PAM8302AASCR) geometry, shown at its crowded imported scale.
+    const scale = 0.5
+    const offsetPoint = ({ x: pointX, y }: { x: number; y: number }) => ({
+      x: x + pointX * scale,
+      y: y * scale,
+    })
+    const ports = [
+      { id: "sd", x: -1.68, y: 1.05, side: "left", label: "N_SD" },
+      { id: "in_neg", x: -1.68, y: 0.21, side: "left", label: "IN_NEG" },
+      { id: "in_pos", x: -1.68, y: -0.63, side: "left", label: "IN_POS" },
+      { id: "gnd", x: 0, y: -1.89, side: "bottom", label: "GND" },
+      { id: "vo_pos", x: 1.68, y: -0.21, side: "right", label: "VO_POS" },
+      { id: "vdd", x: 0, y: 1.47, side: "top", label: "VDD" },
+      { id: "vo_neg", x: 1.68, y: -1.05, side: "right", label: "VO_NEG" },
+      { id: "nc", x: -1.68, y: -1.47, side: "left", label: "NC" },
+    ] as const
+    const symbolPaths = [
+      [
+        { x: -0.84, y: -1.05 },
+        { x: 0.84, y: -0.21 },
+        { x: -0.84, y: 0.63 },
+        { x: -0.84, y: -1.05 },
+      ],
+      [
+        { x: -0.672, y: 0.21 },
+        { x: -0.42, y: 0.21 },
+      ],
+      [
+        { x: -0.672, y: -0.63 },
+        { x: -0.42, y: -0.63 },
+      ],
+      [
+        { x: -0.546, y: -0.504 },
+        { x: -0.546, y: -0.756 },
+      ],
+      [
+        { x: 0, y: 0.63 },
+        { x: 0, y: 0.21 },
+      ],
+      [
+        { x: 0, y: -0.63 },
+        { x: 0, y: -1.05 },
+      ],
+      [
+        { x: 0.42, y: -0.42 },
+        { x: 0.84, y: -1.05 },
+      ],
+      [
+        { x: -0.588, y: 0.504 },
+        { x: -0.84, y: 1.05 },
+      ],
+      [
+        { x: -0.588, y: -0.924 },
+        { x: -0.84, y: -1.47 },
+      ],
+    ]
+    const crowdedPortIds = new Set(["in_neg", "in_pos", "vo_pos", "vo_neg"])
 
     return [
       {
         type: "schematic_component",
         schematic_component_id: schematicComponentId,
         center: { x, y: 0 },
-        size: { width: 2.6, height: 2.2 },
-        is_box_with_pins: true,
+        size: { width: 1.68, height: 1.89 },
+        is_box_with_pins: false,
       },
-      ...[
-        { id: "input", y: 0.45, label: "LONG_INPUT_LABEL" },
-        { id: "active_low", y: 0, label: "N_ACTIVE_LOW" },
-        { id: "output", y: -0.45, label: "OUTPUT_LABEL" },
-      ].map(({ id: portId, y, label }) => ({
+      ...ports.map(({ id: portId, x: portX, y, side, label }) => ({
         type: "schematic_port" as const,
         schematic_port_id: `schematic_port_${id}_${portId}`,
         source_port_id: `source_port_${id}_${portId}`,
         schematic_component_id: schematicComponentId,
-        center: { x: x - 1.7, y },
-        side_of_component: "left" as const,
-        distance_from_component_edge: 0.4,
+        center: offsetPoint({ x: portX, y }),
+        side_of_component: side,
+        distance_from_component_edge: 0.84 * scale,
         display_pin_label: label,
-        display_pin_label_font_size: fontSize,
+        display_pin_label_font_size: crowdedPortIds.has(portId)
+          ? fontSize
+          : undefined,
       })),
-      {
-        type: "schematic_port",
-        schematic_port_id: `schematic_port_${id}_vertical`,
-        source_port_id: `source_port_${id}_vertical`,
+      ...ports.map(({ id: portId, x: portX, y, side }) => {
+        const stemEnd =
+          side === "left"
+            ? { x: portX + 0.84, y }
+            : side === "right"
+              ? { x: portX - 0.84, y }
+              : side === "top"
+                ? { x: portX, y: y - 0.84 }
+                : { x: portX, y: y + 0.84 }
+
+        return {
+          type: "schematic_line" as const,
+          schematic_line_id: `schematic_line_${id}_${portId}`,
+          schematic_component_id: schematicComponentId,
+          x1: x + portX * scale,
+          y1: y * scale,
+          x2: x + stemEnd.x * scale,
+          y2: stemEnd.y * scale,
+          stroke_width: 0.02,
+          color: "rgba(132, 0, 0)",
+          is_dashed: false,
+        }
+      }),
+      ...symbolPaths.map((points, pathIndex) => ({
+        type: "schematic_path" as const,
+        schematic_path_id: `schematic_path_${id}_${pathIndex}`,
         schematic_component_id: schematicComponentId,
-        center: { x: x + 0.65, y: 1.5 },
-        side_of_component: "top",
-        distance_from_component_edge: 0.4,
-        display_pin_label: "VERTICAL_LABEL",
-        display_pin_label_font_size: fontSize,
-      },
+        points: points.map(offsetPoint),
+        is_filled: false,
+        is_dashed: false,
+        stroke_color: "#880000",
+      })),
       {
         type: "schematic_text",
         schematic_text_id: `schematic_text_${id}`,
         text: title,
         font_size: 0.18,
-        position: { x, y: -1.45 },
+        position: { x, y: -1.25 },
         rotation: 0,
         anchor: "center",
         color: "#006464",
@@ -141,16 +217,16 @@ test("schematic pin-label font-size overrides", () => {
   }
 
   const circuitJson: AnyCircuitElement[] = [
-    ...makeComparisonComponent({
+    ...makeAffectedEasyEdaSymbol({
       id: "default",
-      x: -2.3,
-      title: "DEFAULT 0.15mm",
+      x: -1.45,
+      title: "C113367 · DEFAULT 0.15mm",
     }),
-    ...makeComparisonComponent({
+    ...makeAffectedEasyEdaSymbol({
       id: "override",
-      x: 2.3,
-      fontSize: 0.12,
-      title: "OVERRIDE 0.12mm",
+      x: 1.45,
+      fontSize: 0.1,
+      title: "C113367 · CROWDED PINS 0.10mm",
     }),
   ]
 
