@@ -27,7 +27,8 @@ test("schematic graphics cannot restore pointer, focus, or hash navigation", () 
           <a href="#reference" tabindex="0" focusable="true" autofocus="autofocus">
             <rect id="linked-child" x="10" y="10" width="30" height="30"
               fill="#00ff00" tabindex="-1" focusable="true" autofocus="autofocus"
-              pointer-events="auto" style="all:initial;pointer-events:auto;fill:#00ff00" />
+              contenteditable="true" pointer-events="auto"
+              style="all:initial;pointer-events:auto;fill:#00ff00" />
           </a>
           <use href="#reference" x="80" y="20" fill="#0000ff" />
         </svg>`,
@@ -52,6 +53,7 @@ test("schematic graphics cannot restore pointer, focus, or hash navigation", () 
   expect(collectAttributeValues(nestedSvg, "tabindex")).toEqual([])
   expect(collectAttributeValues(nestedSvg, "focusable")).toEqual([])
   expect(collectAttributeValues(nestedSvg, "autofocus")).toEqual([])
+  expect(collectAttributeValues(nestedSvg, "contenteditable")).toEqual([])
   expect(collectAttributeValues(nestedSvg, "pointer-events")).toEqual([])
   expect(graphic.attributes["pointer-events"]).toBe("none")
   expect(nestedMarkup).not.toMatch(/(?:^|[;{])\s*all\s*:/i)

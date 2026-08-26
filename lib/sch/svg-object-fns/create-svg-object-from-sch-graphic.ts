@@ -40,6 +40,7 @@ const BLOCKED_ELEMENTS = new Set([
 const BLOCKED_FOCUS_ATTRIBUTES = new Set([
   "accesskey",
   "autofocus",
+  "contenteditable",
   "focusable",
   "nav-down",
   "nav-left",
