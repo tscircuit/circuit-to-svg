@@ -9,11 +9,7 @@ import {
 import { parseSync, stringify } from "svgson"
 import { applyToPoint, fromString } from "transformation-matrix"
 import { convertCircuitJsonToSchematicSvg } from "./convert-circuit-json-to-schematic-svg"
-import {
-  DEFAULT_SCHEMATIC_SHEET_HEIGHT,
-  DEFAULT_SCHEMATIC_SHEET_WIDTH,
-  getSchematicSheetLayout,
-} from "./schematic-sheet-utils"
+import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
 type SchematicSvgOptions = NonNullable<
   Parameters<typeof convertCircuitJsonToSchematicSvg>[1]
@@ -27,10 +23,6 @@ export interface StackedSchematicSheetsSvgOptions extends SchematicSvgOptions {
 }
 
 const DEFAULT_SHEET_WIDTH = 1000
-// Match the A4 sheet aspect ratio so panels don't get letterboxed with
-// horizontal/vertical padding.
-const SHEET_ASPECT_RATIO =
-  DEFAULT_SCHEMATIC_SHEET_WIDTH / DEFAULT_SCHEMATIC_SHEET_HEIGHT
 const DEFAULT_LABEL_HEIGHT = 28
 const DEFAULT_GAP = 16
 
@@ -60,8 +52,6 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
   }
 
   const sheetWidth = options?.width ?? DEFAULT_SHEET_WIDTH
-  const sheetHeight =
-    options?.height ?? Math.round(sheetWidth / SHEET_ASPECT_RATIO)
   const labelHeight = options?.sheetLabelHeight ?? DEFAULT_LABEL_HEIGHT
   const gap = options?.sheetGap ?? DEFAULT_GAP
 
@@ -77,6 +67,10 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
   let yOffset = 0
 
   sheets.forEach((sheet, index) => {
+    const sheetLayout = getSchematicSheetLayout(sheet.sheet_size)
+    const sheetHeight =
+      options?.height ??
+      Math.round((sheetWidth * sheetLayout.height) / sheetLayout.width)
     const sheetSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
       ...options,
       schematicSheetId: sheet.schematic_sheet_id,
@@ -97,6 +91,7 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
       transformStr: sheetNode.attributes?.["data-real-to-screen-transform"],
       panelTop,
       labelHeight,
+      sheetSize: sheet.sheet_size,
     })
 
     children.push(
@@ -179,10 +174,12 @@ function getSheetLabelPosition({
   transformStr,
   panelTop,
   labelHeight,
+  sheetSize,
 }: {
   transformStr: string | undefined
   panelTop: number
   labelHeight: number
+  sheetSize: SchematicSheet["sheet_size"]
 }): { x: number; y: number } {
   // Baseline near the bottom of the band, leaving a gap below before the frame.
   const y = panelTop - labelHeight * 0.28
@@ -191,7 +188,7 @@ function getSheetLabelPosition({
     return { x: 4, y }
   }
 
-  const layout = getSchematicSheetLayout()
+  const layout = getSchematicSheetLayout(sheetSize)
   const frameLeft = applyToPoint(fromString(transformStr), {
     x: layout.minX,
     y: layout.maxY,
