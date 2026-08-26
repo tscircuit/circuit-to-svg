@@ -1,5 +1,10 @@
 import { expect, test } from "bun:test"
-import type { SchematicComponent, SchematicPort } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicComponent,
+  SchematicPort,
+} from "circuit-json"
+import { convertCircuitJsonToSchematicSvg } from "lib"
 import { createSvgObjectsForSchPortPinLabel } from "lib/sch/svg-object-fns/create-svg-objects-for-sch-port-pin-label"
 import type { Matrix } from "transformation-matrix"
 
@@ -72,4 +77,65 @@ test("font-size overrides do not change vertical label rotation", () => {
 
   expect(label.attributes["font-size"]).toBe("10px")
   expect(label.attributes.transform).toStartWith("rotate(-90 ")
+})
+
+test("schematic pin-label font-size overrides", () => {
+  const circuitJson: AnyCircuitElement[] = [
+    {
+      type: "source_component",
+      source_component_id: "source_component_1",
+      name: "U1",
+      ftype: "simple_chip",
+    },
+    {
+      type: "schematic_component",
+      schematic_component_id: "schematic_component_1",
+      source_component_id: "source_component_1",
+      center: { x: 0, y: 0 },
+      size: { width: 3, height: 3.2 },
+      is_box_with_pins: true,
+    },
+    ...[
+      {
+        id: "default",
+        center: { x: -1.9, y: 0.8 },
+        side: "left" as const,
+        label: "DEFAULT",
+      },
+      {
+        id: "small",
+        center: { x: -1.9, y: -0.8 },
+        side: "left" as const,
+        label: "SMALL",
+        fontSize: 0.09,
+      },
+      {
+        id: "negated",
+        center: { x: -1.9, y: 0 },
+        side: "left" as const,
+        label: "N_NEGATED",
+      },
+      {
+        id: "vertical",
+        center: { x: 0.8, y: 2 },
+        side: "top" as const,
+        label: "VERTICAL",
+        fontSize: 0.08,
+      },
+    ].map(({ id, center, side, label, fontSize }) => ({
+      type: "schematic_port" as const,
+      schematic_port_id: `schematic_port_${id}`,
+      source_port_id: `source_port_${id}`,
+      schematic_component_id: "schematic_component_1",
+      center,
+      side_of_component: side,
+      distance_from_component_edge: 0.4,
+      display_pin_label: label,
+      display_pin_label_font_size: fontSize,
+    })),
+  ]
+
+  expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
 })
