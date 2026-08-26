@@ -37,6 +37,19 @@ const BLOCKED_ELEMENTS = new Set([
   "video",
 ])
 
+const BLOCKED_FOCUS_ATTRIBUTES = new Set([
+  "accesskey",
+  "autofocus",
+  "focusable",
+  "nav-down",
+  "nav-left",
+  "nav-next",
+  "nav-prev",
+  "nav-right",
+  "nav-up",
+  "tabindex",
+])
+
 const SPACE_SEPARATED_ID_REFERENCE_ATTRIBUTES = new Set([
   "aria-describedby",
   "aria-labelledby",
@@ -47,6 +60,7 @@ const SINGLE_ID_REFERENCE_ATTRIBUTES = new Set(["for"])
 
 const BLOCKED_CSS_PROPERTIES = new Set([
   "-moz-binding",
+  "all",
   "animation",
   "animation-delay",
   "animation-direction",
@@ -301,6 +315,11 @@ function sanitizeElement(node: SvgObject, namespace: string): void {
       continue
     }
 
+    if (BLOCKED_FOCUS_ATTRIBUTES.has(localName)) {
+      delete node.attributes[attributeName]
+      continue
+    }
+
     if (localName === "id") {
       node.attributes[attributeName] = namespaceId(namespace, attributeValue)
       continue
@@ -388,6 +407,15 @@ function sanitizeElement(node: SvgObject, namespace: string): void {
 
     const localName = getLocalName(child.name)
     if (BLOCKED_ELEMENTS.has(localName)) continue
+
+    // Anchors are navigation containers even when their href is only a local
+    // fragment. Preserve their static artwork, but remove the interactive
+    // container itself.
+    if (localName === "a") {
+      sanitizeElement(child, namespace)
+      sanitizedChildren.push(...(child.children ?? []))
+      continue
+    }
 
     if (localName === "style") {
       const sanitizedCss = sanitizeStyleSheet(getTextContent(child), namespace)
