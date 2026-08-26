@@ -1,4 +1,8 @@
-import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicGraphic,
+  SchematicSheet,
+} from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
 import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
@@ -210,7 +214,11 @@ export function convertCircuitJsonToSchematicSvg(
       schGraphicSvgs.push(
         createSvgObjectFromSchematicGraphic({
           schematicGraphic: elm,
-          viewport: graphicViewport,
+          viewport: fitSchematicGraphicViewport({
+            availableViewport: graphicViewport,
+            schematicGraphic: elm,
+            transform,
+          }),
         }),
       )
     } else if (elm.type === "schematic_debug_object") {
@@ -494,4 +502,51 @@ function getSchematicGraphicViewport({
     width: Math.abs(bottomRight.x - topLeft.x),
     height: Math.abs(bottomRight.y - topLeft.y),
   }
+}
+
+function fitSchematicGraphicViewport({
+  availableViewport,
+  schematicGraphic,
+  transform,
+}: {
+  availableViewport: { x: number; y: number; width: number; height: number }
+  schematicGraphic: SchematicGraphic
+  transform: Matrix
+}): { x: number; y: number; width: number; height: number } {
+  if (
+    schematicGraphic.width === undefined &&
+    schematicGraphic.height === undefined
+  ) {
+    return availableViewport
+  }
+
+  const width =
+    schematicGraphic.width === undefined
+      ? availableViewport.width
+      : clampGraphicDimension(
+          schematicGraphic.width * Math.hypot(transform.a, transform.b),
+          availableViewport.width,
+        )
+  const height =
+    schematicGraphic.height === undefined
+      ? availableViewport.height
+      : clampGraphicDimension(
+          schematicGraphic.height * Math.hypot(transform.c, transform.d),
+          availableViewport.height,
+        )
+
+  return {
+    x: availableViewport.x + (availableViewport.width - width) / 2,
+    y: availableViewport.y + (availableViewport.height - height) / 2,
+    width,
+    height,
+  }
+}
+
+function clampGraphicDimension(
+  requestedPixels: number,
+  availablePixels: number,
+): number {
+  if (!Number.isFinite(requestedPixels)) return availablePixels
+  return Math.max(0, Math.min(requestedPixels, availablePixels))
 }

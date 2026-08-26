@@ -1,6 +1,6 @@
 import type { AnyCircuitElement, Asset, SchematicGraphic } from "circuit-json"
 import { readFileSync } from "node:fs"
-import type { INode } from "svgson"
+import { parseSync, type INode } from "svgson"
 
 export const systemBlockDiagramSvg = readFileSync(
   new URL("./assets/system-block-diagram.svg", import.meta.url),
@@ -22,16 +22,39 @@ export function schematicGraphic({
   id,
   sheetId,
   svgContent,
+  width,
+  height,
 }: {
   id: string
   sheetId?: string
   svgContent: string
+  width?: number
+  height?: number
 }): SchematicGraphic {
   return {
     type: "schematic_graphic",
     schematic_graphic_id: id,
     ...(sheetId ? { schematic_sheet_id: sheetId } : {}),
     asset: svgAsset(svgContent),
+    ...(width !== undefined ? { width } : {}),
+    ...(height !== undefined ? { height } : {}),
+  }
+}
+
+export function getRenderedGraphicViewport(svg: string): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
+  const graphic = findElement(parseSync(svg), "data-schematic-graphic-id")
+  if (!graphic) throw new Error("Expected rendered schematic graphic")
+  const nestedSvg = getNestedSvg(graphic)
+  return {
+    x: Number(nestedSvg.attributes.x),
+    y: Number(nestedSvg.attributes.y),
+    width: Number(nestedSvg.attributes.width),
+    height: Number(nestedSvg.attributes.height),
   }
 }
 
