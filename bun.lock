@@ -33,7 +33,6 @@
         "react-cosmos": "7.0.0",
         "react-cosmos-plugin-vite": "7.0.0",
         "react-dom": "19.1.0",
-        "three": "^0.179.1",
         "tscircuit": "^0.0.2018",
         "tsup": "^8.0.2",
         "typescript": "^5.4.5",

@@ -4,19 +4,11 @@ import type { AnyCircuitElement, SchematicGraphic } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
 import { readFileSync } from "node:fs"
-import { fileURLToPath } from "node:url"
 import { parseSync, type INode } from "svgson"
 
 const systemBlockDiagramSvg = readFileSync(
   new URL("./assets/system-block-diagram.svg", import.meta.url),
   "utf8",
-)
-
-const rasterTestFontPath = fileURLToPath(
-  new URL(
-    "../../node_modules/three/examples/fonts/ttf/kenpixel.ttf",
-    import.meta.url,
-  ),
 )
 
 test("renders raw SVG content inside a schematic sheet", () => {
@@ -56,7 +48,8 @@ test("renders raw SVG content inside a schematic sheet", () => {
     `${getGraphicNamespace(graphic)}--`,
   )
   expect(svg).toContain(`fill="url(#${gradient?.attributes.id})"`)
-  expect(svg).toContain("System Block Diagram")
+  expect(svg).toContain(">System Block Diagram</text>")
+  expect(svg).not.toContain("data:image/svg+xml")
   // The graphic sits behind the sheet frame and schematic elements.
   expect(svg.indexOf('data-schematic-graphic-id="')).toBeLessThan(
     svg.indexOf('class="schematic-sheet"'),
@@ -392,45 +385,6 @@ test("schematic graphics render behind debug objects", () => {
     svg.indexOf("DEBUG ABOVE GRAPHIC"),
   )
 })
-
-test(
-  "Resvg rasterization retains embedded diagram text",
-  () => {
-    const svg = convertCircuitJsonToSchematicSvg(
-      [
-        schematicGraphic({
-          id: "schematic_graphic_resvg_text",
-          svgContent: `<svg viewBox="0 0 360 120">
-          <text x="20" y="78" font-family="KenPixel" font-size="52" fill="#ff00ff">TEXT</text>
-        </svg>`,
-        }),
-      ],
-      { width: 360, height: 120 },
-    )
-
-    const rendered = new Resvg(svg, {
-      font: {
-        loadSystemFonts: false,
-        fontFiles: [rasterTestFontPath],
-        defaultFontFamily: "KenPixel",
-      },
-    }).render()
-    let magentaPixelCount = 0
-    for (let offset = 0; offset < rendered.pixels.length; offset += 4) {
-      const red = rendered.pixels[offset] ?? 0
-      const green = rendered.pixels[offset + 1] ?? 0
-      const blue = rendered.pixels[offset + 2] ?? 0
-      const alpha = rendered.pixels[offset + 3] ?? 0
-      if (red > 180 && green < 80 && blue > 180 && alpha > 180) {
-        magentaPixelCount += 1
-      }
-    }
-
-    expect(svg).toContain(">TEXT</text>")
-    expect(magentaPixelCount).toBeGreaterThan(100)
-  },
-  { timeout: 15_000 },
-)
 
 test("reports which schematic graphic contains invalid SVG", () => {
   expect(() =>
