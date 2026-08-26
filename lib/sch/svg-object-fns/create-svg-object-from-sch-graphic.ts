@@ -129,18 +129,109 @@ function parseSchematicGraphicSvg(
 ): SvgObject {
   const errorPrefix = `Unable to render schematic graphic "${schematicGraphic.schematic_graphic_id}"`
 
+  const source = getSchematicGraphicSvgSource(schematicGraphic, errorPrefix)
+
   let sourceSvg: SvgObject
   try {
-    sourceSvg = ensureElementNode(parseSync(schematicGraphic.svg_content))
+    sourceSvg = ensureElementNode(parseSync(source.content))
   } catch (cause) {
-    throw new Error(`${errorPrefix}: svg_content is not valid SVG`, { cause })
+    throw new Error(`${errorPrefix}: ${source.label} is not valid SVG`, {
+      cause,
+    })
   }
 
   if (getLocalName(sourceSvg.name) !== "svg") {
-    throw new Error(`${errorPrefix}: svg_content must have an <svg> root`)
+    throw new Error(`${errorPrefix}: ${source.label} must have an <svg> root`)
   }
 
   return sourceSvg
+}
+
+function getSchematicGraphicSvgSource(
+  schematicGraphic: SchematicGraphic,
+  errorPrefix: string,
+): { content: string; label: "asset.url" | "svg_content" } {
+  // The cast keeps the renderer tolerant of Circuit JSON emitted before asset
+  // became required. New producers should always provide the canonical asset.
+  const asset = (
+    schematicGraphic as {
+      asset?: SchematicGraphic["asset"]
+    }
+  ).asset
+
+  if (!asset) {
+    if (schematicGraphic.svg_content !== undefined) {
+      return { content: schematicGraphic.svg_content, label: "svg_content" }
+    }
+    throw new Error(`${errorPrefix}: asset is required`)
+  }
+
+  if (getMediaType(asset.mimetype) !== "image/svg+xml") {
+    throw new Error(
+      `${errorPrefix}: asset.mimetype must be "image/svg+xml" (received ${JSON.stringify(asset.mimetype)})`,
+    )
+  }
+
+  const assetUrl = asset.url.trim()
+  if (assetUrl.toLowerCase().startsWith("data:")) {
+    return {
+      content: decodeSvgDataUrl(assetUrl, errorPrefix),
+      label: "asset.url",
+    }
+  }
+
+  // convertCircuitJsonToSchematicSvg is synchronous, so callers resolving a
+  // file or remote asset may attach its already-loaded text as svg_content.
+  if (schematicGraphic.svg_content !== undefined) {
+    return { content: schematicGraphic.svg_content, label: "svg_content" }
+  }
+
+  throw new Error(
+    `${errorPrefix}: asset.url must be an inline SVG data URL because circuit-to-svg cannot synchronously load ${JSON.stringify(asset.url)}`,
+  )
+}
+
+function decodeSvgDataUrl(dataUrl: string, errorPrefix: string): string {
+  const match = dataUrl.match(/^data:([^,]*),(.*)$/is)
+  if (!match) {
+    throw new Error(`${errorPrefix}: asset.url is not a valid SVG data URL`)
+  }
+
+  const metadata = match[1]!
+  const payload = match[2]!
+  const metadataParts = metadata.split(";").map((part) => part.trim())
+  const dataUrlMediaType = getMediaType(metadataParts.shift() ?? "")
+  if (dataUrlMediaType !== "image/svg+xml") {
+    throw new Error(
+      `${errorPrefix}: asset.url must use the "image/svg+xml" media type`,
+    )
+  }
+
+  const isBase64 = metadataParts.some((part) => part.toLowerCase() === "base64")
+
+  try {
+    if (!isBase64) return decodeURIComponent(payload)
+
+    const encoded = payload.replace(/\s+/g, "")
+    if (
+      !/^(?:[a-z\d+/]{4})*(?:[a-z\d+/]{2}==|[a-z\d+/]{3}=)?$/i.test(encoded)
+    ) {
+      throw new Error("invalid base64")
+    }
+    const binary = atob(encoded)
+    const bytes = Uint8Array.from(binary, (character) =>
+      character.charCodeAt(0),
+    )
+    return new TextDecoder().decode(bytes)
+  } catch (cause) {
+    throw new Error(`${errorPrefix}: asset.url is not a valid SVG data URL`, {
+      cause,
+    })
+  }
+}
+
+function getMediaType(value: string): string {
+  return (value.split(";", 1)[0] ?? "").trim().toLowerCase()
 }
 
 /**

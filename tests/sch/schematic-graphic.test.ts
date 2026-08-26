@@ -1,6 +1,6 @@
 import { Resvg } from "@resvg/resvg-js"
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement, SchematicGraphic } from "circuit-json"
+import type { AnyCircuitElement, Asset, SchematicGraphic } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
 import { readFileSync } from "node:fs"
@@ -11,7 +11,7 @@ const systemBlockDiagramSvg = readFileSync(
   "utf8",
 )
 
-test("renders raw SVG content inside a schematic sheet", () => {
+test("renders a percent-encoded SVG asset inside a schematic sheet", () => {
   const svg = convertCircuitJsonToSchematicSvg(
     [
       schematicSheet("schematic_sheet_system", 0),
@@ -86,13 +86,64 @@ test("schematic graphics follow schematic sheet selection", () => {
   expect(secondPageSvg).not.toContain("FIRST PAGE DIAGRAM")
 })
 
+test("renders a base64 SVG asset without svg_content", () => {
+  const svg = convertCircuitJsonToSchematicSvg([
+    {
+      type: "schematic_graphic",
+      schematic_graphic_id: "schematic_graphic_base64",
+      asset: svgAsset(
+        '<svg viewBox="0 0 10 10"><text>BASE64 ASSET — 温度</text></svg>',
+        "base64",
+      ),
+    },
+  ])
+
+  expect(svg).toContain("BASE64 ASSET — 温度")
+  expect(svg).not.toContain("data:image/svg+xml")
+})
+
+test("prefers the canonical inline asset over svg_content", () => {
+  const svg = convertCircuitJsonToSchematicSvg([
+    {
+      type: "schematic_graphic",
+      schematic_graphic_id: "schematic_graphic_asset_precedence",
+      asset: svgAsset(
+        '<svg viewBox="0 0 10 10"><text>CANONICAL ASSET</text></svg>',
+      ),
+      svg_content: '<svg viewBox="0 0 10 10"><text>STALE FALLBACK</text></svg>',
+    },
+  ])
+
+  expect(svg).toContain("CANONICAL ASSET")
+  expect(svg).not.toContain("STALE FALLBACK")
+})
+
+test("uses svg_content when a non-inline SVG asset has been resolved by the caller", () => {
+  const svg = convertCircuitJsonToSchematicSvg([
+    {
+      type: "schematic_graphic",
+      schematic_graphic_id: "schematic_graphic_resolved_asset",
+      asset: {
+        project_relative_path: "assets/system.svg",
+        url: "https://example.com/system.svg",
+        mimetype: "image/svg+xml",
+      },
+      svg_content: '<svg viewBox="0 0 10 10"><text>RESOLVED SVG</text></svg>',
+    },
+  ])
+
+  expect(svg).toContain("RESOLVED SVG")
+  expect(svg).not.toContain("https://example.com/system.svg")
+})
+
 test("derives a viewBox from absolute SVG dimensions", () => {
+  const sourceSvg =
+    '<svg width="25.4mm" height="1in" preserveAspectRatio="xMinYMin slice"><rect width="96" height="96"/></svg>'
   const graphic = createSvgObjectFromSchematicGraphic({
     schematicGraphic: {
       type: "schematic_graphic",
       schematic_graphic_id: "schematic_graphic_dimensions",
-      svg_content:
-        '<svg width="25.4mm" height="1in" preserveAspectRatio="xMinYMin slice"><rect width="96" height="96"/></svg>',
+      asset: svgAsset(sourceSvg),
     },
     viewport: { x: 10, y: 20, width: 300, height: 200 },
   })
@@ -107,12 +158,13 @@ test("derives a viewBox from absolute SVG dimensions", () => {
 })
 
 test("uses SVG intrinsic dimension fallbacks for non-absolute lengths", () => {
+  const sourceSvg =
+    '<svg width="100%" height="auto"><rect width="10" height="10"/></svg>'
   const graphic = createSvgObjectFromSchematicGraphic({
     schematicGraphic: {
       type: "schematic_graphic",
       schematic_graphic_id: "schematic_graphic_fallback_dimensions",
-      svg_content:
-        '<svg width="100%" height="auto"><rect width="10" height="10"/></svg>',
+      asset: svgAsset(sourceSvg),
     },
     viewport: { x: 0, y: 0, width: 300, height: 150 },
   })
@@ -299,16 +351,17 @@ test("namespaces source classes so host schematic styles cannot restyle them", (
 test("preserves embedded static raster images but strips active and external images", () => {
   const pngDataUrl =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+  const sourceSvg = `<svg viewBox="0 0 10 10">
+    <image id="safe" href="${pngDataUrl}"/>
+    <image id="external" href="https://example.com/logo.png"/>
+    <image id="active" href="data:image/svg+xml;base64,PHN2Zy8+"/>
+    <image id="animated" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="/>
+  </svg>`
   const graphic = createSvgObjectFromSchematicGraphic({
     schematicGraphic: {
       type: "schematic_graphic",
       schematic_graphic_id: "schematic_graphic_embedded_images",
-      svg_content: `<svg viewBox="0 0 10 10">
-        <image id="safe" href="${pngDataUrl}"/>
-        <image id="external" href="https://example.com/logo.png"/>
-        <image id="active" href="data:image/svg+xml;base64,PHN2Zy8+"/>
-        <image id="animated" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="/>
-      </svg>`,
+      asset: svgAsset(sourceSvg),
     },
     viewport: { x: 0, y: 0, width: 100, height: 100 },
   })
@@ -322,14 +375,15 @@ test("preserves embedded static raster images but strips active and external ima
 })
 
 test("drops malformed embedded CSS without rejecting the SVG", () => {
+  const sourceSvg = `<svg viewBox="0 0 10 10">
+    <style>.broken { fill: red</style>
+    <rect width="10" height="10" style="fill:red;} .boundary {display:none"/>
+  </svg>`
   const graphic = createSvgObjectFromSchematicGraphic({
     schematicGraphic: {
       type: "schematic_graphic",
       schematic_graphic_id: "schematic_graphic_bad_css",
-      svg_content: `<svg viewBox="0 0 10 10">
-        <style>.broken { fill: red</style>
-        <rect width="10" height="10" style="fill:red;} .boundary {display:none"/>
-      </svg>`,
+      asset: svgAsset(sourceSvg),
     },
     viewport: { x: 0, y: 0, width: 100, height: 100 },
   })
@@ -392,12 +446,12 @@ test("reports which schematic graphic contains invalid SVG", () => {
       schematicGraphic: {
         type: "schematic_graphic",
         schematic_graphic_id: "schematic_graphic_invalid",
-        svg_content: "not an svg document",
+        asset: svgAsset("not an svg document"),
       },
       viewport: { x: 0, y: 0, width: 100, height: 100 },
     }),
   ).toThrow(
-    'Unable to render schematic graphic "schematic_graphic_invalid": svg_content is not valid SVG',
+    'Unable to render schematic graphic "schematic_graphic_invalid": asset.url is not valid SVG',
   )
 
   expect(() =>
@@ -405,13 +459,79 @@ test("reports which schematic graphic contains invalid SVG", () => {
       schematicGraphic: {
         type: "schematic_graphic",
         schematic_graphic_id: "schematic_graphic_wrong_root",
-        svg_content: "<g><rect/></g>",
+        asset: svgAsset("<g><rect/></g>"),
       },
       viewport: { x: 0, y: 0, width: 100, height: 100 },
     }),
   ).toThrow(
-    'Unable to render schematic graphic "schematic_graphic_wrong_root": svg_content is not valid SVG',
+    'Unable to render schematic graphic "schematic_graphic_wrong_root": asset.url is not valid SVG',
   )
+})
+
+test("reports unsupported and synchronously unavailable assets", () => {
+  expect(() =>
+    createSvgObjectFromSchematicGraphic({
+      schematicGraphic: {
+        type: "schematic_graphic",
+        schematic_graphic_id: "schematic_graphic_png",
+        asset: {
+          project_relative_path: "inline",
+          url: "data:image/png;base64,iVBORw0KGgo=",
+          mimetype: "image/png",
+        },
+      },
+      viewport: { x: 0, y: 0, width: 100, height: 100 },
+    }),
+  ).toThrow(
+    'Unable to render schematic graphic "schematic_graphic_png": asset.mimetype must be "image/svg+xml"',
+  )
+
+  expect(() =>
+    createSvgObjectFromSchematicGraphic({
+      schematicGraphic: {
+        type: "schematic_graphic",
+        schematic_graphic_id: "schematic_graphic_mimetype_mismatch",
+        asset: {
+          project_relative_path: "inline",
+          url: `data:text/plain,${encodeURIComponent("<svg />")}`,
+          mimetype: "image/svg+xml",
+        },
+      },
+      viewport: { x: 0, y: 0, width: 100, height: 100 },
+    }),
+  ).toThrow(
+    'Unable to render schematic graphic "schematic_graphic_mimetype_mismatch": asset.url must use the "image/svg+xml" media type',
+  )
+
+  expect(() =>
+    createSvgObjectFromSchematicGraphic({
+      schematicGraphic: {
+        type: "schematic_graphic",
+        schematic_graphic_id: "schematic_graphic_remote",
+        asset: {
+          project_relative_path: "assets/system.svg",
+          url: "https://example.com/system.svg",
+          mimetype: "image/svg+xml",
+        },
+      },
+      viewport: { x: 0, y: 0, width: 100, height: 100 },
+    }),
+  ).toThrow(
+    'Unable to render schematic graphic "schematic_graphic_remote": asset.url must be an inline SVG data URL because circuit-to-svg cannot synchronously load',
+  )
+})
+
+test("retains runtime compatibility with legacy svg_content", () => {
+  const graphic = createSvgObjectFromSchematicGraphic({
+    schematicGraphic: {
+      type: "schematic_graphic",
+      schematic_graphic_id: "schematic_graphic_legacy",
+      svg_content: '<svg viewBox="0 0 10 10"><text>LEGACY CONTENT</text></svg>',
+    } as unknown as SchematicGraphic,
+    viewport: { x: 0, y: 0, width: 100, height: 100 },
+  })
+
+  expect(getNodeText(getNestedSvg(graphic))).toContain("LEGACY CONTENT")
 })
 
 function schematicSheet(id: string, sheetIndex: number): AnyCircuitElement {
@@ -435,7 +555,21 @@ function schematicGraphic({
     type: "schematic_graphic",
     schematic_graphic_id: id,
     ...(sheetId ? { schematic_sheet_id: sheetId } : {}),
-    svg_content: svgContent,
+    asset: svgAsset(svgContent),
+  }
+}
+
+function svgAsset(
+  svgContent: string,
+  encoding: "percent" | "base64" = "percent",
+): Asset {
+  return {
+    project_relative_path: "inline",
+    mimetype: "image/svg+xml",
+    url:
+      encoding === "base64"
+        ? `data:image/svg+xml;base64,${Buffer.from(svgContent).toString("base64")}`
+        : `data:image/svg+xml,${encodeURIComponent(svgContent)}`,
   }
 }
 
