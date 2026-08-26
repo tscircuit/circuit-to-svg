@@ -67,7 +67,11 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
   let yOffset = 0
 
   sheets.forEach((sheet, index) => {
-    const sheetLayout = getSchematicSheetLayout(sheet.sheet_size)
+    const sheetLayout = getSchematicSheetLayout(
+      sheet.sheet_size,
+      sheet.sheet_width,
+      sheet.sheet_height,
+    )
     const sheetHeight =
       options?.height ??
       Math.round((sheetWidth * sheetLayout.height) / sheetLayout.width)
@@ -92,6 +96,8 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
       panelTop,
       labelHeight,
       sheetSize: sheet.sheet_size,
+      sheetWidth: sheet.sheet_width,
+      sheetHeight: sheet.sheet_height,
     })
 
     children.push(
@@ -175,11 +181,15 @@ function getSheetLabelPosition({
   panelTop,
   labelHeight,
   sheetSize,
+  sheetWidth,
+  sheetHeight,
 }: {
   transformStr: string | undefined
   panelTop: number
   labelHeight: number
   sheetSize: SchematicSheet["sheet_size"]
+  sheetWidth: SchematicSheet["sheet_width"]
+  sheetHeight: SchematicSheet["sheet_height"]
 }): { x: number; y: number } {
   // Baseline near the bottom of the band, leaving a gap below before the frame.
   const y = panelTop - labelHeight * 0.28
@@ -188,7 +198,7 @@ function getSheetLabelPosition({
     return { x: 4, y }
   }
 
-  const layout = getSchematicSheetLayout(sheetSize)
+  const layout = getSchematicSheetLayout(sheetSize, sheetWidth, sheetHeight)
   const frameLeft = applyToPoint(fromString(transformStr), {
     x: layout.minX,
     y: layout.maxY,

@@ -1,3 +1,5 @@
+import type { SchematicSheetSize } from "circuit-json"
+
 const KICAD_RESISTOR_PIN_SPAN_MM = 10.16
 const TSCIRCUIT_RESISTOR_PIN_SPAN = 1.1
 export const SCHEMATIC_UNIT_TO_MM =
@@ -39,11 +41,13 @@ export interface SchematicSheetLayout {
  */
 export function getSchematicSheetLayout(
   sheetSize: SchematicSheetSize = "a4",
+  sheetWidth?: number,
+  sheetHeight?: number,
 ): SchematicSheetLayout {
   const center = { x: 0, y: 0 }
   const dimensions = SCHEMATIC_SHEET_DIMENSIONS_MM[sheetSize]
-  const width = dimensions.width / SCHEMATIC_UNIT_TO_MM
-  const height = dimensions.height / SCHEMATIC_UNIT_TO_MM
+  const width = (sheetWidth ?? dimensions.width) / SCHEMATIC_UNIT_TO_MM
+  const height = (sheetHeight ?? dimensions.height) / SCHEMATIC_UNIT_TO_MM
   const minX = center.x - width / 2
   const maxX = center.x + width / 2
   const minY = center.y - height / 2
@@ -63,4 +67,3 @@ export function getSchematicSheetLayout(
     innerMaxY: maxY - SCHEMATIC_SHEET_INNER_MARGIN,
   }
 }
-import type { SchematicSheetSize } from "circuit-json"
