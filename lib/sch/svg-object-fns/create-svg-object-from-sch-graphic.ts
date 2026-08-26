@@ -48,6 +48,7 @@ export function createSvgObjectFromSchematicGraphic({
         type: "element",
         value: "",
         attributes: {
+          // Use the SVG 2 href attribute supported by browsers and Resvg.
           href,
           x: formatNumber(viewport.x),
           y: formatNumber(viewport.y),
