@@ -22,11 +22,7 @@ export function createSvgObjectsFromSchematicSheet({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
-  const layout = getSchematicSheetLayout(
-    schematicSheet.sheet_size,
-    schematicSheet.sheet_width,
-    schematicSheet.sheet_height,
-  )
+  const layout = getSchematicSheetLayout(schematicSheet)
   const sheetColor = colorMap.schematic.sheet
   const labelColor = colorMap.schematic.net_name
   const children: SvgObject[] = [

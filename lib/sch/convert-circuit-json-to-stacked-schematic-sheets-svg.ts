@@ -1,8 +1,4 @@
-import type {
-  AnyCircuitElement,
-  SchematicSheet,
-  SchematicSheetSize,
-} from "circuit-json"
+import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap } from "lib/utils/colors"
 import {
@@ -71,11 +67,7 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
   let yOffset = 0
 
   sheets.forEach((sheet, index) => {
-    const sheetLayout = getSchematicSheetLayout(
-      sheet.sheet_size,
-      sheet.sheet_width,
-      sheet.sheet_height,
-    )
+    const sheetLayout = getSchematicSheetLayout(sheet)
     const sheetHeight =
       options?.height ??
       Math.round((sheetWidth * sheetLayout.height) / sheetLayout.width)
@@ -99,9 +91,7 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
       transformStr: sheetNode.attributes?.["data-real-to-screen-transform"],
       panelTop,
       labelHeight,
-      sheetSize: sheet.sheet_size,
-      sheetWidth: sheet.sheet_width,
-      sheetHeight: sheet.sheet_height,
+      schematicSheet: sheet,
     })
 
     children.push(
@@ -184,16 +174,12 @@ function getSheetLabelPosition({
   transformStr,
   panelTop,
   labelHeight,
-  sheetSize,
-  sheetWidth,
-  sheetHeight,
+  schematicSheet,
 }: {
   transformStr: string | undefined
   panelTop: number
   labelHeight: number
-  sheetSize: SchematicSheetSize | undefined
-  sheetWidth: number | undefined
-  sheetHeight: number | undefined
+  schematicSheet: SchematicSheet
 }): { x: number; y: number } {
   // Baseline near the bottom of the band, leaving a gap below before the frame.
   const y = panelTop - labelHeight * 0.28
@@ -202,7 +188,7 @@ function getSheetLabelPosition({
     return { x: 4, y }
   }
 
-  const layout = getSchematicSheetLayout(sheetSize, sheetWidth, sheetHeight)
+  const layout = getSchematicSheetLayout(schematicSheet)
   const frameLeft = applyToPoint(fromString(transformStr), {
     x: layout.minX,
     y: layout.maxY,

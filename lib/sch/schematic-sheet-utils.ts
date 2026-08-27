@@ -1,4 +1,4 @@
-import type { SchematicSheetSize } from "circuit-json"
+import type { SchematicSheet, SchematicSheetSize } from "circuit-json"
 
 const KICAD_RESISTOR_PIN_SPAN_MM = 10.16
 const TSCIRCUIT_RESISTOR_PIN_SPAN = 1.1
@@ -33,6 +33,11 @@ export interface SchematicSheetLayout {
   innerMaxY: number
 }
 
+type SchematicSheetLayoutProperties = Pick<
+  SchematicSheet,
+  "sheet_size" | "sheet_width" | "sheet_height"
+>
+
 /**
  * Geometry of a schematic sheet's frame. Each sheet is laid out independently in
  * its own coordinate space (around the origin) and rendered one sheet per view
@@ -40,14 +45,15 @@ export interface SchematicSheetLayout {
  * is not tiled by sheet_index.
  */
 export function getSchematicSheetLayout(
-  sheetSize: SchematicSheetSize = "a4",
-  sheetWidth?: number,
-  sheetHeight?: number,
+  schematicSheet: SchematicSheetLayoutProperties = {},
 ): SchematicSheetLayout {
   const center = { x: 0, y: 0 }
+  const sheetSize = schematicSheet.sheet_size ?? "a4"
   const dimensions = SCHEMATIC_SHEET_DIMENSIONS_MM[sheetSize]
-  const width = (sheetWidth ?? dimensions.width) / SCHEMATIC_UNIT_TO_MM
-  const height = (sheetHeight ?? dimensions.height) / SCHEMATIC_UNIT_TO_MM
+  const width =
+    (schematicSheet.sheet_width ?? dimensions.width) / SCHEMATIC_UNIT_TO_MM
+  const height =
+    (schematicSheet.sheet_height ?? dimensions.height) / SCHEMATIC_UNIT_TO_MM
   const minX = center.x - width / 2
   const maxX = center.x + width / 2
   const minY = center.y - height / 2
