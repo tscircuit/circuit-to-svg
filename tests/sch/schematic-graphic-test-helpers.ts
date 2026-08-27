@@ -75,11 +75,18 @@ export function svgAsset(
 export function findElement(
   node: INode,
   attributeName: string,
+  attributeValue?: string,
 ): INode | undefined {
-  if (node.attributes[attributeName] !== undefined) return node
+  if (
+    node.attributes[attributeName] !== undefined &&
+    (attributeValue === undefined ||
+      node.attributes[attributeName] === attributeValue)
+  ) {
+    return node
+  }
 
   for (const child of node.children) {
-    const match = findElement(child, attributeName)
+    const match = findElement(child, attributeName, attributeValue)
     if (match) return match
   }
 

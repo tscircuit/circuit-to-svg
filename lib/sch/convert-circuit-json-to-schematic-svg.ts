@@ -191,9 +191,7 @@ export function convertCircuitJsonToSchematicSvg(
     transform,
     svgWidth,
     svgHeight,
-    hasSchematicSheet: sheetCircuitJson.some(
-      (elm) => elm.type === "schematic_sheet",
-    ),
+    schematicSheet: selectedSheet,
   })
   const simulationPalette = Array.isArray(colorMap.simulation_palette)
     ? colorMap.simulation_palette
@@ -475,18 +473,18 @@ function getSchematicGraphicViewport({
   transform,
   svgWidth,
   svgHeight,
-  hasSchematicSheet,
+  schematicSheet,
 }: {
   transform: Matrix
   svgWidth: number
   svgHeight: number
-  hasSchematicSheet: boolean
+  schematicSheet?: SchematicSheet
 }): { x: number; y: number; width: number; height: number } {
-  if (!hasSchematicSheet) {
+  if (!schematicSheet) {
     return { x: 0, y: 0, width: svgWidth, height: svgHeight }
   }
 
-  const layout = getSchematicSheetLayout()
+  const layout = getSchematicSheetLayout(schematicSheet)
   const topLeft = applyToPoint(transform, {
     x: layout.innerMinX,
     y: layout.innerMaxY,
