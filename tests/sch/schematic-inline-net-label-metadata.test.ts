@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import type { SchematicText } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 
-test("inline net label text includes source trace metadata", () => {
+test("schematic text includes its circuit json identity", () => {
   const circuitJson: SchematicText[] = [
     {
       type: "schematic_text",
@@ -30,12 +30,10 @@ test("inline net label text includes source trace metadata", () => {
   const svg = convertCircuitJsonToSchematicSvg(circuitJson)
 
   expect(svg).toContain(
-    'class="sch-text sch-inline-net-label" data-circuit-json-type="schematic_text" data-schematic-text-id="schematic_text_inline_label" data-source-trace-id="source_trace_signal"',
+    'class="sch-text" data-circuit-json-type="schematic_text" data-schematic-text-id="schematic_text_inline_label"',
   )
   expect(svg).toContain(
     'class="sch-text" data-circuit-json-type="schematic_text" data-schematic-text-id="schematic_text_note"',
   )
-  expect(svg).not.toContain(
-    'data-schematic-text-id="schematic_text_note" data-source-trace-id',
-  )
+  expect(svg).not.toContain("data-source-trace-id")
 })

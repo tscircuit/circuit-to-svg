@@ -2,7 +2,7 @@ import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 export const createSvgSchText = ({
   elm,
@@ -79,8 +79,6 @@ export const createSvgSchText = ({
   }
 
   const lines = elm.text.split("\n")
-  const classNames = ["sch-text"]
-  if (elm.source_trace_id) classNames.push("sch-inline-net-label")
 
   const children: SvgObject[] =
     lines.length === 1
@@ -117,12 +115,9 @@ export const createSvgSchText = ({
     name: "text",
     value: "",
     attributes: {
-      class: classNames.join(" "),
+      class: "sch-text",
       "data-circuit-json-type": "schematic_text",
       "data-schematic-text-id": elm.schematic_text_id,
-      ...(elm.source_trace_id && {
-        "data-source-trace-id": elm.source_trace_id,
-      }),
       x: center.x.toString(),
       y: center.y.toString(),
       fill: elm.color ?? colorMap.schematic.sheet_label,
