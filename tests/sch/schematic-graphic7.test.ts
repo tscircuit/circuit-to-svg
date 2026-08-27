@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import type { SchematicGraphic } from "circuit-json"
-import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-schematic-graphic"
 
 test("validates schematic graphic source URLs and reports unusable sources", () => {
   const render = (schematicGraphic: SchematicGraphic) =>

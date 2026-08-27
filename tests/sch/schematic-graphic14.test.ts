@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-schematic-graphic"
 
 test("requires hashes in non-base64 SVG data payloads to be percent-encoded", () => {
   const svgContent =

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-schematic-graphic"
 
 test("requires base64 to be the final SVG data URL metadata token", () => {
   const payload = Buffer.from(

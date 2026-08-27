@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-sch-graphic"
+import { createSvgObjectFromSchematicGraphic } from "lib/sch/svg-object-fns/create-svg-object-from-schematic-graphic"
 import { getEmbeddedImage, svgAsset } from "./schematic-graphic-test-helpers"
 
 test("prefers the canonical inline asset over svg_content", () => {
