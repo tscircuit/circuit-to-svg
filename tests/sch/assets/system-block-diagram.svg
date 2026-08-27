@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="system-block-diagram" width="800" height="400" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="controller-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dbeafe" />
+      <stop offset="1" stop-color="#bfdbfe" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155" />
+    </marker>
+  </defs>
+  <rect width="800" height="400" rx="18" fill="#f8fafc" />
+  <text x="400" y="42" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="700" fill="#0f172a">System Block Diagram</text>
+  <g font-family="sans-serif" text-anchor="middle">
+    <rect x="60" y="145" width="170" height="100" rx="12" fill="#dcfce7" stroke="#15803d" stroke-width="3" />
+    <text x="145" y="200" font-size="20" fill="#14532d">Sensor Array</text>
+    <rect x="315" y="125" width="170" height="140" rx="12" fill="url(#controller-fill)" stroke="#1d4ed8" stroke-width="3" />
+    <text x="400" y="188" font-size="20" fill="#1e3a8a">Controller</text>
+    <text x="400" y="218" font-size="15" fill="#475569">processing + control</text>
+    <rect x="570" y="145" width="170" height="100" rx="12" fill="#ffedd5" stroke="#c2410c" stroke-width="3" />
+    <text x="655" y="200" font-size="20" fill="#7c2d12">Actuator</text>
+  </g>
+  <g fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)">
+    <path d="M230 195 H305" />
+    <path d="M485 195 H560" />
+  </g>
+  <g font-family="sans-serif" font-size="14" fill="#475569" text-anchor="middle">
+    <text x="267" y="180">telemetry</text>
+    <text x="523" y="180">commands</text>
+  </g>
+</svg>

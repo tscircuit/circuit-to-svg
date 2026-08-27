@@ -1,4 +1,8 @@
-import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  SchematicGraphic,
+  SchematicSheet,
+} from "circuit-json"
 import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
 import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
@@ -19,6 +23,7 @@ import { drawSchematicGrid } from "./draw-schematic-grid"
 import { drawSchematicLabeledPoints } from "./draw-schematic-labeled-points"
 import { getDefaultSchematicSheet } from "./get-default-schematic-sheet"
 import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-circuit-json"
+import { createSvgObjectFromSchematicGraphic } from "./svg-object-fns/create-svg-object-from-schematic-graphic"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
@@ -35,6 +40,7 @@ import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
+import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -180,6 +186,13 @@ export function convertCircuitJsonToSchematicSvg(
   const schArcSvgs: SvgObject[] = []
   const schPathSvgs: SvgObject[] = []
   const schSheetSvgs: SvgObject[] = []
+  const schGraphicSvgs: SvgObject[] = []
+  const graphicViewport = getSchematicGraphicViewport({
+    transform,
+    svgWidth,
+    svgHeight,
+    schematicSheet: selectedSheet,
+  })
   const simulationPalette = Array.isArray(colorMap.simulation_palette)
     ? colorMap.simulation_palette
     : Array.isArray(colorMap.palette)
@@ -193,6 +206,17 @@ export function convertCircuitJsonToSchematicSvg(
           schematicSheet: elm,
           transform,
           colorMap,
+        }),
+      )
+    } else if (elm.type === "schematic_graphic") {
+      schGraphicSvgs.push(
+        createSvgObjectFromSchematicGraphic({
+          schematicGraphic: elm,
+          viewport: fitSchematicGraphicViewport({
+            availableViewport: graphicViewport,
+            schematicGraphic: elm,
+            transform,
+          }),
         }),
       )
     } else if (elm.type === "schematic_debug_object") {
@@ -342,6 +366,7 @@ export function convertCircuitJsonToSchematicSvg(
 
   // Add elements in correct order
   svgChildren.push(
+    ...schGraphicSvgs,
     ...schDebugObjectSvgs,
     ...schSheetSvgs,
     ...schTraceBaseSvgs,
@@ -443,3 +468,83 @@ export function convertCircuitJsonToSchematicSvg(
  * @deprecated use `convertCircuitJsonToSchematicSvg` instead
  */
 export const circuitJsonToSchematicSvg = convertCircuitJsonToSchematicSvg
+
+function getSchematicGraphicViewport({
+  transform,
+  svgWidth,
+  svgHeight,
+  schematicSheet,
+}: {
+  transform: Matrix
+  svgWidth: number
+  svgHeight: number
+  schematicSheet?: SchematicSheet
+}): { x: number; y: number; width: number; height: number } {
+  if (!schematicSheet) {
+    return { x: 0, y: 0, width: svgWidth, height: svgHeight }
+  }
+
+  const layout = getSchematicSheetLayout(schematicSheet)
+  const topLeft = applyToPoint(transform, {
+    x: layout.innerMinX,
+    y: layout.innerMaxY,
+  })
+  const bottomRight = applyToPoint(transform, {
+    x: layout.innerMaxX,
+    y: layout.innerMinY,
+  })
+
+  return {
+    x: Math.min(topLeft.x, bottomRight.x),
+    y: Math.min(topLeft.y, bottomRight.y),
+    width: Math.abs(bottomRight.x - topLeft.x),
+    height: Math.abs(bottomRight.y - topLeft.y),
+  }
+}
+
+function fitSchematicGraphicViewport({
+  availableViewport,
+  schematicGraphic,
+  transform,
+}: {
+  availableViewport: { x: number; y: number; width: number; height: number }
+  schematicGraphic: SchematicGraphic
+  transform: Matrix
+}): { x: number; y: number; width: number; height: number } {
+  if (
+    schematicGraphic.width === undefined &&
+    schematicGraphic.height === undefined
+  ) {
+    return availableViewport
+  }
+
+  const width =
+    schematicGraphic.width === undefined
+      ? availableViewport.width
+      : clampGraphicDimension(
+          schematicGraphic.width * Math.hypot(transform.a, transform.b),
+          availableViewport.width,
+        )
+  const height =
+    schematicGraphic.height === undefined
+      ? availableViewport.height
+      : clampGraphicDimension(
+          schematicGraphic.height * Math.hypot(transform.c, transform.d),
+          availableViewport.height,
+        )
+
+  return {
+    x: availableViewport.x + (availableViewport.width - width) / 2,
+    y: availableViewport.y + (availableViewport.height - height) / 2,
+    width,
+    height,
+  }
+}
+
+function clampGraphicDimension(
+  requestedPixels: number,
+  availablePixels: number,
+): number {
+  if (!Number.isFinite(requestedPixels)) return availablePixels
+  return Math.max(0, Math.min(requestedPixels, availablePixels))
+}

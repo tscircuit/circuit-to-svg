@@ -15,13 +15,14 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
+        "@resvg/resvg-js": "^2.6.2",
         "@tscircuit/alphabet": "^0.0.25",
         "@types/bun": "^1.2.8",
         "@types/debug": "^4.1.12",
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
         "bun-match-svg": "^0.0.12",
-        "circuit-json": "^0.0.478",
+        "circuit-json": "^0.0.479",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.7",
         "performance-now": "^2.1.0",
@@ -530,7 +531,7 @@
 
     "chownr": ["chownr@1.1.4", "", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
 
-    "circuit-json": ["circuit-json@0.0.478", "", { "peerDependencies": { "format-si-unit": "*" } }, "sha512-c/QPq6Db833Wc468G6QTjm0HFcY8vp5tSgX81lCT3p8uz81RKgLE6SvjRpkEwVVD1Mom9huiCj/RYwbdxwbf/g=="],
+    "circuit-json": ["circuit-json@0.0.479", "", { "peerDependencies": { "format-si-unit": "*" } }, "sha512-nFmjnYUxeyTDp+7QBPa8j6BiB1knY5KHO+r7gsegjpCHxhgALcVAo+sNavk92n7RQZfIn2NzS4G8VqvOFQNrLw=="],
 
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 
