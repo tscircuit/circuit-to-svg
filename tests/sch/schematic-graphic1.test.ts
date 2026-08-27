@@ -7,11 +7,11 @@ import {
   getEmbeddedImage,
   schematicGraphic,
   schematicSheet,
-  systemBlockDiagramSvg,
   svgAsset,
+  systemBlockDiagramSvg,
 } from "./schematic-graphic-test-helpers"
 
-test("renders an inline SVG asset as an embedded image", () => {
+test("renders an inline SVG asset inside a schematic sheet", () => {
   const asset = svgAsset(systemBlockDiagramSvg)
   const svg = convertCircuitJsonToSchematicSvg(
     [
@@ -51,4 +51,5 @@ test("renders an inline SVG asset as an embedded image", () => {
   expect(svg.indexOf('data-schematic-graphic-id="')).toBeLessThan(
     svg.indexOf('class="schematic-sheet"'),
   )
+  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
