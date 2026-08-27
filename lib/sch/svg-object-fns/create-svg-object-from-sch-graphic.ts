@@ -109,7 +109,16 @@ function validateSvgDataUrl(dataUrl: string, errorPrefix: string): void {
   }
 
   const payload = match[2]!
-  const isBase64 = metadataParts.some((part) => part.toLowerCase() === "base64")
+  const base64Index = metadataParts.findIndex(
+    (part) => part.toLowerCase() === "base64",
+  )
+  const isBase64 = base64Index !== -1
+
+  if (isBase64 && base64Index !== metadataParts.length - 1) {
+    throw new Error(
+      `${errorPrefix}: asset.url must place "base64" as its final metadata token`,
+    )
+  }
 
   if (isBase64) {
     const encoded = payload.replace(/\s+/g, "")
