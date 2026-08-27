@@ -79,6 +79,8 @@ export const createSvgSchText = ({
   }
 
   const lines = elm.text.split("\n")
+  const classNames = ["sch-text"]
+  if (elm.source_trace_id) classNames.push("sch-inline-net-label")
 
   const children: SvgObject[] =
     lines.length === 1
@@ -115,7 +117,12 @@ export const createSvgSchText = ({
     name: "text",
     value: "",
     attributes: {
-      class: "sch-text",
+      class: classNames.join(" "),
+      "data-circuit-json-type": "schematic_text",
+      "data-schematic-text-id": elm.schematic_text_id,
+      ...(elm.source_trace_id && {
+        "data-source-trace-id": elm.source_trace_id,
+      }),
       x: center.x.toString(),
       y: center.y.toString(),
       fill: elm.color ?? colorMap.schematic.sheet_label,
