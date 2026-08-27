@@ -51,5 +51,8 @@ test("renders an inline SVG asset inside a schematic sheet", () => {
   expect(svg.indexOf('data-schematic-graphic-id="')).toBeLessThan(
     svg.indexOf('class="schematic-sheet"'),
   )
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
+  expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "schematic-graphic-inside-sheet",
+  )
 })
