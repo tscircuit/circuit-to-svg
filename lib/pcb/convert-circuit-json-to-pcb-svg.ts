@@ -64,6 +64,7 @@ import {
   groupCopperPourMaskedTraceObjects,
 } from "./copper-pour-trace-mask"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
+import { createSvgObjectsFromPcbSoldermaskOpening } from "./svg-object-fns/create-svg-objects-from-pcb-soldermask-opening"
 import {
   createSvgObjectsForPcbGrid,
   type PcbGridOptions,
@@ -568,6 +569,10 @@ function createSvgObjects({
     case "pcb_solder_paste":
       return ctx.showSolderPaste
         ? createSvgObjectsFromSolderPaste(elm, ctx)
+        : []
+    case "pcb_soldermask_opening":
+      return ctx.showSolderMask
+        ? createSvgObjectsFromPcbSoldermaskOpening(elm, ctx)
         : []
     case "pcb_silkscreen_text":
       return createSvgObjectsFromPcbSilkscreenText(elm, ctx)
