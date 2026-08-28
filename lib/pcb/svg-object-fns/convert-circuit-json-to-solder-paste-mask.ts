@@ -1,4 +1,5 @@
 import type { PcbSolderPaste } from "circuit-json"
+import type { INode as SvgObject } from "svgson"
 import { applyToPoint } from "transformation-matrix"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -6,9 +7,33 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 export function createSvgObjectsFromSolderPaste(
   solderPaste: PcbSolderPaste,
   ctx: PcbContext,
-): any {
+): SvgObject[] {
   const { transform, layer: layerFilter } = ctx
   if (layerFilter && solderPaste.layer !== layerFilter) return []
+
+  if (solderPaste.shape === "polygon") {
+    const points = solderPaste.points
+      .map((point) => applyToPoint(transform, [point.x, point.y]))
+      .map(([x, y]) => `${x},${y}`)
+      .join(" ")
+
+    return [
+      {
+        name: "polygon",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-solder-paste",
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
+          points,
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
+        },
+      },
+    ]
+  }
+
   const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
   if (solderPaste.shape === "rect" || solderPaste.shape === "rotated_rect") {
@@ -20,6 +45,8 @@ export function createSvgObjectsFromSolderPaste(
         {
           name: "rect",
           type: "element",
+          value: "",
+          children: [],
           attributes: {
             class: "pcb-solder-paste",
             fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -39,6 +66,8 @@ export function createSvgObjectsFromSolderPaste(
       {
         name: "rect",
         type: "element",
+        value: "",
+        children: [],
         attributes: {
           class: "pcb-solder-paste",
           fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -62,6 +91,8 @@ export function createSvgObjectsFromSolderPaste(
       {
         name: "rect",
         type: "element",
+        value: "",
+        children: [],
         attributes: {
           class: "pcb-solder-paste",
           fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -85,6 +116,8 @@ export function createSvgObjectsFromSolderPaste(
       {
         name: "rect",
         type: "element",
+        value: "",
+        children: [],
         attributes: {
           class: "pcb-solder-paste",
           fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -109,6 +142,8 @@ export function createSvgObjectsFromSolderPaste(
       {
         name: "ellipse",
         type: "element",
+        value: "",
+        children: [],
         attributes: {
           class: "pcb-solder-paste",
           fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -130,6 +165,8 @@ export function createSvgObjectsFromSolderPaste(
       {
         name: "circle",
         type: "element",
+        value: "",
+        children: [],
         attributes: {
           class: "pcb-solder-paste",
           fill: solderPasteLayerNameToColor(solderPaste.layer),
@@ -142,4 +179,6 @@ export function createSvgObjectsFromSolderPaste(
       },
     ]
   }
+
+  return []
 }

@@ -66,8 +66,12 @@ export function convertCircuitJsonToSolderPasteMask(
         const center = panel.center ?? { x: width / 2, y: height / 2 }
         updateBounds(center, width, height)
       }
-    } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
-      updateBounds({ x: item.x, y: item.y }, 0, 0)
+    } else if (item.type === "pcb_solder_paste") {
+      if (item.shape === "polygon") {
+        updateBoundsToIncludeOutline(item.points)
+      } else {
+        updateBounds({ x: item.x, y: item.y }, 0, 0)
+      }
     }
   }
 
