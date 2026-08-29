@@ -40,10 +40,8 @@ const alphabetBounds = (() => {
 const INTER_CHAR_SPACING_RATIO = 0.2
 /** Line-height multiplier for multi-line text (10% extra vertical space) */
 const LINE_HEIGHT_MULTIPLIER = 1.1
-/** Match the visible glyph height previously produced by browser text rendering */
-const FONT_HEIGHT_RATIO = 2 / 3
-/** Stroke width as a fraction of the normalized alphabet font size */
-const STROKE_WIDTH_RATIO = 0.15
+const ALPHABET_FONT_HEIGHT_RATIO = 2 / 3
+const ALPHABET_STROKE_WIDTH_RATIO = 0.15
 
 let silkscreenMaskIdCounter = 0
 
@@ -90,7 +88,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const isBottom = layer === "bottom"
   const applyMirror = isBottom ? true : is_mirrored === true
 
-  const scaledFontSize = (font_size * FONT_HEIGHT_RATIO) / alphabetBounds.height
+  const scaledFontSize =
+    (font_size * ALPHABET_FONT_HEIGHT_RATIO) / alphabetBounds.height
   const charSpacing = alphabetBounds.width * INTER_CHAR_SPACING_RATIO
   const geometry = createPcbAlphabetTextGeometry({
     text,
@@ -109,7 +108,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   })
   if (!geometry.pathData || !geometry.bounds) return []
 
-  const strokeWidth = scaledFontSize * STROKE_WIDTH_RATIO
+  const strokeWidth = scaledFontSize * ALPHABET_STROKE_WIDTH_RATIO
 
   // Handle knockout rendering
   if (is_knockout) {
