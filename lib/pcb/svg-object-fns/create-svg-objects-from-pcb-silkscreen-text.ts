@@ -1,16 +1,16 @@
-import { lineAlphabet } from "@tscircuit/alphabet"
 import type { PcbSilkscreenText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
   compose,
-  toString as matrixToString,
   rotate,
-  scale,
   translate,
+  scale,
+  toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { lineAlphabet } from "@tscircuit/alphabet"
 import {
   createPcbAlphabetTextGeometry,
   getAnchorOffsetForBounds,
@@ -19,8 +19,8 @@ import {
 // Derive character cell dimensions from lineAlphabet glyph bounding boxes
 const alphabetBounds = (() => {
   let maxX = 0
-  let minY = Number.POSITIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
+  let minY = Infinity
+  let maxY = -Infinity
   for (const segments of Object.values(lineAlphabet)) {
     for (const seg of segments as Array<{
       x1: number
