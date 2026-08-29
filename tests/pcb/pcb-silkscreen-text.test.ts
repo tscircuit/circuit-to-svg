@@ -1,5 +1,33 @@
 import { test, expect } from "bun:test"
+import { textMetrics } from "@tscircuit/alphabet"
 import { convertCircuitJsonToPcbSvg } from "lib"
+
+function renderCenteredSilkscreenText(fontSize: number): string {
+  return convertCircuitJsonToPcbSvg([
+    {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      pcb_silkscreen_text_id: "pcb_silkscreen_text_metrics",
+      font: "tscircuit2024",
+      font_size: fontSize,
+      pcb_component_id: "pcb_generic_component_0",
+      anchor_position: { x: 0, y: 0 },
+      anchor_alignment: "center",
+      text: "R_EN_PU",
+    },
+  ])
+}
+
+function getSilkscreenTextPath(svg: string): string {
+  return svg.match(/<path[^>]+class="pcb-silkscreen-text[^>]+>/)?.[0] ?? ""
+}
+
+function getPathCoordinates(pathElement: string): number[] {
+  const pathData = pathElement.match(/d="([^"]+)"/)?.[1] ?? ""
+  return Array.from(pathData.matchAll(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi)).map(
+    ([coordinate]) => Number(coordinate),
+  )
+}
 
 test("silkscreen text", () => {
   const result = convertCircuitJsonToPcbSvg([
@@ -132,14 +160,12 @@ test("silkscreen text", () => {
     },
   ])
 
-  const silkscreenTextPath = result.match(
-    /<path[^>]+class="pcb-silkscreen-text[^>]+>/,
-  )?.[0]
+  const silkscreenTextPath = getSilkscreenTextPath(result)
   const strokeWidth = silkscreenTextPath?.match(/stroke-width="([^"]+)"/)?.[1]
 
   expect(silkscreenTextPath).toStartWith('<path d="M')
   expect(silkscreenTextPath).not.toContain("font-family")
-  expect(Number(strokeWidth)).toBeCloseTo(0.108, 3)
+  expect(Number(strokeWidth)).toBe(textMetrics.strokeWidthRatio)
 
   expect(result).toMatchSvgSnapshot(import.meta.path)
   expect(smallBoard).toMatchSvgSnapshot(
@@ -149,5 +175,20 @@ test("silkscreen text", () => {
   expect(bigBoard).toMatchSvgSnapshot(
     import.meta.path,
     "silkscreen-text-big-board",
+  )
+})
+
+test("silkscreen text scales with its font size", () => {
+  const oneMmPath = getSilkscreenTextPath(renderCenteredSilkscreenText(1))
+  const twoMmPath = getSilkscreenTextPath(renderCenteredSilkscreenText(2))
+  const oneMmCoordinates = getPathCoordinates(oneMmPath)
+  const twoMmCoordinates = getPathCoordinates(twoMmPath)
+
+  expect(twoMmCoordinates).toHaveLength(oneMmCoordinates.length)
+  for (let index = 0; index < oneMmCoordinates.length; index++) {
+    expect(twoMmCoordinates[index]).toBeCloseTo(oneMmCoordinates[index]! * 2)
+  }
+  expect(twoMmPath).toContain(
+    `stroke-width="${textMetrics.strokeWidthRatio * 2}"`,
   )
 })
