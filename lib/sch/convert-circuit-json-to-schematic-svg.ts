@@ -40,6 +40,10 @@ import { createSvgObjectsFromSchematicSheet } from "./svg-object-fns/create-svg-
 import { createSvgObjectsFromSchematicTable } from "./svg-object-fns/create-svg-objects-from-sch-table"
 import { createSchematicTrace } from "./svg-object-fns/create-svg-objects-from-sch-trace"
 import { createSvgObjectsFromSchVoltageProbe } from "./svg-object-fns/create-svg-objects-from-sch-voltage-probe"
+import {
+  createSvgObjectsFromSchematicWarnings,
+  isSchematicWarning,
+} from "./svg-object-fns/create-svg-objects-from-sch-warning"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
 
 export type ColorOverrides = {
@@ -56,6 +60,8 @@ interface Options {
   labeledPoints?: Array<{ x: number; y: number; label: string }>
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
+  /** Draw schematic warnings as callouts around their referenced elements. */
+  shouldDrawWarnings?: boolean
   drawPorts?: boolean
   css?: string
   className?: string
@@ -87,6 +93,7 @@ export function convertCircuitJsonToSchematicSvg(
     ? circuitJson.filter(
         (elm) =>
           !elm.type.startsWith("schematic_") ||
+          isSchematicWarning(elm) ||
           ("schematic_sheet_id" in elm &&
             elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
       )
@@ -392,6 +399,18 @@ export function convertCircuitJsonToSchematicSvg(
       drawSchematicLabeledPoints({
         points: options.labeledPoints,
         transform,
+      }),
+    )
+  }
+
+  if (options?.shouldDrawWarnings) {
+    svgChildren.push(
+      ...createSvgObjectsFromSchematicWarnings({
+        circuitJson: sheetCircuitJson,
+        transform,
+        svgWidth,
+        svgHeight,
+        colorMap,
       }),
     )
   }
