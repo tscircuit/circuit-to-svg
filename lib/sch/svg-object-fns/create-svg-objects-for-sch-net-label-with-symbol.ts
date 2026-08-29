@@ -1,32 +1,32 @@
 import type { SchematicNetLabel } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import type { ColorMap } from "lib/utils/colors"
 import {
   getSchMmFontSize,
   getSchScreenFontSize,
 } from "lib/utils/get-sch-font-size"
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
+import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import { symbols } from "schematic-symbols"
 import {
+  type Matrix,
   applyToPoint,
   compose,
   rotate,
   scale,
   translate,
-  type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
-import { symbols } from "schematic-symbols"
-import { createSvgSchErrorText } from "./create-svg-error-text"
 import {
-  ninePointAnchorToTextAnchor,
-  ninePointAnchorToDominantBaseline,
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
   END_PADDING_FSR,
-  getTextOffsets,
   getNetLabelDataAttributes,
+  getTextOffsets,
+  ninePointAnchorToDominantBaseline,
+  ninePointAnchorToTextAnchor,
 } from "../../utils/net-label-utils"
-import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import type { ColorMap } from "lib/utils/colors"
+import { estimateTextWidth } from "../estimate-text-width"
+import { createSvgSchErrorText } from "./create-svg-error-text"
 
 export const createSvgObjectsForSchNetLabelWithSymbol = ({
   schNetLabel,
@@ -200,7 +200,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
         ...netLabelDataAttributes,
         d: symbolPath + (path.closed ? " Z" : ""),
         stroke: colorMap.schematic.component_outline,
-        fill: "none",
+        fill: path.fill ? colorMap.schematic.component_outline : "none",
         "stroke-width": `${getSchStrokeSize(realToScreenTransform)}px`,
         "stroke-linecap": "round",
       },
