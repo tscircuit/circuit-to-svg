@@ -1,16 +1,16 @@
+import { lineAlphabet } from "@tscircuit/alphabet"
 import type { PcbSilkscreenText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
   compose,
-  rotate,
-  translate,
-  scale,
   toString as matrixToString,
+  rotate,
+  scale,
+  translate,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { lineAlphabet } from "@tscircuit/alphabet"
 import {
   createPcbAlphabetTextGeometry,
   getAnchorOffsetForBounds,
@@ -19,8 +19,8 @@ import {
 // Derive character cell dimensions from lineAlphabet glyph bounding boxes
 const alphabetBounds = (() => {
   let maxX = 0
-  let minY = Infinity
-  let maxY = -Infinity
+  let minY = Number.POSITIVE_INFINITY
+  let maxY = Number.NEGATIVE_INFINITY
   for (const segments of Object.values(lineAlphabet)) {
     for (const seg of segments as Array<{
       x1: number
@@ -40,6 +40,10 @@ const alphabetBounds = (() => {
 const INTER_CHAR_SPACING_RATIO = 0.2
 /** Line-height multiplier for multi-line text (10% extra vertical space) */
 const LINE_HEIGHT_MULTIPLIER = 1.1
+/** Match the visible glyph height previously produced by browser text rendering */
+const FONT_HEIGHT_RATIO = 2 / 3
+/** Stroke width as a fraction of the normalized alphabet font size */
+const STROKE_WIDTH_RATIO = 0.15
 
 let silkscreenMaskIdCounter = 0
 
@@ -86,28 +90,29 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const isBottom = layer === "bottom"
   const applyMirror = isBottom ? true : is_mirrored === true
 
+  const scaledFontSize = (font_size * FONT_HEIGHT_RATIO) / alphabetBounds.height
+  const charSpacing = alphabetBounds.width * INTER_CHAR_SPACING_RATIO
+  const geometry = createPcbAlphabetTextGeometry({
+    text,
+    anchorAlignment: anchor_alignment,
+    fontSize: scaledFontSize,
+    charAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize,
+    spaceAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize * 0.6,
+    trailingSpacing: charSpacing * scaledFontSize,
+    lineHeight: scaledFontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER,
+    mapSegment: (segment, offsetX, offsetY, fontSize) => ({
+      x1: offsetX + segment.x1 * fontSize,
+      y1: offsetY + (1 - segment.y1) * fontSize,
+      x2: offsetX + segment.x2 * fontSize,
+      y2: offsetY + (1 - segment.y2) * fontSize,
+    }),
+  })
+  if (!geometry.pathData || !geometry.bounds) return []
+
+  const strokeWidth = scaledFontSize * STROKE_WIDTH_RATIO
+
   // Handle knockout rendering
   if (is_knockout) {
-    const scaledFontSize = (font_size * (2 / 3)) / alphabetBounds.height
-    const charSpacing = alphabetBounds.width * INTER_CHAR_SPACING_RATIO
-    const geometry = createPcbAlphabetTextGeometry({
-      text,
-      anchorAlignment: anchor_alignment,
-      fontSize: scaledFontSize,
-      charAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize,
-      spaceAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize * 0.6,
-      trailingSpacing: charSpacing * scaledFontSize,
-      lineHeight:
-        scaledFontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER,
-      mapSegment: (segment, offsetX, offsetY, fontSize) => ({
-        x1: offsetX + segment.x1 * fontSize,
-        y1: offsetY + (1 - segment.y1) * fontSize,
-        x2: offsetX + segment.x2 * fontSize,
-        y2: offsetY + (1 - segment.y2) * fontSize,
-      }),
-    })
-    if (!geometry.bounds || !geometry.pathData) return []
-
     const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
     const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
     const padTop = knockout_padding?.top ?? scaledFontSize * 0.3
@@ -119,7 +124,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       geometry.bounds.maxX - geometry.bounds.minX + padLeft + padRight
     const rectH =
       geometry.bounds.maxY - geometry.bounds.minY + padTop + padBottom
-    const strokeWidth = scaledFontSize * 0.15
     const knockoutBounds = {
       minX: rectX,
       minY: rectY,
@@ -229,111 +233,33 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
-
-  let textAnchor = "middle"
-  let dominantBaseline = "central"
-
-  switch (anchor_alignment) {
-    case "top_left":
-      textAnchor = "start"
-      dominantBaseline = "text-before-edge"
-      break
-    case "top_center":
-      textAnchor = "middle"
-      dominantBaseline = "text-before-edge"
-      break
-    case "top_right":
-      textAnchor = "end"
-      dominantBaseline = "text-before-edge"
-      break
-    case "center_left":
-      textAnchor = "start"
-      dominantBaseline = "central"
-      break
-    case "center_right":
-      textAnchor = "end"
-      dominantBaseline = "central"
-      break
-    case "bottom_left":
-      textAnchor = "start"
-      dominantBaseline = "text-after-edge"
-      break
-    case "bottom_center":
-      textAnchor = "middle"
-      dominantBaseline = "text-after-edge"
-      break
-    case "bottom_right":
-      textAnchor = "end"
-      dominantBaseline = "text-after-edge"
-      break
-    case "center":
-    default:
-      textAnchor = "middle"
-      dominantBaseline = "central"
-      break
-  }
-
-  const textTransform = compose(
-    translate(transformedX, transformedY),
-    rotate((-ccw_rotation * Math.PI) / 180),
-    ...(applyMirror ? [scale(-1, 1)] : []),
+  const textTransform = matrixToString(
+    compose(
+      translate(transformedX, transformedY),
+      rotate((-ccw_rotation * Math.PI) / 180),
+      ...(applyMirror ? [scale(-1, 1)] : []),
+      scale(scaleFactor, scaleFactor),
+    ),
   )
-
-  const lines = text.split("\n")
-
-  const children: SvgObject[] =
-    lines.length === 1
-      ? [
-          {
-            type: "text",
-            value: text,
-            name: "",
-            attributes: {},
-            children: [],
-          },
-        ]
-      : lines.map((line, idx) => ({
-          type: "element",
-          name: "tspan",
-          value: "",
-          attributes: {
-            x: "0",
-            ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
-          },
-          children: [
-            {
-              type: "text",
-              value: line,
-              name: "",
-              attributes: {},
-              children: [],
-            },
-          ],
-        }))
 
   return [
     {
-      name: "text",
+      name: "path",
       type: "element",
       attributes: {
-        x: "0",
-        y: "0",
-        dx: "0",
-        dy: "0",
-        fill: silkscreenColor,
-        "font-family": "Arial, sans-serif",
-        "font-size": transformedFontSize.toString(),
-        "text-anchor": textAnchor,
-        "dominant-baseline": dominantBaseline,
-        transform: matrixToString(textTransform),
+        d: geometry.pathData,
+        fill: "none",
+        stroke: silkscreenColor,
+        "stroke-width": strokeWidth.toString(),
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        transform: textTransform,
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
         "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_silkscreen_text_id,
-        stroke: "none",
         "data-type": "pcb_silkscreen_text",
         "data-pcb-layer": layer,
       },
-      children,
+      children: [],
       value: "",
     },
   ]
