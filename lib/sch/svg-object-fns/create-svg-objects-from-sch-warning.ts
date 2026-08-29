@@ -29,8 +29,7 @@ interface CalloutPlacement extends ScreenBounds {
 const TARGET_PADDING = 6
 const CALLOUT_GAP = 12
 const VIEWPORT_PADDING = 12
-const CALLOUT_PADDING = 12
-const HEADER_HEIGHT = 17
+const CALLOUT_PADDING = 10
 const LINE_HEIGHT = 17
 const MESSAGE_FONT_SIZE = 13
 const MAX_CALLOUT_WIDTH = 400
@@ -64,12 +63,13 @@ export function createSvgObjectsFromSchematicWarnings({
     const targetBounds = getWarningTargetBounds(warning, circuitJson, transform)
     if (!targetBounds) return []
 
+    const availableCalloutWidth = Math.max(1, svgWidth - VIEWPORT_PADDING * 2)
     const messageLines = wrapText(
       warning.message,
       Math.max(
         12,
         Math.floor(
-          (Math.min(MAX_CALLOUT_WIDTH, svgWidth - VIEWPORT_PADDING * 2) -
+          (Math.min(MAX_CALLOUT_WIDTH, availableCalloutWidth) -
             CALLOUT_PADDING * 2) /
             (MESSAGE_FONT_SIZE * 0.56),
         ),
@@ -80,14 +80,14 @@ export function createSvgObjectsFromSchematicWarnings({
     )
     const calloutWidth = Math.min(
       MAX_CALLOUT_WIDTH,
-      svgWidth - VIEWPORT_PADDING * 2,
+      availableCalloutWidth,
       Math.max(
-        MIN_CALLOUT_WIDTH,
+        Math.min(MIN_CALLOUT_WIDTH, availableCalloutWidth),
         longestLineLength * MESSAGE_FONT_SIZE * 0.56 + CALLOUT_PADDING * 2,
       ),
     )
     const calloutHeight =
-      CALLOUT_PADDING * 2 + HEADER_HEIGHT + messageLines.length * LINE_HEIGHT
+      CALLOUT_PADDING * 2 + messageLines.length * LINE_HEIGHT
     const placement = placeCallout({
       targetBounds,
       calloutWidth,
@@ -101,118 +101,98 @@ export function createSvgObjectsFromSchematicWarnings({
     const targetOutline = expandBounds(targetBounds, TARGET_PADDING)
     const leader = getLeaderEndpoints(placement, targetOutline)
 
-    return [
-      {
-        name: "g",
-        type: "element",
-        value: "",
-        attributes: {
-          class: "schematic-warning",
-          "data-type": warning.type,
-          "data-warning-id": warningId,
-          role: "note",
-          "aria-label": warning.message,
+    const warningGroup: SvgObject = {
+      name: "g",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "schematic-warning",
+        "data-type": warning.type,
+        "data-warning-id": warningId,
+        role: "note",
+        "aria-label": warning.message,
+      },
+      children: [
+        {
+          name: "rect",
+          type: "element",
+          value: "",
+          attributes: {
+            x: targetOutline.minX.toString(),
+            y: targetOutline.minY.toString(),
+            width: (targetOutline.maxX - targetOutline.minX).toString(),
+            height: (targetOutline.maxY - targetOutline.minY).toString(),
+            rx: "6",
+            fill: "none",
+            stroke: warningColor,
+            "stroke-width": "3",
+            "stroke-dasharray": "8,5",
+            "data-warning-reference": "target",
+          },
+          children: [],
         },
-        children: [
-          {
-            name: "rect",
-            type: "element",
-            value: "",
-            attributes: {
-              x: targetOutline.minX.toString(),
-              y: targetOutline.minY.toString(),
-              width: (targetOutline.maxX - targetOutline.minX).toString(),
-              height: (targetOutline.maxY - targetOutline.minY).toString(),
-              rx: "6",
-              fill: "none",
-              stroke: warningColor,
-              "stroke-width": "3",
-              "stroke-dasharray": "8,5",
-              "data-warning-reference": "target",
-            },
-            children: [],
+        {
+          name: "line",
+          type: "element",
+          value: "",
+          attributes: {
+            x1: leader.from.x.toString(),
+            y1: leader.from.y.toString(),
+            x2: leader.to.x.toString(),
+            y2: leader.to.y.toString(),
+            stroke: warningColor,
+            "stroke-width": "2",
+            "data-warning-reference": "leader",
           },
-          {
-            name: "line",
-            type: "element",
-            value: "",
-            attributes: {
-              x1: leader.from.x.toString(),
-              y1: leader.from.y.toString(),
-              x2: leader.to.x.toString(),
-              y2: leader.to.y.toString(),
-              stroke: warningColor,
-              "stroke-width": "2",
-              "data-warning-reference": "leader",
-            },
-            children: [],
+          children: [],
+        },
+        {
+          name: "rect",
+          type: "element",
+          value: "",
+          attributes: {
+            x: placement.minX.toString(),
+            y: placement.minY.toString(),
+            width: calloutWidth.toString(),
+            height: calloutHeight.toString(),
+            rx: "8",
+            fill: "rgba(255, 250, 235, 0.97)",
+            stroke: warningColor,
+            "stroke-width": "2",
+            "data-warning-reference": "callout",
           },
-          {
-            name: "rect",
-            type: "element",
-            value: "",
-            attributes: {
-              x: placement.minX.toString(),
-              y: placement.minY.toString(),
-              width: calloutWidth.toString(),
-              height: calloutHeight.toString(),
-              rx: "8",
-              fill: "rgba(255, 250, 235, 0.97)",
-              stroke: warningColor,
-              "stroke-width": "2",
-              "data-warning-reference": "callout",
-            },
-            children: [],
+          children: [],
+        },
+        {
+          name: "text",
+          type: "element",
+          value: "",
+          attributes: {
+            x: (placement.minX + CALLOUT_PADDING).toString(),
+            y: (
+              placement.minY +
+              CALLOUT_PADDING +
+              MESSAGE_FONT_SIZE
+            ).toString(),
+            fill: "#5c4300",
+            "font-family": "sans-serif",
+            "font-size": MESSAGE_FONT_SIZE.toString(),
           },
-          createWarningIcon({
-            x: placement.minX + CALLOUT_PADDING,
-            y: placement.minY + CALLOUT_PADDING,
-            color: warningColor,
-          }),
-          {
-            name: "text",
-            type: "element",
-            value: "",
-            attributes: {
-              x: (placement.minX + CALLOUT_PADDING + 21).toString(),
-              y: (placement.minY + CALLOUT_PADDING + 11).toString(),
-              fill: warningColor,
-              "font-family": "sans-serif",
-              "font-size": "12",
-              "font-weight": "700",
-            },
-            children: [createTextNode("WARNING")],
-          },
-          {
-            name: "text",
-            type: "element",
+          children: messageLines.map((line, index) => ({
+            name: "tspan",
+            type: "element" as const,
             value: "",
             attributes: {
               x: (placement.minX + CALLOUT_PADDING).toString(),
-              y: (
-                placement.minY +
-                CALLOUT_PADDING +
-                HEADER_HEIGHT +
-                MESSAGE_FONT_SIZE
-              ).toString(),
-              fill: "#5c4300",
-              "font-family": "sans-serif",
-              "font-size": MESSAGE_FONT_SIZE.toString(),
+              dy: index === 0 ? "0" : LINE_HEIGHT.toString(),
             },
-            children: messageLines.map((line, index) => ({
-              name: "tspan",
-              type: "element" as const,
-              value: "",
-              attributes: {
-                x: (placement.minX + CALLOUT_PADDING).toString(),
-                dy: index === 0 ? "0" : LINE_HEIGHT.toString(),
-              },
-              children: [createTextNode(line)],
-            })),
-          },
-        ],
-      },
-    ]
+            children: [createTextNode(line)],
+          })),
+        },
+      ],
+    }
+
+    return [warningGroup]
   })
 }
 
@@ -458,53 +438,6 @@ function getLeaderEndpoints(
   }
 }
 
-function createWarningIcon({
-  x,
-  y,
-  color,
-}: {
-  x: number
-  y: number
-  color: string
-}): SvgObject {
-  return {
-    name: "g",
-    type: "element",
-    value: "",
-    attributes: {
-      transform: `translate(${x} ${y})`,
-      "aria-hidden": "true",
-    },
-    children: [
-      {
-        name: "path",
-        type: "element",
-        value: "",
-        attributes: {
-          d: "M8 0 L16 15 H0 Z",
-          fill: color,
-        },
-        children: [],
-      },
-      {
-        name: "text",
-        type: "element",
-        value: "",
-        attributes: {
-          x: "8",
-          y: "12",
-          fill: "#ffffff",
-          "font-family": "sans-serif",
-          "font-size": "11",
-          "font-weight": "700",
-          "text-anchor": "middle",
-        },
-        children: [createTextNode("!")],
-      },
-    ],
-  }
-}
-
 function getWarningId(warning: SchematicWarning): string {
   switch (warning.type) {
     case "schematic_component_overlap_warning":
@@ -599,6 +532,7 @@ function makePlacement({
 }
 
 function clamp(value: number, min: number, max: number): number {
+  if (max < min) return (min + max) / 2
   return Math.min(Math.max(value, min), max)
 }
 

@@ -1,23 +1,30 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToSchematicSvg } from "lib"
-import { createMultipleMissingRefdesWarningCircuit } from "./schematic-warning-callouts.fixture"
+import { createDifferentGeneratedWarningsCircuit } from "./schematic-warning-callouts.fixture"
 
-test("multiple real TSX warnings use distinct callout placements", async () => {
-  const { circuitJsonWithWarnings, warningIds } =
-    await createMultipleMissingRefdesWarningCircuit()
+test("different real TSX warnings use distinct callout placements", async () => {
+  const { circuitJsonWithWarnings, warningIds, stylingIssueTypes } =
+    await createDifferentGeneratedWarningsCircuit()
   const svg = convertCircuitJsonToSchematicSvg(circuitJsonWithWarnings, {
-    width: 1000,
-    height: 600,
+    width: 1400,
+    height: 700,
     grid: true,
     shouldDrawWarnings: true,
   })
 
-  expect(svg.match(/class="schematic-warning"/g)).toHaveLength(2)
+  expect([...stylingIssueTypes].sort()).toEqual([
+    "excessive_bottom_padding",
+    "excessive_top_padding",
+    "missing_reference_designator_text",
+    "ports_outside_body",
+  ])
+  expect(svg.match(/class="schematic-warning"/g)).toHaveLength(4)
   for (const warningId of warningIds) {
     expect(svg).toContain(`data-warning-id="${warningId}"`)
   }
+  expect(svg).not.toContain(">WARNING</text>")
   expect(svg).toMatchSvgSnapshot(
     import.meta.path,
-    "multiple-custom-symbol-missing-refdes-warnings",
+    "different-generated-schematic-warnings",
   )
 })
