@@ -14,6 +14,16 @@ import {
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
 
+function parseOptionalDistance(
+  value: string | number | null | undefined,
+): number | undefined {
+  if (value === null || value === undefined) {
+    return undefined
+  }
+  const result = distance.safeParse(value)
+  return result.success ? result.data : undefined
+}
+
 export interface PcbBounds {
   minX: number
   minY: number
@@ -113,7 +123,7 @@ export function getComprehensivePcbBounds(
         updateTraceBounds(pad.points)
       }
     } else if (circuitJsonElm.type === "pcb_via") {
-      const outerDiameter = distance.parse(circuitJsonElm.outer_diameter)
+      const outerDiameter = parseOptionalDistance(circuitJsonElm.outer_diameter)
       updateBounds({
         center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
         width: outerDiameter ?? 0,
@@ -123,7 +133,7 @@ export function getComprehensivePcbBounds(
       const platedHole = circuitJsonElm
       const holeCenter = { x: platedHole.x, y: platedHole.y }
       if (platedHole.shape === "circle") {
-        const outerDiameter = distance.parse(platedHole.outer_diameter)
+        const outerDiameter = parseOptionalDistance(platedHole.outer_diameter)
         updateBounds({
           center: holeCenter,
           width: outerDiameter ?? 0,
@@ -164,7 +174,7 @@ export function getComprehensivePcbBounds(
       const hole = circuitJsonElm
       const holeCenter = { x: hole.x, y: hole.y }
       if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-        const diameter = distance.parse(hole.hole_diameter)
+        const diameter = parseOptionalDistance(hole.hole_diameter)
         updateBounds({
           center: holeCenter,
           width: diameter ?? 0,
