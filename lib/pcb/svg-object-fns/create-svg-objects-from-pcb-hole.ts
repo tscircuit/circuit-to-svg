@@ -25,7 +25,10 @@ export function createSvgObjectsFromPcbHole(
   const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-    const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledDiameter = Math.max(
+      0,
+      hole.hole_diameter * Math.abs(transform.a),
+    )
     const radius = scaledDiameter / 2
 
     if (hole.hole_shape === "circle") {
