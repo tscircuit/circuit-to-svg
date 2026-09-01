@@ -1,6 +1,8 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, PcbDebugObject } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
+import { getPcbDebugObjectLabelLayouts } from "lib/pcb/svg-object-fns/create-svg-objects-from-pcb-debug-object"
+import { identity } from "transformation-matrix"
 
 const circuitJson: AnyCircuitElement[] = [
   {
@@ -68,4 +70,67 @@ test("debug styles scale with the output viewport", () => {
   expect(smallSvg).toContain('stroke-width="1"')
   expect(largeSvg).toContain('font-size="18"')
   expect(largeSvg).toContain('stroke-width="1.8"')
+})
+
+const collisionTestStyle = {
+  fontSize: 20,
+  strokeWidth: 1,
+  dashLength: 4,
+  labelGap: 5,
+  pointRadius: 3,
+}
+
+const createDebugRect = ({
+  id,
+  x,
+  label,
+}: {
+  id: string
+  x: number
+  label: string
+}): PcbDebugObject => ({
+  type: "pcb_debug_object",
+  pcb_debug_object_id: id,
+  shape: "rect",
+  center: { x, y: 5 },
+  size: { width: 10, height: 10 },
+  label,
+})
+
+test("overlapping debug labels shrink before changing rectangle sides", () => {
+  const layouts = getPcbDebugObjectLabelLayouts({
+    debugObjects: [
+      createDebugRect({ id: "a", x: 5, label: "AAAAA" }),
+      createDebugRect({ id: "b", x: 45, label: "BBBBB" }),
+    ],
+    transform: identity(),
+    style: collisionTestStyle,
+  })
+
+  expect(layouts.get("a")).toMatchObject({ fontSize: 10, side: "top" })
+  expect(layouts.get("b")).toMatchObject({ fontSize: 10, side: "top" })
+})
+
+test("rectangle debug labels move outside another side when shrinking is insufficient", () => {
+  const layouts = getPcbDebugObjectLabelLayouts({
+    debugObjects: [
+      createDebugRect({ id: "a", x: 5, label: "AAAAA" }),
+      createDebugRect({ id: "b", x: 5, label: "BBBBB" }),
+    ],
+    transform: identity(),
+    style: collisionTestStyle,
+  })
+
+  expect(layouts.get("a")).toMatchObject({
+    x: 0,
+    y: -5,
+    fontSize: 10,
+    side: "top",
+  })
+  expect(layouts.get("b")).toMatchObject({
+    x: 15,
+    y: 10,
+    fontSize: 10,
+    side: "right",
+  })
 })
