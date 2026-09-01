@@ -84,7 +84,11 @@ import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
-import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
+import {
+  type PcbDebugObjectLabelLayout,
+  createSvgObjectsFromPcbDebugObject,
+  getPcbDebugObjectLabelLayouts,
+} from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
 interface PointObjectNotation {
   x: number
   y: number
@@ -147,6 +151,7 @@ export interface PcbContext {
     labelGap: number
     pointRadius: number
   }
+  debugObjectLabelLayouts?: Map<string, PcbDebugObjectLabelLayout>
   showAnchorOffsets?: boolean
   showPinNumbers?: boolean
   circuitJson?: AnyCircuitElement[]
@@ -342,6 +347,16 @@ export function convertCircuitJsonToPcbSvg(
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
 
+  if (ctx.showDebugObjects) {
+    ctx.debugObjectLabelLayouts = getPcbDebugObjectLabelLayouts({
+      debugObjects: circuitJson.filter(
+        (elm) => elm.type === "pcb_debug_object",
+      ),
+      transform,
+      style: ctx.debugObjectStyle!,
+    })
+  }
+
   let unsortedSvgObjects = circuitJson.flatMap((elm) =>
     createSvgObjects({ elm, circuitJson, ctx }),
   )
@@ -499,20 +514,9 @@ function createSvgObjects({
             debugObject: elm,
             transform: ctx.transform,
             style: ctx.debugObjectStyle!,
-            labelStackIndex:
-              elm.shape === "rect"
-                ? circuitJson
-                    .slice(0, circuitJson.indexOf(elm))
-                    .filter(
-                      (other) =>
-                        other.type === "pcb_debug_object" &&
-                        other.shape === "rect" &&
-                        other.center.x === elm.center.x &&
-                        other.center.y === elm.center.y &&
-                        other.size.width === elm.size.width &&
-                        other.size.height === elm.size.height,
-                    ).length
-                : 0,
+            labelLayout: ctx.debugObjectLabelLayouts?.get(
+              elm.pcb_debug_object_id,
+            ),
           })
         : []
     case "pcb_trace_error":
