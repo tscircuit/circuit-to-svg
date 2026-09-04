@@ -68,12 +68,12 @@ test("font-size overrides apply to negated and inverted pin labels", () => {
   ).toBe("8px")
 })
 
-test("styled pin-label runs overline only their own substring", () => {
+test("styled pin-label parts overline only their own substring", () => {
   const label = renderPinLabel({
     display_pin_label: "ABCD",
-    display_pin_label_text_runs: [
+    display_pin_label_text_parts: [
       { text: "A" },
-      { text: "BC", overline: true },
+      { text: "BC", is_overlined: true },
       { text: "D" },
     ],
   } as Partial<SchematicPort>)
@@ -88,10 +88,10 @@ test("styled pin-label runs overline only their own substring", () => {
   expect(label.children[2]?.attributes.style).toBeUndefined()
 })
 
-test("empty styled pin-label runs fall back to the display label", () => {
+test("empty styled pin-label parts fall back to the display label", () => {
   const label = renderPinLabel({
     display_pin_label: "ABCD",
-    display_pin_label_text_runs: [],
+    display_pin_label_text_parts: [],
   } as Partial<SchematicPort>)
 
   expect(label.children).toHaveLength(1)

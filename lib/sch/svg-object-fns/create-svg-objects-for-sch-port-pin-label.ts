@@ -56,14 +56,14 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
-  const textRuns = (
+  const textParts = (
     schPort as SchematicPort & {
-      display_pin_label_text_runs?: Array<{
+      display_pin_label_text_parts?: Array<{
         text: string
-        overline?: boolean
+        is_overlined?: boolean
       }>
     }
-  ).display_pin_label_text_runs
+  ).display_pin_label_text_parts
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
 
@@ -82,7 +82,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated && !textRuns?.length ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated && !textParts?.length ? " text-decoration: overline;" : ""}`,
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -97,10 +97,10 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? `rotate(-90 ${screenPinNumberTextPos.x} ${screenPinNumberTextPos.y})`
           : "",
     },
-    children: textRuns?.length
-      ? textRuns.map((run): SvgObject => {
+    children: textParts?.length
+      ? textParts.map((part): SvgObject => {
           const attributes: Record<string, string> = {}
-          if (run.overline) attributes.style = "text-decoration: overline;"
+          if (part.is_overlined) attributes.style = "text-decoration: overline;"
 
           return {
             type: "element",
@@ -110,7 +110,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
             children: [
               {
                 type: "text",
-                value: run.text,
+                value: part.text,
                 name: "",
                 attributes: {},
                 children: [],

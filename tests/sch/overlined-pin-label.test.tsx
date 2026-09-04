@@ -4,7 +4,7 @@ import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test(
-  "schematic pin label with structured overline runs",
+  "schematic pin label with structured overlined parts",
   async () => {
     const { circuit } = getTestFixture()
 
@@ -34,12 +34,12 @@ test(
     if (!abcdPort) throw new Error("Expected an ABCD schematic port")
     ;(
       abcdPort as SchematicPort & {
-        display_pin_label_text_runs: Array<{
+        display_pin_label_text_parts: Array<{
           text: string
-          overline?: boolean
+          is_overlined?: boolean
         }>
       }
-    ).display_pin_label_text_runs = [{ text: "ABCD", overline: true }]
+    ).display_pin_label_text_parts = [{ text: "ABCD", is_overlined: true }]
 
     expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
       import.meta.path,
