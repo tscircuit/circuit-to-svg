@@ -28,18 +28,19 @@ export interface SchematicSheetLayout {
 type SchematicSheetLayoutProperties = Pick<
   SchematicSheet,
   "sheet_width" | "sheet_height"
->
+> & {
+  center?: { x: number; y: number }
+}
 
 /**
- * Geometry of a schematic sheet's frame. Each sheet is laid out independently in
- * its own coordinate space (around the origin) and rendered one sheet per view
- * (single-sheet or stacked), so the frame is always centered at the origin - it
- * is not tiled by sheet_index.
+ * Geometry of a schematic sheet's frame. The frame follows the sheet's explicit
+ * center when present and otherwise defaults to the origin. It is not tiled by
+ * sheet_index because each sheet is rendered independently.
  */
 export function getSchematicSheetLayout(
   schematicSheet: SchematicSheetLayoutProperties = {},
 ): SchematicSheetLayout {
-  const center = { x: 0, y: 0 }
+  const center = schematicSheet.center ?? { x: 0, y: 0 }
   const width =
     schematicSheet.sheet_width === undefined
       ? DEFAULT_SCHEMATIC_SHEET_WIDTH
