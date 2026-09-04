@@ -2,14 +2,24 @@ import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
+
+type TextDecorationRange = {
+  start: number
+  end: number
+  decoration: "overline" | "underline" | "line-through"
+}
+
+type SchematicTextWithDecorations = SchematicText & {
+  text_decoration_ranges?: TextDecorationRange[]
+}
 
 export const createSvgSchText = ({
   elm,
   transform,
   colorMap,
 }: {
-  elm: SchematicText
+  elm: SchematicTextWithDecorations
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject => {
@@ -80,8 +90,13 @@ export const createSvgSchText = ({
 
   const lines = elm.text.split("\n")
 
-  const children: SvgObject[] =
-    lines.length === 1
+  const children: SvgObject[] = elm.text_decoration_ranges?.length
+    ? createDecoratedTextChildren(
+        elm.text,
+        elm.text_decoration_ranges,
+        elm.schematic_text_id,
+      )
+    : lines.length === 1
       ? [
           {
             type: "text",
@@ -127,4 +142,44 @@ export const createSvgSchText = ({
     },
     children,
   }
+}
+
+const createDecoratedTextChildren = (
+  text: string,
+  ranges: TextDecorationRange[],
+  schematicTextId: string,
+): SvgObject[] => {
+  const characters = Array.from(text)
+  const boundaries = new Set([0, characters.length])
+  for (const range of ranges) {
+    boundaries.add(range.start)
+    boundaries.add(range.end)
+  }
+  const sortedBoundaries = [...boundaries].sort((a, b) => a - b)
+
+  return sortedBoundaries.slice(0, -1).map((start, index) => {
+    const end = sortedBoundaries[index + 1]
+    const decorations = ranges
+      .filter((range) => range.start <= start && range.end >= end)
+      .map((range) => range.decoration)
+
+    return {
+      type: "element",
+      name: "tspan",
+      value: "",
+      attributes:
+        decorations.length > 0
+          ? { style: `text-decoration: ${decorations.join(" ")};` }
+          : {},
+      children: [
+        {
+          type: "text",
+          value: characters.slice(start, end).join(""),
+          name: index === 0 ? schematicTextId : "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    }
+  })
 }
