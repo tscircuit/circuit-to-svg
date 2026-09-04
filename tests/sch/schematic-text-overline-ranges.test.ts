@@ -2,22 +2,21 @@ import { expect, test } from "bun:test"
 import type { SchematicText } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 
-test("renders text decoration ranges as styled tspans", () => {
+test("renders overline ranges as styled tspans", () => {
   const text = {
     type: "schematic_text",
     schematic_text_id: "decorated_text",
     text: "RESET/GPIO",
-    text_decoration_ranges: [{ start: 0, end: 5, decoration: "overline" }],
+    overline_ranges: [{ start_index: 0, end_index: 5 }],
     font_size: 0.18,
     position: { x: 0, y: 0 },
     rotation: 0,
     anchor: "center",
     color: "#000000",
   } satisfies SchematicText & {
-    text_decoration_ranges: Array<{
-      start: number
-      end: number
-      decoration: "overline"
+    overline_ranges: Array<{
+      start_index: number
+      end_index: number
     }>
   }
 

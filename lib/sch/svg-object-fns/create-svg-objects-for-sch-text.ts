@@ -4,14 +4,13 @@ import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 
-type TextDecorationRange = {
-  start: number
-  end: number
-  decoration: "overline" | "underline" | "line-through"
+type OverlineRange = {
+  start_index: number
+  end_index: number
 }
 
-type SchematicTextWithDecorations = SchematicText & {
-  text_decoration_ranges?: TextDecorationRange[]
+type SchematicTextWithOverlines = SchematicText & {
+  overline_ranges?: OverlineRange[]
 }
 
 export const createSvgSchText = ({
@@ -19,7 +18,7 @@ export const createSvgSchText = ({
   transform,
   colorMap,
 }: {
-  elm: SchematicTextWithDecorations
+  elm: SchematicTextWithOverlines
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject => {
@@ -90,10 +89,10 @@ export const createSvgSchText = ({
 
   const lines = elm.text.split("\n")
 
-  const children: SvgObject[] = elm.text_decoration_ranges?.length
-    ? createDecoratedTextChildren(
+  const children: SvgObject[] = elm.overline_ranges?.length
+    ? createTextChildrenWithOverlines(
         elm.text,
-        elm.text_decoration_ranges,
+        elm.overline_ranges,
         elm.schematic_text_id,
       )
     : lines.length === 1
@@ -144,33 +143,30 @@ export const createSvgSchText = ({
   }
 }
 
-const createDecoratedTextChildren = (
+const createTextChildrenWithOverlines = (
   text: string,
-  ranges: TextDecorationRange[],
+  ranges: OverlineRange[],
   schematicTextId: string,
 ): SvgObject[] => {
   const characters = Array.from(text)
   const boundaries = new Set([0, characters.length])
   for (const range of ranges) {
-    boundaries.add(range.start)
-    boundaries.add(range.end)
+    boundaries.add(range.start_index)
+    boundaries.add(range.end_index)
   }
   const sortedBoundaries = [...boundaries].sort((a, b) => a - b)
 
   return sortedBoundaries.slice(0, -1).map((start, index) => {
     const end = sortedBoundaries[index + 1]
-    const decorations = ranges
-      .filter((range) => range.start <= start && range.end >= end)
-      .map((range) => range.decoration)
+    const hasOverline = ranges.some(
+      (range) => range.start_index <= start && range.end_index >= end,
+    )
 
     return {
       type: "element",
       name: "tspan",
       value: "",
-      attributes:
-        decorations.length > 0
-          ? { style: `text-decoration: ${decorations.join(" ")};` }
-          : {},
+      attributes: hasOverline ? { style: "text-decoration: overline;" } : {},
       children: [
         {
           type: "text",
