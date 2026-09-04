@@ -88,6 +88,32 @@ test("styled pin-label runs overline only their own substring", () => {
   expect(label.children[2]?.attributes.style).toBeUndefined()
 })
 
+test("mixed overlined pin-label runs SVG snapshot", () => {
+  const circuitJson = [
+    schComponent,
+    {
+      type: "schematic_port",
+      schematic_port_id: "schematic_port_mixed_overline",
+      source_port_id: "source_port_mixed_overline",
+      schematic_component_id: schComponent.schematic_component_id,
+      center: { x: -1.2, y: 0 },
+      side_of_component: "left",
+      distance_from_component_edge: 0.2,
+      display_pin_label: "ABCD",
+      display_pin_label_text_runs: [
+        { text: "A" },
+        { text: "BC", overline: true },
+        { text: "D" },
+      ],
+    },
+  ] as unknown as AnyCircuitElement[]
+
+  expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
+    import.meta.path,
+    "mixed-overlined-runs",
+  )
+})
+
 test("font-size overrides do not change vertical label rotation", () => {
   const label = renderPinLabel({
     center: { x: 0, y: 1.2 },

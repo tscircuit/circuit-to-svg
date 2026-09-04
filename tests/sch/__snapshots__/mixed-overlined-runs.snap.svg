@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="tscircuit-schematic" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(200,0,0,-200,630,300)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+              
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g class="sch-component" data-circuit-json-type="schematic_component" data-schematic-component-id="schematic_component_1"><rect class="component chip sch-component-body" x="430" y="100" width="400" height="400" stroke-width="4px" fill="rgb(255, 255, 194)" stroke="rgb(132, 0, 0)"/><rect class="component-overlay sch-component-overlay" x="430" y="100" width="400" height="400" fill="transparent"/><line class="component-pin sch-component-pin sch-port-line" x1="430" y1="300" x2="394" y2="300" stroke-width="4px"/><g class="sch-port" data-schematic-port-id="source_port_mixed_overline"><circle class="component-pin sch-component-pin sch-port-terminal" cx="390" cy="300" r="4" stroke-width="4px"/><rect x="386" y="296" width="8" height="8" opacity="0"/></g><text class="pin-number sch-pin-number" x="410" y="296" style="font-family: sans-serif;" fill="rgb(169, 0, 0)" text-anchor="middle" dominant-baseline="auto" font-size="30px" transform=""></text><text class="pin-number sch-pin-label" x="450" y="300" style="font-family: sans-serif;" fill="rgb(169, 0, 0)" text-anchor="start" dominant-baseline="middle" font-size="30px" transform=""><tspan>A</tspan><tspan style="text-decoration: overline;">BC</tspan><tspan>D</tspan></text></g><g class="schematic-port-hover sch-port-hover" data-schematic-port-id="source_port_mixed_overline"><circle cx="390" cy="300" r="8" fill="red" opacity="0"/></g></svg>
