@@ -2,14 +2,23 @@ import type { SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
+
+type OverlineRange = {
+  start_index: number
+  end_index: number
+}
+
+type SchematicTextWithOverlines = SchematicText & {
+  overline_ranges?: OverlineRange[]
+}
 
 export const createSvgSchText = ({
   elm,
   transform,
   colorMap,
 }: {
-  elm: SchematicText
+  elm: SchematicTextWithOverlines
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject => {
@@ -80,8 +89,13 @@ export const createSvgSchText = ({
 
   const lines = elm.text.split("\n")
 
-  const children: SvgObject[] =
-    lines.length === 1
+  const children: SvgObject[] = elm.overline_ranges?.length
+    ? createTextChildrenWithOverlines(
+        elm.text,
+        elm.overline_ranges,
+        elm.schematic_text_id,
+      )
+    : lines.length === 1
       ? [
           {
             type: "text",
@@ -127,4 +141,41 @@ export const createSvgSchText = ({
     },
     children,
   }
+}
+
+const createTextChildrenWithOverlines = (
+  text: string,
+  ranges: OverlineRange[],
+  schematicTextId: string,
+): SvgObject[] => {
+  const characters = Array.from(text)
+  const boundaries = new Set([0, characters.length])
+  for (const range of ranges) {
+    boundaries.add(range.start_index)
+    boundaries.add(range.end_index)
+  }
+  const sortedBoundaries = [...boundaries].sort((a, b) => a - b)
+
+  return sortedBoundaries.slice(0, -1).map((start, index) => {
+    const end = sortedBoundaries[index + 1]
+    const hasOverline = ranges.some(
+      (range) => range.start_index <= start && range.end_index >= end,
+    )
+
+    return {
+      type: "element",
+      name: "tspan",
+      value: "",
+      attributes: hasOverline ? { style: "text-decoration: overline;" } : {},
+      children: [
+        {
+          type: "text",
+          value: characters.slice(start, end).join(""),
+          name: index === 0 ? schematicTextId : "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    }
+  })
 }
