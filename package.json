@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.411",
+  "version": "0.0.412",
   "repository": {
     "type": "git",
     "url": "https://github.com/tscircuit/circuit-to-svg.git"
