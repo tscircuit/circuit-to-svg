@@ -56,6 +56,14 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
+  const textRuns = (
+    schPort as SchematicPort & {
+      display_pin_label_text_runs?: Array<{
+        text: string
+        overline?: boolean
+      }>
+    }
+  ).display_pin_label_text_runs
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
 
@@ -74,7 +82,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated && !textRuns ? " text-decoration: overline;" : ""}`,
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -89,15 +97,33 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? `rotate(-90 ${screenPinNumberTextPos.x} ${screenPinNumberTextPos.y})`
           : "",
     },
-    children: [
-      {
-        type: "text",
-        value: displayLabel || "",
-        name: "",
-        attributes: {},
-        children: [],
-      },
-    ],
+    children: textRuns
+      ? textRuns.map((run) => ({
+          type: "element" as const,
+          name: "tspan",
+          value: "",
+          attributes: run.overline
+            ? { style: "text-decoration: overline;" }
+            : {},
+          children: [
+            {
+              type: "text" as const,
+              value: run.text,
+              name: "",
+              attributes: {},
+              children: [],
+            },
+          ],
+        }))
+      : [
+          {
+            type: "text",
+            value: displayLabel || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
     value: "",
   })
 
