@@ -98,23 +98,26 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           : "",
     },
     children: textRuns
-      ? textRuns.map((run) => ({
-          type: "element" as const,
-          name: "tspan",
-          value: "",
-          attributes: run.overline
-            ? { style: "text-decoration: overline;" }
-            : {},
-          children: [
-            {
-              type: "text" as const,
-              value: run.text,
-              name: "",
-              attributes: {},
-              children: [],
-            },
-          ],
-        }))
+      ? textRuns.map((run): SvgObject => {
+          const attributes: Record<string, string> = {}
+          if (run.overline) attributes.style = "text-decoration: overline;"
+
+          return {
+            type: "element",
+            name: "tspan",
+            value: "",
+            attributes,
+            children: [
+              {
+                type: "text",
+                value: run.text,
+                name: "",
+                attributes: {},
+                children: [],
+              },
+            ],
+          }
+        })
       : [
           {
             type: "text",

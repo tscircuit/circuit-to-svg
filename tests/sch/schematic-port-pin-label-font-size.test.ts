@@ -84,9 +84,7 @@ test("styled pin-label runs overline only their own substring", () => {
     "tspan",
   ])
   expect(label.children[0]?.attributes.style).toBeUndefined()
-  expect(label.children[1]?.attributes.style).toBe(
-    "text-decoration: overline;",
-  )
+  expect(label.children[1]?.attributes.style).toBe("text-decoration: overline;")
   expect(label.children[2]?.attributes.style).toBeUndefined()
 })
 
