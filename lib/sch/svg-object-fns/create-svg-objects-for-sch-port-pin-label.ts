@@ -82,7 +82,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated && !textRuns ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated && !textRuns?.length ? " text-decoration: overline;" : ""}`,
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -97,7 +97,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? `rotate(-90 ${screenPinNumberTextPos.x} ${screenPinNumberTextPos.y})`
           : "",
     },
-    children: textRuns
+    children: textRuns?.length
       ? textRuns.map((run): SvgObject => {
           const attributes: Record<string, string> = {}
           if (run.overline) attributes.style = "text-decoration: overline;"

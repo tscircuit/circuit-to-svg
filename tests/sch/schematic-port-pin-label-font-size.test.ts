@@ -88,6 +88,17 @@ test("styled pin-label runs overline only their own substring", () => {
   expect(label.children[2]?.attributes.style).toBeUndefined()
 })
 
+test("empty styled pin-label runs fall back to the display label", () => {
+  const label = renderPinLabel({
+    display_pin_label: "ABCD",
+    display_pin_label_text_runs: [],
+  } as Partial<SchematicPort>)
+
+  expect(label.children).toHaveLength(1)
+  expect(label.children[0]?.type).toBe("text")
+  expect(label.children[0]?.value).toBe("ABCD")
+})
+
 test("mixed overlined pin-label runs SVG snapshot", () => {
   const circuitJson = [
     schComponent,
