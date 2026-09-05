@@ -1,3 +1,4 @@
+import { getNetLabelTextWidth } from "lib/utils/net-label-superscript"
 import type { AnyCircuitElement } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
@@ -53,7 +54,7 @@ export function getSchematicBoundsFromCircuitJson(
       }
     } else if (item.type === "schematic_net_label") {
       const fontSizeMm = getSchMmFontSize("net_label")
-      const textWidth = estimateTextWidth(item.text || "")
+      const textWidth = getNetLabelTextWidth(item)
       const fullWidthFsr =
         textWidth +
         ARROW_POINT_WIDTH_FSR * 2 +
