@@ -68,6 +68,37 @@ test("font-size overrides apply to negated and inverted pin labels", () => {
   ).toBe("8px")
 })
 
+test("styled pin-label parts overline only their own substring", () => {
+  const label = renderPinLabel({
+    display_pin_label: "ABCD",
+    display_pin_label_text_parts: [
+      { text: "A" },
+      { text: "BC", is_overlined: true },
+      { text: "D" },
+    ],
+  } as Partial<SchematicPort>)
+
+  expect(label.children.map((child) => child.name)).toEqual([
+    "tspan",
+    "tspan",
+    "tspan",
+  ])
+  expect(label.children[0]?.attributes.style).toBeUndefined()
+  expect(label.children[1]?.attributes.style).toBe("text-decoration: overline;")
+  expect(label.children[2]?.attributes.style).toBeUndefined()
+})
+
+test("empty styled pin-label parts fall back to the display label", () => {
+  const label = renderPinLabel({
+    display_pin_label: "ABCD",
+    display_pin_label_text_parts: [],
+  } as Partial<SchematicPort>)
+
+  expect(label.children).toHaveLength(1)
+  expect(label.children[0]?.type).toBe("text")
+  expect(label.children[0]?.value).toBe("ABCD")
+})
+
 test("font-size overrides do not change vertical label rotation", () => {
   const label = renderPinLabel({
     center: { x: 0, y: 1.2 },

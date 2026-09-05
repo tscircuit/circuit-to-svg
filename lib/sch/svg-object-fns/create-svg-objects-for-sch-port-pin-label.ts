@@ -56,6 +56,14 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
+  const textParts = (
+    schPort as SchematicPort & {
+      display_pin_label_text_parts?: Array<{
+        text: string
+        is_overlined?: boolean
+      }>
+    }
+  ).display_pin_label_text_parts
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
 
@@ -74,7 +82,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated && !textParts?.length ? " text-decoration: overline;" : ""}`,
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -89,15 +97,36 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? `rotate(-90 ${screenPinNumberTextPos.x} ${screenPinNumberTextPos.y})`
           : "",
     },
-    children: [
-      {
-        type: "text",
-        value: displayLabel || "",
-        name: "",
-        attributes: {},
-        children: [],
-      },
-    ],
+    children: textParts?.length
+      ? textParts.map((part): SvgObject => {
+          const attributes: Record<string, string> = {}
+          if (part.is_overlined) attributes.style = "text-decoration: overline;"
+
+          return {
+            type: "element",
+            name: "tspan",
+            value: "",
+            attributes,
+            children: [
+              {
+                type: "text",
+                value: part.text,
+                name: "",
+                attributes: {},
+                children: [],
+              },
+            ],
+          }
+        })
+      : [
+          {
+            type: "text",
+            value: displayLabel || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
     value: "",
   })
 
