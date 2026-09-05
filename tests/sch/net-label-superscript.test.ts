@@ -53,8 +53,9 @@ test("superscripts on outlined labels in every orientation and ground/power symb
 
 test("empty suffix preserves output and multi-character suffix increases label width", () => {
   const label = superscriptLabels[0]!
+  const empty: NetLabelWithSuperscript = { ...label, display_superscript: "" }
   expect(convertCircuitJsonToSchematicSvg([label])).toBe(
-    convertCircuitJsonToSchematicSvg([{ ...label, display_superscript: "" }]),
+    convertCircuitJsonToSchematicSvg([empty]),
   )
   expect(
     getNetLabelTextWidth({ ...label, display_superscript: "12" }),
@@ -64,9 +65,11 @@ test("empty suffix preserves output and multi-character suffix increases label w
 })
 
 test("superscript text is escaped", () => {
-  const svg = convertCircuitJsonToSchematicSvg([
-    { ...superscriptLabels[0]!, display_superscript: "<>&" },
-  ])
+  const label: NetLabelWithSuperscript = {
+    ...superscriptLabels[0]!,
+    display_superscript: "<>&",
+  }
+  const svg = convertCircuitJsonToSchematicSvg([label])
   expect(svg).not.toContain("><>&</tspan>")
   const span = flatten(parseSync(svg)).find((n) => n.name === "tspan")!
   expect(span.children[0]!.value).toBe("<>&")
@@ -79,20 +82,17 @@ test("auto-fit bounds grow for a suffix, including labels positioned by center",
       anchor_side,
       anchor_position: undefined,
     }
+    const withSuffix: NetLabelWithSuperscript = {
+      ...label,
+      display_superscript: "123",
+    }
     const before = getSchematicBoundsFromCircuitJson([label], 0)
-    const after = getSchematicBoundsFromCircuitJson(
-      [{ ...label, display_superscript: "123" }],
-      0,
-    )
+    const after = getSchematicBoundsFromCircuitJson([withSuffix], 0)
     if (anchor_side === "left" || anchor_side === "right") {
       expect(after.maxX - after.minX).toBeGreaterThan(before.maxX - before.minX)
     } else {
       expect(after.maxY - after.minY).toBeGreaterThan(before.maxY - before.minY)
     }
-    expect(
-      convertCircuitJsonToSchematicSvg([
-        { ...label, display_superscript: "123" },
-      ]),
-    ).not.toContain("NaN")
+    expect(convertCircuitJsonToSchematicSvg([withSuffix])).not.toContain("NaN")
   }
 })
