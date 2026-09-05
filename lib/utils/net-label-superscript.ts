@@ -1,4 +1,4 @@
-import type { SchematicNetLabel } from "circuit-json"
+import type { SchematicNetLabel, SchematicText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { estimateTextWidth } from "lib/sch/estimate-text-width"
 
@@ -7,10 +7,17 @@ export type NetLabelWithSuperscript = SchematicNetLabel & {
   display_superscript?: string
 }
 
+export type SchematicTextWithSuperscript = SchematicText & {
+  display_superscript?: string
+}
+
 const SUPERSCRIPT_SCALE = 0.65
 const SUPERSCRIPT_GAP = 0.08
 
-export function getNetLabelTextWidth(label: NetLabelWithSuperscript): number {
+export function getNetLabelTextWidth(label: {
+  text: string
+  display_superscript?: string
+}): number {
   return (
     estimateTextWidth(label.text || "") +
     (label.display_superscript

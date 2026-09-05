@@ -1,4 +1,7 @@
-import type { SchematicText } from "circuit-json"
+import {
+  createNetLabelTextChildren,
+  type SchematicTextWithSuperscript,
+} from "lib/utils/net-label-superscript"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
@@ -9,7 +12,7 @@ export const createSvgSchText = ({
   transform,
   colorMap,
 }: {
-  elm: SchematicText
+  elm: SchematicTextWithSuperscript
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject => {
@@ -109,6 +112,20 @@ export const createSvgSchText = ({
             },
           ],
         }))
+
+  if (elm.display_superscript) {
+    // The suffix belongs to the whole text, so append it only to the last line.
+    const target =
+      lines.length === 1 ? children : children[children.length - 1]!.children
+    target.push(
+      ...createNetLabelTextChildren(
+        "",
+        elm.display_superscript,
+        getSchScreenFontSize(transform, "reference_designator", elm.font_size),
+        dominantBaselineMap[elm.anchor],
+      ).slice(1),
+    )
+  }
 
   return {
     type: "element",
