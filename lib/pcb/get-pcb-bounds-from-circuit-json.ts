@@ -387,7 +387,7 @@ export function getComprehensivePcbBounds(
           typeof keepout.radius === "number"
             ? keepout.radius
             : (distance.parse(keepout.radius) ?? 0)
-        if (radius > 0) {
+        if (Number.isFinite(radius) && radius > 0) {
           updateBounds({
             center: keepout.center,
             width: radius * 2,
