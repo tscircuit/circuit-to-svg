@@ -15,6 +15,7 @@ import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-
 import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { createSvgSchText } from "./create-svg-objects-for-sch-text"
+import { getFiniteSchematicComponentSize } from "../get-finite-schematic-component-size"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -28,14 +29,15 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
   colorMap: ColorMap
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
+  const size = getFiniteSchematicComponentSize(schComponent.size)
 
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - size.width / 2,
+    y: schComponent.center.y + size.height / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + size.width / 2,
+    y: schComponent.center.y - size.height / 2,
   })
   const componentScreenWidth =
     componentScreenBottomRight.x - componentScreenTopLeft.x
