@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="tscircuit-schematic" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(66.6666666667,0,0,-66.6666666667,400,333.3333333333)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><text class="sch-text" x="600.0000000001" y="66.66666666650002" fill="#000000" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="66.6666666667px" transform="rotate(0, 600.0000000001, 66.66666666650002)"><tspan x="600.0000000001">A</tspan><tspan x="600.0000000001" dy="1em">B</tspan><tspan x="600.0000000001" dy="1em">C</tspan><tspan x="600.0000000001" dy="1em">D</tspan><tspan x="600.0000000001" dy="1em">E</tspan><tspan x="600.0000000001" dy="1em">F</tspan><tspan x="600.0000000001" dy="1em">G</tspan><tspan x="600.0000000001" dy="1em">H</tspan></text></svg>
