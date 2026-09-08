@@ -12,6 +12,42 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
 
   const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
   const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+
+  // Skip any circle whose radius is non-finite: r="NaN" is not a valid
+  // SVG length and renderers silently discard the whole element.
+  const children = []
+  if (Number.isFinite(outerRadius)) {
+    children.push({
+      name: "circle",
+      type: "element",
+      attributes: {
+        class: "pcb-hole-outer",
+        fill: colorMap.copper.top,
+        cx: x.toString(),
+        cy: y.toString(),
+        r: outerRadius.toString(),
+        "data-type": "pcb_via",
+        "data-pcb-layer": "top",
+      },
+    })
+  }
+  if (Number.isFinite(innerRadius)) {
+    children.push({
+      name: "circle",
+      type: "element",
+      attributes: {
+        class: "pcb-hole-inner",
+        fill: colorMap.drill,
+        cx: x.toString(),
+        cy: y.toString(),
+        r: innerRadius.toString(),
+        "data-type": "pcb_via",
+        "data-pcb-layer": "drill",
+      },
+    })
+  }
+  if (children.length === 0) return []
+
   return {
     name: "g",
     type: "element",
@@ -19,34 +55,6 @@ export function createSvgObjectsFromPcbVia(hole: PCBVia, ctx: PcbContext): any {
       "data-type": "pcb_via",
       "data-pcb-layer": "through",
     },
-    children: [
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-outer",
-          fill: colorMap.copper.top,
-          cx: x.toString(),
-          cy: y.toString(),
-          r: outerRadius.toString(),
-          "data-type": "pcb_via",
-          "data-pcb-layer": "top",
-        },
-      },
-      {
-        name: "circle",
-        type: "element",
-        attributes: {
-          class: "pcb-hole-inner",
-          fill: colorMap.drill,
-
-          cx: x.toString(),
-          cy: y.toString(),
-          r: innerRadius.toString(),
-          "data-type": "pcb_via",
-          "data-pcb-layer": "drill",
-        },
-      },
-    ],
+    children,
   }
 }

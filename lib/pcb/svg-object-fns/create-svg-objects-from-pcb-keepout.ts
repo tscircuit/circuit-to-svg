@@ -188,6 +188,9 @@ export function createSvgObjectsFromPcbKeepout(
       ])
       const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
 
+      // r="NaN" is not a valid SVG length; renderers discard the element.
+      if (!Number.isFinite(scaledRadius)) continue
+
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
           circleKeepout.pcb_keepout_id,

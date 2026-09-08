@@ -299,7 +299,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
           value: "",
           attributes: {
             x: "0",
-            ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
+            ...(idx > 0 && Number.isFinite(transformedFontSize)
+              ? { dy: transformedFontSize.toString() }
+              : {}),
           },
           children: [
             {
@@ -323,7 +325,11 @@ export function createSvgObjectsFromPcbSilkscreenText(
         dy: "0",
         fill: silkscreenColor,
         "font-family": "Arial, sans-serif",
-        "font-size": transformedFontSize.toString(),
+        // font-size="NaN" is not a valid SVG length; omit it so the
+        // text renders at the inherited default size instead of vanishing.
+        ...(Number.isFinite(transformedFontSize)
+          ? { "font-size": transformedFontSize.toString() }
+          : {}),
         "text-anchor": textAnchor,
         "dominant-baseline": dominantBaseline,
         transform: matrixToString(textTransform),
