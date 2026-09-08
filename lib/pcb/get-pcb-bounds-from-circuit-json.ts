@@ -13,6 +13,7 @@ import {
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import { rotatePointCcwDeg } from "lib/utils/rotate-point"
 
 export interface PcbBounds {
   minX: number
@@ -152,12 +153,17 @@ export function getComprehensivePcbBounds(
           ccwRotationDegrees: platedHole.rect_ccw_rotation,
         })
       } else if (platedHole.shape === "hole_with_polygon_pad") {
-        // pad_outline points are relative to the hole position
+        // pad_outline points are relative to the hole position in the pad's
+        // local frame; ccw_rotation rotates that frame about the hole center
+        const ccwRotation = platedHole.ccw_rotation ?? 0
         updateTraceBounds(
-          (platedHole.pad_outline ?? []).map((point) => ({
-            x: platedHole.x + point.x,
-            y: platedHole.y + point.y,
-          })),
+          (platedHole.pad_outline ?? []).map((point) => {
+            const rotated = rotatePointCcwDeg(point.x, point.y, ccwRotation)
+            return {
+              x: platedHole.x + rotated.x,
+              y: platedHole.y + rotated.y,
+            }
+          }),
         )
       }
     } else if (circuitJsonElm.type === "pcb_hole") {
