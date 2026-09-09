@@ -67,7 +67,18 @@ export function convertCircuitJsonToSolderPasteMask(
         updateBounds(center, width, height)
       }
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
-      updateBounds({ x: item.x, y: item.y }, 0, 0)
+      let width = item.shape === "circle" ? item.radius * 2 : item.width
+      let height = item.shape === "circle" ? item.radius * 2 : item.height
+      if (item.shape === "rotated_rect" || item.shape === "rotated_pill") {
+        const radians = (item.ccw_rotation * Math.PI) / 180
+        const cos = Math.abs(Math.cos(radians))
+        const sin = Math.abs(Math.sin(radians))
+        ;[width, height] = [
+          width * cos + height * sin,
+          width * sin + height * cos,
+        ]
+      }
+      updateBounds({ x: item.x, y: item.y }, width, height)
     }
   }
 
