@@ -1,6 +1,7 @@
 import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { createSvgObjectFromExtendedNpthHole } from "lib/utils/npth-hole-shape"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 const HOLE_COLOR = "rgb(190, 190, 190)" // Darker gray for holes
@@ -74,5 +75,13 @@ export function createSvgObjectsFromAssemblyHole(
       },
     ]
   }
-  return []
+  const extended = createSvgObjectFromExtendedNpthHole(
+    hole,
+    x,
+    y,
+    Math.abs(transform.a),
+    "assembly-hole",
+    HOLE_COLOR,
+  )
+  return extended ? [extended] : []
 }

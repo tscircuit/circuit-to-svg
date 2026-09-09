@@ -1,6 +1,7 @@
 import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { createSvgObjectFromExtendedNpthHole } from "lib/utils/npth-hole-shape"
 import type { PinoutSvgContext } from "../convert-circuit-json-to-pinout-svg"
 
 const HOLE_COLOR = "rgb(50, 50, 50)"
@@ -75,5 +76,13 @@ export function createSvgObjectsFromPinoutHole(
     ]
   }
 
-  return []
+  const extended = createSvgObjectFromExtendedNpthHole(
+    hole,
+    x,
+    y,
+    Math.abs(transform.a),
+    "pinout-hole",
+    HOLE_COLOR,
+  )
+  return extended ? [extended] : []
 }
