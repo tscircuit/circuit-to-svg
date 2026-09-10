@@ -46,6 +46,16 @@ export function formatTickLabel(value: number, axis: AxisInfo): string {
   if (!Number.isFinite(span) || span === 0) return formatNumber(value)
 
   const precision = getTickLabelPrecisionForSpan(span)
+  if (precision > 6) {
+    if (value === 0) return "0"
+    const magnitude = Math.floor(Math.log10(Math.abs(value)))
+    if (magnitude < -precision) return "0"
+    const significantDigits = Math.min(
+      15,
+      Math.max(1, magnitude + precision + 1),
+    )
+    return Number(value.toPrecision(significantDigits)).toString()
+  }
   const factor = 10 ** precision
   const rounded = Math.round(value * factor) / factor
   const fixed = rounded.toFixed(precision)
@@ -60,5 +70,5 @@ function getTickLabelPrecisionForSpan(span: number): number {
   if (span >= 10) return 1
   if (span >= 1) return 2
 
-  return 3
+  return Math.max(3, 2 - Math.floor(Math.log10(span)))
 }
