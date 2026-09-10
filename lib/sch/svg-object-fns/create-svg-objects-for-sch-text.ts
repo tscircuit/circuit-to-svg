@@ -4,6 +4,7 @@ import {
 } from "lib/utils/net-label-superscript"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { createSvgTextPartLines } from "lib/utils/create-svg-text-parts"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 
@@ -82,18 +83,21 @@ export const createSvgSchText = ({
   }
 
   const lines = elm.text.split("\n")
+  const styledLines = createSvgTextPartLines(elm.text_parts ?? [])
 
   const children: SvgObject[] =
     lines.length === 1
-      ? [
-          {
-            type: "text",
-            value: elm.text,
-            name: elm.schematic_text_id,
-            attributes: {},
-            children: [],
-          },
-        ]
+      ? elm.text_parts?.length
+        ? styledLines[0]!
+        : [
+            {
+              type: "text",
+              value: elm.text,
+              name: elm.schematic_text_id,
+              attributes: {},
+              children: [],
+            },
+          ]
       : lines.map((line, idx) => ({
           type: "element",
           name: "tspan",
@@ -102,15 +106,17 @@ export const createSvgSchText = ({
             x: center.x.toString(),
             ...(idx > 0 ? { dy: "1em" } : {}),
           },
-          children: [
-            {
-              type: "text",
-              value: line,
-              name: idx === 0 ? elm.schematic_text_id : "",
-              attributes: {},
-              children: [],
-            },
-          ],
+          children: elm.text_parts?.length
+            ? (styledLines[idx] ?? [])
+            : [
+                {
+                  type: "text",
+                  value: line,
+                  name: idx === 0 ? elm.schematic_text_id : "",
+                  attributes: {},
+                  children: [],
+                },
+              ],
         }))
 
   if (elm.display_superscript) {
