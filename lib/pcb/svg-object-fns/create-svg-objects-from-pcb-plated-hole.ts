@@ -8,6 +8,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadDataAttributes } from "./get-pad-data-attributes"
+import { rotatePointCcwDeg } from "lib/utils/rotate-point"
 
 type HoleWithRectPadOffsets = {
   hole_offset_x?: number
@@ -939,19 +940,30 @@ export function createSvgObjectsFromPcbPlatedHole(
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const ccwRotation = polygonHole.ccw_rotation ?? 0
+
+    // pad_outline and the hole offset are relative to the hole position in
+    // the pad's local frame; ccw_rotation rotates that frame about the hole
+    const rotateLocal = (px: number, py: number) =>
+      rotatePointCcwDeg(px, py, ccwRotation)
 
     // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rotated = rotateLocal(point.x, point.y)
+      return applyToPoint(transform, [holeX + rotated.x, holeY + rotated.y])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
     // Calculate hole position with offset
+    const rotatedOffset = rotateLocal(
+      polygonHole.hole_offset_x,
+      polygonHole.hole_offset_y,
+    )
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + rotatedOffset.x,
+      holeY + rotatedOffset.y,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
