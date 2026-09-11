@@ -13,6 +13,7 @@ import {
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import { getPolygonPadRotator } from "./get-polygon-pad-rotator"
 
 export interface PcbBounds {
   minX: number
@@ -152,12 +153,17 @@ export function getComprehensivePcbBounds(
           ccwRotationDegrees: platedHole.rect_ccw_rotation,
         })
       } else if (platedHole.shape === "hole_with_polygon_pad") {
-        // pad_outline points are relative to the hole position
+        // pad_outline points are relative to the hole position and rotate
+        // with ccw_rotation
+        const rotatePoint = getPolygonPadRotator(platedHole.ccw_rotation)
         updateTraceBounds(
-          (platedHole.pad_outline ?? []).map((point) => ({
-            x: platedHole.x + point.x,
-            y: platedHole.y + point.y,
-          })),
+          (platedHole.pad_outline ?? []).map((point) => {
+            const rotated = rotatePoint(point)
+            return {
+              x: platedHole.x + rotated.x,
+              y: platedHole.y + rotated.y,
+            }
+          }),
         )
       }
     } else if (circuitJsonElm.type === "pcb_hole") {

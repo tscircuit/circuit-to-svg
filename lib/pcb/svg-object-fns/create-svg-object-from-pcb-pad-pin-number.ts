@@ -3,6 +3,7 @@ import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadPinNumber } from "./get-pad-data-attributes"
+import { getPolygonPadRotator } from "../get-polygon-pad-rotator"
 
 type PcbPad = PcbSmtPad | PcbPlatedHole
 
@@ -138,7 +139,10 @@ function getPadTextGeometry(pad: PcbPad): PadTextGeometry | undefined {
   }
 
   if (pad.shape === "hole_with_polygon_pad") {
-    const polygonGeometry = getPolygonGeometry(pad.pad_outline)
+    const rotatePoint = getPolygonPadRotator(pad.ccw_rotation)
+    const polygonGeometry = getPolygonGeometry(
+      (pad.pad_outline ?? []).map((point) => rotatePoint(point)),
+    )
     if (!polygonGeometry) return undefined
 
     return {
