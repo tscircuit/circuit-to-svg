@@ -90,16 +90,18 @@ export function getSchematicBoundsFromCircuitJson(
       const text = item.text ?? ""
       const superscript = (item as SchematicTextWithSuperscript)
         .display_superscript
-      if (superscript) {
-        const lines = text.split("\n")
+      const lines = text.split("\n")
+      if (superscript || lines.length > 1) {
         const width =
           Math.max(
             ...lines.map((line, index) =>
-              getNetLabelTextWidth({
-                text: line,
-                display_superscript:
-                  index === lines.length - 1 ? superscript : undefined,
-              }),
+              superscript
+                ? getNetLabelTextWidth({
+                    text: line,
+                    display_superscript:
+                      index === lines.length - 1 ? superscript : undefined,
+                  })
+                : line.length,
             ),
           ) * fontSize
         // Work in screen-relative coordinates, matching the SVG text anchor.
@@ -116,8 +118,9 @@ export function getSchematicBoundsFromCircuitJson(
             : anchor === "bottom" || anchor.startsWith("bottom_")
               ? -fontSize
               : -fontSize / 2
-        const height = (lines.length + 0.3) * fontSize
-        const offsetY = -(top - 0.3 * fontSize + height / 2)
+        const superscriptAscent = superscript ? 0.3 * fontSize : 0
+        const height = lines.length * fontSize + superscriptAscent
+        const offsetY = -(top - superscriptAscent + height / 2)
         const rotation = (-(item.rotation ?? 0) * Math.PI) / 180
         updateBounds(
           {
