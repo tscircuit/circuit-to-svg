@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="tscircuit-schematic" width="1200" height="600" style="background-color: rgb(245, 241, 237)" data-real-to-screen-transform="matrix(193.5483870968,0,0,-193.5483870968,512.9032258065,309.6774193548)"><style>
+              .boundary { fill: rgb(245, 241, 237); }
+              .schematic-boundary { fill: none; stroke: #fff; }
+              .component { fill: none; stroke: rgb(132, 0, 0); }
+              .chip { fill: rgb(255, 255, 194); stroke: rgb(132, 0, 0); }
+              .component-pin { fill: none; stroke: rgb(132, 0, 0); }
+              .text { font-family: sans-serif; fill: rgb(0, 150, 0); }
+              .pin-number { fill: rgb(169, 0, 0); }
+              .port-label { fill: rgb(0, 100, 100); }
+              .component-name { fill: rgb(0, 100, 100); }
+              
+            </style><rect class="boundary" x="0" y="0" width="1200" height="600"/><g class="sch-component" data-circuit-json-type="schematic_component" data-schematic-component-id="component_1"><text class="sch-text" x="803.2258064517" y="116.129032258" fill="black" text-anchor="start" dominant-baseline="middle" font-family="sans-serif" font-size="38.709677419360006px" transform="rotate(0, 803.2258064517, 116.129032258)">U739</text></g></svg>

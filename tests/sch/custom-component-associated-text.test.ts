@@ -4,7 +4,7 @@ import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { parseSync } from "svgson"
 
 for (const isBoxWithPins of [false, true]) {
-  test(`associated text renders once at its position (is_box_with_pins=${isBoxWithPins})`, () => {
+  test(`associated text renders once at its position (is_box_with_pins=${isBoxWithPins})`, async () => {
     const component: AnyCircuitElement = {
       type: "schematic_component",
       schematic_component_id: "component_1",
@@ -24,7 +24,7 @@ for (const isBoxWithPins of [false, true]) {
       color: "black",
     }
     const render = (text: SchematicText) =>
-      parseSync(convertCircuitJsonToSchematicSvg([component, text]))
+      convertCircuitJsonToSchematicSvg([component, text])
     const findLabels = (node: ReturnType<typeof parseSync>) => {
       const matches: ReturnType<typeof parseSync>[] = []
       const visit = (element: ReturnType<typeof parseSync>) => {
@@ -40,9 +40,14 @@ for (const isBoxWithPins of [false, true]) {
       return matches
     }
 
-    const associated = findLabels(render(label))
+    const svg = render(label)
+    await expect(svg).toMatchSvgSnapshot(
+      import.meta.path,
+      `associated-text-${isBoxWithPins ? "box" : "custom"}-component`,
+    )
+    const associated = findLabels(parseSync(svg))
     const { schematic_component_id, ...unassociatedLabel } = label
-    const unassociated = findLabels(render(unassociatedLabel))
+    const unassociated = findLabels(parseSync(render(unassociatedLabel)))
 
     expect(unassociated).toHaveLength(1)
     expect(associated).toHaveLength(1)
