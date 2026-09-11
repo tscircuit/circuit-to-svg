@@ -14,6 +14,18 @@ type HoleWithRectPadOffsets = {
   hole_offset_y?: number
 }
 
+
+// Drop any circle whose radius is non-finite: r="NaN" is not a valid
+// SVG length and renderers silently discard the whole element, which
+// makes drills disappear without any visible error.
+function dropNonFiniteRadiusCircles(objects: SvgObject[]): SvgObject[] {
+  return objects.filter((obj) => {
+    if (obj.name !== "circle") return true
+    const r = (obj.attributes as any)?.r
+    return r === undefined || Number.isFinite(Number(r))
+  })
+}
+
 export function createSvgObjectsFromPcbPlatedHole(
   hole: PcbPlatedHole,
   ctx: PcbContext,
@@ -197,7 +209,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
@@ -262,7 +274,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
@@ -383,7 +395,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
@@ -590,7 +602,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
@@ -757,7 +769,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
@@ -928,7 +940,7 @@ export function createSvgObjectsFromPcbPlatedHole(
           "data-pcb-layer": "through",
           ...padDataAttributes,
         },
-        children,
+        children: dropNonFiniteRadiusCircles(children),
         value: "",
       },
     ]
