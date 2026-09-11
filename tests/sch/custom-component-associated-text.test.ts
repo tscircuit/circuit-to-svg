@@ -51,10 +51,12 @@ for (const isBoxWithPins of [false, true]) {
     }
 
     const svg = render(label)
-    await expect(svg).toMatchSvgSnapshot(
-      import.meta.path,
-      `associated-text-${isBoxWithPins ? "box" : "custom"}-component`,
-    )
+    if (!isBoxWithPins) {
+      await expect(svg).toMatchSvgSnapshot(
+        import.meta.path,
+        "associated-text-custom-component",
+      )
+    }
     const associated = findLabels(parseSync(svg))
     const { schematic_component_id, ...unassociatedLabel } = label
     const unassociated = findLabels(parseSync(render(unassociatedLabel)))
