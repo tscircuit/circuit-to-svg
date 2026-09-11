@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import type { AnyCircuitElement, SchematicText } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { parseSync } from "svgson"
+import { getC6186CustomSymbolCircuit } from "tests/fixtures/c6186-custom-symbol"
 
 for (const isBoxWithPins of [false, true]) {
   test(`associated text renders once at its position (is_box_with_pins=${isBoxWithPins})`, async () => {
@@ -23,8 +24,17 @@ for (const isBoxWithPins of [false, true]) {
       rotation: 0,
       color: "black",
     }
+    const circuitJson = isBoxWithPins
+      ? [component]
+      : getC6186CustomSymbolCircuit()
+    const customComponent = circuitJson.find(
+      (elm) => elm.type === "schematic_component",
+    )!
+    expect(customComponent.is_box_with_pins).toBe(isBoxWithPins)
+    label.schematic_component_id = customComponent.schematic_component_id
+    if (!isBoxWithPins) label.position = { x: 2, y: 1.2 }
     const render = (text: SchematicText) =>
-      convertCircuitJsonToSchematicSvg([component, text])
+      convertCircuitJsonToSchematicSvg([...circuitJson, text])
     const findLabels = (node: ReturnType<typeof parseSync>) => {
       const matches: ReturnType<typeof parseSync>[] = []
       const visit = (element: ReturnType<typeof parseSync>) => {
