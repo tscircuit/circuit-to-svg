@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><style>
+              .assembly-component { 
+                fill: none; 
+                stroke: #000; 
+              }
+              .assembly-board { 
+                fill: #f2f2f2; 
+                stroke: rgb(0,0,0); 
+                stroke-opacity: 0.8;
+              }
+              .assembly-component-label { 
+                fill: #000; 
+                font-family: Arial, serif;
+                font-weight: bold;
+                dominant-baseline: middle;
+                text-anchor: middle;
+              }
+              .assembly-boundary { 
+                fill: none; 
+                stroke: #fff;
+                stroke-width: 0.2; 
+              }
+            </style><rect fill="#fff" x="0" y="0" width="800" height="600"/><rect class="assembly-boundary" x="36.36363636363632" y="118.18181818181816" width="727.2727272727275" height="363.63636363636374"/><path class="pcb-board" d="M 36.36363636363632 481.81818181818187 L 763.6363636363637 481.81818181818187 L 763.6363636363637 118.18181818181816 L 36.36363636363632 118.18181818181816 Z" fill="none" stroke="rgb(0,0,0)" stroke-opacity="0.8" stroke-width="7.272727272727273"/><rect class="assembly-hole" x="127.27272727272727" y="272.72727272727275" width="109.0909090909091" height="54.54545454545455" fill="rgb(190, 190, 190)"/><path class="assembly-hole" fill="rgb(190, 190, 190)" d="M378.1818181818182,249.0909090909091 v101.81818181818183 a21.81818181818182,21.81818181818182 0 0 0 43.63636363636364,0 v-101.81818181818183 a21.81818181818182,21.81818181818182 0 0 0 -43.63636363636364,0 z"/><path class="assembly-hole" fill="rgb(190, 190, 190)" d="M-36.36363636363637,-27.272727272727273 h72.72727272727273 a27.272727272727273,27.272727272727273 0 0 1 0,54.54545454545455 h-72.72727272727273 a27.272727272727273,27.272727272727273 0 0 1 0,-54.54545454545455 z" transform="translate(618.1818181818182 300) rotate(-30)"/></svg>
