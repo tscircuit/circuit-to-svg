@@ -1,3 +1,4 @@
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { PcbFabricationNoteDimension } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
@@ -320,7 +321,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
         y: textY.toString(),
         fill: lineColor,
         "font-size": transformedFontSize.toString(),
-        "font-family": "Arial, sans-serif",
+        "font-family": ALPHABET_FONT_FAMILY,
         "text-anchor": "middle",
         "dominant-baseline": "central",
         class: "pcb-fabrication-note-dimension-text",

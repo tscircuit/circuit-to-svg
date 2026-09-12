@@ -1,3 +1,4 @@
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { NinePointAnchor, PcbFabricationNoteText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
@@ -56,7 +57,7 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     attributes: {
       x: "0",
       y: "0",
-      "font-family": "Arial, sans-serif",
+      "font-family": ALPHABET_FONT_FAMILY,
       "font-size": transformedFontSize.toString(),
       "text-anchor": textAnchor,
       "dominant-baseline": dominantBaseline,
