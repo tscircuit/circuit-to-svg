@@ -29,18 +29,24 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
+  const width = Math.abs(schComponent.size.width)
+  const height = Math.abs(schComponent.size.height)
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - width / 2,
+    y: schComponent.center.y + height / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + width / 2,
+    y: schComponent.center.y - height / 2,
   })
-  const componentScreenWidth =
-    componentScreenBottomRight.x - componentScreenTopLeft.x
-  const componentScreenHeight =
-    componentScreenBottomRight.y - componentScreenTopLeft.y
+  const componentScreenWidth = Math.abs(
+    componentScreenBottomRight.x - componentScreenTopLeft.x,
+  )
+  const componentScreenHeight = Math.abs(
+    componentScreenBottomRight.y - componentScreenTopLeft.y,
+  )
+  const minX = Math.min(componentScreenTopLeft.x, componentScreenBottomRight.x)
+  const minY = Math.min(componentScreenTopLeft.y, componentScreenBottomRight.y)
 
   // Add basic rectangle for component body
   svgObjects.push({
@@ -49,8 +55,8 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
     value: "",
     attributes: {
       class: "component chip sch-component-body",
-      x: componentScreenTopLeft.x.toString(),
-      y: componentScreenTopLeft.y.toString(),
+      x: minX.toString(),
+      y: minY.toString(),
       width: componentScreenWidth.toString(),
       height: componentScreenHeight.toString(),
       "stroke-width": `${getSchStrokeSize(transform)}px`,
