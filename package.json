@@ -24,7 +24,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@resvg/resvg-js": "^2.6.2",
-    "@tscircuit/alphabet": "^0.0.25",
+    "@tscircuit/alphabet": "^0.0.27",
     "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
     "@types/bun": "^1.2.8",
     "@types/debug": "^4.1.12",

@@ -1,3 +1,4 @@
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { PcbSilkscreenText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
@@ -10,36 +11,8 @@ import {
   toString as matrixToString,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { lineAlphabet } from "@tscircuit/alphabet"
-import {
-  createPcbAlphabetTextGeometry,
-  getAnchorOffsetForBounds,
-} from "./create-pcb-alphabet-text-geometry"
-
-// Derive character cell dimensions from lineAlphabet glyph bounding boxes
-const alphabetBounds = (() => {
-  let maxX = 0
-  let minY = Infinity
-  let maxY = -Infinity
-  for (const segments of Object.values(lineAlphabet)) {
-    for (const seg of segments as Array<{
-      x1: number
-      y1: number
-      x2: number
-      y2: number
-    }>) {
-      maxX = Math.max(maxX, seg.x1, seg.x2)
-      minY = Math.min(minY, seg.y1, seg.y2)
-      maxY = Math.max(maxY, seg.y1, seg.y2)
-    }
-  }
-  return { width: maxX, height: maxY - minY }
-})()
-
-/** Inter-character spacing as a fraction of cell width (20% gap between chars) */
-const INTER_CHAR_SPACING_RATIO = 0.2
-/** Line-height multiplier for multi-line text (10% extra vertical space) */
-const LINE_HEIGHT_MULTIPLIER = 1.1
+import { getAnchorOffsetForBounds } from "./create-pcb-alphabet-text-geometry"
+import { createAlphabetKnockoutText } from "./create-alphabet-knockout-text"
 
 let silkscreenMaskIdCounter = 0
 
@@ -88,30 +61,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Handle knockout rendering
   if (is_knockout) {
-    const scaledFontSize = (font_size * (2 / 3)) / alphabetBounds.height
-    const charSpacing = alphabetBounds.width * INTER_CHAR_SPACING_RATIO
-    const geometry = createPcbAlphabetTextGeometry({
-      text,
-      anchorAlignment: anchor_alignment,
-      fontSize: scaledFontSize,
-      charAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize,
-      spaceAdvance: (alphabetBounds.width + charSpacing) * scaledFontSize * 0.6,
-      trailingSpacing: charSpacing * scaledFontSize,
-      lineHeight:
-        scaledFontSize * alphabetBounds.height * LINE_HEIGHT_MULTIPLIER,
-      mapSegment: (segment, offsetX, offsetY, fontSize) => ({
-        x1: offsetX + segment.x1 * fontSize,
-        y1: offsetY + (1 - segment.y1) * fontSize,
-        x2: offsetX + segment.x2 * fontSize,
-        y2: offsetY + (1 - segment.y2) * fontSize,
-      }),
-    })
-    if (!geometry.bounds || !geometry.pathData) return []
+    const geometry = createAlphabetKnockoutText(text, font_size)
+    if (!geometry.bounds) return []
 
-    const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
-    const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
-    const padTop = knockout_padding?.top ?? scaledFontSize * 0.3
-    const padBottom = knockout_padding?.bottom ?? scaledFontSize * 0.3
+    const padLeft = knockout_padding?.left ?? font_size * 0.5
+    const padRight = knockout_padding?.right ?? font_size * 0.5
+    const padTop = knockout_padding?.top ?? font_size * 0.3
+    const padBottom = knockout_padding?.bottom ?? font_size * 0.3
 
     const rectX = geometry.bounds.minX - padLeft
     const rectY = geometry.bounds.minY - padTop
@@ -119,7 +75,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       geometry.bounds.maxX - geometry.bounds.minX + padLeft + padRight
     const rectH =
       geometry.bounds.maxY - geometry.bounds.minY + padTop + padBottom
-    const strokeWidth = scaledFontSize * 0.15
     const knockoutBounds = {
       minX: rectX,
       minY: rectY,
@@ -146,20 +101,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         },
         children: [],
       },
-      {
-        name: "path",
-        type: "element",
-        value: "",
-        attributes: {
-          d: geometry.pathData,
-          fill: "none",
-          stroke: "black",
-          "stroke-width": strokeWidth.toString(),
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
-        },
-        children: [],
-      },
+      geometry.textNode,
     ]
     const hasKnockoutAnchorOffset =
       knockoutAnchorOffset.x !== 0 || knockoutAnchorOffset.y !== 0
@@ -322,7 +264,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
         dx: "0",
         dy: "0",
         fill: silkscreenColor,
-        "font-family": "Arial, sans-serif",
+        "font-family": ALPHABET_FONT_FAMILY,
         "font-size": transformedFontSize.toString(),
         "text-anchor": textAnchor,
         "dominant-baseline": dominantBaseline,

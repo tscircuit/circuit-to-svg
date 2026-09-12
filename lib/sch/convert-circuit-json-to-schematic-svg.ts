@@ -1,3 +1,4 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   AnyCircuitElement,
   SchematicGraphic,
@@ -8,7 +9,6 @@ import type { SvgObject } from "lib/svg-object"
 import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { stringify } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -480,7 +480,7 @@ export function convertCircuitJsonToSchematicSvg(
     value: "",
   }
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 /**
