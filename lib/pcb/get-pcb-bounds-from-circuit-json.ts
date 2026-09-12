@@ -645,6 +645,7 @@ export function getComprehensivePcbBounds(
           center: item.center,
           width: radiusX * 2,
           height: radiusY * 2,
+          ccwRotationDegrees: item.ccw_rotation,
         })
       }
     } else if (item.type === "pcb_silkscreen_pill") {
