@@ -108,7 +108,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
   // For connected pins, line goes to center. For unconnected pins, stop short by circle radius
   const realLineEnd = { ...schPort.center }
 
-  if (!isConnected) {
+  if (!isConnected && !srcPort?.do_not_connect) {
     // Subtract the pin circle radius from the pin line length for unconnected pins
     switch (schPort.side_of_component) {
       case "left":
@@ -187,7 +187,7 @@ export const createSvgObjectsForSchPortBoxLine = ({
 
   const pinChildren: SvgObject[] = []
 
-  if (!isConnected) {
+  if (!isConnected && !srcPort?.do_not_connect) {
     pinChildren.push({
       name: "circle",
       type: "element",
