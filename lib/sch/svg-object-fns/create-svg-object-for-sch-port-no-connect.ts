@@ -14,7 +14,7 @@ export const createSvgObjectForSchPortNoConnect = ({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject => {
-  const halfSize = 0.1
+  const halfSize = 0.05
   const { x, y } = schPort.center
   const d = [-1, 1]
     .map((slope) => {
