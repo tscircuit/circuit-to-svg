@@ -81,7 +81,7 @@ export function createSvgObjectsFromPcbVia(
           r: outerRadius.toString(),
         },
         layer,
-        fillColor: colorMap.soldermaskOverCopper[layer],
+        fillColor: colorMap.soldermaskWithCopperUnderneath[layer],
         fillOpacity: "1",
         className: "pcb-via-tenting",
       }),
