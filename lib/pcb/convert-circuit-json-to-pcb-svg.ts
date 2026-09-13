@@ -597,12 +597,16 @@ function createSvgObjects({
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardOutline(elm, ctx)
     case "pcb_fabrication_note_path":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
     case "pcb_fabrication_note_rect":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteRect(elm, ctx)
     case "pcb_fabrication_note_dimension":
+      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteDimension(elm, ctx)
     case "pcb_note_dimension":
       if (!ctx.showPcbNotes) return []
