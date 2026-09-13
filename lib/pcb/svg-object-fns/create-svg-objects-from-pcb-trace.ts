@@ -192,7 +192,7 @@ export function createSvgObjectsFromPcbTrace(
     if (standaloneViaPositionKeys.has(getPositionKey(point))) continue
 
     svgObjects.push(
-      createSvgObjectsFromPcbVia(
+      ...createSvgObjectsFromPcbVia(
         createSyntheticViaFromRoutePoint(trace, point, index, ctx),
         ctx,
       ),
