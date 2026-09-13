@@ -113,10 +113,14 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
   const circles = symbol.primitives.filter((p) => p.type === "circle")
   const boxes = symbol.primitives.filter((p) => p.type === "box")
 
-  const connectedSymbolPorts = new Set<SchSymbol["ports"][number]>()
+  const portsWithoutTerminalCircle = new Set<SchSymbol["ports"][number]>()
   for (const match of schPortsWithSymbolPorts) {
-    if (isSourcePortConnected(circuitJson, match.schPort.source_port_id)) {
-      connectedSymbolPorts.add(match.symbolPort)
+    if (
+      isSourcePortConnected(circuitJson, match.schPort.source_port_id) ||
+      su(circuitJson).source_port.get(match.schPort.source_port_id)
+        ?.do_not_connect
+    ) {
+      portsWithoutTerminalCircle.add(match.symbolPort)
     }
   }
 
@@ -261,7 +265,7 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
 
   // Draw Ports for debugging
   for (const port of symbol.ports) {
-    if (connectedSymbolPorts.has(port)) continue
+    if (portsWithoutTerminalCircle.has(port)) continue
     const screenPortPos = applyToPoint(
       compose(realToScreenTransform, transformFromSymbolToReal),
       port,
