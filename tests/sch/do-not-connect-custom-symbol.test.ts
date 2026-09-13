@@ -101,5 +101,7 @@ test("custom symbol no-connect markers use source metadata even with a trace", (
       node.attributes.class?.includes("sch-port-indicator"),
     ),
   ).toHaveLength(3)
-  expect(svg).toMatchSvgSnapshot(import.meta.path)
+  expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
+    import.meta.path,
+  )
 })
