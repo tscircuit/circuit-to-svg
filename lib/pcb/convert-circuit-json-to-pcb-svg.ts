@@ -232,9 +232,18 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  const circuitJsonForBounds = options?.showCourtyards
-    ? circuitJson
-    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
+  const circuitJsonForBounds = circuitJson.filter((element) => {
+    if (!options?.showCourtyards && element.type === "pcb_courtyard_rect") {
+      return false
+    }
+    if (
+      options?.showPcbNotes === false &&
+      element.type.startsWith("pcb_fabrication_note_")
+    ) {
+      return false
+    }
+    return true
+  })
 
   const {
     minX,

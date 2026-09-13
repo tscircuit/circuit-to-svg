@@ -105,8 +105,9 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   `"#000"`.
 - `drawPaddingOutsideBoard` – if `false`, omit the board outline and extra
   padding around it. Defaults to `true`.
-- `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
-  time. Defaults to `true`.
+- `showPcbNotes` – if `false`, hide `pcb_note*` overlay primitives and
+  `pcb_fabrication_note*` annotations. Hidden fabrication annotations are also
+  excluded from automatic viewport bounds. Defaults to `true`.
 - `showPinNumbers` – if `true`, annotate PCB pads with small gray pin numbers.
   Defaults to `false`.
 - `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults

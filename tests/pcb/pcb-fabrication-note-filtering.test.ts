@@ -134,3 +134,40 @@ test("enabled fabrication paths appear only on their own board face", () => {
     ),
   ).toEqual(["bottom-fab-path"])
 })
+
+test("hidden off-board fabrication notes do not shrink or shift the viewport", () => {
+  const offBoardNotes = fabricationNotes.map((note) => {
+    switch (note.type) {
+      case "pcb_fabrication_note_path":
+        return {
+          ...note,
+          route: [
+            { x: 100, y: 30 },
+            { x: 120, y: 30 },
+          ],
+        }
+      case "pcb_fabrication_note_text":
+        return { ...note, anchor_position: { x: -100, y: 30 } }
+      case "pcb_fabrication_note_rect":
+        return { ...note, center: { x: 0, y: 100 } }
+      case "pcb_fabrication_note_dimension":
+        return { ...note, from: { x: -10, y: -100 }, to: { x: 10, y: -100 } }
+      default:
+        return note
+    }
+  })
+  const options = { showPcbNotes: false, matchBoardAspectRatio: true }
+  const expected = parseSync(
+    convertCircuitJsonToPcbSvg([board, silkscreen], options),
+  )
+  const actual = parseSync(
+    convertCircuitJsonToPcbSvg([board, ...offBoardNotes, silkscreen], options),
+  )
+
+  expect(actual.attributes).toEqual(expected.attributes)
+  // Compare visible geometry and placement without copying the embedded font
+  // into assertion failure output.
+  expect(actual.children.filter((node) => node.name !== "style")).toEqual(
+    expected.children.filter((node) => node.name !== "style"),
+  )
+})
