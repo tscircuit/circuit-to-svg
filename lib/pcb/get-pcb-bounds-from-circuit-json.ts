@@ -134,6 +134,7 @@ export function getComprehensivePcbBounds(
           center: holeCenter,
           width: platedHole.outer_width,
           height: platedHole.outer_height,
+          ccwRotationDegrees: platedHole.ccw_rotation,
         })
       } else if (
         platedHole.shape === "circular_hole_with_rect_pad" ||
@@ -143,6 +144,10 @@ export function getComprehensivePcbBounds(
           center: holeCenter,
           width: platedHole.rect_pad_width,
           height: platedHole.rect_pad_height,
+          ccwRotationDegrees:
+            platedHole.shape === "circular_hole_with_rect_pad"
+              ? platedHole.rect_ccw_rotation
+              : undefined,
         })
       } else if (platedHole.shape === "rotated_pill_hole_with_rect_pad") {
         updateBounds({
