@@ -1,4 +1,15 @@
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, PcbNoteText } from "circuit-json"
+
+export const viaTentingViewLabel: Omit<PcbNoteText, "text"> = {
+  type: "pcb_note_text",
+  pcb_note_text_id: "view_label",
+  anchor_position: { x: 0, y: 6 },
+  anchor_alignment: "center",
+  layer: "top",
+  font: "tscircuit2024",
+  font_size: 1,
+  color: "#ffffff",
+}
 
 export const viaTentingCircuit: AnyCircuitElement[] = [
   {
