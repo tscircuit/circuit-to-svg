@@ -155,7 +155,6 @@ export function createSvgObjectsFromSchematicWarnings({
             y: placement.minY.toString(),
             width: calloutWidth.toString(),
             height: calloutHeight.toString(),
-            rx: "8",
             fill: "rgba(255, 250, 235, 0.97)",
             stroke: warningColor,
             "stroke-width": "1",
