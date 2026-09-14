@@ -29,11 +29,11 @@ interface CalloutPlacement extends ScreenBounds {
 const TARGET_PADDING = 6
 const CALLOUT_GAP = 12
 const VIEWPORT_PADDING = 12
-const CALLOUT_PADDING = 10
-const LINE_HEIGHT = 17
-const MESSAGE_FONT_SIZE = 13
-const MAX_CALLOUT_WIDTH = 400
-const MIN_CALLOUT_WIDTH = 220
+const CALLOUT_PADDING = 6
+const LINE_HEIGHT = 14
+const MESSAGE_FONT_SIZE = 11
+const MAX_CALLOUT_WIDTH = 280
+const MIN_CALLOUT_WIDTH = 140
 
 export const isSchematicWarning = (
   element: AnyCircuitElement,
