@@ -282,6 +282,8 @@ function createSyntheticViaFromRoutePoint(
     outer_diameter: outerDiameter,
     hole_diameter: holeDiameter,
     layers: [point.from_layer, point.to_layer],
+    tented_on_top: point.tented_on_top,
+    tented_on_bottom: point.tented_on_bottom,
   }
 }
 
