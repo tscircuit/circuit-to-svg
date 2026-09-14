@@ -110,6 +110,8 @@ export interface PcbSvgOptions {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  /** Render fabrication notes and include them in bounds. Defaults to true. */
+  showFabricationNotes?: boolean
   /** Draw pcb_debug_object overlays. Defaults to false. */
   showDebugObjects?: boolean
   grid?: PcbGridOptions
@@ -162,6 +164,12 @@ export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: PcbSvgOptions,
 ): string {
+  if (options?.showFabricationNotes === false) {
+    // Exclude hidden drawing annotations from both rendering and bounds.
+    circuitJson = circuitJson.filter(
+      (element) => !element.type.startsWith("pcb_fabrication_note_"),
+    )
+  }
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
