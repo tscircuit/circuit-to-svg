@@ -1,3 +1,4 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   Point,
   AnyCircuitElement,
@@ -9,7 +10,7 @@ import type {
   LayerRef,
 } from "circuit-json"
 import { distance } from "circuit-json"
-import { type INode as SvgObject, stringify } from "svgson"
+import { type INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -474,7 +475,7 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   try {
-    return stringify(svgObject as SvgObject)
+    return stringifySvg(svgObject as SvgObject)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
     throw error

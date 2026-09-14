@@ -1,3 +1,4 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap as defaultColorMap } from "lib/utils/colors"
@@ -6,7 +7,7 @@ import {
   formatNumber,
   translateNestedSvg,
 } from "lib/utils/svg-object-utils"
-import { parseSync, stringify } from "svgson"
+import { parseSync } from "svgson"
 import { applyToPoint, fromString } from "transformation-matrix"
 import { convertCircuitJsonToSchematicSvg } from "./convert-circuit-json-to-schematic-svg"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
@@ -157,7 +158,7 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
     ],
   }
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 /**

@@ -1,7 +1,7 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
-  "version": "0.0.416",
+  "version": "0.0.419",
   "repository": {
     "type": "git",
     "url": "https://github.com/tscircuit/circuit-to-svg.git"
@@ -24,14 +24,14 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@resvg/resvg-js": "^2.6.2",
-    "@tscircuit/alphabet": "^0.0.25",
+    "@tscircuit/alphabet": "^0.0.27",
     "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
     "@types/bun": "^1.2.8",
     "@types/debug": "^4.1.12",
     "@vitejs/plugin-react": "5.0.0",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
-    "circuit-json": "^0.0.486",
+    "circuit-json": "^0.0.487",
     "esbuild": "^0.20.2",
     "format-si-unit": "^0.0.12",
     "performance-now": "^2.1.0",

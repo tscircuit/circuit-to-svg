@@ -1,3 +1,4 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   AnyCircuitElement,
   SchematicGraphic,
@@ -8,7 +9,6 @@ import type { SvgObject } from "lib/svg-object"
 import { type ColorMap, colorMap as defaultColorMap } from "lib/utils/colors"
 import { createErrorTextOverlay } from "lib/utils/create-error-text-overlay"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { stringify } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -26,6 +26,7 @@ import { getSchematicBoundsFromCircuitJson } from "./get-schematic-bounds-from-c
 import { createSvgObjectFromSchematicGraphic } from "./svg-object-fns/create-svg-object-from-schematic-graphic"
 import { createSvgObjectsForSchNetLabel } from "./svg-object-fns/create-svg-objects-for-sch-net-label"
 import { createSvgObjectsForSchComponentPortHovers } from "./svg-object-fns/create-svg-objects-for-sch-port-hover"
+import { createSvgObjectForSchPortNoConnect } from "./svg-object-fns/create-svg-object-for-sch-port-no-connect"
 import { createSvgObjectsForSchPortIndicator } from "./svg-object-fns/create-svg-objects-for-sch-port-indicator"
 import { createSvgSchText } from "./svg-object-fns/create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicArc } from "./svg-object-fns/create-svg-objects-from-sch-arc"
@@ -351,15 +352,34 @@ export function convertCircuitJsonToSchematicSvg(
           colorMap,
         }),
       )
-    } else if (elm.type === "schematic_port" && options?.drawPorts) {
-      schPortIndicatorSvgs.push(
-        ...createSvgObjectsForSchPortIndicator({
-          schPort: elm,
-          transform,
-          circuitJson: sheetCircuitJson,
-          colorMap,
-        }),
+    } else if (elm.type === "schematic_port") {
+      const sourcePort = sheetCircuitJson.find(
+        (source) =>
+          source.type === "source_port" &&
+          source.source_port_id === elm.source_port_id,
       )
+      if (
+        sourcePort?.type === "source_port" &&
+        sourcePort.do_not_connect === true
+      ) {
+        schPortIndicatorSvgs.push(
+          createSvgObjectForSchPortNoConnect({
+            schPort: elm,
+            transform,
+            colorMap,
+          }),
+        )
+      }
+      if (options?.drawPorts) {
+        schPortIndicatorSvgs.push(
+          ...createSvgObjectsForSchPortIndicator({
+            schPort: elm,
+            transform,
+            circuitJson: sheetCircuitJson,
+            colorMap,
+          }),
+        )
+      }
     }
   }
 
@@ -480,7 +500,7 @@ export function convertCircuitJsonToSchematicSvg(
     value: "",
   }
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 /**
