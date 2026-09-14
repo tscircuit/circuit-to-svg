@@ -1,3 +1,4 @@
+
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
@@ -118,4 +119,3 @@ test("courtyard circle outside the board remains visible", () => {
     }),
   ).toMatchSvgSnapshot(import.meta.path)
 })
-
