@@ -29,11 +29,11 @@ interface CalloutPlacement extends ScreenBounds {
 const TARGET_PADDING = 6
 const CALLOUT_GAP = 12
 const VIEWPORT_PADDING = 12
-const CALLOUT_PADDING = 10
-const LINE_HEIGHT = 17
-const MESSAGE_FONT_SIZE = 13
-const MAX_CALLOUT_WIDTH = 400
-const MIN_CALLOUT_WIDTH = 220
+const CALLOUT_PADDING = 6
+const LINE_HEIGHT = 14
+const MESSAGE_FONT_SIZE = 11
+const MAX_CALLOUT_WIDTH = 280
+const MIN_CALLOUT_WIDTH = 140
 
 export const isSchematicWarning = (
   element: AnyCircuitElement,
@@ -125,8 +125,8 @@ export function createSvgObjectsFromSchematicWarnings({
             rx: "6",
             fill: "none",
             stroke: warningColor,
-            "stroke-width": "3",
-            "stroke-dasharray": "8,5",
+            "stroke-width": "1",
+            "stroke-dasharray": "4,3",
             "data-warning-reference": "target",
           },
           children: [],
@@ -141,7 +141,7 @@ export function createSvgObjectsFromSchematicWarnings({
             x2: leader.to.x.toString(),
             y2: leader.to.y.toString(),
             stroke: warningColor,
-            "stroke-width": "2",
+            "stroke-width": "1",
             "data-warning-reference": "leader",
           },
           children: [],
@@ -155,10 +155,9 @@ export function createSvgObjectsFromSchematicWarnings({
             y: placement.minY.toString(),
             width: calloutWidth.toString(),
             height: calloutHeight.toString(),
-            rx: "8",
             fill: "rgba(255, 250, 235, 0.97)",
             stroke: warningColor,
-            "stroke-width": "2",
+            "stroke-width": "1",
             "data-warning-reference": "callout",
           },
           children: [],

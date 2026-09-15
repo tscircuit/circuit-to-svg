@@ -110,6 +110,8 @@ export interface PcbSvgOptions {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  /** Render fabrication notes and include them in bounds. Defaults to true. */
+  showFabricationNotes?: boolean
   /** Draw pcb_debug_object overlays. Defaults to false. */
   showDebugObjects?: boolean
   grid?: PcbGridOptions
@@ -162,6 +164,12 @@ export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: PcbSvgOptions,
 ): string {
+  if (options?.showFabricationNotes === false) {
+    // Exclude hidden drawing annotations from both rendering and bounds.
+    circuitJson = circuitJson.filter(
+      (element) => !element.type.startsWith("pcb_fabrication_note_"),
+    )
+  }
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
@@ -232,18 +240,9 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  const circuitJsonForBounds = circuitJson.filter((element) => {
-    if (!options?.showCourtyards && element.type === "pcb_courtyard_rect") {
-      return false
-    }
-    if (
-      options?.showPcbNotes === false &&
-      element.type.startsWith("pcb_fabrication_note_")
-    ) {
-      return false
-    }
-    return true
-  })
+  const circuitJsonForBounds = options?.showCourtyards
+    ? circuitJson
+    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
 
   const {
     minX,
@@ -606,16 +605,12 @@ function createSvgObjects({
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardOutline(elm, ctx)
     case "pcb_fabrication_note_path":
-      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNotePath(elm, ctx)
     case "pcb_fabrication_note_text":
-      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteText(elm, ctx)
     case "pcb_fabrication_note_rect":
-      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteRect(elm, ctx)
     case "pcb_fabrication_note_dimension":
-      if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbFabricationNoteDimension(elm, ctx)
     case "pcb_note_dimension":
       if (!ctx.showPcbNotes) return []
