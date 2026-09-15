@@ -19,10 +19,18 @@ export function createSvgObjectsFromPcbVia(
     (layer === "top" ? tenting.tented_on_top : tenting.tented_on_bottom) ??
     tenting.is_tented
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-  const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-  const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-  const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+  const scaledOuterWidth =
+    (Number.isFinite(hole.outer_diameter) ? hole.outer_diameter : 0) *
+    Math.abs(transform.a)
+  const scaledOuterHeight =
+    (Number.isFinite(hole.outer_diameter) ? hole.outer_diameter : 0) *
+    Math.abs(transform.a)
+  const scaledHoleWidth =
+    (Number.isFinite(hole.hole_diameter) ? hole.hole_diameter : 0) *
+    Math.abs(transform.a)
+  const scaledHoleHeight =
+    (Number.isFinite(hole.hole_diameter) ? hole.hole_diameter : 0) *
+    Math.abs(transform.a)
 
   const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
   const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
