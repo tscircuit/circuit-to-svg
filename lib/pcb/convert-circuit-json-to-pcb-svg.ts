@@ -242,7 +242,13 @@ export function convertCircuitJsonToPcbSvg(
 
   const circuitJsonForBounds = options?.showCourtyards
     ? circuitJson
-    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
+    : circuitJson.filter(
+        (element) =>
+          element.type !== "pcb_courtyard_rect" &&
+          element.type !== "pcb_courtyard_circle" &&
+          element.type !== "pcb_courtyard_polygon" &&
+          element.type !== "pcb_courtyard_outline",
+      )
 
   const {
     minX,
