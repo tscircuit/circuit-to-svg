@@ -316,21 +316,38 @@ export function getComprehensivePcbBounds(
       updateBounds({ center: toArrowP3, width: 0, height: 0 })
 
       if (text) {
+        const textWidth = text.length * font_size * 0.6
+        const textHeight = font_size
+        const textRotation =
+          typeof dimension.text_ccw_rotation === "number" &&
+          Number.isFinite(dimension.text_ccw_rotation)
+            ? dimension.text_ccw_rotation
+            : undefined
+        let additionalOffset = 0
+        if (textRotation !== undefined) {
+          const rotationRadians = (textRotation * Math.PI) / 180
+          additionalOffset =
+            (textWidth / 2) * Math.abs(Math.sin(rotationRadians)) +
+            (textHeight / 2) * Math.abs(Math.cos(rotationRadians)) +
+            font_size * 0.3
+        }
+
         const midPoint = {
           x: (from.x + to.x) / 2 + offsetVector.x,
           y: (from.y + to.y) / 2 + offsetVector.y,
         }
-        const textOffset = arrow_size * 1.5
+        const textOffset = arrow_size * 1.5 + additionalOffset
         const textPoint = {
           x: midPoint.x + perpendicular.x * textOffset,
           y: midPoint.y + perpendicular.y * textOffset,
         }
-        const textWidth = text.length * font_size * 0.6
-        const textHeight = font_size
         updateBounds({
           center: textPoint,
           width: textWidth,
           height: textHeight,
+          ccwRotationDegrees:
+            (Math.atan2(direction.y, direction.x) * 180) / Math.PI +
+            (textRotation ?? 0),
         })
       }
     } else if (
