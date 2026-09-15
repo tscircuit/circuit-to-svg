@@ -141,11 +141,25 @@ function getPadTextGeometry(pad: PcbPad): PadTextGeometry | undefined {
     const polygonGeometry = getPolygonGeometry(pad.pad_outline)
     if (!polygonGeometry) return undefined
 
+    const ccwRotation = (pad as any).ccw_rotation ?? 0
+    const hasRotation = typeof ccwRotation === "number" && ccwRotation !== 0
+    let { centerX, centerY, width, height } = polygonGeometry
+    if (hasRotation) {
+      const rad = (ccwRotation * Math.PI) / 180
+      const cos = Math.cos(rad)
+      const sin = Math.sin(rad)
+      const rotX = centerX * cos - centerY * sin
+      const rotY = centerX * sin + centerY * cos
+      centerX = rotX
+      centerY = rotY
+    }
+
     return {
-      ...polygonGeometry,
-      centerX: pad.x + polygonGeometry.centerX,
-      centerY: pad.y + polygonGeometry.centerY,
-      ccwRotation: 0,
+      width,
+      height,
+      centerX: pad.x + centerX,
+      centerY: pad.y + centerY,
+      ccwRotation,
     }
   }
 
