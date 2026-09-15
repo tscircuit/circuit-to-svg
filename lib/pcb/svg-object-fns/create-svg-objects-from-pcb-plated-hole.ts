@@ -939,19 +939,36 @@ export function createSvgObjectsFromPcbPlatedHole(
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const ccwRotation = (polygonHole as any).ccw_rotation ?? 0
+    const hasRotation = typeof ccwRotation === "number" && ccwRotation !== 0
 
-    // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    const rad = (ccwRotation * Math.PI) / 180
+    const cos = Math.cos(rad)
+    const sin = Math.sin(rad)
+
+    // Transform polygon pad outline points (rotate around local origin by ccw_rotation if present)
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rx = hasRotation ? point.x * cos - point.y * sin : point.x
+      const ry = hasRotation ? point.x * sin + point.y * cos : point.y
+      return applyToPoint(transform, [holeX + rx, holeY + ry])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Calculate hole position with offset (rotated by ccw_rotation if present)
+    const rawOffsetX = polygonHole.hole_offset_x ?? 0
+    const rawOffsetY = polygonHole.hole_offset_y ?? 0
+    const rotatedOffsetX = hasRotation
+      ? rawOffsetX * cos - rawOffsetY * sin
+      : rawOffsetX
+    const rotatedOffsetY = hasRotation
+      ? rawOffsetX * sin + rawOffsetY * cos
+      : rawOffsetY
+
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + rotatedOffsetX,
+      holeY + rotatedOffsetY,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
@@ -994,6 +1011,9 @@ export function createSvgObjectsFromPcbPlatedHole(
             cy: holeCenterY.toString(),
             rx: rx.toString(),
             ry: ry.toString(),
+            ...(hasRotation && {
+              transform: `rotate(${-ccwRotation} ${holeCenterX} ${holeCenterY})`,
+            }),
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },
@@ -1039,7 +1059,9 @@ export function createSvgObjectsFromPcbPlatedHole(
             class: "pcb-hole-inner",
             fill: colorMap.drill,
             d: pathD,
-            transform: `translate(${holeCenterX} ${holeCenterY})`,
+            transform: hasRotation
+              ? `translate(${holeCenterX} ${holeCenterY}) rotate(${-ccwRotation})`
+              : `translate(${holeCenterX} ${holeCenterY})`,
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },

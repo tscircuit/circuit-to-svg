@@ -152,12 +152,21 @@ export function getComprehensivePcbBounds(
           ccwRotationDegrees: platedHole.rect_ccw_rotation,
         })
       } else if (platedHole.shape === "hole_with_polygon_pad") {
-        // pad_outline points are relative to the hole position
+        const ccwRotation = (platedHole as any).ccw_rotation ?? 0
+        const hasRotation = typeof ccwRotation === "number" && ccwRotation !== 0
+        const rad = (ccwRotation * Math.PI) / 180
+        const cos = Math.cos(rad)
+        const sin = Math.sin(rad)
+        // pad_outline points are relative to the hole position (rotated around local origin if ccw_rotation present)
         updateTraceBounds(
-          (platedHole.pad_outline ?? []).map((point) => ({
-            x: platedHole.x + point.x,
-            y: platedHole.y + point.y,
-          })),
+          (platedHole.pad_outline ?? []).map((point) => {
+            const rx = hasRotation ? point.x * cos - point.y * sin : point.x
+            const ry = hasRotation ? point.x * sin + point.y * cos : point.y
+            return {
+              x: platedHole.x + rx,
+              y: platedHole.y + ry,
+            }
+          }),
         )
       }
     } else if (circuitJsonElm.type === "pcb_hole") {
