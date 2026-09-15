@@ -90,15 +90,34 @@ export function convertCircuitJsonToSchematicSvg(
       ) ?? defaultSheet
   }
 
-  const sheetCircuitJson = selectedSheet
-    ? circuitJson.filter(
-        (elm) =>
-          !elm.type.startsWith("schematic_") ||
-          isSchematicWarning(elm) ||
-          ("schematic_sheet_id" in elm &&
-            elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
-      )
-    : circuitJson
+  const sheetCircuitJson = (
+    selectedSheet
+      ? circuitJson.filter(
+          (elm) =>
+            !elm.type.startsWith("schematic_") ||
+            isSchematicWarning(elm) ||
+            ("schematic_sheet_id" in elm &&
+              elm.schematic_sheet_id === selectedSheet.schematic_sheet_id),
+        )
+      : circuitJson
+  ).map((elm) => {
+    if (
+      elm.type !== "schematic_component" ||
+      (Number.isFinite(elm.size.width) && Number.isFinite(elm.size.height))
+    ) {
+      return elm
+    }
+
+    // Bounds, component bodies, and port geometry must use the same finite size.
+    return {
+      ...elm,
+      size: {
+        ...elm.size,
+        width: Number.isFinite(elm.size.width) ? elm.size.width : 0,
+        height: Number.isFinite(elm.size.height) ? elm.size.height : 0,
+      },
+    }
+  })
 
   // Get bounds with padding
   const realBounds = getSchematicBoundsFromCircuitJson(sheetCircuitJson)
