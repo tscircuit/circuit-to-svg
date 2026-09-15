@@ -1,57 +1,29 @@
 import { expect, test } from "bun:test"
-import type { PcbBoard, PcbVia, PcbViaInput } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
+import { getViaTentingPanel } from "./pcb-via-board-tenting.fixture"
 
-test("vias inherit board defaults unless per-side or legacy tenting overrides them", () => {
-  const board: PcbBoard = {
-    type: "pcb_board",
-    pcb_board_id: "board",
-    center: { x: 75, y: 50 },
-    width: 150,
-    height: 100,
-    num_layers: 2,
-    thickness: 1.6,
-    material: "fr4",
-    default_via_tented_on_top: true,
-    default_via_tented_on_bottom: false,
-  }
-  const inherited: PcbVia = {
-    type: "pcb_via",
-    pcb_via_id: "inherited",
-    x: 25,
-    y: 50,
-    outer_diameter: 20,
-    hole_diameter: 10,
-    layers: ["top", "bottom"],
-  }
-  const overridden: PcbVia = {
-    ...inherited,
-    pcb_via_id: "overridden",
-    x: 75,
-    tented_on_top: false,
-    tented_on_bottom: true,
-  }
-  const legacy: PcbVia & Pick<PcbViaInput, "is_tented"> = {
-    ...inherited,
-    pcb_via_id: "legacy",
-    x: 125,
-    is_tented: false,
-  }
-  const elements = [board, inherited, overridden, legacy]
-  const top = convertCircuitJsonToPcbSvg(elements, {
+test("panel vias inherit their own board defaults and preserve explicit overrides", () => {
+  const topCircuit = getViaTentingPanel("top")
+  const original = structuredClone(topCircuit)
+  const top = convertCircuitJsonToPcbSvg(topCircuit, {
     layer: "top",
     showSolderMask: true,
-    width: 600,
-    height: 400,
+    width: 1440,
+    height: 540,
   })
-  const bottom = convertCircuitJsonToPcbSvg(elements, {
+  const bottom = convertCircuitJsonToPcbSvg(getViaTentingPanel("bottom"), {
     layer: "bottom",
     showSolderMask: true,
+    width: 1440,
+    height: 540,
   })
 
-  expect(top.match(/class="pcb-via-tenting"/g)).toHaveLength(1)
-  expect(bottom.match(/class="pcb-via-tenting"/g)).toHaveLength(1)
-  expect(top).toMatchSvgSnapshot(import.meta.path)
-  expect(inherited.tented_on_top).toBeUndefined()
-  expect(inherited.tented_on_bottom).toBeUndefined()
+  expect(top.match(/class="pcb-via-tenting"/g)).toHaveLength(6)
+  expect(bottom.match(/class="pcb-via-tenting"/g)).toHaveLength(6)
+  expect(top.match(/class="pcb-hole-inner"/g)).toHaveLength(16)
+  expect(bottom.match(/class="pcb-hole-inner"/g)).toHaveLength(16)
+  expect(topCircuit).toEqual(original)
+
+  const snapshot = `<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1080">${top}<g transform="translate(0 540)">${bottom}</g></svg>`
+  expect(snapshot).toMatchSvgSnapshot(import.meta.path)
 })

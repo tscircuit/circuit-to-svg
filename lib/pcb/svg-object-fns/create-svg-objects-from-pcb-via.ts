@@ -1,7 +1,8 @@
-import type { PcbBoard, PCBVia, PcbViaInput } from "circuit-json"
+import type { PCBVia, PcbViaInput } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { getPcbBoardForVia } from "../get-pcb-board-for-via"
 import { createSoldermaskOverlayElement } from "./create-soldermask-overlay-element"
 
 export function createSvgObjectsFromPcbVia(
@@ -14,9 +15,7 @@ export function createSvgObjectsFromPcbVia(
     ctx.showSolderMask && (layer === "top" || layer === "bottom")
   if (showSolderMask && !hole.layers.includes(layer)) return []
 
-  const board = ctx.circuitJson?.find(
-    (element): element is PcbBoard => element.type === "pcb_board",
-  )
+  const board = getPcbBoardForVia(hole, ctx.circuitJson)
   const tenting: PcbViaInput = hole
   const isTented =
     (layer === "top" ? tenting.tented_on_top : tenting.tented_on_bottom) ??
