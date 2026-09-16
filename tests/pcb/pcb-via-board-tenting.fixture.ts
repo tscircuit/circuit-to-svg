@@ -1,9 +1,4 @@
-import type {
-  AnyCircuitElement,
-  PcbNoteText,
-  PcbVia,
-  PcbViaInput,
-} from "circuit-json"
+import type { AnyCircuitElement, PcbNoteText } from "circuit-json"
 
 export const boardViaTentingViewLabel: Omit<PcbNoteText, "text"> = {
   type: "pcb_note_text",
@@ -14,54 +9,6 @@ export const boardViaTentingViewLabel: Omit<PcbNoteText, "text"> = {
   font_size: 3,
   layer: "top",
   color: "white",
-}
-
-const boardALegacyVia: PcbVia & Pick<PcbViaInput, "is_tented"> = {
-  type: "pcb_via",
-  pcb_via_id: "A_legacy",
-  subcircuit_id: "child_A",
-  x: -18,
-  y: 5,
-  layers: ["top", "bottom"],
-  outer_diameter: 5,
-  hole_diameter: 2.5,
-  is_tented: false,
-}
-
-const boardADuplicateVia: PcbVia & Pick<PcbViaInput, "is_tented"> = {
-  type: "pcb_via",
-  pcb_via_id: "A_duplicate",
-  x: -18,
-  y: -21,
-  layers: ["top", "bottom"],
-  outer_diameter: 5,
-  hole_diameter: 2.5,
-  is_tented: false,
-  pcb_trace_id: "trace_A",
-}
-
-const boardBLegacyVia: PcbVia & Pick<PcbViaInput, "is_tented"> = {
-  type: "pcb_via",
-  pcb_via_id: "B_legacy",
-  subcircuit_id: "child_B",
-  x: 96,
-  y: 5,
-  layers: ["top", "bottom"],
-  outer_diameter: 5,
-  hole_diameter: 2.5,
-  is_tented: false,
-}
-
-const boardBDuplicateVia: PcbVia & Pick<PcbViaInput, "is_tented"> = {
-  type: "pcb_via",
-  pcb_via_id: "B_duplicate",
-  x: 96,
-  y: -21,
-  layers: ["top", "bottom"],
-  outer_diameter: 5,
-  hole_diameter: 2.5,
-  is_tented: false,
-  pcb_trace_id: "trace_B",
 }
 
 export const boardViaTentingCircuit: AnyCircuitElement[] = [
@@ -174,8 +121,8 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
   },
   {
     type: "pcb_note_text",
-    pcb_note_text_id: "A_standalone_legacy_label",
-    text: "is_tented: false\nExpect top: EXPOSED\nExpect bottom: EXPOSED",
+    pcb_note_text_id: "A_standalone_top_override_label",
+    text: "top: false\nbottom: unset\nExpect top: EXPOSED\nExpect bottom: EXPOSED",
     anchor_position: { x: -18, y: 15 },
     anchor_alignment: "center",
     font: "tscircuit2024",
@@ -217,7 +164,17 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
     tented_on_top: true,
     tented_on_bottom: true,
   },
-  boardALegacyVia,
+  {
+    type: "pcb_via",
+    pcb_via_id: "A_top_override",
+    subcircuit_id: "child_A",
+    x: -18,
+    y: 5,
+    layers: ["top", "bottom"],
+    outer_diameter: 5,
+    hole_diameter: 2.5,
+    tented_on_top: false,
+  },
   {
     type: "pcb_note_text",
     pcb_note_text_id: "A_route_label",
@@ -264,8 +221,8 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
   },
   {
     type: "pcb_note_text",
-    pcb_note_text_id: "A_route_legacy_label",
-    text: "Route top/bottom: true\nVia is_tented: false\nExpect top: EXPOSED\nExpect bottom: EXPOSED\nNo duplicate via",
+    pcb_note_text_id: "A_route_duplicate_label",
+    text: "Route top: true, bottom: true\nVia top: false, bottom: false\nExpect both: EXPOSED\nNo duplicate via",
     anchor_position: { x: -18, y: -10.5 },
     anchor_alignment: "center",
     font: "tscircuit2024",
@@ -322,7 +279,18 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
       },
     ],
   },
-  boardADuplicateVia,
+  {
+    type: "pcb_via",
+    pcb_via_id: "A_duplicate",
+    pcb_trace_id: "trace_A",
+    x: -18,
+    y: -21,
+    layers: ["top", "bottom"],
+    outer_diameter: 5,
+    hole_diameter: 2.5,
+    tented_on_top: false,
+    tented_on_bottom: false,
+  },
   {
     type: "pcb_board",
     pcb_board_id: "board_B",
@@ -412,8 +380,8 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
   },
   {
     type: "pcb_note_text",
-    pcb_note_text_id: "B_standalone_legacy_label",
-    text: "is_tented: false\nExpect top: EXPOSED\nExpect bottom: EXPOSED",
+    pcb_note_text_id: "B_standalone_top_override_label",
+    text: "top: false\nbottom: unset\nExpect top: EXPOSED\nExpect bottom: TENTED",
     anchor_position: { x: 96, y: 15 },
     anchor_alignment: "center",
     font: "tscircuit2024",
@@ -455,7 +423,17 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
     tented_on_top: true,
     tented_on_bottom: true,
   },
-  boardBLegacyVia,
+  {
+    type: "pcb_via",
+    pcb_via_id: "B_top_override",
+    subcircuit_id: "child_B",
+    x: 96,
+    y: 5,
+    layers: ["top", "bottom"],
+    outer_diameter: 5,
+    hole_diameter: 2.5,
+    tented_on_top: false,
+  },
   {
     type: "pcb_note_text",
     pcb_note_text_id: "B_route_label",
@@ -502,8 +480,8 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
   },
   {
     type: "pcb_note_text",
-    pcb_note_text_id: "B_route_legacy_label",
-    text: "Route top/bottom: true\nVia is_tented: false\nExpect top: EXPOSED\nExpect bottom: EXPOSED\nNo duplicate via",
+    pcb_note_text_id: "B_route_duplicate_label",
+    text: "Route top: true, bottom: true\nVia top: false, bottom: false\nExpect both: EXPOSED\nNo duplicate via",
     anchor_position: { x: 96, y: -10.5 },
     anchor_alignment: "center",
     font: "tscircuit2024",
@@ -560,5 +538,16 @@ export const boardViaTentingCircuit: AnyCircuitElement[] = [
       },
     ],
   },
-  boardBDuplicateVia,
+  {
+    type: "pcb_via",
+    pcb_via_id: "B_duplicate",
+    pcb_trace_id: "trace_B",
+    x: 96,
+    y: -21,
+    layers: ["top", "bottom"],
+    outer_diameter: 5,
+    hole_diameter: 2.5,
+    tented_on_top: false,
+    tented_on_bottom: false,
+  },
 ]

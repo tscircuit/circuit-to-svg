@@ -26,7 +26,7 @@ test("panel vias inherit their own board defaults and preserve explicit override
   )
 
   expect(top.match(/class="pcb-via-tenting"/g)).toHaveLength(6)
-  expect(bottom.match(/class="pcb-via-tenting"/g)).toHaveLength(6)
+  expect(bottom.match(/class="pcb-via-tenting"/g)).toHaveLength(7)
   expect(top.match(/class="pcb-hole-inner"/g)).toHaveLength(16)
   expect(bottom.match(/class="pcb-hole-inner"/g)).toHaveLength(16)
   expect(topCircuit).toEqual(original)
