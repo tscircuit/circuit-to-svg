@@ -1,8 +1,10 @@
 import type { AnyCircuitElement, PcbBoard } from "circuit-json"
 
+export type AnyCircuitJsonId = string
+
 export function createBoardOwnerMap(circuitJson: AnyCircuitElement[]) {
-  const boardOwnerMap = new Map<string, PcbBoard | undefined>()
-  const parentById = new Map<string, string | undefined>()
+  const boardOwnerMap = new Map<AnyCircuitJsonId, PcbBoard | undefined>()
+  const parentById = new Map<AnyCircuitJsonId, AnyCircuitJsonId | undefined>()
   const boards = circuitJson.filter(
     (element): element is PcbBoard => element.type === "pcb_board",
   )
@@ -41,8 +43,8 @@ export function createBoardOwnerMap(circuitJson: AnyCircuitElement[]) {
     if (board.subcircuit_id) boardOwnerMap.set(board.subcircuit_id, board)
   }
 
-  const resolving = new Set<string>()
-  function resolveBoard(id: string): PcbBoard | undefined {
+  const resolving = new Set<AnyCircuitJsonId>()
+  function resolveBoard(id: AnyCircuitJsonId): PcbBoard | undefined {
     if (boardOwnerMap.has(id)) return boardOwnerMap.get(id)
     if (resolving.has(id) || !parentById.has(id)) return undefined
     resolving.add(id)
