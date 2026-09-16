@@ -17,7 +17,6 @@ import {
 } from "../get-pcb-trace-segments"
 import { getInterpolatedTracePolygon } from "../get-interpolated-trace-polygon"
 import { layerNameToColor } from "../layer-name-to-color"
-import { getPcbBoardForVia } from "../get-pcb-board-for-via"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
@@ -272,14 +271,7 @@ function createSyntheticViaFromRoutePoint(
   ctx: PcbContext,
 ): PCBVia {
   const width = getAdjacentTraceWidth(trace.route, routeIndex)
-  const board = getPcbBoardForVia(
-    {
-      ...point,
-      subcircuit_id: trace.subcircuit_id,
-      pcb_group_id: trace.pcb_group_id,
-    },
-    ctx.circuitJson,
-  )
+  const board = ctx.boardOwnerMap?.get(trace.pcb_trace_id)
   const { holeDiameter, outerDiameter } = getRouteViaDiameters(board, width)
 
   return {
