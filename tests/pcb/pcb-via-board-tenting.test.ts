@@ -1,9 +1,15 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
-import { getViaTentingPanel } from "./pcb-via-board-tenting.fixture"
+import {
+  boardViaTentingCircuit,
+  boardViaTentingViewLabel,
+} from "./pcb-via-board-tenting.fixture"
 
 test("panel vias inherit their own board defaults and preserve explicit overrides", () => {
-  const topCircuit = getViaTentingPanel("top")
+  const topCircuit = [
+    ...boardViaTentingCircuit,
+    { ...boardViaTentingViewLabel, text: "TOP VIEW - soldermask ON" },
+  ]
   const original = structuredClone(topCircuit)
   const top = convertCircuitJsonToPcbSvg(topCircuit, {
     layer: "top",
@@ -11,12 +17,13 @@ test("panel vias inherit their own board defaults and preserve explicit override
     width: 1440,
     height: 540,
   })
-  const bottom = convertCircuitJsonToPcbSvg(getViaTentingPanel("bottom"), {
-    layer: "bottom",
-    showSolderMask: true,
-    width: 1440,
-    height: 540,
-  })
+  const bottom = convertCircuitJsonToPcbSvg(
+    [
+      ...boardViaTentingCircuit,
+      { ...boardViaTentingViewLabel, text: "BOTTOM VIEW - soldermask ON" },
+    ],
+    { layer: "bottom", showSolderMask: true, width: 1440, height: 540 },
+  )
 
   expect(top.match(/class="pcb-via-tenting"/g)).toHaveLength(6)
   expect(bottom.match(/class="pcb-via-tenting"/g)).toHaveLength(6)

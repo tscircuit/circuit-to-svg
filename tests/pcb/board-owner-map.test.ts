@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test"
 import type { PcbBoard, PcbVia, SourceGroup } from "circuit-json"
 import { createBoardOwnerMap } from "lib/pcb/create-board-owner-map"
-import { getViaTentingPanel } from "./pcb-via-board-tenting.fixture"
+import { boardViaTentingCircuit } from "./pcb-via-board-tenting.fixture"
 
 test("board ownership is precomputed from IDs regardless of positions or element order", () => {
-  const elements = getViaTentingPanel("top")
+  const elements = structuredClone(boardViaTentingCircuit)
   const boardA = elements.find(
     (element): element is PcbBoard =>
       element.type === "pcb_board" && element.pcb_board_id === "board_A",
