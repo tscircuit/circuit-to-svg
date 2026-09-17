@@ -26,13 +26,31 @@ export function createSvgObjectsFromPcbVia(
       ? board?.default_via_tented_on_top
       : board?.default_via_tented_on_bottom)
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-  const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-  const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-  const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+  const scaledOuterWidth = Math.max(
+    0,
+    hole.outer_diameter * Math.abs(transform.a),
+  )
+  const scaledOuterHeight = Math.max(
+    0,
+    hole.outer_diameter * Math.abs(transform.a),
+  )
+  const scaledHoleWidth = Math.max(
+    0,
+    hole.hole_diameter * Math.abs(transform.a),
+  )
+  const scaledHoleHeight = Math.max(
+    0,
+    hole.hole_diameter * Math.abs(transform.a),
+  )
 
-  const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-  const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+  const outerRadius = Math.max(
+    0,
+    Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+  )
+  const innerRadius = Math.max(
+    0,
+    Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+  )
   const via: SvgObject = {
     name: "g",
     type: "element",
