@@ -5,6 +5,7 @@ import type {
   pcb_cutout,
   PcbCutout,
   PcbPanel,
+  PcbBoard,
   PCBKeepoutRect,
   PCBKeepoutCircle,
   LayerRef,
@@ -86,6 +87,10 @@ import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
 import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
+import {
+  createBoardOwnerMap,
+  type AnyCircuitJsonId,
+} from "./create-board-owner-map"
 interface PointObjectNotation {
   x: number
   y: number
@@ -153,6 +158,7 @@ export interface PcbContext {
   showAnchorOffsets?: boolean
   showPinNumbers?: boolean
   circuitJson?: AnyCircuitElement[]
+  boardOwnerMap?: Map<AnyCircuitJsonId, PcbBoard | undefined>
   /**
    * Populated while rendering traces: mask ids referenced by trace strokes to
    * hide the portions covered by copper pours. Used to emit mask defs.
@@ -348,6 +354,7 @@ export function convertCircuitJsonToPcbSvg(
     showAnchorOffsets: options?.showAnchorOffsets,
     showPinNumbers: options?.showPinNumbers,
     circuitJson,
+    boardOwnerMap: createBoardOwnerMap(circuitJson),
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
 

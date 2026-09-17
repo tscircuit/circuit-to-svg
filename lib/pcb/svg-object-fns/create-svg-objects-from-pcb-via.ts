@@ -14,10 +14,17 @@ export function createSvgObjectsFromPcbVia(
     ctx.showSolderMask && (layer === "top" || layer === "bottom")
   if (showSolderMask && !hole.layers.includes(layer)) return []
 
+  const boardOwnerId = ctx.boardOwnerMap?.has(hole.pcb_via_id)
+    ? hole.pcb_via_id
+    : (hole.pcb_trace_id ?? hole.pcb_via_id)
+  const board = ctx.boardOwnerMap?.get(boardOwnerId)
   const tenting: PcbViaInput = hole
   const isTented =
     (layer === "top" ? tenting.tented_on_top : tenting.tented_on_bottom) ??
-    tenting.is_tented
+    tenting.is_tented ??
+    (layer === "top"
+      ? board?.default_via_tented_on_top
+      : board?.default_via_tented_on_bottom)
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
   const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
   const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)

@@ -271,17 +271,22 @@ function createSyntheticViaFromRoutePoint(
   ctx: PcbContext,
 ): PCBVia {
   const width = getAdjacentTraceWidth(trace.route, routeIndex)
-  const { holeDiameter, outerDiameter } = getRouteViaDiameters(ctx, width)
+  const board = ctx.boardOwnerMap?.get(trace.pcb_trace_id)
+  const { holeDiameter, outerDiameter } = getRouteViaDiameters(board, width)
 
   return {
     type: "pcb_via",
     pcb_via_id: `${trace.pcb_trace_id}_route_via_${routeIndex}`,
     pcb_trace_id: trace.pcb_trace_id,
+    subcircuit_id: trace.subcircuit_id,
+    pcb_group_id: trace.pcb_group_id,
     x: point.x,
     y: point.y,
     outer_diameter: outerDiameter,
     hole_diameter: holeDiameter,
     layers: [point.from_layer, point.to_layer],
+    tented_on_top: point.tented_on_top,
+    tented_on_bottom: point.tented_on_bottom,
   }
 }
 
@@ -317,15 +322,12 @@ function findTraceWidth(
 }
 
 function getRouteViaDiameters(
-  ctx: PcbContext,
+  board: PcbBoard | undefined,
   adjacentTraceWidth: number,
 ): {
   holeDiameter: number
   outerDiameter: number
 } {
-  const board = ctx.circuitJson?.find(
-    (elm): elm is PcbBoard => elm.type === "pcb_board",
-  )
   const boardMinViaHoleDiameter = parseOptionalDistance(
     board?.min_via_hole_diameter,
   )
