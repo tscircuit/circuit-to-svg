@@ -67,3 +67,31 @@ test("filters the PCB view to an inner copper layer", () => {
   expect(svg).toContain('data-pcb-layer="inner8"')
   expect(svg).not.toContain('data-pcb-layer="inner7"')
 })
+
+test("applies opacity without replacing the layer color", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitJson, {
+    layerOpacity: { inner1: 0.25 },
+  })
+  const innerTrace = /<path[^>]+data-pcb-layer="inner1"[^>]*>/u.exec(svg)?.[0]
+
+  expect(innerTrace).toContain('stroke="rgb(255, 140, 0)"')
+  expect(innerTrace).toContain('opacity="0.25"')
+})
+
+test("draws the first configured layer in front", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitJson, {
+    layerDrawingOrder: ["bottom", "top"],
+  })
+
+  expect(svg.indexOf('data-pcb-layer="bottom"')).toBeGreaterThan(
+    svg.indexOf('data-pcb-layer="top"'),
+  )
+})
+
+test("rejects invalid layer opacity", () => {
+  expect(() =>
+    convertCircuitJsonToPcbSvg(circuitJson, {
+      layerOpacity: { inner1: 1.1 },
+    }),
+  ).toThrow("Layer opacity must be between 0 and 1: inner1")
+})

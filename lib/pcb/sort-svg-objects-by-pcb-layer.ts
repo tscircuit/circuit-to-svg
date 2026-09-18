@@ -1,4 +1,5 @@
 import type { SvgObject } from "../svg-object"
+import type { PcbSvgLayerName } from "./pcb-layer-rendering"
 
 const TYPE_PRIORITY: Record<string, number> = {
   pcb_background: 0,
@@ -51,13 +52,22 @@ const TYPE_PRIORITY: Record<string, number> = {
 
 const DEFAULT_TYPE_PRIORITY = 100
 
-export function sortSvgObjectsByPcbLayer(objects: SvgObject[]): SvgObject[] {
+export function sortSvgObjectsByPcbLayer({
+  objects,
+  layerDrawingOrder,
+}: {
+  objects: SvgObject[]
+  layerDrawingOrder?: readonly PcbSvgLayerName[]
+}): SvgObject[] {
+  const layerPriorityOverrides = getLayerPriorityOverrides(layerDrawingOrder)
+
   return objects
     .map((object, index) => ({
       object,
       index,
       layerPriority: getLayerPriority(
         object.attributes?.["data-pcb-layer"] ?? undefined,
+        layerPriorityOverrides,
       ),
       typePriority: getTypePriority(
         object.attributes?.["data-type"] ?? undefined,
@@ -77,10 +87,20 @@ export function sortSvgObjectsByPcbLayer(objects: SvgObject[]): SvgObject[] {
     .map(({ object }) => object)
 }
 
-function getLayerPriority(layer?: string): number {
+function getLayerPriority(
+  layer: string | undefined,
+  layerPriorityOverrides: ReadonlyMap<string, number>,
+): number {
   if (!layer) return 500
 
   const normalized = layer.toLowerCase()
+  const priorityOverride = layerPriorityOverrides.get(normalized)
+  if (priorityOverride !== undefined) return priorityOverride
+  return getDefaultLayerPriority(normalized)
+}
+
+function getDefaultLayerPriority(normalizedLayer: string): number {
+  const normalized = normalizedLayer.toLowerCase()
   if (normalized === "global") return -100
   if (normalized === "bottom") return 4
   if (normalized === "board") return 2
@@ -97,6 +117,28 @@ function getLayerPriority(layer?: string): number {
   if (normalized === "overlay") return 40
 
   return 10
+}
+
+function getLayerPriorityOverrides(
+  layerDrawingOrder: readonly PcbSvgLayerName[] | undefined,
+): ReadonlyMap<string, number> {
+  if (!layerDrawingOrder) return new Map()
+
+  const normalizedLayers = layerDrawingOrder.map((layer) => layer.toLowerCase())
+  if (new Set(normalizedLayers).size !== normalizedLayers.length) {
+    throw new Error("Layer drawing order cannot contain duplicate layers")
+  }
+
+  const availablePriorities = normalizedLayers
+    .map(getDefaultLayerPriority)
+    .sort((firstPriority, secondPriority) => firstPriority - secondPriority)
+
+  return new Map(
+    normalizedLayers.map((layer, index) => [
+      layer,
+      availablePriorities[availablePriorities.length - index - 1]!,
+    ]),
+  )
 }
 
 function getTypePriority(type?: string): number {

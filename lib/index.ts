@@ -10,6 +10,10 @@ export * from "./sim/types"
 export { colorMap } from "./utils/colors"
 export type { ColorMap } from "./utils/colors"
 export type { PcbColorMap, PcbColorOverrides } from "./pcb/colors"
+export type {
+  PcbLayerOpacity,
+  PcbSvgLayerName,
+} from "./pcb/pcb-layer-rendering"
 export { getSoftwareUsedString } from "./utils/get-software-used-string"
 export { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 export { createSvgObjectsForSchComponentPortHovers } from "./sch/svg-object-fns/create-svg-objects-for-sch-port-hover"

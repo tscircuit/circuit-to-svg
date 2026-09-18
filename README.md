@@ -113,6 +113,10 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   Defaults to `false`.
 - `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults
   to `false`.
+- `layerDrawingOrder` – PCB layers ordered from front to back. Listed layers
+  exchange their default drawing priorities; unlisted layers keep theirs.
+- `layerOpacity` – opacity multipliers from `0` to `1`, keyed by PCB layer.
+  This preserves the configured layer colors and existing object opacity.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
   - `pcb_trace_error` – errors related to PCB traces
   - `pcb_footprint_overlap_error` – errors for overlapping pads, plated holes, and holes (displays error indicators at each affected element with connecting lines)
