@@ -179,6 +179,7 @@ export function convertCircuitJsonToPcbSvg(
   const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
+  const backgroundColor = options?.backgroundColor ?? "#000"
 
   const copperColors: CopperColorMap = {
     ...DEFAULT_PCB_COLOR_MAP.copper,
@@ -194,7 +195,7 @@ export function convertCircuitJsonToPcbSvg(
 
   const colorMap: PcbColorMap = {
     copper: copperColors,
-    drill: colorOverrides?.drill ?? DEFAULT_PCB_COLOR_MAP.drill,
+    drill: colorOverrides?.drill ?? backgroundColor,
     silkscreen: {
       top:
         colorOverrides?.silkscreen?.top ?? DEFAULT_PCB_COLOR_MAP.silkscreen.top,
@@ -437,7 +438,7 @@ export function convertCircuitJsonToPcbSvg(
       class: "boundary",
       x: "0",
       y: "0",
-      fill: options?.backgroundColor ?? "#000",
+      fill: backgroundColor,
       width: svgWidth.toString(),
       height: svgHeight.toString(),
       "data-type": "pcb_background",

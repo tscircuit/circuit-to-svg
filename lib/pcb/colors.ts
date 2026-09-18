@@ -80,7 +80,7 @@ export const DEFAULT_PCB_COLOR_MAP: PcbColorMap = {
     bottom: "rgb(52, 135, 73)",
   },
   substrate: "rgb(201, 162, 110)", // FR4 substrate color (tan/beige)
-  drill: "#FF26E2",
+  drill: "#000",
   silkscreen: {
     top: "#f2eda1",
     bottom: "#5da9e9",
