@@ -64,6 +64,14 @@ export function sortSvgObjectsByPcbLayer(objects: SvgObject[]): SvgObject[] {
       ),
     }))
     .sort((a, b) => {
+      const aType = a.object.attributes?.["data-type"]
+      const bType = b.object.attributes?.["data-type"]
+
+      // Copper pours are layer backgrounds. Keep traces visible above pours
+      // even when the trace belongs to a layer that is normally drawn first.
+      if (aType === "pcb_copper_pour" && bType === "pcb_trace") return -1
+      if (aType === "pcb_trace" && bType === "pcb_copper_pour") return 1
+
       if (a.layerPriority !== b.layerPriority) {
         return a.layerPriority - b.layerPriority
       }
