@@ -17,6 +17,7 @@ import { estimateTextWidth } from "./estimate-text-width"
 import { getSchematicSymbolTextBounds } from "./get-schematic-symbol-text-bounds"
 import { getTableDimensions } from "./get-table-dimensions"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
+import { getFiniteSchematicComponentSize } from "./get-finite-schematic-component-size"
 
 interface Bounds {
   minX: number
@@ -45,7 +46,7 @@ export function getSchematicBoundsFromCircuitJson(
         0,
       )
     } else if (item.type === "schematic_component") {
-      updateBounds(item.center, item.size, 0)
+      updateBounds(item.center, getFiniteSchematicComponentSize(item.size), 0)
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
     } else if (item.type === "schematic_debug_object") {
