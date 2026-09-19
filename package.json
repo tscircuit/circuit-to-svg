@@ -10,6 +10,7 @@
   "scripts": {
     "start": "cosmos",
     "prepublish": "npm run build",
+    "prepare": "node scripts/prepare-git.cjs",
     "build": "tsup-node ./lib/index.ts --format esm --dts --sourcemap --external tscircuit",
     "format": "biome format . --write",
     "format:check": "biome format .",
