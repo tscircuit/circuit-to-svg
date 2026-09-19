@@ -597,6 +597,7 @@ export function getComprehensivePcbBounds(
 
   function updateSilkscreenBounds(item: AnyCircuitElement) {
     if (item.type === "pcb_silkscreen_text") {
+      if ("is_hidden" in item && item.is_hidden === true) return
       updateBounds({ center: item.anchor_position, width: 0, height: 0 })
     } else if (item.type === "pcb_silkscreen_graphic") {
       for (const vertex of item.brep_shape.outer_ring.vertices) {

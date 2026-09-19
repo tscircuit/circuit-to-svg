@@ -21,8 +21,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
   ctx: PcbContext,
 ): SvgObject[] {
   if (
-    "is_visible" in pcbSilkscreenText &&
-    pcbSilkscreenText.is_visible === false
+    "is_hidden" in pcbSilkscreenText &&
+    pcbSilkscreenText.is_hidden === true
   ) {
     return []
   }

@@ -134,8 +134,8 @@ test("hidden silkscreen text is preserved in Circuit JSON but not rendered", () 
     ...silkscreen,
     pcb_silkscreen_text_id: "hidden-label",
     text: "HIDDEN",
-    is_visible: false,
-  } as PcbSilkscreenText & { is_visible: boolean }
+    is_hidden: true,
+  } as PcbSilkscreenText & { is_hidden: boolean }
   const visibleSilkscreen = {
     ...silkscreen,
     pcb_silkscreen_text_id: "visible-label",
@@ -150,6 +150,25 @@ test("hidden silkscreen text is preserved in Circuit JSON but not rendered", () 
 
   expect(svg).not.toContain("HIDDEN")
   expect(svg).toContain("VISIBLE")
+})
+
+test("hidden silkscreen text does not affect PCB bounds", () => {
+  const hiddenSilkscreen = {
+    ...silkscreen,
+    pcb_silkscreen_text_id: "hidden-label-outside-board",
+    anchor_position: { x: 1000, y: 1000 },
+    text: "HIDDEN",
+    is_hidden: true,
+  } as PcbSilkscreenText & { is_hidden: boolean }
+
+  const baselineSvg = parseSync(convertCircuitJsonToPcbSvg([board]))
+  const svgWithHiddenText = parseSync(
+    convertCircuitJsonToPcbSvg([board, hiddenSilkscreen]),
+  )
+
+  expect(svgWithHiddenText.attributes.viewBox).toBe(
+    baselineSvg.attributes.viewBox,
+  )
 })
 
 test("bottom knockout uses multiline font text inside its vector mask", () => {
