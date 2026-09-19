@@ -10,7 +10,11 @@ import {
   convertCircuitJsonToSimulationGraphSvg,
   convertCircuitJsonToSchematicSimulationSvg,
 } from "lib"
-import type { AnyCircuitElement, PcbSilkscreenText } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PcbFabricationNoteText,
+  PcbSilkscreenText,
+} from "circuit-json"
 import { parseSync, type INode } from "svgson"
 import { stringifySvg } from "lib/utils/stringify-svg"
 
@@ -127,6 +131,49 @@ test("silkscreen and fabrication notes retain text, transforms and font family",
     "Fabrication & <notes>",
   )
   expect(nodes.some((n) => n.name === "image")).toBe(false)
+})
+
+test("fabrication note text respects visibility and mirroring", () => {
+  const mirroredFabricationNote = {
+    type: "pcb_fabrication_note_text",
+    pcb_fabrication_note_text_id: "mirrored-note",
+    pcb_component_id: "component",
+    layer: "bottom",
+    font: "tscircuit2024",
+    font_size: 1,
+    anchor_position: { x: 0, y: 0 },
+    anchor_alignment: "center",
+    text: "U2",
+    is_mirrored: true,
+  } as PcbFabricationNoteText & {
+    is_mirrored: boolean
+    is_visible?: boolean
+  }
+  const hiddenFabricationNote = {
+    ...mirroredFabricationNote,
+    pcb_fabrication_note_text_id: "hidden-note",
+    text: "ZZ1",
+    is_visible: false,
+  }
+
+  const nodes = walk(
+    parseSync(
+      convertCircuitJsonToPcbSvg([
+        board,
+        mirroredFabricationNote,
+        hiddenFabricationNote,
+      ]),
+    ),
+  )
+  const labels = nodes.filter(
+    (node) => node.attributes.class === "pcb-fabrication-note-text",
+  )
+  const [label] = labels
+
+  expect(labels).toHaveLength(1)
+  expect(label).toBeDefined()
+  expect(label?.attributes.transform).toStartWith("matrix(-")
+  expect(walk(label!).find((node) => node.type === "text")?.value).toBe("U2")
 })
 
 test("bottom knockout uses multiline font text inside its vector mask", () => {
