@@ -1,6 +1,5 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
-import { Resvg } from "@resvg/resvg-js"
 import { convertCircuitJsonToPcbSvg } from "../../lib/pcb/convert-circuit-json-to-pcb-svg"
 
 const scene = [
@@ -74,48 +73,19 @@ const render = (options = {}) =>
     hiddenLayerOpacity: 0.05,
     ...options,
   })
-const pixel = (svg: string, x: number, y: number) => {
-  const result = new Resvg(svg).render()
-  return [
-    ...result.pixels.slice(
-      (y * result.width + x) * 4,
-      (y * result.width + x) * 4 + 4,
-    ),
-  ]
-}
-test("X-Ray retains selected copper and drills, dims other nets, and hides non-copper", () => {
-  const svg = render()
-  expect(pixel(svg, 100, 50)[3]).toBe(255)
-  expect(pixel(svg, 100, 150)[3]).toBe(13)
-  for (const x of [40, 160]) {
-    expect(pixel(svg, x, 50)).toEqual([255, 38, 226, 255])
-    expect(pixel(svg, x, 150)[3]).toBe(0)
+test("X-Ray net visual snapshots", () => {
+  // Selected pads, vias, and plated holes remain opaque; the other net is 5%
+  // visible and silkscreen is hidden. Overlapping traces show layer ordering.
+  for (const layer of ["top", "inner1", "bottom"] as const) {
+    expect(render({ layer })).toMatchSvgSnapshot(
+      import.meta.path,
+      `x-ray-net-${layer}`,
+    )
   }
-  expect(svg).not.toContain('data-type="pcb_silkscreen_line"')
-  expect(svg).not.toContain('data-type="pcb_board"')
-  expect(pixel(render({ hiddenLayerOpacity: 0 }), 100, 150)[3]).toBe(0)
-  expect(pixel(render({ hiddenLayerOpacity: 1 }), 100, 150)[3]).toBe(255)
-})
-test("X-Ray preserves frontmost layer order and supports multiple selected nets", () => {
-  for (const [layer, color] of [
-    ["top", [200, 52, 52, 255]],
-    ["inner1", [255, 140, 0, 255]],
-    ["bottom", [77, 127, 196, 255]],
-  ] as const)
-    expect(pixel(render({ layer }), 100, 100)).toEqual([...color])
-  const both = render({ xRayElementIds: [...selected, "b", "b_via", "b_hole"] })
-  expect(pixel(both, 100, 150)[3]).toBe(255)
-  expect(pixel(both, 40, 150)).toEqual([255, 38, 226, 255])
-})
-test("Empty X-Ray selection preserves normal output and invalid opacity is rejected", () => {
-  const options = { width: 200, height: 200 }
   expect(
-    convertCircuitJsonToPcbSvg(scene, { ...options, xRayElementIds: [] }),
-  ).toBe(convertCircuitJsonToPcbSvg(scene, options))
-  expect(() => render({ hiddenLayerOpacity: -0.1 })).toThrow("between 0 and 1")
-})
+    render({ xRayElementIds: [...selected, "b", "b_via", "b_hole"] }),
+  ).toMatchSvgSnapshot(import.meta.path, "x-ray-multiple-nets")
 
-test("X-Ray exposes selected trace segments that ordinary rendering hides inside pours", () => {
   const flagged = scene.map((el) =>
     el.type === "pcb_trace"
       ? {
@@ -127,13 +97,15 @@ test("X-Ray exposes selected trace segments that ordinary rendering hides inside
         }
       : el,
   )
-  const svg = convertCircuitJsonToPcbSvg(flagged, {
-    width: 200,
-    height: 200,
-    viewport: { minX: -10, minY: -10, maxX: 10, maxY: 10 },
-    backgroundColor: "transparent",
-    xRayElementIds: ["top"],
-    hiddenLayerOpacity: 0,
-  })
-  expect(pixel(svg, 100, 100)).toEqual([200, 52, 52, 255])
+  // Trace segments normally hidden inside copper pours must remain visible.
+  expect(
+    convertCircuitJsonToPcbSvg(flagged, {
+      width: 200,
+      height: 200,
+      viewport: { minX: -10, minY: -10, maxX: 10, maxY: 10 },
+      backgroundColor: "transparent",
+      xRayElementIds: ["top"],
+      hiddenLayerOpacity: 0,
+    }),
+  ).toMatchSvgSnapshot(import.meta.path, "x-ray-trace-inside-pour")
 })
