@@ -54,6 +54,16 @@ const simulation = {
 }
 const walk = (node: INode): INode[] => [node, ...node.children.flatMap(walk)]
 
+function getPcbBoundaryAttributes(circuitJson: AnyCircuitElement[]) {
+  const pcbBoundary = walk(
+    parseSync(convertCircuitJsonToPcbSvg(circuitJson)),
+  ).find((node) => node.attributes.class === "pcb-boundary")
+
+  if (!pcbBoundary) throw new Error("Expected PCB boundary in rendered SVG")
+
+  return pcbBoundary.attributes
+}
+
 for (const [name, render] of Object.entries({
   pcb: () => convertCircuitJsonToPcbSvg([board]),
   assembly: () => convertCircuitJsonToAssemblySvg([board]),
@@ -129,7 +139,7 @@ test("silkscreen and fabrication notes retain text, transforms and font family",
   expect(nodes.some((n) => n.name === "image")).toBe(false)
 })
 
-test("hidden silkscreen text is preserved in Circuit JSON but not rendered", () => {
+test("silkscreen text visibility controls rendering", () => {
   const hiddenSilkscreen = {
     ...silkscreen,
     pcb_silkscreen_text_id: "hidden-label",
@@ -139,36 +149,61 @@ test("hidden silkscreen text is preserved in Circuit JSON but not rendered", () 
   const visibleSilkscreen = {
     ...silkscreen,
     pcb_silkscreen_text_id: "visible-label",
-    text: "VISIBLE",
+    text: "OMITTED",
   }
+  const explicitlyVisibleSilkscreen = {
+    ...silkscreen,
+    pcb_silkscreen_text_id: "explicitly-visible-label",
+    text: "FALSE",
+    is_hidden: false,
+  } as PcbSilkscreenText & { is_hidden: boolean }
 
   const svg = convertCircuitJsonToPcbSvg([
     board,
     hiddenSilkscreen,
     visibleSilkscreen,
+    explicitlyVisibleSilkscreen,
   ])
 
   expect(svg).not.toContain("HIDDEN")
-  expect(svg).toContain("VISIBLE")
+  expect(svg).toContain("OMITTED")
+  expect(svg).toContain("FALSE")
 })
 
-test("hidden silkscreen text does not affect PCB bounds", () => {
-  const hiddenSilkscreen = {
+test("silkscreen text visibility controls PCB bounds", () => {
+  const outsideBoardSilkscreen = {
     ...silkscreen,
-    pcb_silkscreen_text_id: "hidden-label-outside-board",
     anchor_position: { x: 1000, y: 1000 },
+  }
+  const hiddenSilkscreen = {
+    ...outsideBoardSilkscreen,
+    pcb_silkscreen_text_id: "hidden-label-outside-board",
     text: "HIDDEN",
     is_hidden: true,
   } as PcbSilkscreenText & { is_hidden: boolean }
+  const explicitlyVisibleSilkscreen = {
+    ...outsideBoardSilkscreen,
+    pcb_silkscreen_text_id: "explicitly-visible-label-outside-board",
+    text: "EXPLICITLY VISIBLE",
+    is_hidden: false,
+  } as PcbSilkscreenText & { is_hidden: boolean }
+  const visibleSilkscreen = {
+    ...outsideBoardSilkscreen,
+    pcb_silkscreen_text_id: "visible-label-outside-board",
+    text: "VISIBLE",
+  }
 
-  const baselineSvg = parseSync(convertCircuitJsonToPcbSvg([board]))
-  const svgWithHiddenText = parseSync(
-    convertCircuitJsonToPcbSvg([board, hiddenSilkscreen]),
-  )
+  const baselineBoundary = getPcbBoundaryAttributes([board])
+  const hiddenBoundary = getPcbBoundaryAttributes([board, hiddenSilkscreen])
+  const explicitlyVisibleBoundary = getPcbBoundaryAttributes([
+    board,
+    explicitlyVisibleSilkscreen,
+  ])
+  const visibleBoundary = getPcbBoundaryAttributes([board, visibleSilkscreen])
 
-  expect(svgWithHiddenText.attributes.viewBox).toBe(
-    baselineSvg.attributes.viewBox,
-  )
+  expect(hiddenBoundary).toEqual(baselineBoundary)
+  expect(explicitlyVisibleBoundary).not.toEqual(baselineBoundary)
+  expect(explicitlyVisibleBoundary).toEqual(visibleBoundary)
 })
 
 test("bottom knockout uses multiline font text inside its vector mask", () => {
