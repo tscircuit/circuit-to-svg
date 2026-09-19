@@ -20,6 +20,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
   pcbSilkscreenText: PcbSilkscreenText,
   ctx: PcbContext,
 ): SvgObject[] {
+  if (
+    "is_visible" in pcbSilkscreenText &&
+    pcbSilkscreenText.is_visible === false
+  ) {
+    return []
+  }
+
   const { transform, layer: layerFilter, colorMap } = ctx
   const {
     anchor_position,

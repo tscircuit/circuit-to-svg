@@ -129,6 +129,29 @@ test("silkscreen and fabrication notes retain text, transforms and font family",
   expect(nodes.some((n) => n.name === "image")).toBe(false)
 })
 
+test("hidden silkscreen text is preserved in Circuit JSON but not rendered", () => {
+  const hiddenSilkscreen = {
+    ...silkscreen,
+    pcb_silkscreen_text_id: "hidden-label",
+    text: "HIDDEN",
+    is_visible: false,
+  } as PcbSilkscreenText & { is_visible: boolean }
+  const visibleSilkscreen = {
+    ...silkscreen,
+    pcb_silkscreen_text_id: "visible-label",
+    text: "VISIBLE",
+  }
+
+  const svg = convertCircuitJsonToPcbSvg([
+    board,
+    hiddenSilkscreen,
+    visibleSilkscreen,
+  ])
+
+  expect(svg).not.toContain("HIDDEN")
+  expect(svg).toContain("VISIBLE")
+})
+
 test("bottom knockout uses multiline font text inside its vector mask", () => {
   const nodes = walk(
     parseSync(
