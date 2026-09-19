@@ -53,6 +53,10 @@ export function createSvgObjectsFromPcbSilkscreenText(
   ])
 
   const scaleFactor = Math.abs(transform.a)
+  const safeFontSize =
+    typeof font_size === "number" && Number.isFinite(font_size) && font_size > 0
+      ? font_size
+      : 1
   const silkscreenColor =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
@@ -61,13 +65,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Handle knockout rendering
   if (is_knockout) {
-    const geometry = createAlphabetKnockoutText(text, font_size)
+    const geometry = createAlphabetKnockoutText(text, safeFontSize)
     if (!geometry.bounds) return []
 
-    const padLeft = knockout_padding?.left ?? font_size * 0.5
-    const padRight = knockout_padding?.right ?? font_size * 0.5
-    const padTop = knockout_padding?.top ?? font_size * 0.3
-    const padBottom = knockout_padding?.bottom ?? font_size * 0.3
+    const padLeft = knockout_padding?.left ?? safeFontSize * 0.5
+    const padRight = knockout_padding?.right ?? safeFontSize * 0.5
+    const padTop = knockout_padding?.top ?? safeFontSize * 0.3
+    const padBottom = knockout_padding?.bottom ?? safeFontSize * 0.3
 
     const rectX = geometry.bounds.minX - padLeft
     const rectY = geometry.bounds.minY - padTop
@@ -171,7 +175,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
+  const transformedFontSize = safeFontSize * scaleFactor
 
   let textAnchor = "middle"
   let dominantBaseline = "central"
