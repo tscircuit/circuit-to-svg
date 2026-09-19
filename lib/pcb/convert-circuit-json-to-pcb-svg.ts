@@ -1,3 +1,4 @@
+import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   Point,
@@ -97,6 +98,10 @@ interface PointObjectNotation {
 }
 
 export interface PcbSvgOptions {
+  /** Resolved PCB element IDs to inspect together. Empty or omitted disables X-Ray. */
+  xRayElementIds?: readonly string[]
+  /** Opacity of other copper during X-Ray, between 0 and 1. Defaults to 0.2. */
+  hiddenLayerOpacity?: number
   colorOverrides?: PcbColorOverrides
   width?: number
   height?: number
@@ -176,7 +181,17 @@ export function convertCircuitJsonToPcbSvg(
       (element) => !element.type.startsWith("pcb_fabrication_note_"),
     )
   }
-  const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
+  const xRayActive = Boolean(options?.xRayElementIds?.length)
+  if (
+    xRayActive &&
+    options?.hiddenLayerOpacity !== undefined &&
+    (!Number.isFinite(options.hiddenLayerOpacity) ||
+      options.hiddenLayerOpacity < 0 ||
+      options.hiddenLayerOpacity > 1)
+  )
+    throw new Error("hiddenLayerOpacity must be between 0 and 1")
+  const drawPaddingOutsideBoard =
+    !xRayActive && (options?.drawPaddingOutsideBoard ?? true)
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
 
@@ -358,9 +373,9 @@ export function convertCircuitJsonToPcbSvg(
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
 
-  let unsortedSvgObjects = circuitJson.flatMap((elm) =>
-    createSvgObjects({ elm, circuitJson, ctx }),
-  )
+  let unsortedSvgObjects = xRayActive
+    ? []
+    : circuitJson.flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -371,14 +386,25 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  if (options?.shouldDrawRatsNest) {
+  if (!xRayActive && options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
     unsortedSvgObjects = [...unsortedSvgObjects, ...ratsNestObjects]
   }
 
-  const svgObjects = groupCopperPourMaskedTraceObjects(
-    sortSvgObjectsByPcbLayer(unsortedSvgObjects),
-  )
+  const svgObjects = xRayActive
+    ? createXRaySvgObjects({
+        circuitJson,
+        ctx,
+        selectedIds: options!.xRayElementIds!,
+        hiddenOpacity: options?.hiddenLayerOpacity ?? 0.2,
+        width: svgWidth,
+        height: svgHeight,
+        create: (elm, context) =>
+          createSvgObjects({ elm, circuitJson, ctx: context }),
+      })
+    : groupCopperPourMaskedTraceObjects(
+        sortSvgObjectsByPcbLayer(unsortedSvgObjects),
+      )
 
   const children: SvgObject[] = [
     {
@@ -399,7 +425,7 @@ export function convertCircuitJsonToPcbSvg(
   ]
 
   const gridObjects = createSvgObjectsForPcbGrid({
-    grid: options?.grid,
+    grid: xRayActive ? undefined : options?.grid,
     svgWidth,
     svgHeight,
   })
@@ -458,7 +484,7 @@ export function convertCircuitJsonToPcbSvg(
     children.push(gridObjects.rect)
   }
 
-  if (options?.showErrorsInTextOverlay) {
+  if (!xRayActive && options?.showErrorsInTextOverlay) {
     const errorOverlay = createErrorTextOverlay(
       circuitJson,
       "pcb_error_text_overlay",

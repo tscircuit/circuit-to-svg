@@ -220,6 +220,26 @@ const simulationGraphSvg = convertCircuitJsonToSimulationGraphSvg({
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
+### X-Ray net images
+
+Pass resolved PCB element IDs in `xRayElementIds` to inspect one or more nets.
+Selected traces, pads, vias, and plated-hole drills render at full opacity across
+all copper layers. Other copper uses `hiddenLayerOpacity` (default `0.2`);
+silkscreen, substrate, annotations, and unrelated drills are hidden. Empty or
+omitted IDs preserve normal rendering. During X-Ray, `layer` chooses the frontmost
+copper layer instead of filtering out other layers.
+
+```typescript
+const svg = convertCircuitJsonToPcbSvg(circuitJson, {
+  xRayElementIds: ["pcb_trace_1", "pcb_smtpad_1", "pcb_via_1"],
+  hiddenLayerOpacity: 0.05,
+  layer: "top",
+})
+```
+
+Resolve electrical connectivity before calling this API: IDs are element IDs,
+not net names. The SVG can be rasterized with Resvg to produce the same PNG.
+
 ## convertCircuitJsonToSolderPasteMask
 
 `convertCircuitJsonToSolderPasteMask(circuitJson: AnyCircuitElement[], options: { layer: 'top' | 'bottom'; width?; height?; includeVersion? }): string`
