@@ -114,3 +114,26 @@ test("Empty X-Ray selection preserves normal output and invalid opacity is rejec
   ).toBe(convertCircuitJsonToPcbSvg(scene, options))
   expect(() => render({ hiddenLayerOpacity: -0.1 })).toThrow("between 0 and 1")
 })
+
+test("X-Ray exposes selected trace segments that ordinary rendering hides inside pours", () => {
+  const flagged = scene.map((el) =>
+    el.type === "pcb_trace"
+      ? {
+          ...el,
+          route: el.route.map((point) => ({
+            ...point,
+            is_inside_copper_pour: true,
+          })),
+        }
+      : el,
+  )
+  const svg = convertCircuitJsonToPcbSvg(flagged, {
+    width: 200,
+    height: 200,
+    viewport: { minX: -10, minY: -10, maxX: 10, maxY: 10 },
+    backgroundColor: "transparent",
+    xRayElementIds: ["top"],
+    hiddenLayerOpacity: 0,
+  })
+  expect(pixel(svg, 100, 100)).toEqual([200, 52, 52, 255])
+})

@@ -111,6 +111,8 @@ export function createXRaySvgObjects({
     showSolderPaste: false,
     showPinNumbers: false,
     showAnchorOffsets: false,
+    // X-Ray exposes trace geometry even where ordinary rendering merges it into a pour.
+    circuitJson: circuitJson.filter((el) => el.type !== "pcb_copper_pour"),
   }
   const background: SvgObject[] = []
   const foreground: SvgObject[] = []
@@ -145,7 +147,21 @@ export function createXRaySvgObjects({
         element.type === "pcb_plated_hole"
           ? { ...element, layers: [layer] }
           : element
-      const objects = create(input, context).map(opaque)
+      const drawable =
+        input.type === "pcb_trace"
+          ? {
+              ...input,
+              route: input.route.map((point) => {
+                const { is_inside_copper_pour, copper_pour_id, ...geometry } =
+                  point as typeof point & {
+                    is_inside_copper_pour?: boolean
+                    copper_pour_id?: string
+                  }
+                return geometry
+              }),
+            }
+          : input
+      const objects = create(drawable, context).map(opaque)
       const drills = selectGeometry(objects, true)
       holes.push(...drills.map(blacken))
       ordinary.push(...selectGeometry(objects, false))
