@@ -1079,7 +1079,7 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
     }
 
-        return [
+    return [
       {
         name: "g",
         type: "element",
