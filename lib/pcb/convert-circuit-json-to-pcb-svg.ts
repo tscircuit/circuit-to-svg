@@ -170,6 +170,7 @@ export interface PcbContext {
    * hide the portions covered by copper pours. Used to emit mask defs.
    */
   usedCopperPourTraceMaskIds?: Set<string>
+  copperPourTraceMaskIdsByLayer?: Map<string, string | undefined>
 }
 
 export function convertCircuitJsonToPcbSvg(

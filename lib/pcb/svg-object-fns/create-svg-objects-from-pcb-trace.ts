@@ -31,7 +31,11 @@ export function createSvgObjectsFromPcbTrace(
   const svgObjects: SvgObject[] = []
   const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  const pourMaskIdByLayer = new Map<string, string | undefined>()
+  // Share lookups across traces and the exposed-copper pass for this render.
+  const pourMaskIdByLayer = (ctx.copperPourTraceMaskIdsByLayer ??= new Map<
+    string,
+    string | undefined
+  >())
   const drawableSegments: PcbTraceSegment[] = []
 
   for (const originalSegment of getPcbTraceSegments(trace.route)) {
