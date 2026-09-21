@@ -171,6 +171,7 @@ export interface PcbContext {
    */
   usedCopperPourTraceMaskIds?: Set<string>
   copperPourTraceMaskIdsByLayer?: Map<string, string | undefined>
+  standaloneViaPositionKeys?: Set<string>
 }
 
 export function convertCircuitJsonToPcbSvg(

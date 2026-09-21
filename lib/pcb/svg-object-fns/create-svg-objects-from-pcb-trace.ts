@@ -29,7 +29,6 @@ export function createSvgObjectsFromPcbTrace(
     return []
 
   const svgObjects: SvgObject[] = []
-  const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
   // Share lookups across traces and the exposed-copper pass for this render.
   const pourMaskIdByLayer = (ctx.copperPourTraceMaskIdsByLayer ??= new Map<
@@ -193,7 +192,7 @@ export function createSvgObjectsFromPcbTrace(
 
   for (const [index, point] of trace.route.entries()) {
     if (!point || point.route_type !== "via") continue
-    if (standaloneViaPositionKeys.has(getPositionKey(point))) continue
+    if (getStandaloneViaPositionKeys(ctx).has(getPositionKey(point))) continue
 
     svgObjects.push(
       ...createSvgObjectsFromPcbVia(
@@ -352,11 +351,11 @@ function getRouteViaDiameters(
 }
 
 function getStandaloneViaPositionKeys(ctx: PcbContext): Set<string> {
-  return new Set(
+  return (ctx.standaloneViaPositionKeys ??= new Set(
     ctx.circuitJson
       ?.filter((elm): elm is PCBVia => elm.type === "pcb_via")
       .map((via) => getPositionKey(via)) ?? [],
-  )
+  ))
 }
 
 function getPositionKey(point: Pick<Point, "x" | "y">): string {
