@@ -82,6 +82,7 @@ import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-object
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import { createViaTentingMask } from "./create-via-tenting-mask"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
@@ -453,6 +454,16 @@ export function convertCircuitJsonToPcbSvg(
   })
   if (copperPourTraceMaskDefs) {
     children.push(copperPourTraceMaskDefs)
+  }
+
+  const viaTentingMask = createViaTentingMask({
+    objects: unsortedSvgObjects,
+    layer: layer ?? "top",
+    width: svgWidth,
+    height: svgHeight,
+  })
+  if (viaTentingMask) {
+    children.push(viaTentingMask)
   }
 
   children.push({
