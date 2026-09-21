@@ -39,7 +39,7 @@ export function createSvgObjectsFromPcbVia(
     value: "",
     attributes: {
       "data-type": "pcb_via",
-      "data-pcb-layer": "through",
+      "data-pcb-layer": showSolderMask && isTented ? layer : "through",
     },
     children: [
       {
