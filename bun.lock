@@ -23,7 +23,7 @@
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
         "bun-match-svg": "^0.0.12",
-        "circuit-json": "github:anil08607/circuit-json#6cab65770e02ac343e249117f3b584ffbaa1a4d5",
+        "circuit-json": "github:anil08607/circuit-json#db62e2e174bcfe7cd10ac5781042e471b6b2c6e5",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.12",
         "performance-now": "^2.1.0",
@@ -534,7 +534,7 @@
 
     "chownr": ["chownr@1.1.4", "", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
 
-    "circuit-json": ["circuit-json@github:anil08607/circuit-json#6cab657", { "peerDependencies": { "format-si-unit": "*" } }, "anil08607-circuit-json-6cab657", "sha512-0zClzEZ01kQVWhDfcOt2D4hqO9LIEFpY60K7GyolNWBxrIhX8RSR7oYiv7RStk+/mPR2jqCpPJJsSL5h5gkcyg=="],
+    "circuit-json": ["circuit-json@github:anil08607/circuit-json#db62e2e", { "peerDependencies": { "format-si-unit": "*" } }, "anil08607-circuit-json-db62e2e", "sha512-eVaMhXLdN1QYwcfyTbPRpA/ALUtkSM+DXp+Mwsw8AQVEJy3fIHakimAZ12yI5d5FkBG0LeM7txmxgMG/dlc5Uw=="],
 
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 

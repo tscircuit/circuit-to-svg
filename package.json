@@ -32,7 +32,7 @@
     "@vitejs/plugin-react": "5.0.0",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
-    "circuit-json": "github:anil08607/circuit-json#6cab65770e02ac343e249117f3b584ffbaa1a4d5",
+    "circuit-json": "github:anil08607/circuit-json#db62e2e174bcfe7cd10ac5781042e471b6b2c6e5",
     "esbuild": "^0.20.2",
     "format-si-unit": "^0.0.12",
     "performance-now": "^2.1.0",
