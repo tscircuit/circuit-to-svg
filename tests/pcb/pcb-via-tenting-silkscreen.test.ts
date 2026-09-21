@@ -1,9 +1,17 @@
 import { expect, test } from "bun:test"
 import { Resvg } from "@resvg/resvg-js"
+import { fileURLToPath } from "node:url"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { circuit } from "./pcb-via-tenting-silkscreen.fixture"
 
 test("silkscreen text remains visible over tented vias on the viewed face", () => {
+  const alphabetFontPath = fileURLToPath(
+    new URL(
+      "TscircuitAlphabet.ttf",
+      import.meta.resolve("@tscircuit/alphabet"),
+    ),
+  )
+
   function render(layer: "top" | "bottom", showSolderMask = true) {
     const svg = convertCircuitJsonToPcbSvg(
       circuit.map((element) =>
@@ -23,7 +31,12 @@ test("silkscreen text remains visible over tented vias on the viewed face", () =
         viewport: { minX: -12, maxX: 12, minY: -5, maxY: 5 },
       },
     )
-    const { pixels } = new Resvg(svg).render()
+    const { pixels } = new Resvg(svg, {
+      font: {
+        fontFiles: [alphabetFontPath],
+        loadSystemFonts: false,
+      },
+    }).render()
     return {
       svg,
       pixel(x: number, y: number) {
