@@ -2,8 +2,9 @@ import { expect, test } from "bun:test"
 import type { CircuitJson } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import { symbols } from "schematic-symbols"
+import { parseSync } from "svgson"
 
-test("reproduces scaled resistor offsets in all four orientations", () => {
+test("scaled resistor terminals meet traces in all four orientations", () => {
   const circuitJson: CircuitJson = []
   for (const [row, direction] of ["right", "left", "up", "down"].entries()) {
     for (const [column, scale] of [0.5, 1, 2].entries()) {
@@ -81,6 +82,31 @@ test("reproduces scaled resistor offsets in all four orientations", () => {
     width: 1000,
     height: 1000,
   })
+  const [a, b, c, d, e, f] = svg
+    .match(/data-real-to-screen-transform="matrix\(([^)]+)\)"/)![1]!
+    .split(/[\s,]+/)
+    .map(Number) as [number, number, number, number, number, number]
+  const vertices: { x: number; y: number }[] = []
+  const visit = (node: ReturnType<typeof parseSync>) => {
+    if (node.attributes.class === "sch-component-symbol-path") {
+      for (const match of node.attributes.d!.matchAll(
+        /[ML]\s+([-\d.e+]+)\s+([-\d.e+]+)/g,
+      )) {
+        vertices.push({ x: Number(match[1]), y: Number(match[2]) })
+      }
+    }
+    node.children.forEach(visit)
+  }
+  visit(parseSync(svg))
+  for (const port of circuitJson.filter(
+    (element) => element.type === "schematic_port",
+  )) {
+    const x = a * port.center.x + c * port.center.y + e
+    const y = b * port.center.x + d * port.center.y + f
+    expect(
+      vertices.some((point) => Math.hypot(point.x - x, point.y - y) < 1e-6),
+    ).toBe(true)
+  }
   expect(JSON.stringify(circuitJson)).toBe(original)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
