@@ -47,8 +47,10 @@ export function createSvgObjectsFromPcbSilkscreenRect(
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
-  const transformedWidth = width * Math.abs(transform.a)
-  const transformedHeight = height * Math.abs(transform.d)
+  const safeWidth = Math.max(0, width)
+  const safeHeight = Math.max(0, height)
+  const transformedWidth = safeWidth * Math.abs(transform.a)
+  const transformedHeight = safeHeight * Math.abs(transform.d)
 
   const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
 
