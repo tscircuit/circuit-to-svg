@@ -935,25 +935,32 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
 
   if (hole.shape === "hole_with_polygon_pad") {
+  if (hole.shape === "hole_with_polygon_pad") {
     const polygonHole = hole
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const rad = ((polygonHole.ccw_rotation ?? 0) * Math.PI) / 180
+    const cosR = Math.cos(rad)
+    const sinR = Math.sin(rad)
 
-    // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    // Transform polygon pad outline points with ccw_rotation
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rx = point.x * cosR - point.y * sinR
+      const ry = point.x * sinR + point.y * cosR
+      return applyToPoint(transform, [holeX + rx, holeY + ry])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Calculate hole position with rotated offset
+    const offX = (polygonHole.hole_offset_x ?? 0) * cosR - (polygonHole.hole_offset_y ?? 0) * sinR
+    const offY = (polygonHole.hole_offset_x ?? 0) * sinR + (polygonHole.hole_offset_y ?? 0) * cosR
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + offX,
+      holeY + offY,
     ])
-
     // Helper function to create hole SVG object based on hole_shape
     const createHoleSvgObject = (): SvgObject => {
       if (polygonHole.hole_shape === "circle") {
