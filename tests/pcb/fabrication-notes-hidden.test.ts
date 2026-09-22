@@ -110,6 +110,22 @@ for (const layer of ["top", "bottom"] as const) {
   })
 }
 
+test("fabrication note paths respect the rendered layer", () => {
+  const circuit = [...board, ...fabricationNotes]
+  const bottom = convertCircuitJsonToPcbSvg(circuit, {
+    layer: "bottom",
+    includeVersion: false,
+  })
+  expect(bottom).toContain('data-pcb-fabrication-note-path-id="path_bottom"')
+  expect(bottom).not.toContain('data-pcb-fabrication-note-path-id="path_top"')
+  const top = convertCircuitJsonToPcbSvg(circuit, {
+    layer: "top",
+    includeVersion: false,
+  })
+  expect(top).toContain('data-pcb-fabrication-note-path-id="path_top"')
+  expect(top).not.toContain('data-pcb-fabrication-note-path-id="path_bottom"')
+})
+
 test("fabrication visibility is independent of PCB note visibility", () => {
   const circuit = [...board, ...pcbNote, ...fabricationNotes]
   const hiddenFab = convertCircuitJsonToPcbSvg(circuit, {

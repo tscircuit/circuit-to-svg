@@ -8,6 +8,8 @@ export function createSvgObjectsFromPcbFabricationNotePath(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter } = ctx
+  const { layer } = fabNotePath
+  if (layerFilter && layer !== layerFilter) return []
   if (!fabNotePath.route || !Array.isArray(fabNotePath.route)) return []
 
   // Close the path if the first and last points are the same
