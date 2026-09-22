@@ -171,7 +171,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
+  const validFontSize = Number.isFinite(font_size) && font_size > 0 ? font_size : 1
+  const transformedFontSize = validFontSize * scaleFactor
 
   let textAnchor = "middle"
   let dominantBaseline = "central"
