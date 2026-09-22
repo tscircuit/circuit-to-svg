@@ -29,13 +29,26 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
+  const rawWidth =
+    typeof schComponent.size?.width === "number" &&
+    Number.isFinite(schComponent.size.width) &&
+    schComponent.size.width > 0
+      ? schComponent.size.width
+      : 1
+  const rawHeight =
+    typeof schComponent.size?.height === "number" &&
+    Number.isFinite(schComponent.size.height) &&
+    schComponent.size.height > 0
+      ? schComponent.size.height
+      : 1
+
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - rawWidth / 2,
+    y: schComponent.center.y + rawHeight / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + rawWidth / 2,
+    y: schComponent.center.y - rawHeight / 2,
   })
   const componentScreenWidth =
     componentScreenBottomRight.x - componentScreenTopLeft.x
