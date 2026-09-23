@@ -64,3 +64,16 @@ test("degenerate and nonfinite geometry emits no vertices", () => {
   ])
     expect(getTeardropPolygon({ ...taper, ...invalid })).toEqual([])
 })
+
+test("tessellation remains bounded for very large finite widths", () => {
+  const polygon = getTeardropPolygon({
+    ...taper,
+    start_width: 1e308,
+    width_interpolation_mode: "smoothstep",
+  })
+  expect(polygon.length).toBeLessThan(1230)
+  expect(polygon.length).toBeGreaterThan(4)
+  expect(
+    polygon.every((p) => Number.isFinite(p.x) && Number.isFinite(p.y)),
+  ).toBe(true)
+})

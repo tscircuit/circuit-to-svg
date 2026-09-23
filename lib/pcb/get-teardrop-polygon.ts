@@ -30,7 +30,7 @@ export function getTeardropPolygon(
       ? 1
       : Math.max(
           1,
-          Math.ceil(Math.sqrt((3 * delta) / (8 * (0.001 + delta * 0.000001)))),
+          Math.ceil(Math.sqrt((delta / (0.001 + delta * 0.000001)) * (3 / 8))),
         )
   const nx = -dy / length
   const ny = dx / length
