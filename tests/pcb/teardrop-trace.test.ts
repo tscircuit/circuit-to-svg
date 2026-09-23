@@ -10,7 +10,7 @@ test("teardrop profiles join pads, wires and vias on multiple layers", () => {
     width: 720,
     height: 600,
   })
-  expect(svg.match(/data-route-type="teardrop"/g)?.length).toBe(6)
+  expect(svg.match(/data-wire-taper="true"/g)?.length).toBe(6)
   expect(svg).not.toMatch(/NaN|Infinity/)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
@@ -24,10 +24,10 @@ test("single taper is bounded by its copper and obeys layer filters", () => {
   for (const mode of ["constant", "interpolated"] as const) {
     const input = [{ ...trace, route_thickness_mode: mode }]
     expect(convertCircuitJsonToPcbSvg(input, { layer: "inner1" })).toContain(
-      'data-route-type="teardrop"',
+      'data-wire-taper="true"',
     )
     expect(convertCircuitJsonToPcbSvg(input, { layer: "top" })).not.toContain(
-      'data-route-type="teardrop"',
+      'data-wire-taper="true"',
     )
   }
 })
@@ -45,6 +45,29 @@ test("soldermask follows the taper", () => {
     layer: "top",
     showSolderMask: true,
   })
-  expect(svg).toContain('data-route-type="teardrop"')
+  expect(svg).toContain('data-wire-taper="true"')
   expect(svg).toContain('data-type="pcb_trace_soldermask"')
+})
+
+test("ordinary segments before and after a taper are preserved without a duplicate stroke", () => {
+  const tapered = {
+    route_type: "wire" as const,
+    x: 0,
+    y: 0,
+    width: 0.6,
+    layer: "top" as const,
+    start_width: 0.6,
+    end_width: 0.2,
+    width_interpolation_mode: "quadratic" as const,
+  }
+  const route: PcbTrace["route"] = [
+    { route_type: "wire", x: -1, y: 0, width: 0.6, layer: "top" },
+    tapered,
+    { route_type: "wire", x: 1, y: 0, width: 0.2, layer: "top" },
+    { route_type: "wire", x: 2, y: 0, width: 0.2, layer: "top" },
+  ]
+  expect(getPcbTraceSegments(route).map((s) => [s.start.x, s.end.x])).toEqual([
+    [-1, 0],
+    [1, 2],
+  ])
 })

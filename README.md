@@ -265,21 +265,29 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 
 ## Teardrop traces
 
-`pcb_trace.route` supports `route_type: "teardrop"` from Circuit JSON 0.0.501.
-Each segment has explicit `start` / `end` coordinates, full `start_width` /
-`end_width` values, a `layer`, and `width_interpolation_mode: "linear" | "quadratic"`.
-The segment renders as trace copper with flat caps, independently of ordinary
-wire `route_thickness_mode`. Quadratic uses `w(u) = narrow + (wide - narrow) * (1-u)^2`, with u measured
-from the wide end toward the narrow end; it has concave sides and flattens into
-the thin trace. Reversing the endpoints preserves the same shape.
-Curved-profile tessellation has a
-maximum boundary error of 1 µm + 1 ppm of the width change in PCB coordinates.
+Teardrops use ordinary `route_type: "wire"` points with optional
+`start_width`, `end_width`, and `width_interpolation_mode: "linear" | "quadratic"`.
+These fields describe the outgoing segment to the next route point. Supply all
+three together and keep `width` equal to `start_width`:
+
+```json
+[
+  { "route_type": "wire", "x": 0, "y": 0, "layer": "top", "width": 0.6,
+    "start_width": 0.6, "end_width": 0.2, "width_interpolation_mode": "quadratic" },
+  { "route_type": "wire", "x": 0.8, "y": 0, "layer": "top", "width": 0.2 }
+]
+```
+
+The incoming segment stays unchanged. The outgoing taper renders as copper with
+flat caps, independently of `route_thickness_mode`. Quadratic has concave sides
+and flattens into the narrow end; reversing the endpoints and widths preserves
+the shape. Tessellation boundary error is at most 1 µm + 1 ppm of width change.
 
 The demo shows linear (upper row), quadratic (middle row), and rotated/bottom
 and inner-layer tapers (lower row). No copper pours are needed.
 
 ![Teardrop trace demo](tests/pcb/__snapshots__/teardrop-trace.snap.svg)
 
-The revised teardrop profile schema is pending publication. A small local
-compatibility type accepts it alongside the published modes; no git dependency
+The wire extension is pending publication in Circuit JSON. A small local
+compatibility type adds the fields to the published wire type; no git dependency
 or unpublished package version is required.

@@ -1,9 +1,12 @@
 import { expect, test } from "bun:test"
-import type { PcbTraceRoutePointTeardrop } from "circuit-json"
-import { getTeardropPolygon } from "../../lib/pcb/get-teardrop-polygon"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+  hasWireTaper,
+  type WireTaperSegment,
+} from "../../lib/pcb/get-wire-taper-polygon"
 
-const taper: PcbTraceRoutePointTeardrop = {
-  route_type: "teardrop",
+const taper: WireTaperSegment = {
   start: { x: 0, y: 0 },
   end: { x: 6, y: 0 },
   start_width: 3,
@@ -13,7 +16,7 @@ const taper: PcbTraceRoutePointTeardrop = {
 }
 
 test("linear taper uses full widths and flat end caps", () => {
-  expect(getTeardropPolygon(taper)).toEqual([
+  expect(getWireTaperPolygon(taper)).toEqual([
     { x: 0, y: 1.5 },
     { x: 6, y: 0.25 },
     { x: 6, y: -0.25 },
@@ -21,7 +24,7 @@ test("linear taper uses full widths and flat end caps", () => {
   ])
 })
 test("reversal and rotation preserve the copper region", () => {
-  const reverse = getTeardropPolygon({
+  const reverse = getWireTaperPolygon({
     ...taper,
     start: taper.end,
     end: taper.start,
@@ -31,10 +34,10 @@ test("reversal and rotation preserve the copper region", () => {
   const key = (p: { x: number; y: number }) =>
     `${p.x.toFixed(6)},${p.y.toFixed(6)}`
   expect(reverse.map(key).sort()).toEqual(
-    getTeardropPolygon(taper).map(key).sort(),
+    getWireTaperPolygon(taper).map(key).sort(),
   )
-  expect(getTeardropPolygon({ ...taper, end: { x: 0, y: 6 } })).toEqual(
-    getTeardropPolygon(taper).map((p) => ({ x: -p.y, y: p.x })),
+  expect(getWireTaperPolygon({ ...taper, end: { x: 0, y: 6 } })).toEqual(
+    getWireTaperPolygon(taper).map((p) => ({ x: -p.y, y: p.x })),
   )
 })
 test("degenerate and nonfinite geometry emits no vertices", () => {
@@ -44,11 +47,11 @@ test("degenerate and nonfinite geometry emits no vertices", () => {
     { end_width: NaN },
     { end: { x: Infinity, y: 0 } },
   ])
-    expect(getTeardropPolygon({ ...taper, ...invalid })).toEqual([])
+    expect(getWireTaperPolygon({ ...taper, ...invalid })).toEqual([])
 })
 
 test("tessellation remains bounded for very large finite widths", () => {
-  const polygon = getTeardropPolygon({
+  const polygon = getWireTaperPolygon({
     ...taper,
     start_width: 1e308,
     width_interpolation_mode: "quadratic",
@@ -71,7 +74,7 @@ test("quadratic follows the selected concave profile in both directions", () => 
       end_width,
       width_interpolation_mode: "quadratic" as const,
     }
-    const polygon = getTeardropPolygon(segment)
+    const polygon = getWireTaperPolygon(segment)
     const left = polygon.slice(0, polygon.length / 2)
     for (const p of left) {
       const t = p.x / 6
@@ -87,7 +90,7 @@ test("quadratic follows the selected concave profile in both directions", () => 
         Math.abs((a.y + b.y) / 2 - (0.5 + 2.5 * u * u) / 2),
       ).toBeLessThanOrEqual(0.001003)
     }
-    const reversed = getTeardropPolygon({
+    const reversed = getWireTaperPolygon({
       ...segment,
       start: segment.end,
       end: segment.start,
@@ -101,7 +104,7 @@ test("quadratic follows the selected concave profile in both directions", () => 
 })
 test("equal-width quadratic reduces to a rectangle", () => {
   expect(
-    getTeardropPolygon({
+    getWireTaperPolygon({
       ...taper,
       start_width: 0.5,
       end_width: 0.5,
@@ -117,6 +120,85 @@ test("equal-width quadratic reduces to a rectangle", () => {
 
 test("removed smoothstep profile produces no copper", () => {
   expect(
-    getTeardropPolygon({ ...taper, width_interpolation_mode: "smoothstep" }),
+    getWireTaperSegments([
+      {
+        route_type: "wire",
+        x: 0,
+        y: 0,
+        width: 3,
+        start_width: 3,
+        end_width: 0.5,
+        width_interpolation_mode: "smoothstep",
+        layer: "top",
+      },
+      { route_type: "wire", x: 6, y: 0, width: 0.5, layer: "top" },
+    ]),
   ).toEqual([])
+})
+
+const wireTaper = {
+  route_type: "wire",
+  x: 0,
+  y: 0,
+  width: 0.6,
+  start_width: 0.6,
+  end_width: 0.2,
+  width_interpolation_mode: "quadratic",
+  layer: "top",
+}
+const endpoint = { route_type: "wire", x: 1, y: 0, width: 0.2, layer: "top" }
+test("taper belongs to the outgoing wire segment only", () => {
+  const route = [
+    { ...endpoint, x: -1, width: 0.6 },
+    wireTaper,
+    endpoint,
+    { ...endpoint, x: 2 },
+  ]
+  const segments = getWireTaperSegments(route)
+  expect(segments).toHaveLength(1)
+  expect(segments[0]!.start).toEqual({ x: 0, y: 0 })
+  expect(segments[0]!.end).toEqual({ x: 1, y: 0 })
+})
+test("tapers terminate at a via or through-pad on the correct layer", () => {
+  for (const end of [
+    { route_type: "via", x: 1, y: 0, from_layer: "top", to_layer: "bottom" },
+    {
+      route_type: "through_pad",
+      start: { x: 1, y: 0 },
+      end: { x: 2, y: 0 },
+      start_layer: "top",
+      end_layer: "bottom",
+      width: 0.2,
+    },
+  ]) {
+    expect(getWireTaperSegments([wireTaper, end])).toHaveLength(1)
+    expect(
+      getWireTaperSegments([{ ...wireTaper, layer: "bottom" }, end]),
+    ).toEqual([])
+  }
+})
+test("malformed or terminal tapers never become constant-width fallbacks", () => {
+  for (const start of [
+    { ...wireTaper, end_width: undefined },
+    { ...wireTaper, width: 0.4 },
+    { ...wireTaper, start_width: 0 },
+  ]) {
+    expect(hasWireTaper(start)).toBe(true)
+    expect(getWireTaperSegments([start, endpoint])).toEqual([])
+  }
+  expect(getWireTaperSegments([wireTaper])).toEqual([])
+  expect(getWireTaperSegments([wireTaper, { ...endpoint, x: 0 }])).toEqual([])
+})
+
+test("taper is inside a pour only when both endpoints are inside", () => {
+  const start = { ...wireTaper, is_inside_copper_pour: true }
+  expect(
+    getWireTaperSegments([start, endpoint])[0]?.is_inside_copper_pour,
+  ).toBe(false)
+  expect(
+    getWireTaperSegments([
+      start,
+      { ...endpoint, is_inside_copper_pour: true },
+    ])[0]?.is_inside_copper_pour,
+  ).toBe(true)
 })

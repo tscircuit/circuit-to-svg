@@ -89,11 +89,13 @@ function getObstacleCenter(
 }
 
 function getRoutePointPositions(point: PcbTraceRoutePoint): PcbPoint[] {
-  if (point.route_type === "through_pad" || point.route_type === "teardrop") {
+  if (point.route_type === "through_pad") {
     return [point.start, point.end].filter(isFinitePoint)
   }
 
-  return isFinitePoint(point) ? [{ x: point.x, y: point.y }] : []
+  return "x" in point && isFinitePoint(point)
+    ? [{ x: point.x, y: point.y }]
+    : []
 }
 
 function getTraceEndpoints(

@@ -5,7 +5,7 @@ import {
   distance,
 } from "circuit-json"
 
-import { getTeardropPolygon } from "./get-teardrop-polygon"
+import { hasWireTaper } from "./get-wire-taper-polygon"
 
 export type PcbTraceRoutePoint = PcbTrace["route"][number]
 
@@ -24,12 +24,10 @@ export interface PcbTraceSegment {
 
 export function getPcbTracePoints(point: PcbTraceRoutePoint): readonly Point[] {
   switch (point.route_type) {
-    case "teardrop":
-      return getTeardropPolygon(point)
     case "through_pad":
       return [point.start, point.end] as const
     default:
-      return [point] as const
+      return "x" in point && "y" in point ? ([point] as const) : []
   }
 }
 
@@ -42,9 +40,12 @@ export function getPcbTraceSegments(
     const start = route[i]
     const end = route[i + 1]
     if (!start || !end) continue
-    // Explicit teardrops consume their own segment; adjoining wire runs
-    // include boundary coordinates, so do not infer another connector.
-    if (start.route_type === "teardrop" || end.route_type === "teardrop")
+    // The outgoing taper is drawn as filled copper, never as a duplicate stroke.
+    if (hasWireTaper(start)) continue
+    if (
+      !("x" in start || start.route_type === "through_pad") ||
+      !("x" in end || end.route_type === "through_pad")
+    )
       continue
 
     const startAnchor = start.route_type === "through_pad" ? start.end : start

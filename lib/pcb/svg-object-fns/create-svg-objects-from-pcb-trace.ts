@@ -20,7 +20,11 @@ import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
-import { getTeardropPolygon } from "../get-teardrop-polygon"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+  hasWireTaper,
+} from "../get-wire-taper-polygon"
 
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
@@ -90,11 +94,10 @@ export function createSvgObjectsFromPcbTrace(
     return {}
   }
 
-  for (const point of trace.route) {
-    if (point.route_type !== "teardrop") continue
+  for (const point of getWireTaperSegments(trace.route)) {
     if (layerFilter && point.layer !== layerFilter) continue
     if (point.is_inside_copper_pour) continue
-    const polygon = getTeardropPolygon(point).map((p) =>
+    const polygon = getWireTaperPolygon(point).map((p) =>
       applyToPoint(transform, p),
     )
     if (!polygon.length) continue
@@ -117,7 +120,9 @@ export function createSvgObjectsFromPcbTrace(
             .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
             .join(" ") + " Z",
         "data-type": showSolderMask ? "pcb_trace_soldermask" : "pcb_trace",
-        "data-route-type": "teardrop",
+        "data-route-type": "wire",
+        "data-wire-taper": "true",
+        "data-width-interpolation-mode": point.width_interpolation_mode,
         "data-pcb-layer": point.layer,
         ...getPourMaskAttributes(point.layer),
       },
@@ -347,7 +352,7 @@ function findTraceWidth(
     index += direction
   ) {
     const point = route[index]
-    if (point?.route_type === "teardrop")
+    if (hasWireTaper(point))
       return direction === -1 ? point.end_width : point.start_width
     if (!point || !("width" in point) || typeof point.width !== "number") {
       continue
