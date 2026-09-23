@@ -52,9 +52,7 @@ export function getWireTaperSegments(
     const end =
       next.route_type === "through_pad"
         ? next.start
-        : next.route_type === "wire" || next.route_type === "via"
-          ? { x: next.x!, y: next.y! }
-          : undefined
+        : { x: next.x!, y: next.y! }
     const layer =
       next.route_type === "via"
         ? next.from_layer

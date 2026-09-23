@@ -27,7 +27,7 @@ export function getPcbTracePoints(point: PcbTraceRoutePoint): readonly Point[] {
     case "through_pad":
       return [point.start, point.end] as const
     default:
-      return "x" in point && "y" in point ? ([point] as const) : []
+      return [point as Point]
   }
 }
 
@@ -42,14 +42,10 @@ export function getPcbTraceSegments(
     if (!start || !end) continue
     // The outgoing taper is drawn as filled copper, never as a duplicate stroke.
     if (hasWireTaper(start)) continue
-    if (
-      !("x" in start || start.route_type === "through_pad") ||
-      !("x" in end || end.route_type === "through_pad")
-    )
-      continue
-
-    const startAnchor = start.route_type === "through_pad" ? start.end : start
-    const endAnchor = end.route_type === "through_pad" ? end.start : end
+    const startAnchor =
+      start.route_type === "through_pad" ? start.end : (start as Point)
+    const endAnchor =
+      end.route_type === "through_pad" ? end.start : (end as Point)
 
     const layer =
       start.route_type === "wire"
