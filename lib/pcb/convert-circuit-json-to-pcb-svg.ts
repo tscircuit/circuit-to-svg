@@ -82,7 +82,7 @@ import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-object
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
-import { createViaTentingMask } from "./create-via-tenting-mask"
+import { createSoldermaskOpeningMasks } from "./create-soldermask-opening-masks"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
@@ -456,14 +456,15 @@ export function convertCircuitJsonToPcbSvg(
     children.push(copperPourTraceMaskDefs)
   }
 
-  const viaTentingMask = createViaTentingMask({
+  const soldermaskOpeningMasks = createSoldermaskOpeningMasks({
+    showSolderMask: ctx.showSolderMask,
     objects: unsortedSvgObjects,
     layer: layer ?? "top",
     width: svgWidth,
     height: svgHeight,
   })
-  if (viaTentingMask) {
-    children.push(viaTentingMask)
+  if (soldermaskOpeningMasks) {
+    children.push(soldermaskOpeningMasks)
   }
 
   children.push({
