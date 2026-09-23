@@ -89,7 +89,7 @@ function getObstacleCenter(
 }
 
 function getRoutePointPositions(point: PcbTraceRoutePoint): PcbPoint[] {
-  if (point.route_type === "through_pad") {
+  if (point.route_type === "through_pad" || point.route_type === "teardrop") {
     return [point.start, point.end].filter(isFinitePoint)
   }
 

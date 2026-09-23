@@ -262,3 +262,17 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 - `width` and `height` – dimensions of the output SVG. Defaults to `800x600`.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
+
+## Teardrop traces
+
+`pcb_trace.route` supports `route_type: "teardrop"` from Circuit JSON 0.0.501.
+Each segment has explicit `start` / `end` coordinates, full `start_width` /
+`end_width` values, a `layer`, and `width_interpolation_mode: "linear" | "smoothstep"`.
+The segment renders as trace copper with flat caps, independently of ordinary
+wire `route_thickness_mode`. Smoothstep uses f(t)=3t²−2t³; tessellation has a
+maximum boundary error of 1 µm + 1 ppm of the width change in PCB coordinates.
+
+The demo shows linear (upper row), smoothstep (middle row), and rotated/bottom
+and inner-layer tapers (lower row). No copper pours are needed.
+
+![Teardrop trace demo](tests/pcb/__snapshots__/teardrop-trace.snap.svg)

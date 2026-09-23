@@ -20,12 +20,14 @@ import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
+import { getTeardropPolygon } from "../get-teardrop-polygon"
+
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
-  if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
+  if (!trace.route || !Array.isArray(trace.route) || trace.route.length === 0)
     return []
 
   const svgObjects: SvgObject[] = []
@@ -86,6 +88,40 @@ export function createSvgObjectsFromPcbTrace(
       return { mask: `url(#${pourMaskId})` }
     }
     return {}
+  }
+
+  for (const point of trace.route) {
+    if (point.route_type !== "teardrop") continue
+    if (layerFilter && point.layer !== layerFilter) continue
+    if (point.is_inside_copper_pour) continue
+    const polygon = getTeardropPolygon(point).map((p) =>
+      applyToPoint(transform, p),
+    )
+    if (!polygon.length) continue
+    const color = showSolderMask
+      ? colorMap.soldermaskWithCopperUnderneath[
+          point.layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+        ]
+      : layerNameToColor(point.layer, colorMap)
+    svgObjects.push({
+      name: "path",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: showSolderMask ? "pcb-soldermask" : "pcb-trace",
+        fill: color,
+        stroke: "none",
+        d:
+          polygon
+            .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+            .join(" ") + " Z",
+        "data-type": showSolderMask ? "pcb_trace_soldermask" : "pcb_trace",
+        "data-route-type": "teardrop",
+        "data-pcb-layer": point.layer,
+        ...getPourMaskAttributes(point.layer),
+      },
+    })
   }
 
   if (trace.route_thickness_mode === "interpolated") {
@@ -311,6 +347,8 @@ function findTraceWidth(
     index += direction
   ) {
     const point = route[index]
+    if (point?.route_type === "teardrop")
+      return direction === -1 ? point.end_width : point.start_width
     if (!point || !("width" in point) || typeof point.width !== "number") {
       continue
     }

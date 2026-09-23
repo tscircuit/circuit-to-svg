@@ -93,7 +93,8 @@ export function createXRaySvgObjects({
         if (/^(top|bottom|inner\d+)$/.test(layer)) layers.add(layer as LayerRef)
     if (element.type === "pcb_trace")
       for (const point of element.route)
-        if (point.route_type === "wire") layers.add(point.layer)
+        if (point.route_type === "wire" || point.route_type === "teardrop")
+          layers.add(point.layer)
   }
   const front = ctx.layer ?? "top"
   const rank = (layer: string) =>
