@@ -267,12 +267,19 @@ const solderPasteMaskSvg = convertCircuitJsonToSolderPasteMask(circuitJson, {
 
 `pcb_trace.route` supports `route_type: "teardrop"` from Circuit JSON 0.0.501.
 Each segment has explicit `start` / `end` coordinates, full `start_width` /
-`end_width` values, a `layer`, and `width_interpolation_mode: "linear" | "smoothstep"`.
+`end_width` values, a `layer`, and `width_interpolation_mode: "linear" | "smoothstep" | "quadratic"`.
 The segment renders as trace copper with flat caps, independently of ordinary
-wire `route_thickness_mode`. Smoothstep uses f(t)=3t²−2t³; tessellation has a
+wire `route_thickness_mode`. Quadratic uses `w(u) = narrow + (wide - narrow) * (1-u)^2`, with u measured
+from the wide end toward the narrow end; it has concave sides and flattens into
+the thin trace. Reversing the endpoints preserves the same shape. Smoothstep
+remains supported. Curved-profile tessellation has a
 maximum boundary error of 1 µm + 1 ppm of the width change in PCB coordinates.
 
-The demo shows linear (upper row), smoothstep (middle row), and rotated/bottom
+The demo shows linear (upper row), quadratic (middle row), and rotated/bottom
 and inner-layer tapers (lower row). No copper pours are needed.
 
 ![Teardrop trace demo](tests/pcb/__snapshots__/teardrop-trace.snap.svg)
+
+The additive `quadratic` schema update is pending publication. A small local
+compatibility type accepts it alongside the published modes; no git dependency
+or unpublished package version is required.
