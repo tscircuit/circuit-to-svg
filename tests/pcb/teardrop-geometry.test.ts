@@ -20,24 +20,6 @@ test("linear taper uses full widths and flat end caps", () => {
     { x: 0, y: -1.5 },
   ])
 })
-test("smoothstep samples follow the specified profile with a bounded chord error", () => {
-  const polygon = getTeardropPolygon({
-    ...taper,
-    width_interpolation_mode: "smoothstep",
-  })
-  const left = polygon.slice(0, polygon.length / 2)
-  for (let i = 0; i < left.length - 1; i++) {
-    const a = left[i]!,
-      b = left[i + 1]!
-    for (const fraction of [0.25, 0.5, 0.75]) {
-      const t = (a.x + (b.x - a.x) * fraction) / 6
-      const exact = (3 + (0.5 - 3) * t * t * (3 - 2 * t)) / 2
-      expect(
-        Math.abs(a.y + (b.y - a.y) * fraction - exact),
-      ).toBeLessThanOrEqual(0.001003)
-    }
-  }
-})
 test("reversal and rotation preserve the copper region", () => {
   const reverse = getTeardropPolygon({
     ...taper,
@@ -69,7 +51,7 @@ test("tessellation remains bounded for very large finite widths", () => {
   const polygon = getTeardropPolygon({
     ...taper,
     start_width: 1e308,
-    width_interpolation_mode: "smoothstep",
+    width_interpolation_mode: "quadratic",
   })
   expect(polygon.length).toBeLessThan(1230)
   expect(polygon.length).toBeGreaterThan(4)
@@ -131,4 +113,10 @@ test("equal-width quadratic reduces to a rectangle", () => {
     { x: 6, y: -0.25 },
     { x: 0, y: -0.25 },
   ])
+})
+
+test("removed smoothstep profile produces no copper", () => {
+  expect(
+    getTeardropPolygon({ ...taper, width_interpolation_mode: "smoothstep" }),
+  ).toEqual([])
 })

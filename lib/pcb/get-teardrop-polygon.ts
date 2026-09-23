@@ -1,21 +1,22 @@
 import type { PcbTraceRoutePointTeardrop, Point } from "circuit-json"
 
-// Accept the additive quadratic profile while its circuit-json release is pending.
+// Accept quadratic while the revised circuit-json profile enum is pending release.
 // Remove this compatibility type after updating to the published schema.
 export type RenderableTeardrop = Omit<
   PcbTraceRoutePointTeardrop,
   "width_interpolation_mode"
 > & {
-  width_interpolation_mode:
-    | PcbTraceRoutePointTeardrop["width_interpolation_mode"]
-    | "quadratic"
+  width_interpolation_mode: "linear" | "quadratic"
 }
 
 /** Tessellate full-width tapers with flat caps. No extra endpoint disks.
  * Curved-profile chord error is bounded by 1um + 1ppm of the width change.
  * The relative term bounds tessellation memory even for very large inputs.
  */
-export function getTeardropPolygon(segment: RenderableTeardrop): Point[] {
+// Published inputs may still contain removed modes; reject them below.
+export function getTeardropPolygon(
+  segment: RenderableTeardrop | PcbTraceRoutePointTeardrop,
+): Point[] {
   const { start, end, start_width: w0, end_width: w1 } = segment
   const dx = end.x - start.x
   const dy = end.y - start.y
@@ -29,13 +30,12 @@ export function getTeardropPolygon(segment: RenderableTeardrop): Point[] {
     return []
   if (
     segment.width_interpolation_mode !== "linear" &&
-    segment.width_interpolation_mode !== "smoothstep" &&
     segment.width_interpolation_mode !== "quadratic"
   )
     return []
   const delta = Math.abs(w1 - w0)
-  // max |(width/2)''| is delta for quadratic and 3*delta for smoothstep.
-  // Using the smoothstep bound for both keeps chord error bounded.
+  // max |(width/2)''| is delta for quadratic.
+  // Chord error <= delta/(8*n*n); keep a factor-of-three safety margin.
   const steps =
     segment.width_interpolation_mode === "linear"
       ? 1
@@ -49,15 +49,13 @@ export function getTeardropPolygon(segment: RenderableTeardrop): Point[] {
   const right: Point[] = []
   for (let i = 0; i <= steps; i++) {
     const t = i / steps
-    const f =
-      segment.width_interpolation_mode === "linear" ? t : t * t * (3 - 2 * t)
     // Orient the quadratic from narrow to wide so reversing route order
     // preserves the shape and the tangent stays flat at the narrow end.
     const u = w0 <= w1 ? t : 1 - t
     const width =
       segment.width_interpolation_mode === "quadratic"
         ? Math.min(w0, w1) + delta * u * u
-        : w0 + (w1 - w0) * f
+        : w0 + (w1 - w0) * t
     const halfWidth = width / 2
     const x = start.x + dx * t
     const y = start.y + dy * t
