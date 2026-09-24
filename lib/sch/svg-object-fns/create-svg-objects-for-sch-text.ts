@@ -139,6 +139,7 @@ export const createSvgSchText = ({
     value: "",
     attributes: {
       class: "sch-text",
+      "data-schematic-text-id": elm.schematic_text_id,
       x: center.x.toString(),
       y: center.y.toString(),
       fill: elm.color ?? colorMap.schematic.sheet_label,
