@@ -27,6 +27,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@tscircuit/alphabet": "^0.0.27",
     "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
+    "@tscircuit/circuit-json-util": "^0.0.116",
     "@types/bun": "^1.2.8",
     "@types/debug": "^4.1.12",
     "@vitejs/plugin-react": "5.0.0",
@@ -46,7 +47,8 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/alphabet": "*"
+    "@tscircuit/alphabet": "*",
+    "@tscircuit/circuit-json-util": "*"
   },
   "dependencies": {
     "@types/node": "^22.5.5",

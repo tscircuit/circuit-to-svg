@@ -92,7 +92,7 @@ import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-
 import {
   createBoardOwnerMap,
   type AnyCircuitJsonId,
-} from "./create-board-owner-map"
+} from "@tscircuit/circuit-json-util"
 interface PointObjectNotation {
   x: number
   y: number
