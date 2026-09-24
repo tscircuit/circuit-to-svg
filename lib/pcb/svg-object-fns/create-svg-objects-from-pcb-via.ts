@@ -66,7 +66,7 @@ export function createSvgObjectsFromPcbVia(
         children: [],
         attributes: {
           class: isPlugged ? "pcb-via-plug" : "pcb-hole-inner",
-          fill: isPlugged ? colorMap.substrate : colorMap.drill,
+          fill: isPlugged ? colorMap.soldermask[layer] : colorMap.drill,
 
           cx: x.toString(),
           cy: y.toString(),
