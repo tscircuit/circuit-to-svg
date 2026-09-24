@@ -18,6 +18,7 @@ export function createSvgObjectsFromPcbVia(
     ? hole.pcb_via_id
     : (hole.pcb_trace_id ?? hole.pcb_via_id)
   const board = ctx.boardOwnerMap?.get(boardOwnerId)
+  const isPlugged = showSolderMask && board?.default_via_plugged === true
   const tenting: PcbViaInput = hole
   const isTented =
     (layer === "top" ? tenting.tented_on_top : tenting.tented_on_bottom) ??
@@ -39,7 +40,8 @@ export function createSvgObjectsFromPcbVia(
     value: "",
     attributes: {
       "data-type": "pcb_via",
-      "data-pcb-layer": showSolderMask && isTented ? layer : "through",
+      "data-pcb-layer":
+        showSolderMask && (isTented || isPlugged) ? layer : "through",
     },
     children: [
       {
@@ -63,14 +65,14 @@ export function createSvgObjectsFromPcbVia(
         value: "",
         children: [],
         attributes: {
-          class: "pcb-hole-inner",
-          fill: colorMap.drill,
+          class: isPlugged ? "pcb-via-plug" : "pcb-hole-inner",
+          fill: isPlugged ? colorMap.substrate : colorMap.drill,
 
           cx: x.toString(),
           cy: y.toString(),
           r: innerRadius.toString(),
           "data-type": "pcb_via",
-          "data-pcb-layer": "drill",
+          "data-pcb-layer": isPlugged ? layer : "drill",
         },
       },
     ],
