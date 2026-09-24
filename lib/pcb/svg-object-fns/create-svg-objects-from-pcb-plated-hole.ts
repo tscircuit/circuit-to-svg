@@ -935,23 +935,35 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
 
   if (hole.shape === "hole_with_polygon_pad") {
-    const polygonHole = hole
+    const polygonHole = hole as any
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const ccwRotation = polygonHole.ccw_rotation ?? 0
+    const rotRad = (ccwRotation * Math.PI) / 180
+    const cosRot = Math.cos(rotRad)
+    const sinRot = Math.sin(rotRad)
 
-    // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    // Rotate points counter-clockwise around (0, 0) relative to hole center, then translate by (holeX, holeY)
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rx = point.x * cosRot - point.y * sinRot
+      const ry = point.x * sinRot + point.y * cosRot
+      return applyToPoint(transform, [holeX + rx, holeY + ry])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Rotate drill hole offset around hole position
+    const rawOffsetX = polygonHole.hole_offset_x ?? 0
+    const rawOffsetY = polygonHole.hole_offset_y ?? 0
+    const rotOffsetX = rawOffsetX * cosRot - rawOffsetY * sinRot
+    const rotOffsetY = rawOffsetX * sinRot + rawOffsetY * cosRot
+
+    // Calculate hole position with rotated offset
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + rotOffsetX,
+      holeY + rotOffsetY,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
@@ -984,16 +996,21 @@ export function createSvgObjectsFromPcbPlatedHole(
           (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
         const rx = scaledWidth / 2
         const ry = scaledHeight / 2
+        const holeTransform = ccwRotation
+          ? `translate(${holeCenterX} ${holeCenterY}) rotate(${-ccwRotation})`
+          : undefined
+
         return {
           name: "ellipse",
           type: "element",
           attributes: {
             class: "pcb-hole-inner",
             fill: colorMap.drill,
-            cx: holeCenterX.toString(),
-            cy: holeCenterY.toString(),
+            cx: holeTransform ? "0" : holeCenterX.toString(),
+            cy: holeTransform ? "0" : holeCenterY.toString(),
             rx: rx.toString(),
             ry: ry.toString(),
+            ...(holeTransform ? { transform: holeTransform } : {}),
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },
@@ -1032,6 +1049,10 @@ export function createSvgObjectsFromPcbPlatedHole(
             `v-${straightLength} ` +
             `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
+        const transformStr = ccwRotation
+          ? `translate(${holeCenterX} ${holeCenterY}) rotate(${-ccwRotation})`
+          : `translate(${holeCenterX} ${holeCenterY})`
+
         return {
           name: "path",
           type: "element",
@@ -1039,7 +1060,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             class: "pcb-hole-inner",
             fill: colorMap.drill,
             d: pathD,
-            transform: `translate(${holeCenterX} ${holeCenterY})`,
+            transform: transformStr,
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },
