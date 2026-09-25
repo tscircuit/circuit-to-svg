@@ -14,6 +14,7 @@ import { createSvgObjectsFromSchematicArc } from "./create-svg-objects-from-sch-
 import { createSvgObjectsFromSchematicPath } from "./create-svg-objects-from-sch-path"
 import { createSvgObjectsForSchPortPinLabel } from "./create-svg-objects-for-sch-port-pin-label"
 import { createSvgSchText } from "./create-svg-objects-for-sch-text"
+import { getSchematicPrimitivePaintOrder } from "./get-schematic-primitive-paint-order"
 
 export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
   component: schComponent,
@@ -29,13 +30,19 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
   const svgObjects: SvgObject[] = []
   const compId = schComponent.schematic_component_id
 
-  for (const elm of circuitJson) {
-    if (
-      !("schematic_component_id" in elm) ||
-      elm.schematic_component_id !== compId
+  const componentElements = circuitJson
+    .filter(
+      (element) =>
+        "schematic_component_id" in element &&
+        element.schematic_component_id === compId,
     )
-      continue
+    .sort(
+      (firstElement, secondElement) =>
+        getSchematicPrimitivePaintOrder(firstElement) -
+        getSchematicPrimitivePaintOrder(secondElement),
+    )
 
+  for (const elm of componentElements) {
     // Box components already render their associated text in the box renderer.
     if (
       elm.type === "schematic_text" &&
