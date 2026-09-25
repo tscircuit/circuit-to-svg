@@ -8,6 +8,7 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
+import { glyphAdvanceRatio, spaceWidthRatio } from "@tscircuit/alphabet"
 import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
@@ -595,9 +596,100 @@ export function getComprehensivePcbBounds(
     })
   }
 
+  // Silkscreen text renders with the TscircuitAlphabet font, whose advance is
+  // ~0.692*fontSize per glyph — wider than the 0.6 nominal used elsewhere.
+  // Measure with the real per-glyph advances so the viewport reflects the
+  // text's true extent (overhanging text is shown, not silently clipped).
+  function updateSilkscreenTextBounds(item: AnyCircuitElement) {
+    if (item.type !== "pcb_silkscreen_text") return
+    const anchorPosition = item.anchor_position
+    if (!anchorPosition || !item.text) return
+
+    // font_size is optional in real-world circuit JSON; distance.parse throws
+    // on undefined, so fall back rather than crash bounds computation.
+    const parseLen = (v: unknown, fallback: number): number => {
+      try {
+        return distance.parse(v as number) ?? fallback
+      } catch {
+        return fallback
+      }
+    }
+    const fontSize = parseLen(item.font_size, 1)
+    const lines = item.text.split("\n")
+    const textWidth =
+      Math.max(
+        ...lines.map((line) =>
+          Array.from(line).reduce(
+            (width, char) =>
+              width +
+              (char === " "
+                ? spaceWidthRatio
+                : (glyphAdvanceRatio[char] ?? spaceWidthRatio)),
+            0,
+          ),
+        ),
+        0,
+      ) * fontSize
+    const textHeight = Math.max(lines.length, 1) * fontSize
+
+    let padLeft = 0
+    let padRight = 0
+    let padTop = 0
+    let padBottom = 0
+    if (item.is_knockout) {
+      padLeft = parseLen(item.knockout_padding?.left, fontSize * 0.5)
+      padRight = parseLen(item.knockout_padding?.right, fontSize * 0.5)
+      padTop = parseLen(item.knockout_padding?.top, fontSize * 0.3)
+      padBottom = parseLen(item.knockout_padding?.bottom, fontSize * 0.3)
+    }
+    const width = textWidth + padLeft + padRight
+    const height = textHeight + padTop + padBottom
+
+    // Match the renderer's anchor convention: text-anchor maps left/center/
+    // right horizontally, and dominant-baseline maps top alignments to
+    // "text-before-edge" (box below the anchor) and bottom alignments to
+    // "text-after-edge" (box above the anchor) in circuit coordinates.
+    const alignment = item.anchor_alignment ?? "center"
+    const centerX = alignment.endsWith("_left")
+      ? anchorPosition.x + width / 2
+      : alignment.endsWith("_right")
+        ? anchorPosition.x - width / 2
+        : anchorPosition.x
+    const centerY = alignment.startsWith("top")
+      ? anchorPosition.y - height / 2
+      : alignment.startsWith("bottom")
+        ? anchorPosition.y + height / 2
+        : anchorPosition.y
+    const center = { x: centerX, y: centerY }
+
+    // Text rotates about its anchor, not about the box center: rotate the
+    // anchor->center offset so non-centered alignments land correctly.
+    const rotationDegrees = item.ccw_rotation ?? 0
+    if (rotationDegrees !== 0) {
+      const radians = (rotationDegrees * Math.PI) / 180
+      const offsetX = center.x - anchorPosition.x
+      const offsetY = center.y - anchorPosition.y
+      center.x =
+        anchorPosition.x +
+        offsetX * Math.cos(radians) -
+        offsetY * Math.sin(radians)
+      center.y =
+        anchorPosition.y +
+        offsetX * Math.sin(radians) +
+        offsetY * Math.cos(radians)
+    }
+
+    updateBounds({
+      center,
+      width,
+      height,
+      ccwRotationDegrees: rotationDegrees,
+    })
+  }
+
   function updateSilkscreenBounds(item: AnyCircuitElement) {
     if (item.type === "pcb_silkscreen_text") {
-      updateBounds({ center: item.anchor_position, width: 0, height: 0 })
+      updateSilkscreenTextBounds(item)
     } else if (item.type === "pcb_silkscreen_graphic") {
       for (const vertex of item.brep_shape.outer_ring.vertices) {
         updateBounds({
