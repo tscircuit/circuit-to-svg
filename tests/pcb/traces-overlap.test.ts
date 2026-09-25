@@ -1,12 +1,12 @@
 import { expect, test, describe } from "bun:test"
-import sharedCircuitJsonFixture from "../assets/traces-too-close.json"
+import circuitJsonFixture from "../assets/traces-too-close.json"
 import { convertCircuitJsonToPcbSvg } from "lib/index"
 import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
 
 describe("PCB traces in non-overlapping trace checks", () => {
   test("Should draw error as two traces are too close", async () => {
-    const circuitJsonFixture = structuredClone(sharedCircuitJsonFixture)
-    const errors = checkEachPcbTraceNonOverlapping(circuitJsonFixture as any)
+    const circuitJson = structuredClone(circuitJsonFixture)
+    const errors = checkEachPcbTraceNonOverlapping(circuitJson as any)
 
     expect(errors).toMatchInlineSnapshot(`
       [
@@ -32,12 +32,9 @@ describe("PCB traces in non-overlapping trace checks", () => {
       ]
     `)
     expect(errors.length).toBeGreaterThan(0)
-    const svg = convertCircuitJsonToPcbSvg(
-      [...circuitJsonFixture, ...errors] as any,
-      {
-        shouldDrawErrors: true,
-      },
-    )
+    const svg = convertCircuitJsonToPcbSvg([...circuitJson, ...errors] as any, {
+      shouldDrawErrors: true,
+    })
     await expect(svg).toMatchSvgSnapshot(import.meta.path)
   })
 })
