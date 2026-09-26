@@ -1,3 +1,7 @@
+import {
+  getWireTaperSegments,
+  getWireTaperPolygon,
+} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -539,8 +543,12 @@ export function getComprehensivePcbBounds(
 
   function updateTraceBounds(route: Array<Point | PcbTraceRoutePoint>) {
     let updated = false
-    for (const point of route) {
-      for (const anchor of getTracePoints(point)) {
+    const points = [
+      ...route.flatMap(getTracePoints),
+      ...getWireTaperSegments(route).flatMap(getWireTaperPolygon),
+    ]
+    for (const point of points) {
+      for (const anchor of [point]) {
         const x = distance.parse(anchor.x)
         const y = distance.parse(anchor.y)
         if (x === undefined || y === undefined) continue

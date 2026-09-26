@@ -93,7 +93,8 @@ function getRoutePointPositions(point: PcbTraceRoutePoint): PcbPoint[] {
     return [point.start, point.end].filter(isFinitePoint)
   }
 
-  return isFinitePoint(point) ? [{ x: point.x, y: point.y }] : []
+  const position = point as PcbPoint
+  return isFinitePoint(position) ? [{ x: position.x, y: position.y }] : []
 }
 
 function getTraceEndpoints(
