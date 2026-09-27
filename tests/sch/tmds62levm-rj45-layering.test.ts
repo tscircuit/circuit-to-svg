@@ -23,7 +23,11 @@ test("TMDS62LEVM RJ45 preserves native symbol detail above its body", () => {
   // The real Altium symbol stores its filled body after its linework.
   expect(bodyIndex).toBeGreaterThan(firstDetailIndex)
 
-  expect(convertCircuitJsonToSchematicSvg(circuitJson)).toMatchSvgSnapshot(
-    import.meta.path,
+  const svg = convertCircuitJsonToSchematicSvg(circuitJson)
+  expect(
+    svg.indexOf('data-schematic-rect-id="schematic_rect_altium_4205"'),
+  ).toBeLessThan(
+    svg.indexOf('data-schematic-line-id="schematic_line_altium_3837_line"'),
   )
+  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
