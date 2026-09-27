@@ -101,7 +101,9 @@ export function convertCircuitJsonToSchematicSvg(
     : circuitJson
 
   // Get bounds with padding
-  const realBounds = getSchematicBoundsFromCircuitJson(sheetCircuitJson)
+  const realBounds = getSchematicBoundsFromCircuitJson(
+    selectedSheet ? [selectedSheet] : sheetCircuitJson,
+  )
   const realWidth = realBounds.maxX - realBounds.minX
   const realHeight = realBounds.maxY - realBounds.minY
 
