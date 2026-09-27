@@ -5,10 +5,10 @@ import type { AnyCircuitElement } from "circuit-json"
 test("non-finite schematic component size does not render NaN coordinates", () => {
   const circuitJson: AnyCircuitElement[] = [
     {
-      type: "source_chip",
+      type: "source_component",
       source_component_id: "src_1",
       name: "U1",
-      ftr: "soic8",
+      ftype: "simple_chip",
     },
     {
       type: "schematic_component",
@@ -16,7 +16,7 @@ test("non-finite schematic component size does not render NaN coordinates", () =
       source_component_id: "src_1",
       center: { x: 0, y: 0 },
       size: { width: Number.NaN, height: Number.NaN } as any,
-      rotation: 0,
+      is_box_with_pins: true,
     },
   ]
 
