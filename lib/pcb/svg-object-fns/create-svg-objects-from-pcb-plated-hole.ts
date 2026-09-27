@@ -204,10 +204,19 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Handle oval shape
   if (hole.shape === "oval") {
-    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledOuterWidth = Math.max(
+      0,
+      hole.outer_width * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = Math.max(
+      0,
+      hole.outer_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHoleHeight = Math.max(
+      0,
+      hole.hole_height * Math.abs(transform.a),
+    )
     const rotation = hole.ccw_rotation || 0
 
     const transformStr = rotation
@@ -274,8 +283,14 @@ export function createSvgObjectsFromPcbPlatedHole(
     const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
 
-    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+    const outerRadius = Math.max(
+      0,
+      Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+    )
+    const innerRadius = Math.max(
+      0,
+      Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+    )
 
     let children: SvgObject[] = [
       {
@@ -313,7 +328,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskRadius = outerRadius + soldermaskMargin
+      const maskRadius = Math.max(0, outerRadius + soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {

@@ -25,7 +25,10 @@ export function createSvgObjectsFromPcbHole(
   const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-    const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledDiameter = Math.max(
+      0,
+      hole.hole_diameter * Math.abs(transform.a),
+    )
     const radius = scaledDiameter / 2
 
     if (hole.hole_shape === "circle") {
@@ -49,7 +52,7 @@ export function createSvgObjectsFromPcbHole(
         return [holeElement]
       }
 
-      const maskRadius = radius + soldermaskMargin
+      const maskRadius = Math.max(0, radius + soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -129,7 +132,7 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskDiameter = scaledDiameter + 2 * soldermaskMargin
+    const maskDiameter = Math.max(0, scaledDiameter + 2 * soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -191,8 +194,8 @@ export function createSvgObjectsFromPcbHole(
     return [substrateElement, holeElement]
   }
   if (hole.hole_shape === "oval") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
     const rx = scaledWidth / 2
     const ry = scaledHeight / 2
 
@@ -217,8 +220,8 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskRx = rx + soldermaskMargin
-    const maskRy = ry + soldermaskMargin
+    const maskRx = Math.max(0, rx + soldermaskMargin)
+    const maskRy = Math.max(0, ry + soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -281,8 +284,8 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "rect") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
 
     const holeElement: SvgObject = {
       name: "rect",
@@ -305,8 +308,8 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskWidth = scaledWidth + 2 * soldermaskMargin
-    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskWidth = Math.max(0, scaledWidth + 2 * soldermaskMargin)
+    const maskHeight = Math.max(0, scaledHeight + 2 * soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
