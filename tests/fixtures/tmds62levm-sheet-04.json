@@ -1,0 +1,867 @@
+[
+  {
+    "type": "schematic_sheet",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "name": "TI TMDS62LEVM Rev. B — sheet 04",
+    "outline_color": "#334155",
+    "sheet_index": 0
+  },
+  {
+    "type": "schematic_rect",
+    "schematic_rect_id": "schematic_rect_altium_28",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -0.7122876087857453,
+      "y": 0.9972026523000412
+    },
+    "width": 21.653543307086615,
+    "height": 4.273725652714464,
+    "rotation": 0,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_filled": false,
+    "fill_color": "#ffffff",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_29_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 2.564235391628678,
+    "x2": 10.114484044757564,
+    "y2": 2.564235391628678,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_30_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 1.8519477828429345,
+    "x2": 10.114484044757564,
+    "y2": 1.8519477828429345,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_rect",
+    "schematic_rect_id": "schematic_rect_altium_31",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -0.7122876087857453,
+      "y": 6.766732283464567
+    },
+    "width": 21.653543307086615,
+    "height": 4.131268130957315,
+    "rotation": 0,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_filled": false,
+    "fill_color": "#ffffff",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_32_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 8.120078740157481,
+    "x2": 10.114484044757564,
+    "y2": 8.120078740157481,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_33_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 7.407791131371738,
+    "x2": 10.114484044757564,
+    "y2": 7.407791131371738,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_34_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 6.6955035225859945,
+    "x2": 10.114484044757564,
+    "y2": 6.6955035225859945,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_35_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 5.983215913800251,
+    "x2": 10.114484044757564,
+    "y2": 5.983215913800251,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_36_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 5.270928305014504,
+    "x2": 10.114484044757564,
+    "y2": 5.270928305014504,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_37_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 1.139660174057191,
+    "x2": 10.114484044757564,
+    "y2": 1.139660174057191,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_rect",
+    "schematic_rect_id": "schematic_rect_altium_38",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -0.698041856610029,
+      "y": -6.5388002486531285
+    },
+    "width": 21.653543307086615,
+    "height": 4.986013261500208,
+    "rotation": 0,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_filled": false,
+    "fill_color": "#ffffff",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_39_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -10.812525901367593,
+    "y1": -4.045793617903025,
+    "x2": -10.812525901367593,
+    "y2": -9.031806879403232,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_40_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": 0.5698300870285955,
+    "x2": 10.114484044757564,
+    "y2": 0.5698300870285955,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_41_line",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -11.539059262329053,
+    "y1": -0.28491504351429775,
+    "x2": 10.114484044757564,
+    "y2": -0.28491504351429775,
+    "stroke_width": 0.05,
+    "color": "#1f2937",
+    "is_dashed": false
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_42",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "PROC181E1-1",
+    "font_size": 0.2,
+    "position": {
+      "x": 10.000518027351845,
+      "y": -10.299678823041857
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_43",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "KEY LINKS TO COLLATERALS",
+    "font_size": 0.5555843348528803,
+    "position": {
+      "x": -3.9888106092001667,
+      "y": 9.131527144633239
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#0000ff"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_44",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "LINKS TO KEY FAQs",
+    "font_size": 0.5555843348528803,
+    "position": {
+      "x": -3.4189805221715712,
+      "y": 3.4332262743472857
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#0000ff"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_45",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1478018/faq-am62l-custom-board-hardware-design-collaterals-to-get-started",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 2.7636759220886873
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_46_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1285107/faq-am64x-am243x-am62x-am62ax-am62px-am62d-q1-am62l-custom-board-",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 2.4217771575839215
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_46_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "hardware-design---collaterals-for-reference-during-schematic-design-and-schematics-review",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 2.1653536184210527
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_47_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1478030/faq-am62l-custom-board-hardware-design---faqs-related-to-processor-",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 1.709489548798178
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_47_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "collaterals-functioning-peripherals-interface-and-evm",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 1.4530660096353092
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_48",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "AM62L EVM (TMDS62LEVM):",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 8.43348528802321
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_49",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://www.ti.com/product/AM62L",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 8.17706174886034
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#000042"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_50",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "AM62Lx Sitara™ Processors datasheet :",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 7.721197679237466
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_51",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://www.ti.com/lit/pdf/SPRSPA1",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 7.464774140074596
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#000042"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_52",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Hardware Design Considerations :",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 7.008910070451719
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_53",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://www.ti.com/lit/pdf/SPRUJC9",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 6.752486531288852
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#000042"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_54",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "SK-AM62B, SK-AM62B-P1, SK-AM62-LP, SK-AM62-SIP, TMDS62LEVM, SK-AM62A-LP, SK-AM62P-LP",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -6.410588479071696,
+      "y": 4.872047244094489
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_55",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "SKs (Starter Kits) for reference :",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 4.872047244094489
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_56",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "DDR Board Design and Layout Guidelines :",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 6.296622461665976
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_57",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://www.ti.com/lit/pdf/sprad06",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 6.040198922503109
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#000042"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_58",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Schematic Design and Review Checklist for AM62Lx processor family :",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 5.584334852880232
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_59",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://www.ti.com/lit/pdf/SPRADO8",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 5.327911313717365
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#000042"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_60",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1478025/faq-am62l-custom-board-hardware-design---reusing-ti-evm-design-files",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601740571903,
+      "y": 0.7407791131371741
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_61",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "COMMON SOC LVCMOS IO INTERFACE GUIDELINES",
+    "font_size": 0.5555843348528803,
+    "position": {
+      "x": -6.239639452963118,
+      "y": -3.803615830915872
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#0000ff"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_62_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Verify cap loading of the SOC output (when any cap value > 22 pF (use case dependent, max value) is connected, customer needs to simulate), ",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -8.177062461147948
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_62_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "slew rate of the input signal (LVCMOS input slew should be 1000 ns or less), IO compatibility and fail-safe operation between the SOC IOs and ",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -8.404994495959386
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_62_2",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "attached devices.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -8.632926530770824
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_63",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Most of the SOC IOs are not fail-safe. No input should be applied before supply ramps.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670068379610445,
+      "y": -4.416183174471612
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_64",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "SOC LVCOMOS IOs have slew rate requirements specified, applying a slow ramp input or connecting a cap at the input is not recommended.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670068379610445,
+      "y": -4.986013261500207
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_65",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Connecting a cap load 50 pF or more at the output is not recommended. DNI cap or perform simulations based on the use case.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670068379610445,
+      "y": -5.555843348528803
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_66",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "SOC IO buffers are off during Reset. A pull is required near to the attached device being driven by the SOC IO that could float.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670068379610445,
+      "y": -6.125673435557397
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_67_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Any SOC IO that has a trace connected needs a parallel pull. When adding pull is not feasible, ensure the traces are routed away ",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -6.467572200062163
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_67_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "from noisy signals.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -6.695504234873601
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_68_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "Connecting SOC IOs that have alternate function that can be configured directly to supply or ground is not allowed or recommended ",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -7.179859808847906
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_68_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "(including bootmode inputs). (Customer could have bug with their firmware and mis-configure these LVCMOS GPIOs that were intended to be inputs, ",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -7.407791843659345
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_68_2",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "to be outputs driven logic high instead).",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -10.670067667322837,
+      "y": -7.635723878470783
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_69",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "1.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -4.416183174471612
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_70",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "2.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -4.986013261500207
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_71",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "3.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -5.555843348528803
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_72",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "4.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -6.125673435557397
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_73",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "5.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -6.695503522585993
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_74",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "6.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -7.407791131371736
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_altium_75",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "7.",
+    "font_size": 0.22793203481143806,
+    "position": {
+      "x": -11.23989846663904,
+      "y": -8.404993783671777
+    },
+    "rotation": 0,
+    "anchor": "bottom_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_76_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1318441/faq-am625-am623-am62a-design-recommendations-commonly-observed-",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 0.42737185298383906
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_76_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "errors-during-custom-board-hardware-design-sk-schematics-updates-for-design-update-note",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": 0.1709483138209702
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_77_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1478027/faq-am62l-design-recommendations-custom-board-hardware-design--",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": -0.4273732775590542
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_77_1",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "-custom-board-schematics-self-review",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": -0.683796816721923
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_text",
+    "schematic_text_id": "schematic_text_frame_line_altium_79_0",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "text": "https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1522815/faq-am62l-am62l32-am62l31-custom-board-hardware-design---available-design-files-and-supported-cad-tools-format-that-can-be-used-during-custom-board-schematic-and-pcb-design",
+    "font_size": 0.2564235391628678,
+    "position": {
+      "x": -11.396601028284294,
+      "y": -1.33909999222959
+    },
+    "rotation": 0,
+    "anchor": "top_left",
+    "color": "#1f2937"
+  },
+  {
+    "type": "schematic_path",
+    "schematic_path_id": "schematic_path_altium_80",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "points": [
+      {
+        "x": -11.553305014504767,
+        "y": -1.1396601740571892
+      },
+      {
+        "x": -11.553305014504767,
+        "y": -2.2793203481143802
+      },
+      {
+        "x": 10.114484044757564,
+        "y": -2.2793203481143802
+      },
+      {
+        "x": 10.114484044757564,
+        "y": -1.1396601740571892
+      },
+      {
+        "x": 10.071746788230417,
+        "y": -1.1396601740571892
+      }
+    ],
+    "stroke_width": 0.05,
+    "stroke_color": "#1f2937",
+    "is_filled": false,
+    "is_dashed": false
+  }
+]
