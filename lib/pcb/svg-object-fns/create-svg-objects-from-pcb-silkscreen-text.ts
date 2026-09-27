@@ -24,7 +24,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const {
     anchor_position,
     text,
-    font_size = 1,
+    font_size: rawFontSize = 1,
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
@@ -32,6 +32,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     knockout_padding,
     is_mirrored = false,
   } = pcbSilkscreenText
+  const fontSize = Number.isFinite(rawFontSize) ? rawFontSize : 1
 
   if (layerFilter && layer !== layerFilter) return []
 
@@ -61,13 +62,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Handle knockout rendering
   if (is_knockout) {
-    const geometry = createAlphabetKnockoutText(text, font_size)
+    const geometry = createAlphabetKnockoutText(text, fontSize)
     if (!geometry.bounds) return []
 
-    const padLeft = knockout_padding?.left ?? font_size * 0.5
-    const padRight = knockout_padding?.right ?? font_size * 0.5
-    const padTop = knockout_padding?.top ?? font_size * 0.3
-    const padBottom = knockout_padding?.bottom ?? font_size * 0.3
+    const padLeft = knockout_padding?.left ?? fontSize * 0.5
+    const padRight = knockout_padding?.right ?? fontSize * 0.5
+    const padTop = knockout_padding?.top ?? fontSize * 0.3
+    const padBottom = knockout_padding?.bottom ?? fontSize * 0.3
 
     const rectX = geometry.bounds.minX - padLeft
     const rectY = geometry.bounds.minY - padTop
@@ -171,7 +172,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
+  const transformedFontSize = fontSize * scaleFactor
 
   let textAnchor = "middle"
   let dominantBaseline = "central"
