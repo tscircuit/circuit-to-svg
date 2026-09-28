@@ -60,6 +60,7 @@ import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-o
 import {
   createSvgObjectsFromPcbKeepout,
   createKeepoutPatternDefs,
+  type PcbKeepoutRing,
 } from "./svg-object-fns/create-svg-objects-from-pcb-keepout"
 import { createSvgObjectsFromPcbCopperPour } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour"
 import {
@@ -694,7 +695,7 @@ function createSvgObjects({
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     case "pcb_keepout":
       return createSvgObjectsFromPcbKeepout(
-        elm as PCBKeepoutRect | PCBKeepoutCircle,
+        elm as PCBKeepoutRect | PCBKeepoutCircle | PcbKeepoutRing,
         ctx,
       )
     case "pcb_group":

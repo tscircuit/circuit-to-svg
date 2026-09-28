@@ -13,6 +13,18 @@ const KEEPOUT_PATTERN_SIZE = 20
 const KEEPOUT_LINE_SPACING = 5
 const KEEPOUT_BACKGROUND_COLOR = "rgba(255, 107, 107, 0.2)"
 
+// Replace this local type with PcbKeepoutRing once circuit-json publishes it.
+export interface PcbKeepoutRing {
+  type: "pcb_keepout"
+  shape: "ring"
+  pcb_keepout_id: string
+  center: Point
+  inner_radius: number
+  outer_radius: number
+  layers: string[]
+  description?: string
+}
+
 function createKeepoutPatternLines(keepoutColor: string): SvgObject[] {
   const patternLines: SvgObject[] = []
   for (
@@ -105,7 +117,7 @@ function createKeepoutPatternAttributes(
 }
 
 export function createSvgObjectsFromPcbKeepout(
-  keepout: PCBKeepoutRect | PCBKeepoutCircle,
+  keepout: PCBKeepoutRect | PCBKeepoutCircle | PcbKeepoutRing,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
@@ -176,6 +188,53 @@ export function createSvgObjectsFromPcbKeepout(
           name: "rect",
           type: "element",
           attributes: patternAttributes,
+          children: [],
+          value: "",
+        },
+      )
+    } else if (keepout.shape === "ring") {
+      const [cx, cy] = applyToPoint(transform, [
+        keepout.center.x,
+        keepout.center.y,
+      ])
+      const outerRadius = keepout.outer_radius * Math.abs(transform.a)
+      const innerRadius = keepout.inner_radius * Math.abs(transform.a)
+      // Two closed subpaths plus evenodd fill leave the center transparent.
+      const circlePath = (radius: number) =>
+        `M ${cx + radius} ${cy} A ${radius} ${radius} 0 1 0 ${cx - radius} ${cy} A ${radius} ${radius} 0 1 0 ${cx + radius} ${cy} Z`
+      const d = `${circlePath(outerRadius)} ${circlePath(innerRadius)}`
+
+      svgObjects.push(
+        {
+          name: "path",
+          type: "element",
+          attributes: {
+            ...createKeepoutBaseAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-ring",
+              keepout.description,
+            ),
+            d,
+            "fill-rule": "evenodd",
+            fill: KEEPOUT_BACKGROUND_COLOR,
+          },
+          children: [],
+          value: "",
+        },
+        {
+          name: "path",
+          type: "element",
+          attributes: {
+            ...createKeepoutPatternAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-ring",
+              keepout.description,
+            ),
+            d,
+            "fill-rule": "evenodd",
+          },
           children: [],
           value: "",
         },

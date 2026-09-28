@@ -144,3 +144,33 @@ test("pcb keepout with pcb_group_id and subcircuit_id", () => {
 
   expect(result).toMatchSvgSnapshot(import.meta.path + "with-group-id")
 })
+
+test("ring keepout leaves its center open", () => {
+  const result = convertCircuitJsonToPcbSvg([
+    {
+      type: "pcb_board",
+      pcb_board_id: "pcb_board_0",
+      center: { x: 0, y: 0 },
+      width: 50,
+      height: 40,
+      material: "fr1",
+      num_layers: 2,
+      thickness: 1.2,
+    },
+    {
+      type: "pcb_keepout",
+      shape: "ring",
+      pcb_keepout_id: "pcb_keepout_ring_0",
+      center: { x: 0, y: 0 },
+      inner_radius: 4,
+      outer_radius: 6,
+      layers: ["top"],
+    } as any, // circuit-json will add this type in its ring keepout release
+  ])
+
+  expect(result).toContain(
+    'class="pcb-keepout pcb-keepout-ring pcb-keepout-background"',
+  )
+  expect(result).toContain('fill-rule="evenodd"')
+  expect(result).toMatchSvgSnapshot(import.meta.path + "ring")
+})

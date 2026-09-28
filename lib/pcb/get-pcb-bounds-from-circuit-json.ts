@@ -378,7 +378,14 @@ export function getComprehensivePcbBounds(
         }
       }
     } else if (circuitJsonElm.type === "pcb_keepout") {
-      const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
+      const keepout = circuitJsonElm as
+        | PCBKeepoutRect
+        | PCBKeepoutCircle
+        | {
+            shape: "ring"
+            center: { x: number; y: number }
+            outer_radius: number
+          }
       if (keepout.shape === "rect") {
         updateBounds({
           center: keepout.center,
@@ -398,6 +405,12 @@ export function getComprehensivePcbBounds(
             height: radius * 2,
           })
         }
+      } else if (keepout.shape === "ring") {
+        updateBounds({
+          center: keepout.center,
+          width: keepout.outer_radius * 2,
+          height: keepout.outer_radius * 2,
+        })
       }
     } else if (
       circuitJsonElm.type === "pcb_silkscreen_graphic" ||
