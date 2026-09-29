@@ -1,0 +1,328 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index c2e28aff61770d8f9e7009c92160035111026d02..5cf46525179417a56addeff6b5276ff197603695 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -11836,7 +11836,65 @@ declare const pcb_keepout_outline: z.ZodObject<{
+     allow_placements?: boolean | undefined;
+ }>;
+ type PcbKeepoutOutlineInput = z.input<typeof pcb_keepout_outline>;
+-declare const pcb_keepout: z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
++/** A filled, implicitly closed polygon, unlike a stroked keepout outline. */
++declare const pcb_keepout_polygon: z.ZodObject<{
++    type: z.ZodLiteral<"pcb_keepout">;
++    description: z.ZodOptional<z.ZodString>;
++    layers: z.ZodArray<z.ZodString, "many">;
++    subcircuit_id: z.ZodOptional<z.ZodString>;
++    pcb_group_id: z.ZodOptional<z.ZodString>;
++    pcb_keepout_id: z.ZodString;
++    excluded_pcb_component_ids: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
++    warning_only: z.ZodOptional<z.ZodBoolean>;
++    allow_traces: z.ZodOptional<z.ZodBoolean>;
++    allow_placements: z.ZodOptional<z.ZodBoolean>;
++} & {
++    shape: z.ZodLiteral<"polygon">;
++    points: z.ZodArray<z.ZodObject<{
++        x: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++        y: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++    }, "strip", z.ZodTypeAny, {
++        x: number;
++        y: number;
++    }, {
++        x: string | number;
++        y: string | number;
++    }>, "many">;
++}, "strip", z.ZodTypeAny, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: number;
++        y: number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
++}, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: string | number;
++        y: string | number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
++}>;
++type PcbKeepoutPolygonInput = z.input<typeof pcb_keepout_polygon>;
++declare const pcb_keepout: z.ZodUnion<[z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout">;
+     shape: z.ZodLiteral<"rect">;
+     pcb_group_id: z.ZodOptional<z.ZodString>;
+@@ -12010,6 +12068,61 @@ declare const pcb_keepout: z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
+     warning_only?: boolean | undefined;
+     allow_traces?: boolean | undefined;
+     allow_placements?: boolean | undefined;
++}>]>, z.ZodObject<{
++    type: z.ZodLiteral<"pcb_keepout">;
++    description: z.ZodOptional<z.ZodString>;
++    layers: z.ZodArray<z.ZodString, "many">;
++    subcircuit_id: z.ZodOptional<z.ZodString>;
++    pcb_group_id: z.ZodOptional<z.ZodString>;
++    pcb_keepout_id: z.ZodString;
++    excluded_pcb_component_ids: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
++    warning_only: z.ZodOptional<z.ZodBoolean>;
++    allow_traces: z.ZodOptional<z.ZodBoolean>;
++    allow_placements: z.ZodOptional<z.ZodBoolean>;
++} & {
++    shape: z.ZodLiteral<"polygon">;
++    points: z.ZodArray<z.ZodObject<{
++        x: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++        y: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++    }, "strip", z.ZodTypeAny, {
++        x: number;
++        y: number;
++    }, {
++        x: string | number;
++        y: string | number;
++    }>, "many">;
++}, "strip", z.ZodTypeAny, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: number;
++        y: number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
++}, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: string | number;
++        y: string | number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
+ }>]>;
+ type PCBKeepoutInput = z.input<typeof pcb_keepout>;
+ interface PCBKeepoutRect {
+@@ -12082,7 +12195,12 @@ interface PcbKeepoutOutline {
+     /** Allow components and their pads/plated holes without keepout diagnostics; copper pours remain excluded. */
+     allow_placements?: boolean;
+ }
+-type PCBKeepout = PCBKeepoutRect | PCBKeepoutCircle | PcbKeepoutOutline;
++/** Filled polygon. The last point is implicitly connected to the first. */
++interface PcbKeepoutPolygon extends Omit<PcbKeepoutOutline, "shape" | "outline" | "stroke_width"> {
++    shape: "polygon";
++    points: Point[];
++}
++type PCBKeepout = PCBKeepoutRect | PCBKeepoutCircle | PcbKeepoutOutline | PcbKeepoutPolygon;
+ 
+ declare const pcb_keepout_overlap_warning: z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout_overlap_warning">;
+@@ -43842,7 +43960,7 @@ declare const any_circuit_element: z.ZodUnion<[z.ZodObject<{
+     pcb_plated_hole_id?: string | undefined;
+     hole_offset_x?: string | number | undefined;
+     hole_offset_y?: string | number | undefined;
+-}>]>, z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
++}>]>, z.ZodUnion<[z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout">;
+     shape: z.ZodLiteral<"rect">;
+     pcb_group_id: z.ZodOptional<z.ZodString>;
+@@ -44016,6 +44134,61 @@ declare const any_circuit_element: z.ZodUnion<[z.ZodObject<{
+     warning_only?: boolean | undefined;
+     allow_traces?: boolean | undefined;
+     allow_placements?: boolean | undefined;
++}>]>, z.ZodObject<{
++    type: z.ZodLiteral<"pcb_keepout">;
++    description: z.ZodOptional<z.ZodString>;
++    layers: z.ZodArray<z.ZodString, "many">;
++    subcircuit_id: z.ZodOptional<z.ZodString>;
++    pcb_group_id: z.ZodOptional<z.ZodString>;
++    pcb_keepout_id: z.ZodString;
++    excluded_pcb_component_ids: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
++    warning_only: z.ZodOptional<z.ZodBoolean>;
++    allow_traces: z.ZodOptional<z.ZodBoolean>;
++    allow_placements: z.ZodOptional<z.ZodBoolean>;
++} & {
++    shape: z.ZodLiteral<"polygon">;
++    points: z.ZodArray<z.ZodObject<{
++        x: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++        y: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++    }, "strip", z.ZodTypeAny, {
++        x: number;
++        y: number;
++    }, {
++        x: string | number;
++        y: string | number;
++    }>, "many">;
++}, "strip", z.ZodTypeAny, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: number;
++        y: number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
++}, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: string | number;
++        y: string | number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
+ }>]>, z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout_overlap_warning">;
+     pcb_keepout_overlap_warning_id: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+@@ -65070,7 +65243,7 @@ declare const any_soup_element: z.ZodUnion<[z.ZodObject<{
+     pcb_plated_hole_id?: string | undefined;
+     hole_offset_x?: string | number | undefined;
+     hole_offset_y?: string | number | undefined;
+-}>]>, z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
++}>]>, z.ZodUnion<[z.ZodUnion<[z.ZodUnion<[z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout">;
+     shape: z.ZodLiteral<"rect">;
+     pcb_group_id: z.ZodOptional<z.ZodString>;
+@@ -65244,6 +65417,61 @@ declare const any_soup_element: z.ZodUnion<[z.ZodObject<{
+     warning_only?: boolean | undefined;
+     allow_traces?: boolean | undefined;
+     allow_placements?: boolean | undefined;
++}>]>, z.ZodObject<{
++    type: z.ZodLiteral<"pcb_keepout">;
++    description: z.ZodOptional<z.ZodString>;
++    layers: z.ZodArray<z.ZodString, "many">;
++    subcircuit_id: z.ZodOptional<z.ZodString>;
++    pcb_group_id: z.ZodOptional<z.ZodString>;
++    pcb_keepout_id: z.ZodString;
++    excluded_pcb_component_ids: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
++    warning_only: z.ZodOptional<z.ZodBoolean>;
++    allow_traces: z.ZodOptional<z.ZodBoolean>;
++    allow_placements: z.ZodOptional<z.ZodBoolean>;
++} & {
++    shape: z.ZodLiteral<"polygon">;
++    points: z.ZodArray<z.ZodObject<{
++        x: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++        y: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber]>, number, string | number>;
++    }, "strip", z.ZodTypeAny, {
++        x: number;
++        y: number;
++    }, {
++        x: string | number;
++        y: string | number;
++    }>, "many">;
++}, "strip", z.ZodTypeAny, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: number;
++        y: number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
++}, {
++    type: "pcb_keepout";
++    shape: "polygon";
++    layers: string[];
++    points: {
++        x: string | number;
++        y: string | number;
++    }[];
++    pcb_keepout_id: string;
++    description?: string | undefined;
++    subcircuit_id?: string | undefined;
++    pcb_group_id?: string | undefined;
++    excluded_pcb_component_ids?: string[] | undefined;
++    warning_only?: boolean | undefined;
++    allow_traces?: boolean | undefined;
++    allow_placements?: boolean | undefined;
+ }>]>, z.ZodObject<{
+     type: z.ZodLiteral<"pcb_keepout_overlap_warning">;
+     pcb_keepout_overlap_warning_id: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+@@ -80358,4 +80586,4 @@ type AnySoupElementInput = AnyCircuitElementInput;
+  */
+ type CircuitJson = AnyCircuitElement[];
+ 
+-export { type AnyCircuitElement, type AnyCircuitElementInput, type AnySoupElement, type AnySoupElementInput, type AnySourceComponent, type AnySourceElement, type Asset, type AssetInput, type BRepShape, type BaseCircuitJsonError, type BaseCircuitJsonErrorInput, type CadComponent, type CadComponentAnchorAlignment, type CadComponentInput, type CadModelAxisDirection, type CadModelFormat, type CircuitJson, type CircuitJsonError, type CircuitJsonFootprintLoadError, type CircuitJsonFootprintLoadErrorInput, type Distance, type ExperimentType, type ExternalFootprintLoadError, type ExternalFootprintLoadErrorInput, type InferredProjectMetadata, type InferredSchematicNetLabel, type InputPoint, type InputPosition, type InputRotation, type InsertionDirection, type InsertionDirectionCartesian, type InsertionDirectionDeprecated, type InsertionDirectionInput, type KicadAt, type KicadEffects, type KicadFont, type KicadFootprintAttributes, type KicadFootprintMetadata, type KicadFootprintModel, type KicadFootprintPad, type KicadFootprintProperties, type KicadProperty, type KicadSymbolEffects, type KicadSymbolMetadata, type KicadSymbolPinNames, type KicadSymbolPinNumbers, type KicadSymbolProperties, type KicadSymbolProperty, type LayerRef, type LayerRefInput, type Length, type ManufacturingDrcProperties, type NinePointAnchor, type PCBBoard, type PCBComponent, type PCBCopperText, type PCBCourtyardOutline, type PCBCourtyardPolygon, type PCBCourtyardRect, type PCBFabricationNoteDimension, type PCBFabricationNotePath, type PCBFabricationNoteRect, type PCBFabricationNoteText, type PCBHole, type PCBHoleInput, type PCBKeepout, type PCBKeepoutCircle, type PCBKeepoutInput, type PCBKeepoutRect, type PCBMissingFootprintError, type PCBPackingError, type PCBPanel, type PCBPanelizationPlacementError, type PCBPlacementError, type PCBPlatedHole, type PCBPlatedHoleInput, type PCBPort, type PCBPortInput, type PCBPortNotMatchedError, type PCBSMTPad, type PCBSMTPadInput, type PCBSilkscreenLine, type PCBSilkscreenText, type PCBSolderPasteInput, type PCBText, type PCBTrace, type PCBTraceError, type PCBTraceHint, type PCBTraceInput, type PCBTraceMissingError, type PCBVia, type PcbAutoroutingError, type PcbAutoroutingErrorInput, type PcbAutoroutingErrorInterface, type PcbBend, type PcbBendInput, type PcbBoard, type PcbBoardInput, type PcbBreakoutPoint, type PcbBreakoutPointInput, type PcbBusLengthSkewError, type PcbBusLengthSkewErrorInput, type PcbCircuitElement, type PcbComponent, type PcbComponentInput, type PcbComponentInvalidLayerError, type PcbComponentInvalidLayerErrorInput, type PcbComponentMetadata, type PcbComponentMissingCourtyardWarning, type PcbComponentMissingCourtyardWarningInput, type PcbComponentNotOnBoardEdgeError, type PcbComponentNotOnBoardEdgeErrorInput, type PcbComponentOutsideBoardError, type PcbComponentOutsideBoardErrorInput, type PcbConnectorNotInAccessibleOrientationWarning, type PcbConnectorNotInAccessibleOrientationWarningInput, type PcbCopperPour, type PcbCopperPourBRep, type PcbCopperPourBRepInput, type PcbCopperPourInput, type PcbCopperPourPolygon, type PcbCopperPourPolygonInput, type PcbCopperPourRect, type PcbCopperPourRectInput, type PcbCopperText, type PcbCopperTextInput, type PcbCourtyardCircle, type PcbCourtyardCircleInput, type PcbCourtyardOutline, type PcbCourtyardOutlineInput, type PcbCourtyardOverlapError, type PcbCourtyardOverlapErrorInput, type PcbCourtyardPill, type PcbCourtyardPillInput, type PcbCourtyardPolygon, type PcbCourtyardPolygonInput, type PcbCourtyardRect, type PcbCourtyardRectInput, type PcbCutout, type PcbCutoutCircle, type PcbCutoutCircleInput, type PcbCutoutInput, type PcbCutoutPath, type PcbCutoutPathInput, type PcbCutoutPolygon, type PcbCutoutPolygonInput, type PcbCutoutRect, type PcbCutoutRectInput, type PcbDebugLine, type PcbDebugObject, type PcbDebugObjectInput, type PcbDebugPoint, type PcbDebugRect, type PcbFabricationNoteDimension, type PcbFabricationNoteDimensionInput, type PcbFabricationNotePath, type PcbFabricationNotePathInput, type PcbFabricationNoteRect, type PcbFabricationNoteRectInput, type PcbFabricationNoteText, type PcbFabricationNoteTextInput, type PcbFabricatorExtraChargeWarning, type PcbFabricatorExtraChargeWarningInput, type PcbFootprintOverlapError, type PcbFootprintOverlapErrorInput, type PcbGroundPlane, type PcbGroundPlaneInput, type PcbGroundPlaneRegion, type PcbGroundPlaneRegionInput, type PcbGroup, type PcbGroupInput, type PcbHole, type PcbHoleCircle, type PcbHoleCircleInput, type PcbHoleCircleOrSquare, type PcbHoleCircleOrSquareInput, type PcbHoleCircularWithRectPad, type PcbHoleOval, type PcbHoleOvalInput, type PcbHolePill, type PcbHolePillInput, type PcbHolePillWithRectPad, type PcbHoleRect, type PcbHoleRectInput, type PcbHoleRotatedPill, type PcbHoleRotatedPillInput, type PcbHoleRotatedPillWithRectPad, type PcbHoleWithPolygonPad, type PcbKeepoutOutline, type PcbKeepoutOutlineInput, type PcbKeepoutOverlapWarning, type PcbKeepoutOverlapWarningInput, type PcbManualEditConflictWarning, type PcbManualEditConflictWarningInput, type PcbMissingFootprintError, type PcbMissingFootprintErrorInput, type PcbNet, type PcbNetInput, type PcbNoteDimension, type PcbNoteDimensionInput, type PcbNoteLine, type PcbNoteLineInput, type PcbNotePath, type PcbNotePathInput, type PcbNoteRect, type PcbNoteRectInput, type PcbNoteText, type PcbNoteTextInput, type PcbPackingError, type PcbPackingErrorInput, type PcbPadPadClearanceError, type PcbPadPadClearanceErrorInput, type PcbPadTraceClearanceError, type PcbPadTraceClearanceErrorInput, type PcbPanel, type PcbPanelInput, type PcbPanelizationPlacementError, type PcbPanelizationPlacementErrorInput, type PcbPin1Location, type PcbPin1LocationRotation, type PcbPlacementError, type PcbPlacementErrorInput, type PcbPlatedHole, type PcbPlatedHoleCircle, type PcbPlatedHoleInput, type PcbPlatedHoleOval, type PcbPort, type PcbPortInput, type PcbPortNotConnectedError, type PcbPortNotConnectedErrorInput, type PcbPortNotMatchedError, type PcbPortNotMatchedErrorInput, type PcbPreflightRoutingError, type PcbPreflightRoutingErrorInput, type PcbRenderLayer, type PcbRouteHint, type PcbRouteHintInput, type PcbRouteHints, type PcbRouteHintsInput, type PcbSilkscreenCircle, type PcbSilkscreenCircleInput, type PcbSilkscreenGraphic, type PcbSilkscreenGraphicBRep, type PcbSilkscreenGraphicBRepInput, type PcbSilkscreenGraphicInput, type PcbSilkscreenLine, type PcbSilkscreenLineInput, type PcbSilkscreenOval, type PcbSilkscreenOvalDeprecated, type PcbSilkscreenOvalInput, type PcbSilkscreenPath, type PcbSilkscreenPathDeprecated, type PcbSilkscreenPathInput, type PcbSilkscreenPill, type PcbSilkscreenPillDeprecated, type PcbSilkscreenPillInput, type PcbSilkscreenRect, type PcbSilkscreenRectInput, type PcbSilkscreenRectOld, type PcbSilkscreenText, type PcbSilkscreenTextInput, type PcbSmtPad, type PcbSmtPadCircle, type PcbSmtPadPill, type PcbSmtPadPolygon, type PcbSmtPadRect, type PcbSmtPadRotatedPill, type PcbSmtPadRotatedRect, type PcbSolderPaste, type PcbSolderPasteCircle, type PcbSolderPasteOval, type PcbSolderPastePill, type PcbSolderPasteRect, type PcbSolderPasteRotatedPill, type PcbSolderPasteRotatedRect, type PcbStiffener, type PcbStiffenerBase, type PcbStiffenerInput, type PcbStiffenerPolygon, type PcbStiffenerPolygonInput, type PcbStiffenerRect, type PcbStiffenerRectInput, type PcbText, type PcbTextInput, type PcbThermalSpoke, type PcbThermalSpokeInput, type PcbTrace, type PcbTraceError, type PcbTraceErrorInput, type PcbTraceHint, type PcbTraceHintInput, type PcbTraceInput, type PcbTraceMissingError, type PcbTraceMissingErrorInput, type PcbTraceRoutePoint, type PcbTraceRoutePointThroughPad, type PcbTraceRoutePointVia, type PcbTraceRoutePointWire, type PcbTraceTooLongError, type PcbTraceTooLongErrorInput, type PcbTraceTooLongWarning, type PcbTraceTooLongWarningInput, type PcbTraceTooManyViasWarning, type PcbTraceTooManyViasWarningInput, type PcbTraceWarning, type PcbTraceWarningInput, type PcbVia, type PcbViaClearanceError, type PcbViaClearanceErrorInput, type PcbViaInput, type PcbViaTraceClearanceError, type PcbViaTraceClearanceErrorInput, type Point, type Point3, type PointWithBulge, type Position, type Ring, type Rotation, type RouteHintPoint, type RouteHintPointInput, type SchematicArc, type SchematicArcInput, type SchematicBox, type SchematicBoxInput, type SchematicCircle, type SchematicCircleInput, type SchematicComponent, type SchematicComponentInput, type SchematicComponentOverlapWarning, type SchematicComponentOverlapWarningInput, type SchematicComponentStylingWarning, type SchematicComponentStylingWarningInput, type SchematicDebugLine, type SchematicDebugObject, type SchematicDebugObjectInput, type SchematicDebugPoint, type SchematicDebugRect, type SchematicElementOutsideSheetWarning, type SchematicElementOutsideSheetWarningInput, type SchematicError, type SchematicErrorInput, type SchematicGraphic, type SchematicGraphicInput, type SchematicGroup, type SchematicGroupInput, type SchematicLayoutError, type SchematicLayoutErrorInput, type SchematicLine, type SchematicLineInput, type SchematicManualEditConflictWarning, type SchematicManualEditConflictWarningInput, type SchematicMissingSheetWarning, type SchematicMissingSheetWarningInput, type SchematicNetLabel, type SchematicNetLabelInput, type SchematicPath, type SchematicPathInput, type SchematicPort, type SchematicPortArrangement, type SchematicPortArrangementBySides, type SchematicPortArrangementBySize, type SchematicPortInput, type SchematicRect, type SchematicRectInput, type SchematicSheet, type SchematicSheetInput, type SchematicSheetSize, type SchematicSymbol, type SchematicSymbolInput, type SchematicSymbolMetadata, type SchematicTable, type SchematicTableCell, type SchematicTableCellInput, type SchematicTableInput, type SchematicText, type SchematicTextInput, type SchematicTextPart, type SchematicTrace, type SchematicTraceEdge, type SchematicTraceInput, type SchematicVoltageProbe, type SchematicVoltageProbeInput, type SimulationAcCurrentSource, type SimulationAcCurrentSourceInput, type SimulationAcSweepCurrentGraph, type SimulationAcSweepCurrentGraphInput, type SimulationAcSweepVoltageGraph, type SimulationAcSweepVoltageGraphInput, type SimulationAcVoltageSource, type SimulationAcVoltageSourceInput, type SimulationAnalysisResult, type SimulationAnalysisResultInput, type SimulationCapacitanceParameterSweep, type SimulationComplexSample, type SimulationCurrentAnalysisResult, type SimulationCurrentAnalysisResultInput, type SimulationCurrentParameterSweep, type SimulationCurrentProbe, type SimulationCurrentProbeInput, type SimulationCurrentSource, type SimulationCurrentSourceInput, type SimulationDcCurrentSource, type SimulationDcOperatingPointCurrent, type SimulationDcOperatingPointCurrentInput, type SimulationDcOperatingPointVoltage, type SimulationDcOperatingPointVoltageInput, type SimulationDcSweepCurrentGraph, type SimulationDcSweepCurrentGraphInput, type SimulationDcSweepUnit, type SimulationDcSweepVoltageGraph, type SimulationDcSweepVoltageGraphInput, type SimulationDcVoltageSource, type SimulationExperiment, type SimulationExperimentInput, type SimulationInductanceParameterSweep, type SimulationNonTransientCurrentAnalysisResult, type SimulationNonTransientCurrentAnalysisResultInput, type SimulationNonTransientVoltageAnalysisResult, type SimulationNonTransientVoltageAnalysisResultInput, type SimulationOpAmp, type SimulationOpAmpInput, type SimulationOscilloscopeTrace, type SimulationOscilloscopeTraceInput, type SimulationParameterSweep, type SimulationParameterSweepCoordinate, type SimulationParameterSweepInput, type SimulationParameterType, type SimulationParameterUnit, type SimulationResistanceParameterSweep, type SimulationSpiceSubcircuit, type SimulationSpiceSubcircuitInput, type SimulationSwitch, type SimulationSwitchInput, type SimulationTransientCurrentGraph, type SimulationTransientCurrentGraphInput, type SimulationTransientVoltageGraph, type SimulationTransientVoltageGraphInput, type SimulationUnknownExperimentError, type SimulationUnknownExperimentErrorInput, type SimulationVoltageAnalysisResult, type SimulationVoltageAnalysisResultInput, type SimulationVoltageParameterSweep, type SimulationVoltageProbe, type SimulationVoltageProbeInput, type SimulationVoltageSource, type SimulationVoltageSourceInput, type Size, type SizeInput, type SourceAmbiguousPortReference, type SourceAmbiguousPortReferenceInput, type SourceBoard, type SourceBoardInput, type SourceBus, type SourceBusInput, type SourceComponentBase, type SourceComponentInternalConnection, type SourceComponentMisconfiguredError, type SourceComponentMisconfiguredErrorInput, type SourceComponentPinsUnderspecifiedWarning, type SourceComponentPinsUnderspecifiedWarningInput, type SourceConfusingNetNameWarning, type SourceConfusingNetNameWarningInput, type SourceFailedToCreateComponentError, type SourceFailedToCreateComponentErrorInput, type SourceGroup, type SourceGroupInput, type SourceI2cMisconfiguredError, type SourceI2cMisconfiguredErrorInput, type SourceInterconnect, type SourceInterconnectInput, type SourceInvalidComponentPropertyError, type SourceInvalidComponentPropertyErrorInput, type SourceManuallyPlacedVia, type SourceManuallyPlacedViaInput, type SourceMissingManufacturerPartNumberWarning, type SourceMissingManufacturerPartNumberWarningInput, type SourceMissingPropertyError, type SourceMissingPropertyErrorInput, type SourceNet, type SourceNetInput, type SourceNoGroundPinDefinedWarning, type SourceNoGroundPinDefinedWarningInput, type SourceNoPowerPinDefinedWarning, type SourceNoPowerPinDefinedWarningInput, type SourcePartNotFoundWarning, type SourcePartNotFoundWarningInput, type SourcePcbGroundPlane, type SourcePcbGroundPlaneInput, type SourcePinAttributes, type SourcePinMissingTraceWarning, type SourcePinMissingTraceWarningInput, type SourcePinMustBeConnectedError, type SourcePinMustBeConnectedErrorInput, type SourcePort, type SourcePortInput, type SourceProjectMetadata, type SourcePropertyIgnoredWarning, type SourcePropertyIgnoredWarningInput, type SourceRefdesConventionWarning, type SourceRefdesConventionWarningInput, type SourceSimpleAmmeter, type SourceSimpleAmmeterInput, type SourceSimpleBattery, type SourceSimpleBatteryInput, type SourceSimpleCapacitor, type SourceSimpleCapacitorInput, type SourceSimpleChip, type SourceSimpleChipInput, type SourceSimpleConnector, type SourceSimpleConnectorInput, type SourceSimpleConnectorStandard, type SourceSimpleCrystal, type SourceSimpleCrystalInput, type SourceSimpleCurrentSource, type SourceSimpleCurrentSourceInput, type SourceSimpleDiode, type SourceSimpleDiodeInput, type SourceSimpleFiducial, type SourceSimpleFiducialInput, type SourceSimpleFuse, type SourceSimpleFuseInput, type SourceSimpleGround, type SourceSimpleGroundInput, type SourceSimpleInductor, type SourceSimpleInductorInput, type SourceSimpleLed, type SourceSimpleLedInput, type SourceSimpleMosfet, type SourceSimpleMosfetInput, type SourceSimpleOpAmp, type SourceSimpleOpAmpInput, type SourceSimplePinHeader, type SourceSimplePinHeaderInput, type SourceSimplePinout, type SourceSimplePinoutInput, type SourceSimplePotentiometer, type SourceSimplePotentiometerInput, type SourceSimplePowerSource, type SourceSimplePowerSourceInput, type SourceSimplePushButton, type SourceSimplePushButtonInput, type SourceSimpleResistor, type SourceSimpleResistorInput, type SourceSimpleResonator, type SourceSimpleResonatorInput, type SourceSimpleSwitch, type SourceSimpleSwitchInput, type SourceSimpleTestPoint, type SourceSimpleTestPointInput, type SourceSimpleTransistor, type SourceSimpleTransistorInput, type SourceSimpleVoltageProbe, type SourceSimpleVoltageProbeInput, type SourceSimpleVoltageSource, type SourceSimpleVoltageSourceInput, type SourceTrace, type SourceTraceNotConnectedError, type SourceTraceNotConnectedErrorInput, type SourceUnnamedTraceWarning, type SourceUnnamedTraceWarningInput, type SpiceSimulationOptions, type SupplierFootprintMismatchWarning, type SupplierFootprintMismatchWarningInput, type SupplierName, type SupplierPin1LocationMap, type UnknownErrorFindingPart, type UnknownErrorFindingPartInput, type VisibleLayer, type VisibleLayerRef, type WaveShape, all_layers, any_circuit_element, any_soup_element, any_source_component, asset, base_circuit_json_error, battery_capacity, brep_shape, cadModelDefaultDirectionMap, cad_component, cad_model_axis_directions, cad_model_formats, capacitance, circuit_json_footprint_load_error, current, distance, duration_ms, experiment_type, external_footprint_load_error, frequency, getRotationBetweenPcbPin1Locations, getZodPrefixedIdWithDefault, inductance, insertionDirectionToCanonical, insertionDirectionToVector, insertion_direction, kicadAt, kicadEffects, kicadFont, kicadFootprintAttributes, kicadFootprintMetadata, kicadFootprintModel, kicadFootprintPad, kicadFootprintProperties, kicadProperty, kicadSymbolEffects, kicadSymbolMetadata, kicadSymbolPinNames, kicadSymbolPinNumbers, kicadSymbolProperties, kicadSymbolProperty, layer_ref, layer_string, length, manufacturing_drc_properties, ms, ninePointAnchor, pcbRenderLayer, pcb_autorouting_error, pcb_bend, pcb_board, pcb_breakout_point, pcb_bus_length_skew_error, pcb_component, pcb_component_invalid_layer_error, pcb_component_missing_courtyard_warning, pcb_component_not_on_board_edge_error, pcb_component_outside_board_error, pcb_connector_not_in_accessible_orientation_warning, pcb_copper_pour, pcb_copper_pour_brep, pcb_copper_pour_polygon, pcb_copper_pour_rect, pcb_copper_text, pcb_courtyard_circle, pcb_courtyard_outline, pcb_courtyard_overlap_error, pcb_courtyard_pill, pcb_courtyard_polygon, pcb_courtyard_rect, pcb_cutout, pcb_cutout_circle, pcb_cutout_path, pcb_cutout_polygon, pcb_cutout_rect, pcb_debug_line, pcb_debug_object, pcb_debug_object_base, pcb_debug_point, pcb_debug_rect, pcb_fabrication_note_dimension, pcb_fabrication_note_path, pcb_fabrication_note_rect, pcb_fabrication_note_text, pcb_fabricator_extra_charge_warning, pcb_footprint_overlap_error, pcb_ground_plane, pcb_ground_plane_region, pcb_group, pcb_hole, pcb_hole_circle_or_square_shape, pcb_hole_circle_shape, pcb_hole_oval_shape, pcb_hole_pill_shape, pcb_hole_rect_shape, pcb_hole_rotated_pill_shape, pcb_keepout, pcb_keepout_outline, pcb_keepout_overlap_warning, pcb_manual_edit_conflict_warning, pcb_missing_footprint_error, pcb_net, pcb_note_dimension, pcb_note_line, pcb_note_path, pcb_note_rect, pcb_note_text, pcb_packing_error, pcb_pad_pad_clearance_error, pcb_pad_trace_clearance_error, pcb_panel, pcb_panelization_placement_error, pcb_pin1_location, pcb_placement_error, pcb_plated_hole, pcb_port, pcb_port_not_connected_error, pcb_port_not_matched_error, pcb_preflight_routing_error, pcb_route_hint, pcb_route_hints, pcb_silkscreen_circle, pcb_silkscreen_graphic, pcb_silkscreen_graphic_brep, pcb_silkscreen_line, pcb_silkscreen_oval, pcb_silkscreen_path, pcb_silkscreen_pill, pcb_silkscreen_rect, pcb_silkscreen_text, pcb_smtpad, pcb_smtpad_pill, pcb_solder_paste, pcb_stiffener, pcb_stiffener_polygon, pcb_stiffener_rect, pcb_text, pcb_thermal_spoke, pcb_trace, pcb_trace_error, pcb_trace_hint, pcb_trace_missing_error, pcb_trace_route_point, pcb_trace_route_point_through_pad, pcb_trace_route_point_via, pcb_trace_route_point_wire, pcb_trace_too_long_error, pcb_trace_too_long_warning, pcb_trace_too_many_vias_warning, pcb_trace_warning, pcb_via, pcb_via_clearance_error, pcb_via_trace_clearance_error, point, point3, point_with_bulge, port_arrangement, position, position3, resistance, ring, rotation, route_hint_point, schematic_arc, schematic_box, schematic_circle, schematic_component, schematic_component_overlap_warning, schematic_component_port_arrangement_by_sides, schematic_component_port_arrangement_by_size, schematic_component_styling_warning, schematic_debug_line, schematic_debug_object, schematic_debug_object_base, schematic_debug_point, schematic_debug_rect, schematic_element_outside_sheet_warning, schematic_error, schematic_graphic, schematic_group, schematic_layout_error, schematic_line, schematic_manual_edit_conflict_warning, schematic_missing_sheet_warning, schematic_net_label, schematic_path, schematic_pin_styles, schematic_port, schematic_rect, schematic_sheet, schematic_sheet_size, schematic_symbol, schematic_table, schematic_table_cell, schematic_text, schematic_text_part, schematic_trace, schematic_voltage_probe, simulation_ac_current_source, simulation_ac_sweep_current_graph, simulation_ac_sweep_voltage_graph, simulation_ac_voltage_source, simulation_complex_sample, simulation_current_probe, simulation_current_source, simulation_dc_current_source, simulation_dc_operating_point_current, simulation_dc_operating_point_voltage, simulation_dc_sweep_current_graph, simulation_dc_sweep_unit, simulation_dc_sweep_voltage_graph, simulation_dc_voltage_source, simulation_experiment, simulation_op_amp, simulation_oscilloscope_trace, simulation_parameter_sweep, simulation_parameter_sweep_coordinate, simulation_parameter_type, simulation_parameter_unit, simulation_spice_subcircuit, simulation_switch, simulation_transient_current_graph, simulation_transient_voltage_graph, simulation_unknown_experiment_error, simulation_voltage_probe, simulation_voltage_source, size, source_ambiguous_port_reference, source_board, source_bus, source_component_base, source_component_internal_connection, source_component_misconfigured_error, source_component_pins_underspecified_warning, source_confusing_net_name_warning, source_failed_to_create_component_error, source_group, source_i2c_misconfigured_error, source_interconnect, source_invalid_component_property_error, source_manually_placed_via, source_missing_manufacturer_part_number_warning, source_missing_property_error, source_net, source_no_ground_pin_defined_warning, source_no_power_pin_defined_warning, source_part_not_found_warning, source_pcb_ground_plane, source_pin_attributes, source_pin_missing_trace_warning, source_pin_must_be_connected_error, source_port, source_project_metadata, source_property_ignored_warning, source_refdes_convention_warning, source_simple_ammeter, source_simple_battery, source_simple_capacitor, source_simple_chip, source_simple_connector, source_simple_connector_standards, source_simple_crystal, source_simple_current_source, source_simple_diode, source_simple_fiducial, source_simple_fuse, source_simple_ground, source_simple_inductor, source_simple_led, source_simple_mosfet, source_simple_op_amp, source_simple_pin_header, source_simple_pinout, source_simple_potentiometer, source_simple_power_source, source_simple_push_button, source_simple_resistor, source_simple_resonator, source_simple_switch, source_simple_test_point, source_simple_transistor, source_simple_voltage_probe, source_simple_voltage_source, source_trace, source_trace_not_connected_error, source_unnamed_trace_warning, spice_simulation_options, supplier_footprint_mismatch_warning, supplier_name, time, timestamp, unknown_error_finding_part, visible_layer, voltage, wave_shape };
++export { type AnyCircuitElement, type AnyCircuitElementInput, type AnySoupElement, type AnySoupElementInput, type AnySourceComponent, type AnySourceElement, type Asset, type AssetInput, type BRepShape, type BaseCircuitJsonError, type BaseCircuitJsonErrorInput, type CadComponent, type CadComponentAnchorAlignment, type CadComponentInput, type CadModelAxisDirection, type CadModelFormat, type CircuitJson, type CircuitJsonError, type CircuitJsonFootprintLoadError, type CircuitJsonFootprintLoadErrorInput, type Distance, type ExperimentType, type ExternalFootprintLoadError, type ExternalFootprintLoadErrorInput, type InferredProjectMetadata, type InferredSchematicNetLabel, type InputPoint, type InputPosition, type InputRotation, type InsertionDirection, type InsertionDirectionCartesian, type InsertionDirectionDeprecated, type InsertionDirectionInput, type KicadAt, type KicadEffects, type KicadFont, type KicadFootprintAttributes, type KicadFootprintMetadata, type KicadFootprintModel, type KicadFootprintPad, type KicadFootprintProperties, type KicadProperty, type KicadSymbolEffects, type KicadSymbolMetadata, type KicadSymbolPinNames, type KicadSymbolPinNumbers, type KicadSymbolProperties, type KicadSymbolProperty, type LayerRef, type LayerRefInput, type Length, type ManufacturingDrcProperties, type NinePointAnchor, type PCBBoard, type PCBComponent, type PCBCopperText, type PCBCourtyardOutline, type PCBCourtyardPolygon, type PCBCourtyardRect, type PCBFabricationNoteDimension, type PCBFabricationNotePath, type PCBFabricationNoteRect, type PCBFabricationNoteText, type PCBHole, type PCBHoleInput, type PCBKeepout, type PCBKeepoutCircle, type PCBKeepoutInput, type PCBKeepoutRect, type PCBMissingFootprintError, type PCBPackingError, type PCBPanel, type PCBPanelizationPlacementError, type PCBPlacementError, type PCBPlatedHole, type PCBPlatedHoleInput, type PCBPort, type PCBPortInput, type PCBPortNotMatchedError, type PCBSMTPad, type PCBSMTPadInput, type PCBSilkscreenLine, type PCBSilkscreenText, type PCBSolderPasteInput, type PCBText, type PCBTrace, type PCBTraceError, type PCBTraceHint, type PCBTraceInput, type PCBTraceMissingError, type PCBVia, type PcbAutoroutingError, type PcbAutoroutingErrorInput, type PcbAutoroutingErrorInterface, type PcbBend, type PcbBendInput, type PcbBoard, type PcbBoardInput, type PcbBreakoutPoint, type PcbBreakoutPointInput, type PcbBusLengthSkewError, type PcbBusLengthSkewErrorInput, type PcbCircuitElement, type PcbComponent, type PcbComponentInput, type PcbComponentInvalidLayerError, type PcbComponentInvalidLayerErrorInput, type PcbComponentMetadata, type PcbComponentMissingCourtyardWarning, type PcbComponentMissingCourtyardWarningInput, type PcbComponentNotOnBoardEdgeError, type PcbComponentNotOnBoardEdgeErrorInput, type PcbComponentOutsideBoardError, type PcbComponentOutsideBoardErrorInput, type PcbConnectorNotInAccessibleOrientationWarning, type PcbConnectorNotInAccessibleOrientationWarningInput, type PcbCopperPour, type PcbCopperPourBRep, type PcbCopperPourBRepInput, type PcbCopperPourInput, type PcbCopperPourPolygon, type PcbCopperPourPolygonInput, type PcbCopperPourRect, type PcbCopperPourRectInput, type PcbCopperText, type PcbCopperTextInput, type PcbCourtyardCircle, type PcbCourtyardCircleInput, type PcbCourtyardOutline, type PcbCourtyardOutlineInput, type PcbCourtyardOverlapError, type PcbCourtyardOverlapErrorInput, type PcbCourtyardPill, type PcbCourtyardPillInput, type PcbCourtyardPolygon, type PcbCourtyardPolygonInput, type PcbCourtyardRect, type PcbCourtyardRectInput, type PcbCutout, type PcbCutoutCircle, type PcbCutoutCircleInput, type PcbCutoutInput, type PcbCutoutPath, type PcbCutoutPathInput, type PcbCutoutPolygon, type PcbCutoutPolygonInput, type PcbCutoutRect, type PcbCutoutRectInput, type PcbDebugLine, type PcbDebugObject, type PcbDebugObjectInput, type PcbDebugPoint, type PcbDebugRect, type PcbFabricationNoteDimension, type PcbFabricationNoteDimensionInput, type PcbFabricationNotePath, type PcbFabricationNotePathInput, type PcbFabricationNoteRect, type PcbFabricationNoteRectInput, type PcbFabricationNoteText, type PcbFabricationNoteTextInput, type PcbFabricatorExtraChargeWarning, type PcbFabricatorExtraChargeWarningInput, type PcbFootprintOverlapError, type PcbFootprintOverlapErrorInput, type PcbGroundPlane, type PcbGroundPlaneInput, type PcbGroundPlaneRegion, type PcbGroundPlaneRegionInput, type PcbGroup, type PcbGroupInput, type PcbHole, type PcbHoleCircle, type PcbHoleCircleInput, type PcbHoleCircleOrSquare, type PcbHoleCircleOrSquareInput, type PcbHoleCircularWithRectPad, type PcbHoleOval, type PcbHoleOvalInput, type PcbHolePill, type PcbHolePillInput, type PcbHolePillWithRectPad, type PcbHoleRect, type PcbHoleRectInput, type PcbHoleRotatedPill, type PcbHoleRotatedPillInput, type PcbHoleRotatedPillWithRectPad, type PcbHoleWithPolygonPad, type PcbKeepoutOutline, type PcbKeepoutOutlineInput, type PcbKeepoutOverlapWarning, type PcbKeepoutOverlapWarningInput, type PcbKeepoutPolygon, type PcbKeepoutPolygonInput, type PcbManualEditConflictWarning, type PcbManualEditConflictWarningInput, type PcbMissingFootprintError, type PcbMissingFootprintErrorInput, type PcbNet, type PcbNetInput, type PcbNoteDimension, type PcbNoteDimensionInput, type PcbNoteLine, type PcbNoteLineInput, type PcbNotePath, type PcbNotePathInput, type PcbNoteRect, type PcbNoteRectInput, type PcbNoteText, type PcbNoteTextInput, type PcbPackingError, type PcbPackingErrorInput, type PcbPadPadClearanceError, type PcbPadPadClearanceErrorInput, type PcbPadTraceClearanceError, type PcbPadTraceClearanceErrorInput, type PcbPanel, type PcbPanelInput, type PcbPanelizationPlacementError, type PcbPanelizationPlacementErrorInput, type PcbPin1Location, type PcbPin1LocationRotation, type PcbPlacementError, type PcbPlacementErrorInput, type PcbPlatedHole, type PcbPlatedHoleCircle, type PcbPlatedHoleInput, type PcbPlatedHoleOval, type PcbPort, type PcbPortInput, type PcbPortNotConnectedError, type PcbPortNotConnectedErrorInput, type PcbPortNotMatchedError, type PcbPortNotMatchedErrorInput, type PcbPreflightRoutingError, type PcbPreflightRoutingErrorInput, type PcbRenderLayer, type PcbRouteHint, type PcbRouteHintInput, type PcbRouteHints, type PcbRouteHintsInput, type PcbSilkscreenCircle, type PcbSilkscreenCircleInput, type PcbSilkscreenGraphic, type PcbSilkscreenGraphicBRep, type PcbSilkscreenGraphicBRepInput, type PcbSilkscreenGraphicInput, type PcbSilkscreenLine, type PcbSilkscreenLineInput, type PcbSilkscreenOval, type PcbSilkscreenOvalDeprecated, type PcbSilkscreenOvalInput, type PcbSilkscreenPath, type PcbSilkscreenPathDeprecated, type PcbSilkscreenPathInput, type PcbSilkscreenPill, type PcbSilkscreenPillDeprecated, type PcbSilkscreenPillInput, type PcbSilkscreenRect, type PcbSilkscreenRectInput, type PcbSilkscreenRectOld, type PcbSilkscreenText, type PcbSilkscreenTextInput, type PcbSmtPad, type PcbSmtPadCircle, type PcbSmtPadPill, type PcbSmtPadPolygon, type PcbSmtPadRect, type PcbSmtPadRotatedPill, type PcbSmtPadRotatedRect, type PcbSolderPaste, type PcbSolderPasteCircle, type PcbSolderPasteOval, type PcbSolderPastePill, type PcbSolderPasteRect, type PcbSolderPasteRotatedPill, type PcbSolderPasteRotatedRect, type PcbStiffener, type PcbStiffenerBase, type PcbStiffenerInput, type PcbStiffenerPolygon, type PcbStiffenerPolygonInput, type PcbStiffenerRect, type PcbStiffenerRectInput, type PcbText, type PcbTextInput, type PcbThermalSpoke, type PcbThermalSpokeInput, type PcbTrace, type PcbTraceError, type PcbTraceErrorInput, type PcbTraceHint, type PcbTraceHintInput, type PcbTraceInput, type PcbTraceMissingError, type PcbTraceMissingErrorInput, type PcbTraceRoutePoint, type PcbTraceRoutePointThroughPad, type PcbTraceRoutePointVia, type PcbTraceRoutePointWire, type PcbTraceTooLongError, type PcbTraceTooLongErrorInput, type PcbTraceTooLongWarning, type PcbTraceTooLongWarningInput, type PcbTraceTooManyViasWarning, type PcbTraceTooManyViasWarningInput, type PcbTraceWarning, type PcbTraceWarningInput, type PcbVia, type PcbViaClearanceError, type PcbViaClearanceErrorInput, type PcbViaInput, type PcbViaTraceClearanceError, type PcbViaTraceClearanceErrorInput, type Point, type Point3, type PointWithBulge, type Position, type Ring, type Rotation, type RouteHintPoint, type RouteHintPointInput, type SchematicArc, type SchematicArcInput, type SchematicBox, type SchematicBoxInput, type SchematicCircle, type SchematicCircleInput, type SchematicComponent, type SchematicComponentInput, type SchematicComponentOverlapWarning, type SchematicComponentOverlapWarningInput, type SchematicComponentStylingWarning, type SchematicComponentStylingWarningInput, type SchematicDebugLine, type SchematicDebugObject, type SchematicDebugObjectInput, type SchematicDebugPoint, type SchematicDebugRect, type SchematicElementOutsideSheetWarning, type SchematicElementOutsideSheetWarningInput, type SchematicError, type SchematicErrorInput, type SchematicGraphic, type SchematicGraphicInput, type SchematicGroup, type SchematicGroupInput, type SchematicLayoutError, type SchematicLayoutErrorInput, type SchematicLine, type SchematicLineInput, type SchematicManualEditConflictWarning, type SchematicManualEditConflictWarningInput, type SchematicMissingSheetWarning, type SchematicMissingSheetWarningInput, type SchematicNetLabel, type SchematicNetLabelInput, type SchematicPath, type SchematicPathInput, type SchematicPort, type SchematicPortArrangement, type SchematicPortArrangementBySides, type SchematicPortArrangementBySize, type SchematicPortInput, type SchematicRect, type SchematicRectInput, type SchematicSheet, type SchematicSheetInput, type SchematicSheetSize, type SchematicSymbol, type SchematicSymbolInput, type SchematicSymbolMetadata, type SchematicTable, type SchematicTableCell, type SchematicTableCellInput, type SchematicTableInput, type SchematicText, type SchematicTextInput, type SchematicTextPart, type SchematicTrace, type SchematicTraceEdge, type SchematicTraceInput, type SchematicVoltageProbe, type SchematicVoltageProbeInput, type SimulationAcCurrentSource, type SimulationAcCurrentSourceInput, type SimulationAcSweepCurrentGraph, type SimulationAcSweepCurrentGraphInput, type SimulationAcSweepVoltageGraph, type SimulationAcSweepVoltageGraphInput, type SimulationAcVoltageSource, type SimulationAcVoltageSourceInput, type SimulationAnalysisResult, type SimulationAnalysisResultInput, type SimulationCapacitanceParameterSweep, type SimulationComplexSample, type SimulationCurrentAnalysisResult, type SimulationCurrentAnalysisResultInput, type SimulationCurrentParameterSweep, type SimulationCurrentProbe, type SimulationCurrentProbeInput, type SimulationCurrentSource, type SimulationCurrentSourceInput, type SimulationDcCurrentSource, type SimulationDcOperatingPointCurrent, type SimulationDcOperatingPointCurrentInput, type SimulationDcOperatingPointVoltage, type SimulationDcOperatingPointVoltageInput, type SimulationDcSweepCurrentGraph, type SimulationDcSweepCurrentGraphInput, type SimulationDcSweepUnit, type SimulationDcSweepVoltageGraph, type SimulationDcSweepVoltageGraphInput, type SimulationDcVoltageSource, type SimulationExperiment, type SimulationExperimentInput, type SimulationInductanceParameterSweep, type SimulationNonTransientCurrentAnalysisResult, type SimulationNonTransientCurrentAnalysisResultInput, type SimulationNonTransientVoltageAnalysisResult, type SimulationNonTransientVoltageAnalysisResultInput, type SimulationOpAmp, type SimulationOpAmpInput, type SimulationOscilloscopeTrace, type SimulationOscilloscopeTraceInput, type SimulationParameterSweep, type SimulationParameterSweepCoordinate, type SimulationParameterSweepInput, type SimulationParameterType, type SimulationParameterUnit, type SimulationResistanceParameterSweep, type SimulationSpiceSubcircuit, type SimulationSpiceSubcircuitInput, type SimulationSwitch, type SimulationSwitchInput, type SimulationTransientCurrentGraph, type SimulationTransientCurrentGraphInput, type SimulationTransientVoltageGraph, type SimulationTransientVoltageGraphInput, type SimulationUnknownExperimentError, type SimulationUnknownExperimentErrorInput, type SimulationVoltageAnalysisResult, type SimulationVoltageAnalysisResultInput, type SimulationVoltageParameterSweep, type SimulationVoltageProbe, type SimulationVoltageProbeInput, type SimulationVoltageSource, type SimulationVoltageSourceInput, type Size, type SizeInput, type SourceAmbiguousPortReference, type SourceAmbiguousPortReferenceInput, type SourceBoard, type SourceBoardInput, type SourceBus, type SourceBusInput, type SourceComponentBase, type SourceComponentInternalConnection, type SourceComponentMisconfiguredError, type SourceComponentMisconfiguredErrorInput, type SourceComponentPinsUnderspecifiedWarning, type SourceComponentPinsUnderspecifiedWarningInput, type SourceConfusingNetNameWarning, type SourceConfusingNetNameWarningInput, type SourceFailedToCreateComponentError, type SourceFailedToCreateComponentErrorInput, type SourceGroup, type SourceGroupInput, type SourceI2cMisconfiguredError, type SourceI2cMisconfiguredErrorInput, type SourceInterconnect, type SourceInterconnectInput, type SourceInvalidComponentPropertyError, type SourceInvalidComponentPropertyErrorInput, type SourceManuallyPlacedVia, type SourceManuallyPlacedViaInput, type SourceMissingManufacturerPartNumberWarning, type SourceMissingManufacturerPartNumberWarningInput, type SourceMissingPropertyError, type SourceMissingPropertyErrorInput, type SourceNet, type SourceNetInput, type SourceNoGroundPinDefinedWarning, type SourceNoGroundPinDefinedWarningInput, type SourceNoPowerPinDefinedWarning, type SourceNoPowerPinDefinedWarningInput, type SourcePartNotFoundWarning, type SourcePartNotFoundWarningInput, type SourcePcbGroundPlane, type SourcePcbGroundPlaneInput, type SourcePinAttributes, type SourcePinMissingTraceWarning, type SourcePinMissingTraceWarningInput, type SourcePinMustBeConnectedError, type SourcePinMustBeConnectedErrorInput, type SourcePort, type SourcePortInput, type SourceProjectMetadata, type SourcePropertyIgnoredWarning, type SourcePropertyIgnoredWarningInput, type SourceRefdesConventionWarning, type SourceRefdesConventionWarningInput, type SourceSimpleAmmeter, type SourceSimpleAmmeterInput, type SourceSimpleBattery, type SourceSimpleBatteryInput, type SourceSimpleCapacitor, type SourceSimpleCapacitorInput, type SourceSimpleChip, type SourceSimpleChipInput, type SourceSimpleConnector, type SourceSimpleConnectorInput, type SourceSimpleConnectorStandard, type SourceSimpleCrystal, type SourceSimpleCrystalInput, type SourceSimpleCurrentSource, type SourceSimpleCurrentSourceInput, type SourceSimpleDiode, type SourceSimpleDiodeInput, type SourceSimpleFiducial, type SourceSimpleFiducialInput, type SourceSimpleFuse, type SourceSimpleFuseInput, type SourceSimpleGround, type SourceSimpleGroundInput, type SourceSimpleInductor, type SourceSimpleInductorInput, type SourceSimpleLed, type SourceSimpleLedInput, type SourceSimpleMosfet, type SourceSimpleMosfetInput, type SourceSimpleOpAmp, type SourceSimpleOpAmpInput, type SourceSimplePinHeader, type SourceSimplePinHeaderInput, type SourceSimplePinout, type SourceSimplePinoutInput, type SourceSimplePotentiometer, type SourceSimplePotentiometerInput, type SourceSimplePowerSource, type SourceSimplePowerSourceInput, type SourceSimplePushButton, type SourceSimplePushButtonInput, type SourceSimpleResistor, type SourceSimpleResistorInput, type SourceSimpleResonator, type SourceSimpleResonatorInput, type SourceSimpleSwitch, type SourceSimpleSwitchInput, type SourceSimpleTestPoint, type SourceSimpleTestPointInput, type SourceSimpleTransistor, type SourceSimpleTransistorInput, type SourceSimpleVoltageProbe, type SourceSimpleVoltageProbeInput, type SourceSimpleVoltageSource, type SourceSimpleVoltageSourceInput, type SourceTrace, type SourceTraceNotConnectedError, type SourceTraceNotConnectedErrorInput, type SourceUnnamedTraceWarning, type SourceUnnamedTraceWarningInput, type SpiceSimulationOptions, type SupplierFootprintMismatchWarning, type SupplierFootprintMismatchWarningInput, type SupplierName, type SupplierPin1LocationMap, type UnknownErrorFindingPart, type UnknownErrorFindingPartInput, type VisibleLayer, type VisibleLayerRef, type WaveShape, all_layers, any_circuit_element, any_soup_element, any_source_component, asset, base_circuit_json_error, battery_capacity, brep_shape, cadModelDefaultDirectionMap, cad_component, cad_model_axis_directions, cad_model_formats, capacitance, circuit_json_footprint_load_error, current, distance, duration_ms, experiment_type, external_footprint_load_error, frequency, getRotationBetweenPcbPin1Locations, getZodPrefixedIdWithDefault, inductance, insertionDirectionToCanonical, insertionDirectionToVector, insertion_direction, kicadAt, kicadEffects, kicadFont, kicadFootprintAttributes, kicadFootprintMetadata, kicadFootprintModel, kicadFootprintPad, kicadFootprintProperties, kicadProperty, kicadSymbolEffects, kicadSymbolMetadata, kicadSymbolPinNames, kicadSymbolPinNumbers, kicadSymbolProperties, kicadSymbolProperty, layer_ref, layer_string, length, manufacturing_drc_properties, ms, ninePointAnchor, pcbRenderLayer, pcb_autorouting_error, pcb_bend, pcb_board, pcb_breakout_point, pcb_bus_length_skew_error, pcb_component, pcb_component_invalid_layer_error, pcb_component_missing_courtyard_warning, pcb_component_not_on_board_edge_error, pcb_component_outside_board_error, pcb_connector_not_in_accessible_orientation_warning, pcb_copper_pour, pcb_copper_pour_brep, pcb_copper_pour_polygon, pcb_copper_pour_rect, pcb_copper_text, pcb_courtyard_circle, pcb_courtyard_outline, pcb_courtyard_overlap_error, pcb_courtyard_pill, pcb_courtyard_polygon, pcb_courtyard_rect, pcb_cutout, pcb_cutout_circle, pcb_cutout_path, pcb_cutout_polygon, pcb_cutout_rect, pcb_debug_line, pcb_debug_object, pcb_debug_object_base, pcb_debug_point, pcb_debug_rect, pcb_fabrication_note_dimension, pcb_fabrication_note_path, pcb_fabrication_note_rect, pcb_fabrication_note_text, pcb_fabricator_extra_charge_warning, pcb_footprint_overlap_error, pcb_ground_plane, pcb_ground_plane_region, pcb_group, pcb_hole, pcb_hole_circle_or_square_shape, pcb_hole_circle_shape, pcb_hole_oval_shape, pcb_hole_pill_shape, pcb_hole_rect_shape, pcb_hole_rotated_pill_shape, pcb_keepout, pcb_keepout_outline, pcb_keepout_overlap_warning, pcb_keepout_polygon, pcb_manual_edit_conflict_warning, pcb_missing_footprint_error, pcb_net, pcb_note_dimension, pcb_note_line, pcb_note_path, pcb_note_rect, pcb_note_text, pcb_packing_error, pcb_pad_pad_clearance_error, pcb_pad_trace_clearance_error, pcb_panel, pcb_panelization_placement_error, pcb_pin1_location, pcb_placement_error, pcb_plated_hole, pcb_port, pcb_port_not_connected_error, pcb_port_not_matched_error, pcb_preflight_routing_error, pcb_route_hint, pcb_route_hints, pcb_silkscreen_circle, pcb_silkscreen_graphic, pcb_silkscreen_graphic_brep, pcb_silkscreen_line, pcb_silkscreen_oval, pcb_silkscreen_path, pcb_silkscreen_pill, pcb_silkscreen_rect, pcb_silkscreen_text, pcb_smtpad, pcb_smtpad_pill, pcb_solder_paste, pcb_stiffener, pcb_stiffener_polygon, pcb_stiffener_rect, pcb_text, pcb_thermal_spoke, pcb_trace, pcb_trace_error, pcb_trace_hint, pcb_trace_missing_error, pcb_trace_route_point, pcb_trace_route_point_through_pad, pcb_trace_route_point_via, pcb_trace_route_point_wire, pcb_trace_too_long_error, pcb_trace_too_long_warning, pcb_trace_too_many_vias_warning, pcb_trace_warning, pcb_via, pcb_via_clearance_error, pcb_via_trace_clearance_error, point, point3, point_with_bulge, port_arrangement, position, position3, resistance, ring, rotation, route_hint_point, schematic_arc, schematic_box, schematic_circle, schematic_component, schematic_component_overlap_warning, schematic_component_port_arrangement_by_sides, schematic_component_port_arrangement_by_size, schematic_component_styling_warning, schematic_debug_line, schematic_debug_object, schematic_debug_object_base, schematic_debug_point, schematic_debug_rect, schematic_element_outside_sheet_warning, schematic_error, schematic_graphic, schematic_group, schematic_layout_error, schematic_line, schematic_manual_edit_conflict_warning, schematic_missing_sheet_warning, schematic_net_label, schematic_path, schematic_pin_styles, schematic_port, schematic_rect, schematic_sheet, schematic_sheet_size, schematic_symbol, schematic_table, schematic_table_cell, schematic_text, schematic_text_part, schematic_trace, schematic_voltage_probe, simulation_ac_current_source, simulation_ac_sweep_current_graph, simulation_ac_sweep_voltage_graph, simulation_ac_voltage_source, simulation_complex_sample, simulation_current_probe, simulation_current_source, simulation_dc_current_source, simulation_dc_operating_point_current, simulation_dc_operating_point_voltage, simulation_dc_sweep_current_graph, simulation_dc_sweep_unit, simulation_dc_sweep_voltage_graph, simulation_dc_voltage_source, simulation_experiment, simulation_op_amp, simulation_oscilloscope_trace, simulation_parameter_sweep, simulation_parameter_sweep_coordinate, simulation_parameter_type, simulation_parameter_unit, simulation_spice_subcircuit, simulation_switch, simulation_transient_current_graph, simulation_transient_voltage_graph, simulation_unknown_experiment_error, simulation_voltage_probe, simulation_voltage_source, size, source_ambiguous_port_reference, source_board, source_bus, source_component_base, source_component_internal_connection, source_component_misconfigured_error, source_component_pins_underspecified_warning, source_confusing_net_name_warning, source_failed_to_create_component_error, source_group, source_i2c_misconfigured_error, source_interconnect, source_invalid_component_property_error, source_manually_placed_via, source_missing_manufacturer_part_number_warning, source_missing_property_error, source_net, source_no_ground_pin_defined_warning, source_no_power_pin_defined_warning, source_part_not_found_warning, source_pcb_ground_plane, source_pin_attributes, source_pin_missing_trace_warning, source_pin_must_be_connected_error, source_port, source_project_metadata, source_property_ignored_warning, source_refdes_convention_warning, source_simple_ammeter, source_simple_battery, source_simple_capacitor, source_simple_chip, source_simple_connector, source_simple_connector_standards, source_simple_crystal, source_simple_current_source, source_simple_diode, source_simple_fiducial, source_simple_fuse, source_simple_ground, source_simple_inductor, source_simple_led, source_simple_mosfet, source_simple_op_amp, source_simple_pin_header, source_simple_pinout, source_simple_potentiometer, source_simple_power_source, source_simple_push_button, source_simple_resistor, source_simple_resonator, source_simple_switch, source_simple_test_point, source_simple_transistor, source_simple_voltage_probe, source_simple_voltage_source, source_trace, source_trace_not_connected_error, source_unnamed_trace_warning, spice_simulation_options, supplier_footprint_mismatch_warning, supplier_name, time, timestamp, unknown_error_finding_part, visible_layer, voltage, wave_shape };
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 3075f71860ebcd40fde8d1c64228432bc9a584f3..9974980d7c7e3be855d6361953ece8a07d648d2a 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -3429,6 +3429,10 @@ var pcb_keepout_outline = z156.object({
+   allow_traces: z156.boolean().optional(),
+   allow_placements: z156.boolean().optional()
+ });
++var pcb_keepout_polygon = pcb_keepout_outline.omit({ outline: true, stroke_width: true }).extend({
++  shape: z156.literal("polygon"),
++  points: z156.array(point).min(3)
++});
+ var pcb_keepout = z156.object({
+   type: z156.literal("pcb_keepout"),
+   shape: z156.literal("rect"),
+@@ -3464,7 +3468,8 @@ var pcb_keepout = z156.object({
+     allow_traces: z156.boolean().optional(),
+     allow_placements: z156.boolean().optional()
+   })
+-).or(pcb_keepout_outline);
++).or(pcb_keepout_outline).or(pcb_keepout_polygon);
++expectTypesMatch(true);
+ expectTypesMatch(true);
+ expectTypesMatch(true);
+ 
+@@ -5093,6 +5098,7 @@ export {
+   pcb_keepout,
+   pcb_keepout_outline,
+   pcb_keepout_overlap_warning,
++  pcb_keepout_polygon,
+   pcb_manual_edit_conflict_warning,
+   pcb_missing_footprint_error,
+   pcb_net,

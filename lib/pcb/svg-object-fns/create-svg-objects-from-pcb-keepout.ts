@@ -1,4 +1,4 @@
-import type { PCBKeepoutRect, PCBKeepoutCircle, Point } from "circuit-json"
+import type { PCBKeepout, PCBKeepoutRect, PCBKeepoutCircle } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import {
   applyToPoint,
@@ -105,7 +105,7 @@ function createKeepoutPatternAttributes(
 }
 
 export function createSvgObjectsFromPcbKeepout(
-  keepout: PCBKeepoutRect | PCBKeepoutCircle,
+  keepout: PCBKeepout,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
@@ -125,7 +125,54 @@ export function createSvgObjectsFromPcbKeepout(
       continue
     }
 
-    if (keepout.shape === "rect") {
+    if (keepout.shape === "polygon") {
+      if (
+        keepout.points.length < 3 ||
+        keepout.points.some(
+          (point) => !Number.isFinite(point.x) || !Number.isFinite(point.y),
+        )
+      )
+        continue
+      const points = keepout.points
+        .map((point) => {
+          const { x, y } = applyToPoint(transform, point)
+          return `${x},${y}`
+        })
+        .join(" ")
+      svgObjects.push(
+        {
+          name: "polygon",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            ...createKeepoutBaseAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-polygon",
+              keepout.description,
+            ),
+            points,
+            fill: KEEPOUT_BACKGROUND_COLOR,
+          },
+        },
+        {
+          name: "polygon",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            ...createKeepoutPatternAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-polygon",
+              keepout.description,
+            ),
+            points,
+          },
+        },
+      )
+    } else if (keepout.shape === "rect") {
       const rectKeepout = keepout as PCBKeepoutRect
       const [cx, cy] = applyToPoint(transform, [
         rectKeepout.center.x,
