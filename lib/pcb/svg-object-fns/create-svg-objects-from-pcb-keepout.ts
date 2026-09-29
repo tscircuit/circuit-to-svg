@@ -1,10 +1,10 @@
-import type { PCBKeepoutRect, PCBKeepoutCircle, Point } from "circuit-json"
+import type { PCBKeepout } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import {
   applyToPoint,
   compose,
-  translate,
   toString as matrixToString,
+  translate,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
@@ -105,7 +105,7 @@ function createKeepoutPatternAttributes(
 }
 
 export function createSvgObjectsFromPcbKeepout(
-  keepout: PCBKeepoutRect | PCBKeepoutCircle,
+  keepout: PCBKeepout,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
@@ -126,7 +126,7 @@ export function createSvgObjectsFromPcbKeepout(
     }
 
     if (keepout.shape === "rect") {
-      const rectKeepout = keepout as PCBKeepoutRect
+      const rectKeepout = keepout
       const [cx, cy] = applyToPoint(transform, [
         rectKeepout.center.x,
         rectKeepout.center.y,
@@ -181,7 +181,7 @@ export function createSvgObjectsFromPcbKeepout(
         },
       )
     } else if (keepout.shape === "circle") {
-      const circleKeepout = keepout as PCBKeepoutCircle
+      const circleKeepout = keepout
       const [cx, cy] = applyToPoint(transform, [
         circleKeepout.center.x,
         circleKeepout.center.y,
@@ -223,6 +223,63 @@ export function createSvgObjectsFromPcbKeepout(
         },
         {
           name: "circle",
+          type: "element",
+          attributes: patternAttributes,
+          children: [],
+          value: "",
+        },
+      )
+    } else if (keepout.shape === "outline") {
+      const outlineKeepout = keepout
+      const path = outlineKeepout.outline
+        .map((point, pointIndex) => {
+          const [x, y] = applyToPoint(transform, [point.x, point.y])
+          return pointIndex === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
+        })
+        .join(" ")
+      const scaledStrokeWidth =
+        outlineKeepout.stroke_width * Math.abs(transform.a)
+
+      const backgroundAttributes = {
+        ...createKeepoutBaseAttributes(
+          outlineKeepout.pcb_keepout_id,
+          layer,
+          "pcb-keepout-outline",
+          outlineKeepout.description,
+        ),
+        d: path,
+        fill: "none",
+        stroke: KEEPOUT_BACKGROUND_COLOR,
+        "stroke-width": scaledStrokeWidth.toString(),
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }
+
+      const patternAttributes = {
+        ...createKeepoutPatternAttributes(
+          outlineKeepout.pcb_keepout_id,
+          layer,
+          "pcb-keepout-outline",
+          outlineKeepout.description,
+        ),
+        d: path,
+        fill: "none",
+        stroke: `url(#${KEEPOUT_PATTERN_ID})`,
+        "stroke-width": scaledStrokeWidth.toString(),
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }
+
+      svgObjects.push(
+        {
+          name: "path",
+          type: "element",
+          attributes: backgroundAttributes,
+          children: [],
+          value: "",
+        },
+        {
+          name: "path",
           type: "element",
           attributes: patternAttributes,
           children: [],

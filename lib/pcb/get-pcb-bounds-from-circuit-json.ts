@@ -5,8 +5,6 @@ import {
 import type {
   AnyCircuitElement,
   NinePointAnchor,
-  PCBKeepoutCircle,
-  PCBKeepoutRect,
   PcbCutout,
   PcbPanel,
   Point,
@@ -378,7 +376,7 @@ export function getComprehensivePcbBounds(
         }
       }
     } else if (circuitJsonElm.type === "pcb_keepout") {
-      const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
+      const keepout = circuitJsonElm
       if (keepout.shape === "rect") {
         updateBounds({
           center: keepout.center,
@@ -396,6 +394,14 @@ export function getComprehensivePcbBounds(
             center: keepout.center,
             width: radius * 2,
             height: radius * 2,
+          })
+        }
+      } else if (keepout.shape === "outline") {
+        for (const point of keepout.outline) {
+          updateBounds({
+            center: point,
+            width: keepout.stroke_width,
+            height: keepout.stroke_width,
           })
         }
       }
