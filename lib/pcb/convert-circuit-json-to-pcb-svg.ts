@@ -7,8 +7,6 @@ import type {
   PcbCutout,
   PcbPanel,
   PcbBoard,
-  PCBKeepoutRect,
-  PCBKeepoutCircle,
   LayerRef,
 } from "circuit-json"
 import { distance } from "circuit-json"
@@ -693,10 +691,7 @@ function createSvgObjects({
       }
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     case "pcb_keepout":
-      return createSvgObjectsFromPcbKeepout(
-        elm as PCBKeepoutRect | PCBKeepoutCircle,
-        ctx,
-      )
+      return createSvgObjectsFromPcbKeepout(elm, ctx)
     case "pcb_group":
       return ctx.showPcbGroups
         ? createSvgObjectsFromPcbGroup(elm as any, ctx)
