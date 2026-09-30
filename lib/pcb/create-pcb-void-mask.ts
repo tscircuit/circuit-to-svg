@@ -1,4 +1,9 @@
 import type { SvgObject } from "../svg-object"
+import { excludePcbSvgGeometry } from "./exclude-pcb-svg-geometry"
+import { isPcbVoidOverlay } from "./is-pcb-void-overlay"
+import { paintPcbVoidMaskShape } from "./paint-pcb-void-mask-shape"
+import { selectPcbDrillGeometry } from "./select-pcb-drill-geometry"
+import { selectPcbSvgGeometry } from "./select-pcb-svg-geometry"
 
 const PCB_VOID_MASK_ID = "pcb-void-mask"
 
@@ -17,11 +22,9 @@ export function createPcbVoidMask({
   width: number
   height: number
 }): PcbVoidMask | undefined {
-  const maskedObjects = objects.filter((object) => !isPcbOverlay(object))
-  const overlayContent = objects.filter(isPcbOverlay)
-  const drillObjects = maskedObjects.filter(
-    (object) => object.attributes?.["data-pcb-layer"] === "drill",
-  )
+  const maskedObjects = excludePcbSvgGeometry(objects, isPcbVoidOverlay)
+  const overlayContent = selectPcbSvgGeometry(objects, isPcbVoidOverlay)
+  const drillObjects = selectPcbDrillGeometry(objects)
   if (drillObjects.length === 0) return undefined
 
   const mask: SvgObject = {
@@ -50,7 +53,7 @@ export function createPcbVoidMask({
         },
         children: [],
       },
-      ...drillObjects.map(createPcbVoidMaskShape),
+      ...drillObjects.map(paintPcbVoidMaskShape),
     ],
   }
 
@@ -73,30 +76,5 @@ export function createPcbVoidMask({
       children: maskedObjects,
     },
     overlayContent,
-  }
-}
-
-function isPcbOverlay(object: SvgObject): boolean {
-  const elementType = object.attributes?.["data-type"] ?? ""
-  return (
-    elementType.startsWith("pcb_fabrication_note_") ||
-    elementType.startsWith("pcb_note_") ||
-    elementType.endsWith("_error") ||
-    elementType.endsWith("_warning") ||
-    elementType === "pcb_rats_nest" ||
-    elementType === "pcb_debug_object"
-  )
-}
-
-function createPcbVoidMaskShape(object: SvgObject): SvgObject {
-  return {
-    ...object,
-    attributes: {
-      ...object.attributes,
-      fill: "#000",
-      stroke: "#000",
-      "fill-opacity": "1",
-      "stroke-opacity": "1",
-    },
   }
 }
