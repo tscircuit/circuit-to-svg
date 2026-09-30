@@ -81,6 +81,7 @@ import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { createSoldermaskOpeningMasks } from "./create-soldermask-opening-masks"
+import { createPcbVoidMask } from "./create-pcb-void-mask"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
@@ -127,6 +128,8 @@ export interface PcbSvgOptions {
   showAnchorOffsets?: boolean
   /** Show small pin numbers centered inside PCB pads. */
   showPinNumbers?: boolean
+  /** Paint the drill layer instead of rendering physical holes as voids. */
+  showDrillLayer?: boolean
   viewport?: {
     minX: number
     minY: number
@@ -404,6 +407,16 @@ export function convertCircuitJsonToPcbSvg(
     : groupCopperPourMaskedTraceObjects(
         sortSvgObjectsByPcbLayer(unsortedSvgObjects),
       )
+  const showDrillLayer =
+    options?.showDrillLayer ?? colorOverrides?.drill !== undefined
+  const pcbVoidMask =
+    showDrillLayer || xRayActive
+      ? undefined
+      : createPcbVoidMask({
+          objects: svgObjects,
+          width: svgWidth,
+          height: svgHeight,
+        })
 
   const children: SvgObject[] = [
     {
@@ -465,6 +478,8 @@ export function convertCircuitJsonToPcbSvg(
     children.push(soldermaskOpeningMasks)
   }
 
+  if (pcbVoidMask) children.push(pcbVoidMask.definition)
+
   children.push({
     name: "rect",
     type: "element",
@@ -488,7 +503,9 @@ export function convertCircuitJsonToPcbSvg(
     )
   }
 
-  children.push(...svgObjects)
+  if (pcbVoidMask) {
+    children.push(pcbVoidMask.maskedContent, ...pcbVoidMask.overlayContent)
+  } else children.push(...svgObjects)
 
   if (gridObjects.rect) {
     children.push(gridObjects.rect)
