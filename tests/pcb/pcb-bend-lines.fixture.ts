@@ -1,0 +1,91 @@
+import type { CircuitJson, PcbBend } from "circuit-json"
+
+export const finiteTailBend: PcbBend = {
+  type: "pcb_bend",
+  pcb_bend_id: "left_tail_bend",
+  pcb_board_id: "u_board",
+  name: "Left tail",
+  start: { x: -20, y: 20 },
+  end: { x: -12, y: 20 },
+  bend_angle: 90,
+  bend_radius: 1,
+  bend_side: "left",
+}
+
+export const translatedFlexBoard: CircuitJson = [
+  {
+    type: "pcb_board",
+    pcb_board_id: "u_board",
+    center: { x: 60, y: 50 },
+    width: 40,
+    height: 40,
+    thickness: 0.12,
+    material: "fr4",
+    num_layers: 2,
+    outline: [
+      { x: 40, y: 40 },
+      { x: 80, y: 40 },
+      { x: 80, y: 80 },
+      { x: 72, y: 80 },
+      { x: 72, y: 60 },
+      { x: 48, y: 60 },
+      { x: 48, y: 80 },
+      { x: 40, y: 80 },
+    ],
+  },
+  finiteTailBend,
+]
+
+export const multipleFlexBoards: CircuitJson = [
+  ...translatedFlexBoard,
+  {
+    type: "pcb_board",
+    pcb_board_id: "rect_board",
+    center: { x: 110, y: 60 },
+    width: 32,
+    height: 28,
+    thickness: 0.12,
+    material: "fr4",
+    num_layers: 2,
+  },
+  {
+    ...finiteTailBend,
+    pcb_bend_id: "vertical_bend",
+    pcb_board_id: "rect_board",
+    name: "Vertical",
+    start: { x: 0, y: -10 },
+    end: { x: 0, y: 10 },
+    bend_angle: -90,
+    bend_radius: 2,
+    bend_side: "right",
+  },
+  {
+    ...finiteTailBend,
+    pcb_bend_id: "diagonal_bend",
+    pcb_board_id: "rect_board",
+    name: "Diagonal",
+    start: { x: -10, y: -6 },
+    end: { x: -2, y: 2 },
+    bend_angle: 45,
+  },
+  {
+    type: "pcb_note_text",
+    pcb_note_text_id: "tail_label",
+    layer: "top",
+    text: "Finite left-tail bend",
+    font: "tscircuit2024",
+    font_size: 1.3,
+    anchor_position: { x: 60, y: 48 },
+    anchor_alignment: "center",
+  },
+  {
+    type: "pcb_note_text",
+    pcb_note_text_id: "rect_label",
+    layer: "top",
+    text: "Board-local centerlines",
+    font: "tscircuit2024",
+    font_size: 1.3,
+    anchor_position: { x: 110, y: 71 },
+    anchor_alignment: "center",
+  },
+]
