@@ -1,6 +1,9 @@
 {
   "name": "circuit-to-svg",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "version": "0.0.436",
   "repository": {
     "type": "git",
