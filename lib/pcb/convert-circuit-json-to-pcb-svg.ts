@@ -32,6 +32,7 @@ import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-obj
 import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
 import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
 import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
+import { createSvgObjectsFromPcbBend } from "./svg-object-fns/create-svg-objects-from-pcb-bend"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenGraphic } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-graphic"
@@ -119,6 +120,8 @@ export interface PcbSvgOptions {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  /** Draw finite pcb_bend centerlines as dashed overlays. Defaults to false. */
+  showBendLines?: boolean
   /** Render fabrication notes and include them in bounds. Defaults to true. */
   showFabricationNotes?: boolean
   /** Draw pcb_debug_object overlays. Defaults to false. */
@@ -151,6 +154,7 @@ export interface PcbContext {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  showBendLines?: boolean
   showDebugObjects?: boolean
   debugObjectStyle?: {
     fontSize: number
@@ -357,6 +361,7 @@ export function convertCircuitJsonToPcbSvg(
     showSolderMask: options?.showSolderMask,
     showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
+    showBendLines: options?.showBendLines,
     showDebugObjects: options?.showDebugObjects,
     debugObjectStyle: {
       fontSize: debugFontSize,
@@ -670,6 +675,9 @@ function createSvgObjects({
     case "pcb_note_line":
       if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
+    case "pcb_bend":
+      if (!ctx.showBendLines) return []
+      return createSvgObjectsFromPcbBend(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_silkscreen_graphic":
