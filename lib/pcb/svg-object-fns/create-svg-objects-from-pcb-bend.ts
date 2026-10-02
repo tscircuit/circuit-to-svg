@@ -38,7 +38,7 @@ export function createSvgObjectsFromPcbBend(
   ])
   const scale = Math.abs(ctx.transform.a)
   const lineLength = Math.hypot(endX - startX, endY - startY)
-  const fontSize = Math.min(2 * scale, (lineLength * 0.8) / LABEL_WIDTH_RATIO)
+  const fontSize = Math.min(0.5 * scale, (lineLength * 0.8) / LABEL_WIDTH_RATIO)
   // Derive the label's baseline from the emitted SVG endpoints (+Y down,
   // pixels), as fabrication-note dimensions do. Keep the text upright even
   // when the Circuit JSON endpoints are reversed, without mirroring glyphs.

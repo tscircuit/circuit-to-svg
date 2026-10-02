@@ -103,7 +103,7 @@ test("a bend with an absent board reference is omitted", () => {
   ).not.toContain('data-type="pcb_bend"')
 })
 
-test("bend labels are at most 2 mm, fit short segments and stay parallel when reversed", () => {
+test("bend labels are at most 0.5 mm, fit short segments and stay parallel when reversed", () => {
   for (const layer of ["top", "bottom"] as const) {
     const options = {
       showBendLines: true,
@@ -114,12 +114,15 @@ test("bend labels are at most 2 mm, fit short segments and stay parallel when re
       viewport: { minX: 40, minY: 30, maxX: 140, maxY: 90 },
     }
     // The explicit viewport gives 10 SVG pixels per millimeter.
-    const original = parseSync(
-      convertCircuitJsonToPcbSvg(multipleFlexBoards, options),
+    const circuit = multipleFlexBoards.map((element) =>
+      element.type === "pcb_bend" && element.pcb_bend_id === "left_tail_bend"
+        ? { ...element, end: { x: element.start.x + 0.5, y: element.start.y } }
+        : element,
     )
+    const original = parseSync(convertCircuitJsonToPcbSvg(circuit, options))
     const reversed = parseSync(
       convertCircuitJsonToPcbSvg(
-        multipleFlexBoards.map((element) =>
+        circuit.map((element) =>
           element.type === "pcb_bend"
             ? { ...element, start: element.end, end: element.start }
             : element,
@@ -159,12 +162,12 @@ test("bend labels are at most 2 mm, fit short segments and stay parallel when re
       expect(labelMatrix.b).toBeCloseTo(originalMatrix.b)
       expect(labelMatrix.e).toBeCloseTo(originalMatrix.e)
       expect(labelMatrix.f).toBeCloseTo(originalMatrix.f)
-      expect(Number(label.attributes["font-size"])).toBeLessThanOrEqual(20)
+      expect(Number(label.attributes["font-size"])).toBeLessThanOrEqual(5)
       if (bendId === "vertical_bend") {
-        expect(Number(label.attributes["font-size"])).toBe(20)
+        expect(Number(label.attributes["font-size"])).toBe(5)
       }
       if (bendId === "left_tail_bend") {
-        expect(Number(label.attributes["font-size"])).toBeLessThan(20)
+        expect(Number(label.attributes["font-size"])).toBeLessThan(5)
       }
     }
   }
