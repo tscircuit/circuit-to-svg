@@ -107,9 +107,6 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   padding around it. Defaults to `true`.
 - `showPcbNotes` – if `false`, hide all `pcb_note*` overlay primitives at render
   time. Defaults to `true`.
-- `showBendLines` – if `true`, draw dashed centerlines for `pcb_bend` records
-  between their finite endpoints, positioned relative to their referenced board.
-  Visible on either PCB face and independent of `showPcbNotes`. Defaults to `false`.
 - `showFabricationNotes` – if `false`, omit all `pcb_fabrication_note_*`
   annotations from rendering and bounds. Defaults to `true`.
 - `showPinNumbers` – if `true`, annotate PCB pads with small gray pin numbers.
