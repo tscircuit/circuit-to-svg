@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
+import { applyToPoint, fromString } from "transformation-matrix"
 import {
   multipleFlexBoards,
   translatedFlexBoard,
@@ -59,9 +60,19 @@ for (const layer of ["top", "bottom"] as const) {
       height: 650,
     })
     const bends = parseSync(svg).children.filter(
-      (child) => child.attributes["data-type"] === "pcb_bend",
+      (child) =>
+        child.name === "line" && child.attributes["data-type"] === "pcb_bend",
     )
     expect(bends).toHaveLength(3)
+    const labels = parseSync(svg).children.filter(
+      (child) => child.attributes.class === "pcb-bend-line-label",
+    )
+    expect(labels).toHaveLength(3)
+    expect(labels.map((label) => label.children[0]?.value)).toEqual([
+      "BEND LINE",
+      "BEND LINE",
+      "BEND LINE",
+    ])
     expect(bends.map((bend) => bend.attributes["data-pcb-board-id"])).toEqual([
       "u_board",
       "rect_board",
@@ -92,6 +103,73 @@ test("a bend with an absent board reference is omitted", () => {
   ).not.toContain('data-type="pcb_bend"')
 })
 
+test("bend labels are at most 2 mm, fit short segments and stay parallel when reversed", () => {
+  for (const layer of ["top", "bottom"] as const) {
+    const options = {
+      showBendLines: true,
+      showPcbNotes: false,
+      layer,
+      width: 1000,
+      height: 600,
+      viewport: { minX: 40, minY: 30, maxX: 140, maxY: 90 },
+    }
+    // The explicit viewport gives 10 SVG pixels per millimeter.
+    const original = parseSync(
+      convertCircuitJsonToPcbSvg(multipleFlexBoards, options),
+    )
+    const reversed = parseSync(
+      convertCircuitJsonToPcbSvg(
+        multipleFlexBoards.map((element) =>
+          element.type === "pcb_bend"
+            ? { ...element, start: element.end, end: element.start }
+            : element,
+        ),
+        options,
+      ),
+    )
+    for (const label of reversed.children.filter(
+      (child) => child.attributes.class === "pcb-bend-line-label",
+    )) {
+      const bendId = label.attributes["data-pcb-bend-id"]
+      const line = reversed.children.find(
+        (child) =>
+          child.name === "line" &&
+          child.attributes["data-pcb-bend-id"] === bendId,
+      )!
+      const originalLabel = original.children.find(
+        (child) =>
+          child.name === "text" &&
+          child.attributes["data-pcb-bend-id"] === bendId,
+      )!
+      const labelMatrix = fromString(label.attributes.transform!)
+      const originalMatrix = fromString(originalLabel.attributes.transform!)
+      const baselineStart = applyToPoint(labelMatrix, [0, 0])
+      const baselineEnd = applyToPoint(labelMatrix, [1, 0])
+      const baselineX = baselineEnd[0] - baselineStart[0]
+      const baselineY = baselineEnd[1] - baselineStart[1]
+      const lineX = Number(line.attributes.x2) - Number(line.attributes.x1)
+      const lineY = Number(line.attributes.y2) - Number(line.attributes.y1)
+      // Compare the emitted text baseline with the emitted finite segment.
+      expect(baselineX * lineY - baselineY * lineX).toBeCloseTo(0)
+      expect(labelMatrix.a).toBeGreaterThanOrEqual(0)
+      expect(
+        labelMatrix.a * labelMatrix.d - labelMatrix.b * labelMatrix.c,
+      ).toBeCloseTo(1)
+      expect(labelMatrix.a).toBeCloseTo(originalMatrix.a)
+      expect(labelMatrix.b).toBeCloseTo(originalMatrix.b)
+      expect(labelMatrix.e).toBeCloseTo(originalMatrix.e)
+      expect(labelMatrix.f).toBeCloseTo(originalMatrix.f)
+      expect(Number(label.attributes["font-size"])).toBeLessThanOrEqual(20)
+      if (bendId === "vertical_bend") {
+        expect(Number(label.attributes["font-size"])).toBe(20)
+      }
+      if (bendId === "left_tail_bend") {
+        expect(Number(label.attributes["font-size"])).toBeLessThan(20)
+      }
+    }
+  }
+})
+
 test("each bend uses its own board center", () => {
   const svg = convertCircuitJsonToPcbSvg(multipleFlexBoards, {
     showBendLines: true,
@@ -101,7 +179,8 @@ test("each bend uses its own board center", () => {
     viewport: { minX: 40, minY: 30, maxX: 140, maxY: 90 },
   })
   const bends = parseSync(svg).children.filter(
-    (child) => child.attributes["data-type"] === "pcb_bend",
+    (child) =>
+      child.name === "line" && child.attributes["data-type"] === "pcb_bend",
   )
   const endpoints = bends.map(({ attributes }) =>
     ["x1", "y1", "x2", "y2"].map((key) => Number(attributes[key])),
