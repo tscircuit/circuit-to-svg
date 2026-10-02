@@ -18,6 +18,7 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_via: 36,
   pcb_soldermask: 40,
   pcb_soldermask_opening: 25,
+  pcb_soldermask_opening_layer: 44,
   pcb_solder_paste: 45,
   pcb_silkscreen_text: 50,
   pcb_silkscreen_path: 50,

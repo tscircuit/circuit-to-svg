@@ -1,4 +1,5 @@
 import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
+import { createSoldermaskOpeningLayers } from "./create-soldermask-opening-layers"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   Point,
@@ -172,6 +173,8 @@ export interface PcbContext {
    * hide the portions covered by copper pours. Used to emit mask defs.
    */
   usedCopperPourTraceMaskIds?: Set<string>
+  copperPourTraceMaskIdsByLayer?: Map<string, string | undefined>
+  standaloneViaPositionKeys?: Set<string>
 }
 
 export function convertCircuitJsonToPcbSvg(
@@ -264,9 +267,16 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  const circuitJsonForBounds = options?.showCourtyards
-    ? circuitJson
-    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
+  const circuitJsonForBounds = circuitJson.filter((element) => {
+    if (element.type === "pcb_courtyard_rect" && !options?.showCourtyards)
+      return false
+    if (element.type === "pcb_soldermask_opening") {
+      return (
+        Boolean(options?.showSolderMask) && (!layer || element.layer === layer)
+      )
+    }
+    return true
+  })
 
   const {
     minX,
@@ -380,6 +390,17 @@ export function convertCircuitJsonToPcbSvg(
   let unsortedSvgObjects = xRayActive
     ? []
     : circuitJson.flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+
+  if (!xRayActive) {
+    unsortedSvgObjects.push(
+      ...createSoldermaskOpeningLayers({
+        circuitJson,
+        ctx,
+        create: (elm, context) =>
+          createSvgObjects({ elm, circuitJson, ctx: context }),
+      }),
+    )
+  }
 
   let strokeWidth = String(0.05 * scaleFactor)
 
