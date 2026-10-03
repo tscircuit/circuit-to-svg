@@ -1,5 +1,6 @@
 import type { PcbSolderPaste } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
+import type { SvgObject } from "../../svg-object"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
@@ -22,20 +23,21 @@ export function createSvgObjectsFromSolderPaste(
             .join(" ") + " Z",
       )
       .join(" ")
-    return [
-      {
-        name: "path",
-        type: "element",
-        attributes: {
-          class: "pcb-solder-paste",
-          fill: solderPasteLayerNameToColor(solderPaste.layer),
-          "fill-rule": "evenodd",
-          d,
-          "data-type": "pcb_solder_paste",
-          "data-pcb-layer": solderPaste.layer,
-        },
+    const polygon: SvgObject = {
+      name: "path",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: "pcb-solder-paste",
+        fill: solderPasteLayerNameToColor(solderPaste.layer),
+        "fill-rule": "evenodd",
+        d,
+        "data-type": "pcb_solder_paste",
+        "data-pcb-layer": solderPaste.layer,
       },
-    ]
+    }
+    return [polygon]
   }
   const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
