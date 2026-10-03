@@ -4,7 +4,7 @@
   "engines": {
     "node": "24.x"
   },
-  "version": "0.0.439",
+  "version": "0.0.440",
   "repository": {
     "type": "git",
     "url": "https://github.com/tscircuit/circuit-to-svg.git"
