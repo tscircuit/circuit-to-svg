@@ -939,19 +939,27 @@ export function createSvgObjectsFromPcbPlatedHole(
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const ccwRotation = polygonHole.ccw_rotation ?? 0
+    const rad = (ccwRotation * Math.PI) / 180
+    const cos = Math.cos(rad)
+    const sin = Math.sin(rad)
 
-    // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    // Transform polygon pad outline points (rotated by ccw_rotation)
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rx = point.x * cos - point.y * sin
+      const ry = point.x * sin + point.y * cos
+      return applyToPoint(transform, [holeX + rx, holeY + ry])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Calculate hole position with rotated offset
+    const offX = (polygonHole.hole_offset_x ?? 0) * cos - (polygonHole.hole_offset_y ?? 0) * sin
+    const offY = (polygonHole.hole_offset_x ?? 0) * sin + (polygonHole.hole_offset_y ?? 0) * cos
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + offX,
+      holeY + offY,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
