@@ -9,6 +9,34 @@ export function createSvgObjectsFromSolderPaste(
 ): any {
   const { transform, layer: layerFilter } = ctx
   if (layerFilter && solderPaste.layer !== layerFilter) return []
+  if (solderPaste.shape === "polygon") {
+    const contours = [solderPaste.points, ...(solderPaste.holes ?? [])]
+    const d = contours
+      .map(
+        (points) =>
+          points
+            .map((point, index) => {
+              const position = applyToPoint(transform, point)
+              return `${index === 0 ? "M" : "L"}${position.x} ${position.y}`
+            })
+            .join(" ") + " Z",
+      )
+      .join(" ")
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pcb-solder-paste",
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
+          "fill-rule": "evenodd",
+          d,
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
+        },
+      },
+    ]
+  }
   const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
   if (solderPaste.shape === "rect" || solderPaste.shape === "rotated_rect") {

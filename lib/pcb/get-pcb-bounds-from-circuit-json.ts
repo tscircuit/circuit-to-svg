@@ -107,6 +107,11 @@ export function getComprehensivePcbBounds(
               : 0,
         })
       }
+    } else if (
+      circuitJsonElm.type === "pcb_solder_paste" &&
+      circuitJsonElm.shape === "polygon"
+    ) {
+      updateTraceBounds(circuitJsonElm.points)
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       const pad = circuitJsonElm
       if (pad.shape === "rect" || pad.shape === "pill") {
