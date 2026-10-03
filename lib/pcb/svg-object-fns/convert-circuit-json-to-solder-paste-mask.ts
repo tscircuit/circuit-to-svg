@@ -1,5 +1,6 @@
 import type { PcbSolderPaste } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
+import { ringToPathD } from "lib/utils/ring-to-path-d"
 import { solderPasteLayerNameToColor } from "../layer-name-to-color"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
@@ -9,6 +10,31 @@ export function createSvgObjectsFromSolderPaste(
 ): any {
   const { transform, layer: layerFilter } = ctx
   if (layerFilter && solderPaste.layer !== layerFilter) return []
+
+  if (solderPaste.shape === "polygon") {
+    let d = ringToPathD(solderPaste.points, transform)
+    for (const hole of solderPaste.holes ?? []) {
+      d += ` ${ringToPathD(hole, transform)}`
+    }
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        value: "",
+        children: [],
+        attributes: {
+          class: "pcb-solder-paste",
+          fill: solderPasteLayerNameToColor(solderPaste.layer),
+          d,
+          "fill-rule": "evenodd",
+          "data-type": "pcb_solder_paste",
+          "data-pcb-layer": solderPaste.layer,
+        },
+      },
+    ]
+  }
+
   const [x, y] = applyToPoint(transform, [solderPaste.x, solderPaste.y])
 
   if (solderPaste.shape === "rect" || solderPaste.shape === "rotated_rect") {
