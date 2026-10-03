@@ -25,4 +25,18 @@ test("missing port references are skipped and duplicate references draw only onc
     ["source_port_0"],
   )
   await expect(svg).toMatchSvgSnapshot(import.meta.path)
+  for (const sourcePortIds of [undefined, ["missing_port"]]) {
+    const svgWithoutPin = convertCircuitJsonToSchematicSvg(
+      circuitJson.map((element) =>
+        element.type === "source_component_misconfigured_error"
+          ? { ...element, source_port_ids: sourcePortIds }
+          : element,
+      ),
+      { shouldDrawErrors: true },
+    )
+    expect(svgWithoutPin).not.toContain('data-type="source_port_error_callout"')
+    expect(svgWithoutPin).not.toContain(
+      'data-type="source_component_misconfigured_error"',
+    )
+  }
 })
