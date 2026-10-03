@@ -46,6 +46,7 @@ import {
   isSchematicWarning,
 } from "./svg-object-fns/create-svg-objects-from-sch-warning"
 import { getSchematicSheetLayout } from "./schematic-sheet-utils"
+import { createSvgObjectsFromSourceComponentMisconfiguredErrors } from "./svg-object-fns/create-svg-objects-from-source-component-misconfigured-error"
 
 export type ColorOverrides = {
   schematic?: Partial<ColorMap["schematic"]>
@@ -61,6 +62,8 @@ interface Options {
   labeledPoints?: Array<{ x: number; y: number; label: string }>
   includeVersion?: boolean
   showErrorsInTextOverlay?: boolean
+  /** Highlight pins referenced by source component configuration errors. */
+  shouldDrawErrors?: boolean
   /** Draw schematic warnings as callouts around their referenced elements. */
   shouldDrawWarnings?: boolean
   drawPorts?: boolean
@@ -433,6 +436,15 @@ export function convertCircuitJsonToSchematicSvg(
         svgWidth,
         svgHeight,
         colorMap,
+      }),
+    )
+  }
+
+  if (options?.shouldDrawErrors) {
+    svgChildren.push(
+      ...createSvgObjectsFromSourceComponentMisconfiguredErrors({
+        circuitJson: sheetCircuitJson,
+        transform,
       }),
     )
   }
