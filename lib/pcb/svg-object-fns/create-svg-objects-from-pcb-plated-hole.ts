@@ -269,10 +269,18 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
-    const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+    const scaledOuterWidth =
+      (Number.isFinite(hole.outer_diameter) ? hole.outer_diameter : 0) *
+      Math.abs(transform.a)
+    const scaledOuterHeight =
+      (Number.isFinite(hole.outer_diameter) ? hole.outer_diameter : 0) *
+      Math.abs(transform.a)
+    const scaledHoleWidth =
+      (Number.isFinite(hole.hole_diameter) ? hole.hole_diameter : 0) *
+      Math.abs(transform.a)
+    const scaledHoleHeight =
+      (Number.isFinite(hole.hole_diameter) ? hole.hole_diameter : 0) *
+      Math.abs(transform.a)
 
     const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
     const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
@@ -392,7 +400,9 @@ export function createSvgObjectsFromPcbPlatedHole(
   // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
   if (hole.shape === "circular_hole_with_rect_pad") {
     const h = hole as PcbHoleCircularWithRectPad
-    const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledHoleDiameter =
+      (Number.isFinite(hole.hole_diameter) ? hole.hole_diameter : 0) *
+      Math.abs(transform.a)
     const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
     const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
     const scaledRectBorderRadius =
@@ -958,7 +968,9 @@ export function createSvgObjectsFromPcbPlatedHole(
     const createHoleSvgObject = (): SvgObject => {
       if (polygonHole.hole_shape === "circle") {
         const scaledDiameter =
-          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a)
+          (Number.isFinite(polygonHole.hole_diameter)
+            ? polygonHole.hole_diameter!
+            : 0) * Math.abs(transform.a)
         const radius = scaledDiameter / 2
         return {
           name: "circle",
