@@ -77,12 +77,14 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson, {
 - `css` – append custom CSS to the generated schematic SVG.
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
-- `shouldDrawErrors` – highlight pins referenced by
-  `source_component_misconfigured_error` elements, including voltage mismatch
-  DRCs. Only pins on the selected schematic sheet are highlighted.
+- `shouldDrawErrors` – draw pin highlights and a local message callout for
+  `source_component_misconfigured_error`, `source_pin_must_be_connected_error`,
+  `source_i2c_misconfigured_error`, and `source_trace_not_connected_error`
+  elements that reference source ports. Only pins on the selected schematic
+  sheet are highlighted; one message is displayed per error.
 - `showErrorsInTextOverlay` – display error messages at the top of the SVG.
-  Enable this together with `shouldDrawErrors` for visible messages and pin
-  highlights.
+  This optional overview is independent of the local `shouldDrawErrors`
+  callouts.
 
 ## convertCircuitJsonToPcbSvg
 
