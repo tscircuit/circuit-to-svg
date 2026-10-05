@@ -1,0 +1,485 @@
+[
+  {
+    "type": "source_port",
+    "source_port_id": "source_port_altium_1112",
+    "source_component_id": "source_component_altium_98",
+    "name": "4",
+    "port_hints": [
+      "4",
+      "pin4"
+    ],
+    "pin_number": 4
+  },
+  {
+    "type": "source_component",
+    "display_name": "U3",
+    "display_value": "SN74LVC3G14DCUTG4",
+    "name": "U3",
+    "source_component_id": "source_component_altium_442",
+    "ftype": "simple_chip"
+  },
+  {
+    "type": "source_port",
+    "name": "1Y",
+    "port_hints": [
+      "7",
+      "1Y",
+      "pin7"
+    ],
+    "source_component_id": "source_component_altium_442",
+    "source_port_id": "source_port_altium_470",
+    "pin_number": 7
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -7.8971746178786475,
+      "y": 3.0569708198239915
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_442",
+    "schematic_port_id": "schematic_port_altium_470",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_470",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 7,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_470_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -8.088235294117647,
+    "y1": 3.0569708198239915,
+    "x2": -7.8971746178786475,
+    "y2": 3.0569708198239915,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_442"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_470",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -8.120078740157481,
+      "y": 3.0569708198239915
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_442"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -8.342982862436312,
+      "y": 3.0569708198239915
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_442",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_442",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  },
+  {
+    "type": "source_port",
+    "name": "2Y",
+    "port_hints": [
+      "5",
+      "2Y",
+      "pin5"
+    ],
+    "source_component_id": "source_component_altium_442",
+    "source_port_id": "source_port_altium_541",
+    "pin_number": 5
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -6.75081056044465,
+      "y": 3.0569708198239915
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_540",
+    "schematic_port_id": "schematic_port_altium_541",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_541",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 5,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_541_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -6.9418712366836495,
+    "y1": 3.0569708198239915,
+    "x2": -6.75081056044465,
+    "y2": 3.0569708198239915,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_540"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_541",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -6.973714682723483,
+      "y": 3.0569708198239915
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_540"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -7.196618805002315,
+      "y": 3.0569708198239915
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_540",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_442",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  },
+  {
+    "type": "source_port",
+    "name": "3Y",
+    "port_hints": [
+      "2",
+      "3Y",
+      "pin2"
+    ],
+    "source_component_id": "source_component_altium_442",
+    "source_port_id": "source_port_altium_650",
+    "pin_number": 2
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -4.585456229735989,
+      "y": 3.0569708198239915
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_638",
+    "schematic_port_id": "schematic_port_altium_650",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_650",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 2,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_650_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -4.776516905974988,
+    "y1": 3.0569708198239915,
+    "x2": -4.585456229735989,
+    "y2": 3.0569708198239915,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_638"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_650",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -4.808360352014821,
+      "y": 3.0569708198239915
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_638"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -5.031264474293653,
+      "y": 3.0569708198239915
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_638",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_442",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  },
+  {
+    "type": "source_component",
+    "display_name": "U5",
+    "display_value": "SN74LVC3G14DCUTG4",
+    "name": "U5",
+    "source_component_id": "source_component_altium_888",
+    "ftype": "simple_chip"
+  },
+  {
+    "type": "source_port",
+    "name": "2Y",
+    "port_hints": [
+      "5",
+      "2Y",
+      "pin5"
+    ],
+    "source_component_id": "source_component_altium_888",
+    "source_port_id": "source_port_altium_889",
+    "pin_number": 5
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -6.75081056044465,
+      "y": -0.6368689207966653
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_888",
+    "schematic_port_id": "schematic_port_altium_889",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_889",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 5,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_889_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -6.9418712366836495,
+    "y1": -0.6368689207966653,
+    "x2": -6.75081056044465,
+    "y2": -0.6368689207966653,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_888"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_889",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -6.973714682723483,
+      "y": -0.6368689207966653
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_888"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -7.196618805002315,
+      "y": -0.6368689207966653
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_888",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_888",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  },
+  {
+    "type": "source_port",
+    "name": "3Y",
+    "port_hints": [
+      "2",
+      "3Y",
+      "pin2"
+    ],
+    "source_component_id": "source_component_altium_888",
+    "source_port_id": "source_port_altium_998",
+    "pin_number": 2
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -4.585456229735989,
+      "y": -0.6368689207966653
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_986",
+    "schematic_port_id": "schematic_port_altium_998",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_998",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 2,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_998_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -4.776516905974988,
+    "y1": -0.6368689207966653,
+    "x2": -4.585456229735989,
+    "y2": -0.6368689207966653,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_986"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_998",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -4.808360352014821,
+      "y": -0.6368689207966653
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_986"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -5.031264474293653,
+      "y": -0.6368689207966653
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_986",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_888",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  },
+  {
+    "type": "source_port",
+    "name": "1Y",
+    "port_hints": [
+      "7",
+      "1Y",
+      "pin7"
+    ],
+    "source_component_id": "source_component_altium_888",
+    "source_port_id": "source_port_altium_1112",
+    "pin_number": 7
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": -7.8971746178786475,
+      "y": -0.6368689207966653
+    },
+    "distance_from_component_edge": 0.2547475683186661,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_1084",
+    "schematic_port_id": "schematic_port_altium_1112",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_1112",
+    "true_ccw_index": 0,
+    "is_drawn_with_inversion_circle": true,
+    "pin_number": 7,
+    "has_output_arrow": true
+  },
+  {
+    "type": "schematic_line",
+    "schematic_line_id": "schematic_line_altium_1112_pin",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "x1": -8.088235294117647,
+    "y1": -0.6368689207966653,
+    "x2": -7.8971746178786475,
+    "y2": -0.6368689207966653,
+    "stroke_width": 0.012737378415933302,
+    "color": "#000000",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_1084"
+  },
+  {
+    "type": "schematic_circle",
+    "schematic_circle_id": "schematic_pin_inversion_altium_1112",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "center": {
+      "x": -8.120078740157481,
+      "y": -0.6368689207966653
+    },
+    "radius": 0.03184344603983326,
+    "color": "#000000",
+    "stroke_width": 0.012737378415933302,
+    "is_filled": true,
+    "fill_color": "#ffffff",
+    "is_dashed": false,
+    "schematic_component_id": "schematic_component_altium_1084"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": -8.342982862436312,
+      "y": -0.6368689207966653
+    },
+    "is_box_with_pins": false,
+    "schematic_component_id": "schematic_component_altium_1084",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 0.4,
+      "width": 0.4
+    },
+    "source_component_id": "source_component_altium_888",
+    "symbol_display_value": "SN74LVC3G14DCUTG4"
+  }
+]
