@@ -1,3 +1,4 @@
+import { Resvg } from "@resvg/resvg-js"
 import { expect, test } from "bun:test"
 import type { CircuitJson, PcbFabricationNotePath } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
@@ -48,10 +49,8 @@ test("filled fabrication paths close implicitly and allow fill without stroke", 
 })
 
 test("filled fabrication paths can retain their stroke and default color", () => {
-  expect(render({ is_filled: true })).toContain('fill="rgba(255,255,255,0.5)"')
-  expect(render({ is_filled: true })).toContain(
-    'stroke="rgba(255,255,255,0.5)"',
-  )
+  expect(render({ is_filled: true })).toContain('fill="rgb(255, 255, 255)"')
+  expect(render({ is_filled: true })).toContain('stroke="rgb(255, 255, 255)"')
   expect(render({ has_stroke: false })).toContain('stroke="none"')
 })
 
@@ -68,4 +67,43 @@ test("fabrication path fill modes visual snapshot", () => {
     showFabricationNotes: true,
   })
   expect(svg).toMatchSvgSnapshot(import.meta.path)
+})
+
+test("paint alpha is applied once to the whole fabrication path", () => {
+  for (const color of [
+    "rgba(255,0,0,0.5)",
+    "#ff000080",
+    "hsla(0,100%,50%,0.5)",
+  ]) {
+    const svg = render({ is_filled: true, color })
+    expect(svg).toContain('fill="rgb(255, 0, 0)"')
+    expect(svg).toContain('stroke="rgb(255, 0, 0)"')
+    expect(Number(svg.match(/opacity="([^"]+)"/)![1])).toBeCloseTo(0.5, 2)
+  }
+})
+
+test("rasterized filled edges and retraces have the same opacity as interiors", () => {
+  for (const is_filled of [false, true]) {
+    const element = render({ is_filled, color: "rgba(255,0,0,0.5)" })
+      .replace(/d="[^"]*"/, 'd="M 20 20 L 80 20 L 80 80 L 20 20 L 80 80"')
+      .replace(/stroke-width="[^"]*"/, 'stroke-width="10"')
+    const image = new Resvg(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">${element.replace(/\/?>$/, "/>")}</svg>`,
+    ).render()
+    for (const [x, y] of [
+      [50, 20],
+      [78, 22],
+      [50, 50],
+    ]) {
+      const offset = (y! * image.width + x!) * 4
+      expect(Math.abs(image.pixels[offset]! - 128)).toBeLessThanOrEqual(1)
+      expect(Math.abs(image.pixels[offset + 3]! - 128)).toBeLessThanOrEqual(1)
+    }
+  }
+})
+
+test("SVG context-dependent paints remain valid fabrication colors", () => {
+  expect(render({ is_filled: true, color: "currentColor" })).toContain(
+    'fill="currentColor"',
+  )
 })
