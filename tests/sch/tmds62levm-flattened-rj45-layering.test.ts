@@ -67,6 +67,6 @@ test("TMDS62LEVM flattened RJ45 preserves primitive order", () => {
     `data-schematic-circle-id="${firstTerminalId}"`,
   )
 
-  expect(bodyIndex).toBeGreaterThan(terminalIndex)
+  expect(bodyIndex).toBeLessThan(terminalIndex)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })

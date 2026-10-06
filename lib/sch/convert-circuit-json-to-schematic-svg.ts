@@ -193,11 +193,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schTableSvgs: SvgObject[] = []
   const schPortHoverSvgs: SvgObject[] = []
   const schPortIndicatorSvgs: SvgObject[] = []
-  const schLineSvgs: SvgObject[] = []
-  const schCircleSvgs: SvgObject[] = []
-  const schRectSvgs: SvgObject[] = []
-  const schArcSvgs: SvgObject[] = []
-  const schPathSvgs: SvgObject[] = []
+  const schPrimitiveSvgs: SvgObject[] = []
   const schSheetSvgs: SvgObject[] = []
   const schGraphicSvgs: SvgObject[] = []
   const graphicViewport = getSchematicGraphicViewport({
@@ -314,7 +310,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_line") {
       if (elm.schematic_component_id) continue
-      schLineSvgs.push(
+      schPrimitiveSvgs.push(
         ...createSvgObjectsFromSchematicLine({
           schLine: elm,
           transform,
@@ -323,7 +319,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_circle") {
       if (elm.schematic_component_id) continue
-      schCircleSvgs.push(
+      schPrimitiveSvgs.push(
         ...createSvgObjectsFromSchematicCircle({
           schCircle: elm,
           transform,
@@ -332,7 +328,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_rect") {
       if (elm.schematic_component_id) continue
-      schRectSvgs.push(
+      schPrimitiveSvgs.push(
         ...createSvgObjectsFromSchematicRect({
           schRect: elm,
           transform,
@@ -341,7 +337,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_arc") {
       if (elm.schematic_component_id) continue
-      schArcSvgs.push(
+      schPrimitiveSvgs.push(
         ...createSvgObjectsFromSchematicArc({
           schArc: elm,
           transform,
@@ -350,7 +346,7 @@ export function convertCircuitJsonToSchematicSvg(
       )
     } else if (elm.type === "schematic_path") {
       if (elm.schematic_component_id) continue
-      schPathSvgs.push(
+      schPrimitiveSvgs.push(
         ...createSvgObjectsFromSchematicPath({
           schPath: elm,
           transform,
@@ -403,11 +399,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schSheetSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
-    ...schLineSvgs,
-    ...schCircleSvgs,
-    ...schRectSvgs,
-    ...schArcSvgs,
-    ...schPathSvgs,
+    ...schPrimitiveSvgs,
     ...schComponentSvgs,
     ...schPortHoverSvgs,
     ...schPortIndicatorSvgs,
