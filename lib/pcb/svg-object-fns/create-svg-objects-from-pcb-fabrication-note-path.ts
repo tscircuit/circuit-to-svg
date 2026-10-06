@@ -1,29 +1,39 @@
-import type { PcbSilkscreenPath, PcbFabricationNotePath } from "circuit-json"
+import type {
+  PcbFabricationNoteRect,
+  PcbFabricationNotePath,
+} from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
+// Accept the additive flags before the next circuit-json release.
+type FabricationPath = PcbFabricationNotePath &
+  Pick<PcbFabricationNoteRect, "is_filled" | "has_stroke">
+
 export function createSvgObjectsFromPcbFabricationNotePath(
-  fabNotePath: PcbFabricationNotePath,
+  fabNotePath: FabricationPath,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, layer: layerFilter } = ctx
-  if (!fabNotePath.route || !Array.isArray(fabNotePath.route)) return []
+  const { transform } = ctx
+  if (!Array.isArray(fabNotePath.route) || fabNotePath.route.length < 2)
+    return []
 
   // Close the path if the first and last points are the same
   const firstPoint = fabNotePath.route[0]
   const lastPoint = fabNotePath.route[fabNotePath.route.length - 1]
-  const isClosed =
+  const repeatsFirstPoint =
     firstPoint!.x === lastPoint!.x && firstPoint!.y === lastPoint!.y
 
   const path =
     fabNotePath.route
-      .slice(0, isClosed ? -1 : undefined)
-      .map((point: any, index: number) => {
+      .slice(0, repeatsFirstPoint ? -1 : undefined)
+      .map((point, index) => {
         const [x, y] = applyToPoint(transform, [point.x, point.y])
         return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
       })
-      .join(" ") + (isClosed ? " Z" : "")
+      .join(" ") + (repeatsFirstPoint || fabNotePath.is_filled ? " Z" : "")
+
+  const color = fabNotePath.color || "rgba(255,255,255,0.5)"
 
   return [
     {
@@ -31,8 +41,8 @@ export function createSvgObjectsFromPcbFabricationNotePath(
       type: "element",
       attributes: {
         class: "pcb-fabrication-note-path",
-        stroke: fabNotePath.color || "rgba(255,255,255,0.5)",
-        fill: "none",
+        stroke: fabNotePath.has_stroke === false ? "none" : color,
+        fill: fabNotePath.is_filled ? color : "none",
         d: path,
         "stroke-width": (
           fabNotePath.stroke_width * Math.abs(transform.a)
