@@ -1,13 +1,8 @@
 import { expect, test } from "bun:test"
-import type {
-  PcbFabricationNotePath,
-  PcbFabricationNoteRect,
-} from "circuit-json"
+import type { PcbFabricationNotePath } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 
-type FabricationPath = PcbFabricationNotePath &
-  Pick<PcbFabricationNoteRect, "is_filled" | "has_stroke">
-const path: FabricationPath = {
+const path: PcbFabricationNotePath = {
   type: "pcb_fabrication_note_path",
   pcb_fabrication_note_path_id: "filled-path",
   pcb_component_id: "component",
@@ -22,7 +17,7 @@ const path: FabricationPath = {
   ],
   stroke_width: 0.5,
 }
-function render(overrides: Partial<FabricationPath> = {}) {
+function render(overrides: Partial<PcbFabricationNotePath> = {}) {
   return (
     convertCircuitJsonToPcbSvg([{ ...path, ...overrides }], {
       includeVersion: false,

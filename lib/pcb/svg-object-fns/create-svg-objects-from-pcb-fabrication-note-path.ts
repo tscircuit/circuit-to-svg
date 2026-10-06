@@ -1,17 +1,10 @@
-import type {
-  PcbFabricationNoteRect,
-  PcbFabricationNotePath,
-} from "circuit-json"
+import type { PcbFabricationNotePath } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
-// Accept the additive flags before the next circuit-json release.
-type FabricationPath = PcbFabricationNotePath &
-  Pick<PcbFabricationNoteRect, "is_filled" | "has_stroke">
-
 export function createSvgObjectsFromPcbFabricationNotePath(
-  fabNotePath: FabricationPath,
+  fabNotePath: PcbFabricationNotePath,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform } = ctx
