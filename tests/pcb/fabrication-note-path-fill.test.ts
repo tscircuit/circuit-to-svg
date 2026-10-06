@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
-import type { PcbFabricationNotePath } from "circuit-json"
+import type { CircuitJson, PcbFabricationNotePath } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
+import visualFixture from "../fixtures/fabrication-path-fill.circuit.json"
 
 const path: PcbFabricationNotePath = {
   type: "pcb_fabrication_note_path",
@@ -57,4 +58,14 @@ test("filled fabrication paths can retain their stroke and default color", () =>
 test("empty and single-point fabrication paths are ignored", () => {
   expect(render({ route: [], is_filled: true })).toBe("")
   expect(render({ route: [{ x: 0, y: 0 }], is_filled: true })).toBe("")
+})
+
+test("fabrication path fill modes visual snapshot", () => {
+  const svg = convertCircuitJsonToPcbSvg(visualFixture as CircuitJson, {
+    width: 800,
+    height: 600,
+    includeVersion: false,
+    showFabricationNotes: true,
+  })
+  expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
