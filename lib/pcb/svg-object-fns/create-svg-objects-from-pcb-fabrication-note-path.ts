@@ -1,3 +1,4 @@
+import Color from "color"
 import type { PcbFabricationNotePath } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
@@ -28,15 +29,37 @@ export function createSvgObjectsFromPcbFabricationNotePath(
 
   const color = fabNotePath.color || "rgba(255,255,255,0.5)"
 
+  // SVG element opacity composites fill and stroke together. Alpha in each
+  // paint would otherwise be applied twice where their coverage overlaps.
+  let paint = color
+  let opacity: string | undefined
+  if (
+    fabNotePath.is_filled &&
+    fabNotePath.has_stroke !== false &&
+    fabNotePath.stroke_width > 0
+  ) {
+    try {
+      const parsedColor = Color(color)
+      if (parsedColor.alpha() < 1) {
+        paint = parsedColor.alpha(1).rgb().string()
+        opacity = parsedColor.alpha().toString()
+      }
+    } catch {
+      // Context-dependent SVG paints (currentColor, var(), url()) must still
+      // be resolved by the SVG consumer rather than rejected by this renderer.
+    }
+  }
+
   return [
     {
       name: "path",
       type: "element",
       attributes: {
         class: "pcb-fabrication-note-path",
-        stroke: fabNotePath.has_stroke === false ? "none" : color,
-        fill: fabNotePath.is_filled ? color : "none",
+        stroke: fabNotePath.has_stroke === false ? "none" : paint,
+        fill: fabNotePath.is_filled ? paint : "none",
         d: path,
+        ...(opacity === undefined ? {} : { opacity }),
         "stroke-width": (
           fabNotePath.stroke_width * Math.abs(transform.a)
         ).toString(),

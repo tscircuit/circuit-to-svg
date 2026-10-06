@@ -343,5 +343,98 @@
     ],
     "stroke_width": 1,
     "color": "rgba(80,200,255,0.7)"
+  },
+  {
+    "type": "pcb_fabrication_note_path",
+    "pcb_fabrication_note_path_id": "overlap-0",
+    "pcb_component_id": "component",
+    "layer": "top",
+    "stroke_width": 0.8,
+    "color": "rgba(255,255,255,0.5)",
+    "is_filled": false,
+    "route": [
+      {
+        "x": -15,
+        "y": -14
+      },
+      {
+        "x": -9,
+        "y": -14
+      },
+      {
+        "x": -9,
+        "y": -12
+      },
+      {
+        "x": -15,
+        "y": -14
+      },
+      {
+        "x": -9,
+        "y": -12
+      }
+    ]
+  },
+  {
+    "type": "pcb_fabrication_note_path",
+    "pcb_fabrication_note_path_id": "overlap-1",
+    "pcb_component_id": "component",
+    "layer": "top",
+    "stroke_width": 0.8,
+    "color": "rgba(255,255,255,0.5)",
+    "is_filled": true,
+    "route": [
+      {
+        "x": -3,
+        "y": -14
+      },
+      {
+        "x": 3,
+        "y": -14
+      },
+      {
+        "x": 3,
+        "y": -12
+      },
+      {
+        "x": -3,
+        "y": -14
+      },
+      {
+        "x": 3,
+        "y": -12
+      }
+    ]
+  },
+  {
+    "type": "pcb_fabrication_note_path",
+    "pcb_fabrication_note_path_id": "overlap-2",
+    "pcb_component_id": "component",
+    "layer": "top",
+    "stroke_width": 0.8,
+    "color": "rgba(255,255,255,0.5)",
+    "is_filled": false,
+    "route": [
+      {
+        "x": 9,
+        "y": -14
+      },
+      {
+        "x": 15,
+        "y": -14
+      },
+      {
+        "x": 15,
+        "y": -12
+      },
+      {
+        "x": 9,
+        "y": -14
+      },
+      {
+        "x": 15,
+        "y": -12
+      }
+    ]
   }
 ]
