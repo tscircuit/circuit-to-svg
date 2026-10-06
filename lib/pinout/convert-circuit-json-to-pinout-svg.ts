@@ -1,5 +1,6 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement, PcbPort, SourceBoard } from "circuit-json"
-import { type INode as SvgObject, stringify } from "svgson"
+import { type INode as SvgObject } from "svgson"
 import {
   type Matrix,
   compose,
@@ -327,7 +328,7 @@ export function convertCircuitJsonToPinoutSvg(
     children,
   }
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 function createSvgObjects(

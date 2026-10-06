@@ -1,31 +1,28 @@
 import { expect, test, describe } from "bun:test"
 import circuitJsonFixture from "../assets/via-too-close-to-trace.json"
 import { convertCircuitJsonToPcbSvg } from "lib/index"
-import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
+import { checkViaTraceClearance } from "@tscircuit/checks"
 
 describe("PCB vias in non-overlapping trace checks", () => {
-  test("non-overlapping functionality should include vias as collidable objects", async () => {
+  test("via clearance checks should detect traces too close to vias", async () => {
     const circuitJson = structuredClone(circuitJsonFixture)
-    const errors = checkEachPcbTraceNonOverlapping(circuitJson as any)
+    const errors = checkViaTraceClearance(circuitJson as any)
 
     expect(errors).toMatchInlineSnapshot(`
       [
         {
+          "actual_clearance": 0.0859484136946458,
           "center": {
-            "x": 2.143385148180965,
-            "y": -0.13905158630535422,
+            "x": 1.9,
+            "y": -0.2570257931526771,
           },
-          "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.neg, .C1 > port.neg] is too close to pcb_via "pcb_via[#pcb_via_0]" (gap: 0.086mm)",
-          "pcb_component_ids": [],
-          "pcb_port_ids": [
-            "pcb_port_1",
-            "pcb_port_3",
-          ],
-          "pcb_trace_error_id": "overlap_source_trace_0_0_pcb_via_0",
+          "error_type": "pcb_via_trace_clearance_error",
+          "message": "Via pcb_via[#pcb_via_0] and trace trace[source_trace_0_0] are too close (clearance: 0.086mm, minimum: 0.1mm)",
+          "minimum_clearance": 0.1,
           "pcb_trace_id": "source_trace_0_0",
-          "source_trace_id": "",
-          "type": "pcb_trace_error",
+          "pcb_via_id": "pcb_via_0",
+          "pcb_via_trace_clearance_error_id": "via_trace_clearance_pcb_via_0_source_trace_0_0",
+          "type": "pcb_via_trace_clearance_error",
         },
       ]
     `)

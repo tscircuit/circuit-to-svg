@@ -5,6 +5,8 @@ import {
   distance,
 } from "circuit-json"
 
+import { hasWireTaper } from "./get-wire-taper-polygon"
+
 export type PcbTraceRoutePoint = PcbTrace["route"][number]
 
 export interface PcbTraceSegment {
@@ -25,7 +27,7 @@ export function getPcbTracePoints(point: PcbTraceRoutePoint): readonly Point[] {
     case "through_pad":
       return [point.start, point.end] as const
     default:
-      return [point] as const
+      return [point as Point]
   }
 }
 
@@ -38,9 +40,12 @@ export function getPcbTraceSegments(
     const start = route[i]
     const end = route[i + 1]
     if (!start || !end) continue
-
-    const startAnchor = start.route_type === "through_pad" ? start.end : start
-    const endAnchor = end.route_type === "through_pad" ? end.start : end
+    // The outgoing taper is drawn as filled copper, never as a duplicate stroke.
+    if (hasWireTaper(start)) continue
+    const startAnchor =
+      start.route_type === "through_pad" ? start.end : (start as Point)
+    const endAnchor =
+      end.route_type === "through_pad" ? end.start : (end as Point)
 
     const layer =
       start.route_type === "wire"

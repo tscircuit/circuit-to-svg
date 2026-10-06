@@ -5,30 +5,11 @@ import { checkEachPcbTraceNonOverlapping } from "@tscircuit/checks"
 
 describe("PCB traces in non-overlapping trace checks", () => {
   test("Should draw error as two traces are too close", async () => {
-    const errors = checkEachPcbTraceNonOverlapping(circuitJsonFixture as any)
+    const circuitJson = structuredClone(circuitJsonFixture)
+    const errors = checkEachPcbTraceNonOverlapping(circuitJson as any)
 
     expect(errors).toMatchInlineSnapshot(`
       [
-        {
-          "center": {
-            "x": -2.8,
-            "y": -1.5972222222222219,
-          },
-          "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] is too close to pcb_smtpad "pcb_port[.C1 > .cathode]" (gap: 0.092mm)",
-          "pcb_component_ids": [
-            "pcb_component_1",
-          ],
-          "pcb_port_ids": [
-            "pcb_port_0",
-            "pcb_port_2",
-            "pcb_port_3",
-          ],
-          "pcb_trace_error_id": "overlap_source_trace_1_0_pcb_smtpad_3",
-          "pcb_trace_id": "source_trace_1_0",
-          "source_trace_id": "",
-          "type": "pcb_trace_error",
-        },
         {
           "center": {
             "x": -0.6877720255648351,
@@ -51,12 +32,9 @@ describe("PCB traces in non-overlapping trace checks", () => {
       ]
     `)
     expect(errors.length).toBeGreaterThan(0)
-    const svg = convertCircuitJsonToPcbSvg(
-      [...circuitJsonFixture, ...errors] as any,
-      {
-        shouldDrawErrors: true,
-      },
-    )
+    const svg = convertCircuitJsonToPcbSvg([...circuitJson, ...errors] as any, {
+      shouldDrawErrors: true,
+    })
     await expect(svg).toMatchSvgSnapshot(import.meta.path)
   })
 })

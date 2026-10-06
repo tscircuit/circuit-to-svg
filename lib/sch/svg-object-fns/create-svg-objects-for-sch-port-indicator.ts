@@ -27,29 +27,31 @@ export const createSvgObjectsForSchPortIndicator = ({
   const strokeWidth = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM
   const screenPos = applyToPoint(transform, schPort.center)
 
-  // Only draw port circle if not connected (same as schematic box behavior)
-  svgObjects.push({
-    name: "circle",
-    type: "element",
-    value: "",
-    attributes: {
-      class: "component-pin sch-component-pin sch-port-indicator",
-      cx: screenPos.x.toString(),
-      cy: screenPos.y.toString(),
-      r: radiusPx.toString(),
-      fill: "none",
-      stroke: colorMap.schematic.component_outline,
-      "stroke-width": strokeWidth.toString(),
-      "data-schematic-port-id": schPort.schematic_port_id,
-    },
-    children: [],
-  })
-
-  // Get port label from display_pin_label or source_port name
+  // No-connect crosses are drawn centrally, including when drawPorts is off.
   const sourcePort = circuitJson.find(
     (e) =>
       e.type === "source_port" && e.source_port_id === schPort.source_port_id,
   ) as SourcePort | undefined
+  if (!sourcePort?.do_not_connect) {
+    // Keep the debug circle from overlapping a no-connect cross.
+    svgObjects.push({
+      name: "circle",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "component-pin sch-component-pin sch-port-indicator",
+        cx: screenPos.x.toString(),
+        cy: screenPos.y.toString(),
+        r: radiusPx.toString(),
+        fill: "none",
+        stroke: colorMap.schematic.component_outline,
+        "stroke-width": strokeWidth.toString(),
+        "data-schematic-port-id": schPort.schematic_port_id,
+      },
+      children: [],
+    })
+  }
+
   const label = schPort.display_pin_label ?? sourcePort?.name
 
   if (label) {

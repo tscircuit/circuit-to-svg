@@ -5,7 +5,7 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 import circuitJsonFixture from "../assets/traces-too-close.json"
 
 test("renders a real pcb_pad_trace_clearance_error", () => {
-  const circuitJson = [...circuitJsonFixture] as AnyCircuitElement[]
+  const circuitJson = structuredClone(circuitJsonFixture) as AnyCircuitElement[]
   const errors = checkPadTraceClearance(circuitJson)
 
   expect(errors).toHaveLength(1)

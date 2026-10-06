@@ -1,4 +1,8 @@
-import type { SchematicNetLabel } from "circuit-json"
+import {
+  createNetLabelTextChildren,
+  getNetLabelTextWidth,
+  type NetLabelWithSuperscript,
+} from "lib/utils/net-label-superscript"
 import type { SvgObject } from "lib/svg-object"
 import {
   getSchMmFontSize,
@@ -13,7 +17,6 @@ import {
   translate,
   type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
 import { symbols } from "schematic-symbols"
 import { createSvgSchErrorText } from "./create-svg-error-text"
 import {
@@ -33,7 +36,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
   realToScreenTransform,
   colorMap,
 }: {
-  schNetLabel: SchematicNetLabel
+  schNetLabel: NetLabelWithSuperscript
   realToScreenTransform: Matrix
   colorMap: ColorMap
 }): SvgObject[] => {
@@ -73,7 +76,7 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
 
   // Use the same positioning logic as the net label text
   const fontSizeMm = getSchMmFontSize("net_label")
-  const textWidthFSR = estimateTextWidth(labelText || "")
+  const textWidthFSR = getNetLabelTextWidth({ ...schNetLabel, text: labelText })
 
   const fullWidthFsr =
     textWidthFSR +
@@ -253,15 +256,12 @@ export const createSvgObjectsForSchNetLabelWithSymbol = ({
           ? { style: "text-decoration: overline;" }
           : {}),
       },
-      children: [
-        {
-          type: "text",
-          value: textValue,
-          name: "",
-          attributes: {},
-          children: [],
-        },
-      ],
+      children: createNetLabelTextChildren(
+        textValue,
+        text.text === "{REF}" ? schNetLabel.display_superscript : undefined,
+        getSchScreenFontSize(realToScreenTransform, "reference_designator"),
+        ninePointAnchorToDominantBaseline[text.anchor],
+      ),
       value: "",
     })
   }

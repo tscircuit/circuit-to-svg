@@ -20,18 +20,27 @@ import { layerNameToColor } from "../layer-name-to-color"
 import { createSvgObjectsFromPcbVia } from "./create-svg-objects-from-pcb-via"
 import { getCopperPourTraceMaskIdForLayer } from "../copper-pour-trace-mask"
 
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+  hasWireTaper,
+} from "../get-wire-taper-polygon"
+
 export function createSvgObjectsFromPcbTrace(
   trace: PcbTrace,
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap, showSolderMask } = ctx
-  if (!trace.route || !Array.isArray(trace.route) || trace.route.length < 2)
+  if (!trace.route || !Array.isArray(trace.route) || trace.route.length === 0)
     return []
 
   const svgObjects: SvgObject[] = []
-  const standaloneViaPositionKeys = getStandaloneViaPositionKeys(ctx)
 
-  const pourMaskIdByLayer = new Map<string, string | undefined>()
+  // Share lookups across traces and the exposed-copper pass for this render.
+  const pourMaskIdByLayer = (ctx.copperPourTraceMaskIdsByLayer ??= new Map<
+    string,
+    string | undefined
+  >())
   const drawableSegments: PcbTraceSegment[] = []
 
   for (const originalSegment of getPcbTraceSegments(trace.route)) {
@@ -86,6 +95,41 @@ export function createSvgObjectsFromPcbTrace(
       return { mask: `url(#${pourMaskId})` }
     }
     return {}
+  }
+
+  for (const point of getWireTaperSegments(trace.route)) {
+    if (layerFilter && point.layer !== layerFilter) continue
+    if (point.is_inside_copper_pour) continue
+    const polygon = getWireTaperPolygon(point).map((p) =>
+      applyToPoint(transform, p),
+    )
+    if (!polygon.length) continue
+    const color = showSolderMask
+      ? colorMap.soldermaskWithCopperUnderneath[
+          point.layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
+        ]
+      : layerNameToColor(point.layer, colorMap)
+    svgObjects.push({
+      name: "path",
+      type: "element",
+      value: "",
+      children: [],
+      attributes: {
+        class: showSolderMask ? "pcb-soldermask" : "pcb-trace",
+        fill: color,
+        stroke: "none",
+        d:
+          polygon
+            .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+            .join(" ") + " Z",
+        "data-type": showSolderMask ? "pcb_trace_soldermask" : "pcb_trace",
+        "data-route-type": "wire",
+        "data-wire-taper": "true",
+        "data-width-interpolation-mode": point.width_interpolation_mode,
+        "data-pcb-layer": point.layer,
+        ...getPourMaskAttributes(point.layer),
+      },
+    })
   }
 
   if (trace.route_thickness_mode === "interpolated") {
@@ -189,10 +233,10 @@ export function createSvgObjectsFromPcbTrace(
 
   for (const [index, point] of trace.route.entries()) {
     if (!point || point.route_type !== "via") continue
-    if (standaloneViaPositionKeys.has(getPositionKey(point))) continue
+    if (getStandaloneViaPositionKeys(ctx).has(getPositionKey(point))) continue
 
     svgObjects.push(
-      createSvgObjectsFromPcbVia(
+      ...createSvgObjectsFromPcbVia(
         createSyntheticViaFromRoutePoint(trace, point, index, ctx),
         ctx,
       ),
@@ -271,17 +315,22 @@ function createSyntheticViaFromRoutePoint(
   ctx: PcbContext,
 ): PCBVia {
   const width = getAdjacentTraceWidth(trace.route, routeIndex)
-  const { holeDiameter, outerDiameter } = getRouteViaDiameters(ctx, width)
+  const board = ctx.boardOwnerMap?.get(trace.pcb_trace_id)
+  const { holeDiameter, outerDiameter } = getRouteViaDiameters(board, width)
 
   return {
     type: "pcb_via",
     pcb_via_id: `${trace.pcb_trace_id}_route_via_${routeIndex}`,
     pcb_trace_id: trace.pcb_trace_id,
+    subcircuit_id: trace.subcircuit_id,
+    pcb_group_id: trace.pcb_group_id,
     x: point.x,
     y: point.y,
     outer_diameter: outerDiameter,
     hole_diameter: holeDiameter,
     layers: [point.from_layer, point.to_layer],
+    tented_on_top: point.tented_on_top,
+    tented_on_bottom: point.tented_on_bottom,
   }
 }
 
@@ -306,6 +355,8 @@ function findTraceWidth(
     index += direction
   ) {
     const point = route[index]
+    if (hasWireTaper(point))
+      return direction === -1 ? point.end_width : point.start_width
     if (!point || !("width" in point) || typeof point.width !== "number") {
       continue
     }
@@ -317,15 +368,12 @@ function findTraceWidth(
 }
 
 function getRouteViaDiameters(
-  ctx: PcbContext,
+  board: PcbBoard | undefined,
   adjacentTraceWidth: number,
 ): {
   holeDiameter: number
   outerDiameter: number
 } {
-  const board = ctx.circuitJson?.find(
-    (elm): elm is PcbBoard => elm.type === "pcb_board",
-  )
   const boardMinViaHoleDiameter = parseOptionalDistance(
     board?.min_via_hole_diameter,
   )
@@ -346,11 +394,11 @@ function getRouteViaDiameters(
 }
 
 function getStandaloneViaPositionKeys(ctx: PcbContext): Set<string> {
-  return new Set(
+  return (ctx.standaloneViaPositionKeys ??= new Set(
     ctx.circuitJson
       ?.filter((elm): elm is PCBVia => elm.type === "pcb_via")
       .map((via) => getPositionKey(via)) ?? [],
-  )
+  ))
 }
 
 function getPositionKey(point: Pick<Point, "x" | "y">): string {

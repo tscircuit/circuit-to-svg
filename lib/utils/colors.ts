@@ -227,7 +227,7 @@ export const colorMap = {
     label_hier: "rgb(114, 86, 0)",
     label_local: "rgb(15, 15, 15)",
     net_name: "rgb(132, 132, 132)",
-    no_connect: "rgb(0, 0, 132)",
+    no_connect: "rgb(132, 0, 0)",
     note: "rgb(0, 0, 194)",
     override_item_colors: false,
     pin: "rgb(132, 0, 0)",

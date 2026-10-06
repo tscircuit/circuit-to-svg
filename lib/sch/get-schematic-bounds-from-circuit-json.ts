@@ -1,3 +1,7 @@
+import {
+  getNetLabelTextWidth,
+  type SchematicTextWithSuperscript,
+} from "lib/utils/net-label-superscript"
 import type { AnyCircuitElement } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
@@ -53,7 +57,7 @@ export function getSchematicBoundsFromCircuitJson(
       }
     } else if (item.type === "schematic_net_label") {
       const fontSizeMm = getSchMmFontSize("net_label")
-      const textWidth = estimateTextWidth(item.text || "")
+      const textWidth = getNetLabelTextWidth(item)
       const fullWidthFsr =
         textWidth +
         ARROW_POINT_WIDTH_FSR * 2 +
@@ -84,9 +88,56 @@ export function getSchematicBoundsFromCircuitJson(
       const textType = "reference_designator"
       const fontSize = getSchMmFontSize(textType, item.font_size) ?? 0.18
       const text = item.text ?? ""
-      const width = text.length * fontSize
-      const height = fontSize
-      updateBounds(item.position, { width, height }, item.rotation ?? 0)
+      const superscript = (item as SchematicTextWithSuperscript)
+        .display_superscript
+      if (superscript) {
+        const lines = text.split("\n")
+        const width =
+          Math.max(
+            ...lines.map((line, index) =>
+              getNetLabelTextWidth({
+                text: line,
+                display_superscript:
+                  index === lines.length - 1 ? superscript : undefined,
+              }),
+            ),
+          ) * fontSize
+        // Work in screen-relative coordinates, matching the SVG text anchor.
+        const anchor = item.anchor
+        const offsetX =
+          anchor === "left" || anchor.endsWith("_left")
+            ? width / 2
+            : anchor === "right" || anchor.endsWith("_right")
+              ? -width / 2
+              : 0
+        const top =
+          anchor === "top" || anchor.startsWith("top_")
+            ? 0
+            : anchor === "bottom" || anchor.startsWith("bottom_")
+              ? -fontSize
+              : -fontSize / 2
+        const height = (lines.length + 0.3) * fontSize
+        const offsetY = -(top - 0.3 * fontSize + height / 2)
+        const rotation = (-(item.rotation ?? 0) * Math.PI) / 180
+        updateBounds(
+          {
+            x:
+              item.position.x +
+              offsetX * Math.cos(rotation) -
+              offsetY * Math.sin(rotation),
+            y:
+              item.position.y +
+              offsetX * Math.sin(rotation) +
+              offsetY * Math.cos(rotation),
+          },
+          { width, height },
+          rotation,
+        )
+      } else {
+        const width = text.length * fontSize
+        const height = fontSize
+        updateBounds(item.position, { width, height }, item.rotation ?? 0)
+      }
     } else if (item.type === "schematic_voltage_probe") {
       updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and height of the probe (Arrow)
 

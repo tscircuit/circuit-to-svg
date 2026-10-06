@@ -1,15 +1,17 @@
+import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
+import { createSoldermaskOpeningLayers } from "./create-soldermask-opening-layers"
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   Point,
   AnyCircuitElement,
   pcb_cutout,
   PcbCutout,
   PcbPanel,
-  PCBKeepoutRect,
-  PCBKeepoutCircle,
+  PcbBoard,
   LayerRef,
 } from "circuit-json"
 import { distance } from "circuit-json"
-import { type INode as SvgObject, stringify } from "svgson"
+import { type INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -31,6 +33,7 @@ import { createSvgObjectsFromPcbNoteText } from "./svg-object-fns/create-svg-obj
 import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-objects-from-pcb-note-rect"
 import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
 import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
+import { createSvgObjectsFromPcbBend } from "./svg-object-fns/create-svg-objects-from-pcb-bend"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenGraphic } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-graphic"
@@ -79,18 +82,27 @@ import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-object
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import { createSoldermaskOpeningMasks } from "./create-soldermask-opening-masks"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
 import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
+import {
+  createBoardOwnerMap,
+  type AnyCircuitJsonId,
+} from "./create-board-owner-map"
 interface PointObjectNotation {
   x: number
   y: number
 }
 
 export interface PcbSvgOptions {
+  /** Resolved PCB element IDs to inspect together. Empty or omitted disables X-Ray. */
+  xRayElementIds?: readonly string[]
+  /** Opacity of other copper during X-Ray, between 0 and 1. Defaults to 0.2. */
+  hiddenLayerOpacity?: number
   colorOverrides?: PcbColorOverrides
   width?: number
   height?: number
@@ -109,6 +121,10 @@ export interface PcbSvgOptions {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  /** Draw finite pcb_bend centerlines as dashed overlays. Defaults to false. */
+  showBendLines?: boolean
+  /** Render fabrication notes and include them in bounds. Defaults to true. */
+  showFabricationNotes?: boolean
   /** Draw pcb_debug_object overlays. Defaults to false. */
   showDebugObjects?: boolean
   grid?: PcbGridOptions
@@ -139,6 +155,7 @@ export interface PcbContext {
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
+  showBendLines?: boolean
   showDebugObjects?: boolean
   debugObjectStyle?: {
     fontSize: number
@@ -150,18 +167,37 @@ export interface PcbContext {
   showAnchorOffsets?: boolean
   showPinNumbers?: boolean
   circuitJson?: AnyCircuitElement[]
+  boardOwnerMap?: Map<AnyCircuitJsonId, PcbBoard | undefined>
   /**
    * Populated while rendering traces: mask ids referenced by trace strokes to
    * hide the portions covered by copper pours. Used to emit mask defs.
    */
   usedCopperPourTraceMaskIds?: Set<string>
+  copperPourTraceMaskIdsByLayer?: Map<string, string | undefined>
+  standaloneViaPositionKeys?: Set<string>
 }
 
 export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: PcbSvgOptions,
 ): string {
-  const drawPaddingOutsideBoard = options?.drawPaddingOutsideBoard ?? true
+  if (options?.showFabricationNotes === false) {
+    // Exclude hidden drawing annotations from both rendering and bounds.
+    circuitJson = circuitJson.filter(
+      (element) => !element.type.startsWith("pcb_fabrication_note_"),
+    )
+  }
+  const xRayActive = Boolean(options?.xRayElementIds?.length)
+  if (
+    xRayActive &&
+    options?.hiddenLayerOpacity !== undefined &&
+    (!Number.isFinite(options.hiddenLayerOpacity) ||
+      options.hiddenLayerOpacity < 0 ||
+      options.hiddenLayerOpacity > 1)
+  )
+    throw new Error("hiddenLayerOpacity must be between 0 and 1")
+  const drawPaddingOutsideBoard =
+    !xRayActive && (options?.drawPaddingOutsideBoard ?? true)
   const layer = options?.layer
   const colorOverrides = options?.colorOverrides
 
@@ -231,9 +267,16 @@ export function convertCircuitJsonToPcbSvg(
     },
   }
 
-  const circuitJsonForBounds = options?.showCourtyards
-    ? circuitJson
-    : circuitJson.filter((element) => element.type !== "pcb_courtyard_rect")
+  const circuitJsonForBounds = circuitJson.filter((element) => {
+    if (element.type === "pcb_courtyard_rect" && !options?.showCourtyards)
+      return false
+    if (element.type === "pcb_soldermask_opening") {
+      return (
+        Boolean(options?.showSolderMask) && (!layer || element.layer === layer)
+      )
+    }
+    return true
+  })
 
   const {
     minX,
@@ -328,6 +371,7 @@ export function convertCircuitJsonToPcbSvg(
     showSolderMask: options?.showSolderMask,
     showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
+    showBendLines: options?.showBendLines,
     showDebugObjects: options?.showDebugObjects,
     debugObjectStyle: {
       fontSize: debugFontSize,
@@ -339,12 +383,24 @@ export function convertCircuitJsonToPcbSvg(
     showAnchorOffsets: options?.showAnchorOffsets,
     showPinNumbers: options?.showPinNumbers,
     circuitJson,
+    boardOwnerMap: createBoardOwnerMap(circuitJson),
     usedCopperPourTraceMaskIds: new Set<string>(),
   }
 
-  let unsortedSvgObjects = circuitJson.flatMap((elm) =>
-    createSvgObjects({ elm, circuitJson, ctx }),
-  )
+  let unsortedSvgObjects = xRayActive
+    ? []
+    : circuitJson.flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
+
+  if (!xRayActive) {
+    unsortedSvgObjects.push(
+      ...createSoldermaskOpeningLayers({
+        circuitJson,
+        ctx,
+        create: (elm, context) =>
+          createSvgObjects({ elm, circuitJson, ctx: context }),
+      }),
+    )
+  }
 
   let strokeWidth = String(0.05 * scaleFactor)
 
@@ -355,14 +411,25 @@ export function convertCircuitJsonToPcbSvg(
     }
   }
 
-  if (options?.shouldDrawRatsNest) {
+  if (!xRayActive && options?.shouldDrawRatsNest) {
     const ratsNestObjects = createSvgObjectsForRatsNest(circuitJson, ctx)
     unsortedSvgObjects = [...unsortedSvgObjects, ...ratsNestObjects]
   }
 
-  const svgObjects = groupCopperPourMaskedTraceObjects(
-    sortSvgObjectsByPcbLayer(unsortedSvgObjects),
-  )
+  const svgObjects = xRayActive
+    ? createXRaySvgObjects({
+        circuitJson,
+        ctx,
+        selectedIds: options!.xRayElementIds!,
+        hiddenOpacity: options?.hiddenLayerOpacity ?? 0.2,
+        width: svgWidth,
+        height: svgHeight,
+        create: (elm, context) =>
+          createSvgObjects({ elm, circuitJson, ctx: context }),
+      })
+    : groupCopperPourMaskedTraceObjects(
+        sortSvgObjectsByPcbLayer(unsortedSvgObjects),
+      )
 
   const children: SvgObject[] = [
     {
@@ -383,7 +450,7 @@ export function convertCircuitJsonToPcbSvg(
   ]
 
   const gridObjects = createSvgObjectsForPcbGrid({
-    grid: options?.grid,
+    grid: xRayActive ? undefined : options?.grid,
     svgWidth,
     svgHeight,
   })
@@ -411,6 +478,17 @@ export function convertCircuitJsonToPcbSvg(
   })
   if (copperPourTraceMaskDefs) {
     children.push(copperPourTraceMaskDefs)
+  }
+
+  const soldermaskOpeningMasks = createSoldermaskOpeningMasks({
+    showSolderMask: ctx.showSolderMask,
+    objects: unsortedSvgObjects,
+    layer: layer ?? "top",
+    width: svgWidth,
+    height: svgHeight,
+  })
+  if (soldermaskOpeningMasks) {
+    children.push(soldermaskOpeningMasks)
   }
 
   children.push({
@@ -442,7 +520,7 @@ export function convertCircuitJsonToPcbSvg(
     children.push(gridObjects.rect)
   }
 
-  if (options?.showErrorsInTextOverlay) {
+  if (!xRayActive && options?.showErrorsInTextOverlay) {
     const errorOverlay = createErrorTextOverlay(
       circuitJson,
       "pcb_error_text_overlay",
@@ -474,7 +552,7 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   try {
-    return stringify(svgObject as SvgObject)
+    return stringifySvg(svgObject as SvgObject)
   } catch (error) {
     console.error("Error stringifying SVG object:", error)
     throw error
@@ -618,6 +696,9 @@ function createSvgObjects({
     case "pcb_note_line":
       if (!ctx.showPcbNotes) return []
       return createSvgObjectsFromPcbNoteLine(elm, ctx)
+    case "pcb_bend":
+      if (!ctx.showBendLines) return []
+      return createSvgObjectsFromPcbBend(elm, ctx)
     case "pcb_silkscreen_path":
       return createSvgObjectsFromPcbSilkscreenPath(elm, ctx)
     case "pcb_silkscreen_graphic":
@@ -639,10 +720,7 @@ function createSvgObjects({
       }
       return createSvgObjectsFromPcbCutout(elm as any, ctx)
     case "pcb_keepout":
-      return createSvgObjectsFromPcbKeepout(
-        elm as PCBKeepoutRect | PCBKeepoutCircle,
-        ctx,
-      )
+      return createSvgObjectsFromPcbKeepout(elm, ctx)
     case "pcb_group":
       return ctx.showPcbGroups
         ? createSvgObjectsFromPcbGroup(elm as any, ctx)

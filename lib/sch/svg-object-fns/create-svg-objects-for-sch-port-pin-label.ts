@@ -7,7 +7,8 @@ import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { createSvgTextParts } from "lib/utils/create-svg-text-parts"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 const LABEL_DIST_FROM_EDGE_MM = 0.1
 
@@ -56,6 +57,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
 
   const isNegated = label.startsWith("N_")
   const displayLabel = isNegated ? label.slice(2) : label
+  const textParts = schPort.display_pin_label_text_parts
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
 
@@ -74,7 +76,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated ? " text-decoration: overline;" : ""}`,
+      style: `font-family: sans-serif;${isNegated && !textParts?.length ? " text-decoration: overline;" : ""}`,
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
@@ -89,15 +91,17 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           ? `rotate(-90 ${screenPinNumberTextPos.x} ${screenPinNumberTextPos.y})`
           : "",
     },
-    children: [
-      {
-        type: "text",
-        value: displayLabel || "",
-        name: "",
-        attributes: {},
-        children: [],
-      },
-    ],
+    children: textParts?.length
+      ? createSvgTextParts(textParts)
+      : [
+          {
+            type: "text",
+            value: displayLabel || "",
+            name: "",
+            attributes: {},
+            children: [],
+          },
+        ],
     value: "",
   })
 

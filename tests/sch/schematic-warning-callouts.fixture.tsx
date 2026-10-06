@@ -27,7 +27,10 @@ export async function createMissingRefdesWarningCircuit(): Promise<{
   )
 
   await circuit.renderUntilSettled()
-  const circuitJson = circuit.getCircuitJson()
+  // The latest core already emits styling warnings; regenerate them below.
+  const circuitJson = circuit
+    .getCircuitJson()
+    .filter((element) => element.type !== "schematic_component_styling_warning")
   const warnings =
     checkSchematicComponentMissingReferenceDesignatorText(circuitJson)
   if (warnings.length !== 1) {
@@ -65,6 +68,7 @@ export async function createDifferentGeneratedWarningsCircuit(): Promise<{
   // published schematic check (including is_box_with_pins).
   const circuitJson = circuit
     .getCircuitJson()
+    .filter((element) => element.type !== "schematic_component_styling_warning")
     .map((element) =>
       element.type === "schematic_component"
         ? schematic_component.parse(element)

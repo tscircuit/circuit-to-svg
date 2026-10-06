@@ -4,7 +4,7 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 import circuitJsonFixture from "../assets/traces-too-close.json"
 
 test("falls back to the supplied center when references are unavailable", () => {
-  const circuitJson = [...circuitJsonFixture] as AnyCircuitElement[]
+  const circuitJson = structuredClone(circuitJsonFixture) as AnyCircuitElement[]
   const error: PcbPadTraceClearanceError = {
     type: "pcb_pad_trace_clearance_error",
     error_type: "pcb_pad_trace_clearance_error",

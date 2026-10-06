@@ -1,5 +1,6 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement } from "circuit-json"
-import { parseSync, stringify } from "svgson"
+import { parseSync } from "svgson"
 import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
 import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
@@ -152,7 +153,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     children: combinedChildren,
   }
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 function getSvgViewBoxSize(

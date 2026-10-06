@@ -1,8 +1,10 @@
+import {
+  getWireTaperSegments,
+  getWireTaperPolygon,
+} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
-  PCBKeepoutCircle,
-  PCBKeepoutRect,
   PcbCutout,
   PcbPanel,
   Point,
@@ -95,6 +97,31 @@ export function getComprehensivePcbBounds(
         height: circuitJsonElm.height,
         ccwRotationDegrees: circuitJsonElm.ccw_rotation,
       })
+    } else if (circuitJsonElm.type === "pcb_soldermask_opening") {
+      if (circuitJsonElm.shape === "polygon") {
+        updateTraceBounds(circuitJsonElm.points)
+      } else if (circuitJsonElm.shape === "circle") {
+        updateBounds({
+          center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
+          width: circuitJsonElm.radius * 2,
+          height: circuitJsonElm.radius * 2,
+        })
+      } else {
+        updateBounds({
+          center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
+          width: circuitJsonElm.width,
+          height: circuitJsonElm.height,
+          ccwRotationDegrees:
+            circuitJsonElm.shape === "rotated_rect"
+              ? circuitJsonElm.ccw_rotation
+              : 0,
+        })
+      }
+    } else if (
+      circuitJsonElm.type === "pcb_solder_paste" &&
+      circuitJsonElm.shape === "polygon"
+    ) {
+      updateTraceBounds(circuitJsonElm.points)
     } else if (circuitJsonElm.type === "pcb_smtpad") {
       const pad = circuitJsonElm
       if (pad.shape === "rect" || pad.shape === "pill") {
@@ -384,7 +411,7 @@ export function getComprehensivePcbBounds(
         }
       }
     } else if (circuitJsonElm.type === "pcb_keepout") {
-      const keepout = circuitJsonElm as PCBKeepoutRect | PCBKeepoutCircle
+      const keepout = circuitJsonElm
       if (keepout.shape === "rect") {
         updateBounds({
           center: keepout.center,
@@ -402,6 +429,14 @@ export function getComprehensivePcbBounds(
             center: keepout.center,
             width: radius * 2,
             height: radius * 2,
+          })
+        }
+      } else if (keepout.shape === "outline") {
+        for (const point of keepout.outline) {
+          updateBounds({
+            center: point,
+            width: keepout.stroke_width,
+            height: keepout.stroke_width,
           })
         }
       }
@@ -549,8 +584,12 @@ export function getComprehensivePcbBounds(
 
   function updateTraceBounds(route: Array<Point | PcbTraceRoutePoint>) {
     let updated = false
-    for (const point of route) {
-      for (const anchor of getTracePoints(point)) {
+    const points = [
+      ...route.flatMap(getTracePoints),
+      ...getWireTaperSegments(route).flatMap(getWireTaperPolygon),
+    ]
+    for (const point of points) {
+      for (const anchor of [point]) {
         const x = distance.parse(anchor.x)
         const y = distance.parse(anchor.y)
         if (x === undefined || y === undefined) continue

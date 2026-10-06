@@ -1,3 +1,4 @@
+import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   AnyCircuitElement,
   SimulationAnalysisResult,
@@ -7,7 +8,6 @@ import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
-import { stringify } from "svgson"
 import {
   type AcSweepView,
   getSimulationAnalysisResultId,
@@ -243,7 +243,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
     svgChildren,
   )
 
-  return stringify(svgObject)
+  return stringifySvg(svgObject)
 }
 
 const buildLogarithmicAxisInfo = (logarithmicCoordinates: number[]) => {

@@ -1,4 +1,8 @@
-import type { SchematicNetLabel } from "circuit-json"
+import {
+  createNetLabelTextChildren,
+  getNetLabelTextWidth,
+  type NetLabelWithSuperscript,
+} from "lib/utils/net-label-superscript"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import {
@@ -15,7 +19,6 @@ import {
   translate,
   type Matrix,
 } from "transformation-matrix"
-import { estimateTextWidth } from "../estimate-text-width"
 import { createSvgObjectsForSchNetLabelWithSymbol } from "./create-svg-objects-for-sch-net-label-with-symbol"
 import {
   ARROW_POINT_WIDTH_FSR,
@@ -30,7 +33,7 @@ export const createSvgObjectsForSchNetLabel = ({
   realToScreenTransform,
   colorMap,
 }: {
-  schNetLabel: SchematicNetLabel
+  schNetLabel: NetLabelWithSuperscript
   realToScreenTransform: Matrix
   colorMap: ColorMap
 }): SvgObject[] => {
@@ -53,7 +56,7 @@ export const createSvgObjectsForSchNetLabel = ({
   const fontSizePx = getSchScreenFontSize(realToScreenTransform, "net_label")
   const fontSizeMm = getSchMmFontSize("net_label")
   const halfHeightFsr = NET_LABEL_HEIGHT_MM / fontSizeMm / 2
-  const textWidthFSR = estimateTextWidth(labelText || "")
+  const textWidthFSR = getNetLabelTextWidth({ ...schNetLabel, text: labelText })
 
   // Transform the center position to screen coordinates
   const screenCenter = applyToPoint(realToScreenTransform, schNetLabel.center)
@@ -206,15 +209,11 @@ export const createSvgObjectsForSchNetLabel = ({
       "font-size": `${fontSizePx}px`,
       transform: textTransformString,
     },
-    children: [
-      {
-        type: "text",
-        value: labelText || "",
-        name: "",
-        attributes: {},
-        children: [],
-      },
-    ],
+    children: createNetLabelTextChildren(
+      labelText,
+      schNetLabel.display_superscript,
+      fontSizePx,
+    ),
     value: "",
   })
 
