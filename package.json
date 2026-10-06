@@ -54,7 +54,7 @@
   "peerDependencies": {
     "@tscircuit/alphabet": "*",
     "@tscircuit/circuit-json-util": "*",
-    "circuit-json": ">=0.0.518",
+    "circuit-json": "*",
     "circuit-json-to-connectivity-map": "*",
     "schematic-symbols": "*"
   },
