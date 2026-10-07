@@ -4,10 +4,12 @@ import type {
   SchematicComponentStylingWarning,
   SchematicElementOutsideSheetWarning,
   SchematicManualEditConflictWarning,
+  SchematicSheetStylingWarning,
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { type Matrix, applyToPoint } from "transformation-matrix"
+import { getSchematicSheetLayout } from "../schematic-sheet-utils"
 import {
   getSchematicDiagnosticCalloutLayout,
   type ScreenBounds,
@@ -18,6 +20,7 @@ export type SchematicWarning =
   | SchematicComponentStylingWarning
   | SchematicElementOutsideSheetWarning
   | SchematicManualEditConflictWarning
+  | SchematicSheetStylingWarning
 
 const CALLOUT_PADDING = 6
 const LINE_HEIGHT = 14
@@ -28,6 +31,7 @@ export const isSchematicWarning = (
 ): element is SchematicWarning =>
   element.type === "schematic_component_overlap_warning" ||
   element.type === "schematic_component_styling_warning" ||
+  element.type === "schematic_sheet_styling_warning" ||
   element.type === "schematic_element_outside_sheet_warning" ||
   element.type === "schematic_manual_edit_conflict_warning"
 
@@ -180,6 +184,8 @@ function getWarningTargetBounds(
 
 function getWarningTargetIds(warning: SchematicWarning): string[] {
   switch (warning.type) {
+    case "schematic_sheet_styling_warning":
+      return [warning.schematic_sheet_id]
     case "schematic_component_overlap_warning":
       return warning.schematic_component_ids
     case "schematic_component_styling_warning":
@@ -209,6 +215,16 @@ function getElementScreenBounds(
   element: AnyCircuitElement,
   transform: Matrix,
 ): ScreenBounds | null {
+  if (element.type === "schematic_sheet") {
+    // Sheet layout is in schematic world units, +X right and +Y up.
+    // The renderer transform converts these points to SVG screen coordinates.
+    const layout = getSchematicSheetLayout(element)
+    return boundsFromPoints([
+      applyToPoint(transform, { x: layout.minX, y: layout.maxY }),
+      applyToPoint(transform, { x: layout.maxX, y: layout.minY }),
+    ])
+  }
+
   if (element.type === "schematic_component") {
     const topLeft = applyToPoint(transform, {
       x: element.center.x - element.size.width / 2,
@@ -254,6 +270,8 @@ function getElementScreenBounds(
 
 function getWarningId(warning: SchematicWarning): string {
   switch (warning.type) {
+    case "schematic_sheet_styling_warning":
+      return warning.schematic_sheet_styling_warning_id
     case "schematic_component_overlap_warning":
       return warning.schematic_component_overlap_warning_id
     case "schematic_component_styling_warning":
