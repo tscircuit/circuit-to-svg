@@ -29,7 +29,7 @@ test("pad openings clip via tenting on both faces", () => {
       return Array.from(pixels.subarray(offset, offset + 4))
     }
     expect(pixel(1.75, -0.5)).toEqual(pixel(1, -0.5))
-    expect(pixel(2.35, -0.5)).toEqual(pixel(-3.5, -0.5))
+    expect(pixel(2.35, -0.5)).toEqual(pixel(-3.15, -0.5))
     expect(pixel(2.1, -0.5)).toEqual(pixel(-3.5, -0.5))
     expect(pixel(1, -0.5)).not.toEqual(pixel(-3.5, -0.5))
     return svg

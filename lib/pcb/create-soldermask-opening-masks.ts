@@ -26,7 +26,11 @@ export function createSoldermaskOpeningMasks({
   const tenting = objects
     .filter((object) => object.attributes["data-type"] === "pcb_via")
     .flatMap((object) => object.children)
-    .filter((object) => object.attributes.class === "pcb-via-tenting")
+    .filter(
+      (object) =>
+        object.attributes.class === "pcb-via-tenting" ||
+        object.attributes.class === "pcb-via-tenting-hole",
+    )
   // Pours and their mask overlays are drawn after pads. Clip both at pad
   // openings so exposed copper is neither tinted nor covered by the pour.
   const pours = objects.filter(
