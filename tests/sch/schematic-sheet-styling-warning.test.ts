@@ -29,19 +29,24 @@ test("sheet style warnings appear on their sheet when warnings are enabled", () 
     },
   ]
   const svg = convertCircuitJsonToSchematicSvg(circuitJson, {
+    width: 900,
+    height: 600,
     shouldDrawWarnings: true,
     schematicSheetIndex: 0,
   })
-  expect(svg).toContain('data-type="schematic_sheet_styling_warning"')
-  expect(svg).toContain('data-warning-reference="target"')
-  expect(svg).toContain("500 × 300 mm")
-  expect(convertCircuitJsonToSchematicSvg(circuitJson)).not.toContain(
-    'data-type="schematic_sheet_styling_warning"',
+  expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "sheet-style-warning-visible",
   )
   expect(
+    convertCircuitJsonToSchematicSvg(circuitJson, { width: 900, height: 600 }),
+  ).toMatchSvgSnapshot(import.meta.path, "sheet-style-warning-hidden")
+  expect(
     convertCircuitJsonToSchematicSvg(circuitJson, {
+      width: 900,
+      height: 600,
       shouldDrawWarnings: true,
       schematicSheetIndex: 1,
     }),
-  ).not.toContain('data-type="schematic_sheet_styling_warning"')
+  ).toMatchSvgSnapshot(import.meta.path, "sheet-style-warning-other-sheet")
 })
