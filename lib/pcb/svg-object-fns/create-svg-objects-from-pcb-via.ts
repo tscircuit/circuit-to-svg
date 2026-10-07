@@ -95,29 +95,27 @@ export function createSvgObjectsFromPcbVia(
       }),
     )
 
-    if (!board?.default_via_plugged) {
-      const maskColor = Color(colorMap.soldermaskWithCopperUnderneath[layer])
-      const holeColor = Color.rgb(
-        maskColor.red() / 2,
-        maskColor.green() / 2,
-        maskColor.blue() / 2,
-      ).alpha(maskColor.alpha())
-      // Shade the hole beneath the mask without changing the drill geometry.
-      via.children.push(
-        createSoldermaskOverlayElement({
-          elementType: "circle",
-          shapeAttributes: {
-            cx: x.toString(),
-            cy: y.toString(),
-            r: innerRadius.toString(),
-          },
-          layer,
-          fillColor: holeColor.string(),
-          fillOpacity: "1",
-          className: "pcb-via-tenting-hole",
-        }),
-      )
-    }
+    const maskColor = Color(colorMap.soldermaskWithCopperUnderneath[layer])
+    const holeColor = Color.rgb(
+      maskColor.red() / 2,
+      maskColor.green() / 2,
+      maskColor.blue() / 2,
+    ).alpha(maskColor.alpha())
+    // Shade the hole beneath the mask without changing the drill geometry.
+    via.children.push(
+      createSoldermaskOverlayElement({
+        elementType: "circle",
+        shapeAttributes: {
+          cx: x.toString(),
+          cy: y.toString(),
+          r: innerRadius.toString(),
+        },
+        layer,
+        fillColor: holeColor.string(),
+        fillOpacity: "1",
+        className: "pcb-via-tenting-hole",
+      }),
+    )
   }
 
   return [via]
