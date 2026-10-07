@@ -78,44 +78,68 @@ export function createSvgObjectsFromPcbVia(
   }
 
   if (showSolderMask && isTented) {
-    // Keep this overlay in the via group so it covers the drill as well as
-    // the copper ring, even when a connected trace runs through the via.
-    via.children.push(
-      createSoldermaskOverlayElement({
-        elementType: "circle",
-        shapeAttributes: {
-          cx: x.toString(),
-          cy: y.toString(),
-          r: outerRadius.toString(),
-        },
-        layer,
-        fillColor: colorMap.soldermaskWithCopperUnderneath[layer],
-        fillOpacity: "1",
-        className: "pcb-via-tenting",
-      }),
-    )
+    let maskPaint = colorMap.soldermaskWithCopperUnderneath[layer]
+    let holePaint: string | undefined
+    let maskOpacity = 1
+    try {
+      const maskColor = Color(maskPaint)
+      maskOpacity = maskColor.alpha()
+      maskPaint = maskColor.alpha(1).rgb().string()
+      holePaint = Color.rgb(
+        maskColor.red() / 2,
+        maskColor.green() / 2,
+        maskColor.blue() / 2,
+      ).string()
+    } catch {
+      // Leave currentColor, var() and url() paints for the SVG consumer to resolve.
+    }
 
-    const maskColor = Color(colorMap.soldermaskWithCopperUnderneath[layer])
-    const holeColor = Color.rgb(
-      maskColor.red() / 2,
-      maskColor.green() / 2,
-      maskColor.blue() / 2,
-    ).alpha(maskColor.alpha())
-    // Shade the hole beneath the mask without changing the drill geometry.
-    via.children.push(
-      createSoldermaskOverlayElement({
-        elementType: "circle",
-        shapeAttributes: {
-          cx: x.toString(),
-          cy: y.toString(),
-          r: innerRadius.toString(),
-        },
-        layer,
-        fillColor: holeColor.string(),
-        fillOpacity: "1",
-        className: "pcb-via-tenting-hole",
-      }),
-    )
+    // Composite the mask once so its center keeps the configured alpha.
+    // Keeping a solid base also avoids seams at the antialiased hole boundary.
+    const tentingOverlay: SvgObject = {
+      name: "g",
+      type: "element",
+      value: "",
+      attributes: {
+        class: "pcb-via-tenting",
+        "data-type": "pcb_soldermask",
+        "data-pcb-layer": layer,
+        opacity: maskOpacity.toString(),
+      },
+      children: [
+        createSoldermaskOverlayElement({
+          elementType: "circle",
+          shapeAttributes: {
+            cx: x.toString(),
+            cy: y.toString(),
+            r: outerRadius.toString(),
+          },
+          layer,
+          fillColor: maskPaint,
+          fillOpacity: "1",
+          className: "pcb-via-tenting-ring",
+        }),
+      ],
+    }
+
+    if (holePaint !== undefined) {
+      // Shade the hole beneath the mask without changing the drill geometry.
+      tentingOverlay.children.push(
+        createSoldermaskOverlayElement({
+          elementType: "circle",
+          shapeAttributes: {
+            cx: x.toString(),
+            cy: y.toString(),
+            r: innerRadius.toString(),
+          },
+          layer,
+          fillColor: holePaint,
+          fillOpacity: "1",
+          className: "pcb-via-tenting-hole",
+        }),
+      )
+    }
+    via.children.push(tentingOverlay)
   }
 
   return [via]

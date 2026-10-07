@@ -81,3 +81,70 @@ test("transparent mask colors do not add a dark center", () => {
   expect(view.pixel(-2, 1.5)).toEqual(copper.pixel(-2, 1.5))
   expect(view.pixel(-2, -1.5)).toEqual(copper.pixel(-2, -1.5))
 })
+
+test("context-dependent SVG mask paints are preserved", () => {
+  for (const paint of [
+    "currentColor",
+    "var(--mask-color)",
+    "url(#mask-paint)",
+  ]) {
+    const svg = convertCircuitJsonToPcbSvg(circuit, {
+      showSolderMask: true,
+      colorOverrides: {
+        soldermaskWithCopperUnderneath: { top: paint },
+      },
+    })
+    expect(svg).toContain(`fill="${paint}"`)
+    expect(svg).toContain('class="pcb-via-tenting"')
+  }
+})
+
+for (const layer of ["top", "bottom"] as const) {
+  test(`${layer} semi-transparent tenting preserves center alpha`, () => {
+    const svg = convertCircuitJsonToPcbSvg(
+      [
+        {
+          type: "pcb_via",
+          pcb_via_id: "translucent_via",
+          x: 0,
+          y: 0,
+          outer_diameter: 2,
+          hole_diameter: 1,
+          layers: ["top", "bottom"],
+          tented_on_top: true,
+          tented_on_bottom: true,
+        },
+      ],
+      {
+        layer,
+        showSolderMask: true,
+        width: 200,
+        height: 200,
+        viewport: { minX: -2, maxX: 2, minY: -2, maxY: 2 },
+        backgroundColor: "transparent",
+        colorOverrides: {
+          copper: { top: "transparent", bottom: "transparent" },
+          drill: "transparent",
+          soldermaskWithCopperUnderneath: {
+            top: "rgba(128,192,240,0.5)",
+            bottom: "rgba(128,192,240,0.5)",
+          },
+        },
+      },
+    )
+    const { pixels } = new Resvg(svg).render()
+    const center = Array.from(
+      pixels.subarray((100 * 200 + 100) * 4, (100 * 200 + 100) * 4 + 4),
+    )
+    const ring = Array.from(
+      pixels.subarray((100 * 200 + 140) * 4, (100 * 200 + 140) * 4 + 4),
+    )
+    expect(center[3]).toBe(ring[3])
+    expect(Math.abs(center[3]! - 127.5)).toBeLessThanOrEqual(0.5)
+    for (let channel = 0; channel < 3; channel++) {
+      expect(
+        Math.abs(center[channel]! - ring[channel]! / 2),
+      ).toBeLessThanOrEqual(1)
+    }
+  })
+}
