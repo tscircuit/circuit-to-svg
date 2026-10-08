@@ -28,6 +28,13 @@ The snapshot shows the real PCB, selected signal, distinct terminal markers,
 phase-0° arrows, and an explicit 0–0.04 A/mm² color scale. Its data comes from
 the decoded field, even though the result also contains an embedded PNG.
 
+![Real Palace return-current rendering](../../pcb/__snapshots__/pcb-return-current.snap.svg)
+
+This generated fixture directory is excluded from Biome formatting to preserve
+the byte-identical solver output and provenance files, including their recorded
+SHA-256 hashes. The renderer test code follows the repository's normal format
+checks.
+
 To repeat the physical run, build the CLI from
 [simulate-return-current #16](https://github.com/tscircuit/simulate-return-current/pull/16),
 install its Python dependencies, and run from this fixture directory:
