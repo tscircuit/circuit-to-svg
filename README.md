@@ -137,6 +137,8 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 
 ## PCB return-current simulation overlays
 
+Requires `circuit-json` 0.0.522 or later for the return-current schemas.
+
 Pass `simulationResultId` to render one completed
 `simulation_pcb_return_current_result` alongside the actual PCB. Other simulation
 results remain hidden. The selected excitation traces appear in cyan on top and
