@@ -1,4 +1,6 @@
 export * from "./pcb/convert-circuit-json-to-pcb-svg"
+export * from "./pcb/return-current/convert-circuit-json-to-pcb-simulation-svg"
+export * from "./pcb/return-current/types"
 export * from "./assembly/convert-circuit-json-to-assembly-svg"
 export * from "./pinout/convert-circuit-json-to-pinout-svg"
 export * from "./sch/convert-circuit-json-to-schematic-svg"
