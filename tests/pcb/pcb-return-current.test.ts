@@ -216,6 +216,34 @@ test("return-current overlays are opt-in and select one result", () => {
   expect(svg).toContain('data-pcb-trace-id="signal"')
   expect(svg).toContain('stroke="#08d9ef"')
   expect(svg).toContain('stroke="#ff941f"')
+})
+
+test("a real Palace field renders over its PCB with actual terminals and a numeric density scale", async () => {
+  const fixture = (await Bun.file(
+    new URL(
+      "../fixtures/pcb-return-current-palace/result.circuit.json",
+      import.meta.url,
+    ),
+  ).json()) as AnyCircuitElement[]
+  const svg = await convertCircuitJsonToPcbSimulationSvg(fixture, {
+    simulationResultId:
+      "simulation_pcb_return_current_result_explicit_port_1mhz",
+    layer: "bottom",
+    width: 1200,
+    height: 900,
+    includeVersion: false,
+    returnCurrent: {
+      showVectors: true,
+      phaseDegrees: 0,
+      densityRange: { min: 0, max: 0.04 },
+    },
+  })
+  expect(svg).toContain("1 MHz")
+  expect(svg).toContain("0.00 – 0.0400 A/mm²")
+  expect(svg).toContain('data-role="return_source"')
+  expect(svg).toContain('data-role="signal_source"')
+  expect(svg).toContain('data-type="simulation_pcb_return_current_vector"')
+  expect(svg).toContain('data-type="simulation_pcb_return_current_cell"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
 

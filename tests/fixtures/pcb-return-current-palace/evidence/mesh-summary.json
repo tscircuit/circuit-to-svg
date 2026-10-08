@@ -1,0 +1,10 @@
+{
+  "nodes": 6221,
+  "tetrahedra": 35018,
+  "groundAttribute": 11,
+  "signalAttribute": 12,
+  "portAttributes": [
+    21,
+    22
+  ]
+}

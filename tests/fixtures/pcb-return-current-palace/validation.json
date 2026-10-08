@@ -1,0 +1,121 @@
+{
+  "kind": "genuine Palace CLI integration fixture; coarse mesh, not convergence/signoff evidence",
+  "solver": "palace",
+  "solver_version": "v0.14.0",
+  "solver_image": "benvial/palace@sha256:f0f3a3cbbdf1ee2d8f856ddbe1f5bf4628a92ee8ab87d1e27dc33402ad9c8dda",
+  "circuit_json_version": "0.0.522",
+  "experiment_id": "simulation_experiment_explicit_port_1mhz",
+  "result_id": "simulation_pcb_return_current_result_explicit_port_1mhz",
+  "frequency_hz": 1000000,
+  "source_peak_current_a": 0.005,
+  "source_reference": "U1.GND",
+  "load_reference": "U2.GND",
+  "source_resistance_ohms": 25,
+  "load_resistance_ohms": 100,
+  "physical_parameters": {
+    "layerSeparation": 0.8,
+    "copperThickness": 0.035,
+    "copperConductivity": 58000000,
+    "substratePermittivity": 4.3,
+    "substrateLossTangent": 0.02,
+    "meshSize": 2,
+    "airPadding": 2,
+    "order": 1
+  },
+  "mesh": {
+    "nodes": 6221,
+    "tetrahedra": 35018,
+    "groundAttribute": 11,
+    "signalAttribute": 12,
+    "portAttributes": [
+      21,
+      22
+    ]
+  },
+  "sample_grid": {
+    "layer": "bottom",
+    "units": "A/mm",
+    "phasor_convention": "peak, exp(+j omega t)",
+    "columns": 80,
+    "rows": 60,
+    "cell_width_mm": 0.1,
+    "cell_height_mm": 0.1,
+    "conductor_cells": 4792,
+    "masked_via_drill_cells": 8
+  },
+  "checks": {
+    "official_simulation_schemas": true,
+    "official_decoded_grid_schema": true,
+    "embedded_asset_portability": true,
+    "all_ids_unique": true,
+    "input_definitions_preserved": true,
+    "pcb_geometry_preserved": true,
+    "masked_cells_shared_across_all_channels": true,
+    "finite_nonzero_complex_currents": true,
+    "flags_and_predeclared_model_equivalent_except_excitation_ids": true,
+    "linear_solve_converged": true,
+    "source_peak_current_normalization": true,
+    "positive_input_and_load_power": true,
+    "all_simulation_foreign_keys_resolve": true,
+    "portable_renderer_wrapper_passed": true,
+    "pcb_overlay_rasterization_and_visual_inspection_passed": true,
+    "explicit_numeric_density_legend": true
+  },
+  "electrical_results": {
+    "source_currents_a": [
+      {
+        "real": 0.005000000000000001,
+        "imag": 1.3234889800848443e-23
+      }
+    ],
+    "load_currents_a": [
+      {
+        "real": 0.004999976457825788,
+        "imag": -1.4000607819096002e-06
+      }
+    ],
+    "input_impedance_ohms": {
+      "real": 100.01223729156582,
+      "imag": -0.002920505945242012
+    },
+    "input_average_power_w": 0.001250152966144573,
+    "load_average_power_w": 0.0012499883269491152,
+    "input_minus_load_power_w": 1.6463919545782815e-07,
+    "electric_field_scale_volts_per_meter": 19409.541814844688,
+    "source_normalization_condition_number": 1.0
+  },
+  "mesh_accuracy_caveat": {
+    "sampled_x_mm": 0.05,
+    "sampled_ground_flux_a": {
+      "real": -0.004208942012180635,
+      "imag": -3.951834112379645e-05
+    },
+    "expected_return_current_a": -0.005,
+    "relative_discrepancy": 0.15840889361118574,
+    "statement": "This coarse first-order smoke case has about 16% cross-section return-current discrepancy. Mesh/order/domain convergence is required for engineering accuracy."
+  },
+  "input_normalizations": [
+    "core numeric pcb_component.display_offset_x/y normalized to circuit-json string display offsets (4 fields); copper/terminal coordinates unchanged"
+  ],
+  "run": {
+    "startedAt": "2026-10-08T04:35:58.178Z",
+    "completedAt": "2026-10-08T04:36:14.006Z",
+    "totalSeconds": 15.827959279,
+    "reusedCompletedFemSolve": false
+  },
+  "sha256": {
+    "fixture_input": "d9c8d29caf8d2e89924cc51b55530889d0257c94ccec96403bd8c6183045c2d7",
+    "fixture_board": "787cc10fea92afaa5a57a066ebd0726913387b79143e5ac0de7ffd2fea0ec2b9",
+    "result_circuit_json": "5c5835053fce9073d26a143cc03b43cf485fe327cf7604a22ea24fa802cb6c3f",
+    "circuitSha256": "0f2f065215622b7d2ef814fc44c2d0251b25ce176eadb8456f5b85afad090aa3",
+    "modelSha256": "d8441ab1f57f4a979d5e13c69b6c17ec0584487fd47d4081bb5509d9af93016a",
+    "meshSha256": "7067d3668c29a186644dc95449fb14eeb1a6b49fd24933ed9fd3bc554c9b9c74",
+    "rendered_overlay_svg": "579a97cf877fb57a1d55b9fcb130b0c6984e66d6582afc70232e7d6c916e49fe",
+    "rendered_overlay_png": "accbb5250c0e22e29d8108634b5c484f997469d3c62caf22ae32c8924d42f555"
+  },
+  "rendered_density_range_a_per_mm2": {
+    "min": 0,
+    "max": 0.04
+  },
+  "renderer_source_commit": "060ee8f958a3c9e282596c67fa617860a57f52b5"
+}
