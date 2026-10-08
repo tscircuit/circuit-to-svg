@@ -488,7 +488,7 @@ export function createReturnCurrentSvgObjects({
         "font-size": "12",
       }),
     )
-    if (decoded.length && heatmaps.length === 0) {
+    if (decoded.length && (heatmaps.length === 0 || range)) {
       for (let i = 0; i < 80; i++)
         legend.push(
           node("rect", {

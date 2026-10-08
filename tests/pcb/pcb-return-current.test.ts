@@ -313,23 +313,24 @@ test("external fields require an explicit resolver and only selected assets are 
   expect(svg).toContain('data-current-density="1"')
 })
 
+const image = {
+  type: "simulation_pcb_return_current_heatmap" as const,
+  simulation_pcb_return_current_heatmap_id: "image",
+  simulation_pcb_return_current_result_id: "result_1",
+  layer: "inner1" as const,
+  source_net_id: "ground",
+  min_x: -1,
+  min_y: -1,
+  max_x: 1,
+  max_y: 1,
+  image_asset: {
+    project_relative_path: "heat.png",
+    mimetype: "image/png",
+    url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==",
+  },
+}
+
 test("image bounds map top-left to (min_x,max_y) and render without decoded grids", () => {
-  const image = {
-    type: "simulation_pcb_return_current_heatmap" as const,
-    simulation_pcb_return_current_heatmap_id: "image",
-    simulation_pcb_return_current_result_id: "result_1",
-    layer: "inner1" as const,
-    source_net_id: "ground",
-    min_x: -1,
-    min_y: -1,
-    max_x: 1,
-    max_y: 1,
-    image_asset: {
-      project_relative_path: "heat.png",
-      mimetype: "image/png",
-      url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==",
-    },
-  }
   const svg = convertCircuitJsonToPcbSvg([...circuit, image], {
     ...options,
     returnCurrent: undefined,
@@ -337,6 +338,22 @@ test("image bounds map top-left to (min_x,max_y) and render without decoded grid
   expect(svg).toContain('data-type="simulation_pcb_return_current_heatmap"')
   expect(svg).toContain('preserveAspectRatio="none"')
   expect(svg).not.toContain('data-type="simulation_pcb_return_current_cell"')
+})
+
+test("an explicit density range replaces a stored image and displays its numeric scale", () => {
+  const svg = convertCircuitJsonToPcbSvg([...circuit, image], {
+    ...options,
+    returnCurrent: {
+      ...options.returnCurrent,
+      densityRange: { min: 0.25, max: 2 },
+    },
+  })
+  expect(svg).not.toContain('data-type="simulation_pcb_return_current_heatmap"')
+  expect(
+    svg.match(/data-type="simulation_pcb_return_current_cell"/g),
+  ).toHaveLength(3)
+  expect(svg).toContain("0.250 – 2.00 A/mm²")
+  expect(svg).toContain('data-current-density="1"')
 })
 
 test("invalid or missing results/assets fail explicitly", () => {
