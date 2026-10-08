@@ -800,14 +800,14 @@
   },
   {
     "type": "simulation_experiment",
-    "simulation_experiment_id": "simulation_experiment_explicit_port_1mhz",
-    "name": "Explicit GND terminals: 5 mA peak at 1 MHz",
+    "simulation_experiment_id": "simulation_experiment_explicit_port_100mhz",
+    "name": "Explicit GND terminals: 5 mA peak at 100 MHz \u00b7 surface-impedance EM",
     "experiment_type": "pcb_return_current"
   },
   {
     "type": "simulation_return_current_excitation",
-    "simulation_return_current_excitation_id": "simulation_return_current_excitation_explicit_ports",
-    "simulation_experiment_id": "simulation_experiment_explicit_port_1mhz",
+    "simulation_return_current_excitation_id": "simulation_return_current_excitation_explicit_port_100mhz",
+    "simulation_experiment_id": "simulation_experiment_explicit_port_100mhz",
     "pcb_trace_id": "pcb_trace_0",
     "ground_source_net_id": "source_net_0",
     "current": 0.005,

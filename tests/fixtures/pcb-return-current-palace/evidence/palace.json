@@ -26,14 +26,6 @@
         "Permittivity": 4.3,
         "Permeability": 1.0,
         "LossTan": 0.02
-      },
-      {
-        "Attributes": [
-          3
-        ],
-        "Permittivity": 1.0,
-        "Permeability": 1.0,
-        "Conductivity": 58000000
       }
     ]
   },
@@ -70,17 +62,28 @@
         ],
         "R": 100
       }
+    ],
+    "Conductivity": [
+      {
+        "Attributes": [
+          11,
+          12
+        ],
+        "Conductivity": 58000000,
+        "Permeability": 1.0,
+        "External": true
+      }
     ]
   },
   "Solver": {
-    "Order": 1,
+    "Order": 2,
     "Device": "CPU",
     "Driven": {
       "Samples": [
         {
           "Type": "Point",
           "Freq": [
-            0.001
+            0.1
           ],
           "SaveStep": 1
         }

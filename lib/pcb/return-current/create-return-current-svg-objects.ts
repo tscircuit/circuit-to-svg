@@ -61,11 +61,7 @@ export function getReturnCurrentResult(
   return result
 }
 
-function values(
-  grid: SimulationReturnCurrentGridJson,
-  i: number,
-  phase: number,
-) {
+function values(grid: SimulationReturnCurrentGridJson, i: number) {
   if (grid.field_type === "real") {
     const x = grid.sheet_current_x[i]
     const y = grid.sheet_current_y[i]
@@ -77,8 +73,8 @@ function values(
   const yi = grid.sheet_current_y_imag[i]
   if (xr == null || xi == null || yr == null || yi == null) return null
   return {
-    x: xr * Math.cos(phase) - xi * Math.sin(phase),
-    y: yr * Math.cos(phase) - yi * Math.sin(phase),
+    x: xr,
+    y: yr,
     magnitude: Math.hypot(xr, xi, yr, yi),
   }
 }
@@ -117,9 +113,6 @@ export function createReturnCurrentSvgObjects({
   const opacity = options.opacity ?? 0.65
   if (!Number.isFinite(opacity) || opacity < 0 || opacity > 1)
     throw new Error("Return-current opacity must be between 0 and 1")
-  const phaseDegrees = options.phaseDegrees ?? 0
-  if (!Number.isFinite(phaseDegrees))
-    throw new Error("Return-current phaseDegrees must be finite")
   const range = options.densityRange
   if (
     range &&
@@ -171,7 +164,7 @@ export function createReturnCurrentSvgObjects({
     for (let i = 0; i < field.columns * field.rows; i++)
       maximum = Math.max(
         maximum,
-        (values(grid, i, 0)?.magnitude ?? 0) / field.copper_thickness,
+        (values(grid, i)?.magnitude ?? 0) / field.copper_thickness,
       )
   const minimum = range?.min ?? 0
   const upper = range?.max ?? (maximum || 1)
@@ -233,7 +226,7 @@ export function createReturnCurrentSvgObjects({
     for (let row = 0; row < field.rows; row++) {
       for (let column = 0; column < field.columns; column++) {
         const i = row * field.columns + column
-        const current = values(grid, i, (phaseDegrees * Math.PI) / 180)
+        const current = values(grid, i)
         if (!current) continue // null is absent copper; zero is present copper.
         const density = current.magnitude / field.copper_thickness
         const x = field.min_x + column * field.cell_width
@@ -281,7 +274,7 @@ export function createReturnCurrentSvgObjects({
             "data-sheet-current-x": String(current.x),
             "data-sheet-current-y": String(current.y),
             "data-units": "A/mm",
-            "data-phase-degrees": String(phaseDegrees),
+            "data-arrow-reference": "excitation-current-peak",
           }),
         )
       }
@@ -468,7 +461,7 @@ export function createReturnCurrentSvgObjects({
       result.frequency_hz === undefined
         ? "frequency not specified"
         : `${result.frequency_hz / 1e6} MHz`
-    const labels = `${frequency} · ${ctx.layer ?? "all result layers"} · density A/mm² · cyan: top signal · orange: bottom signal · magenta: return`
+    const labels = `${frequency} · ${ctx.layer ?? "all result layers"} · average density A/mm² · cyan: top signal · orange: bottom signal · magenta: return${options.showVectors ? " · arrows: current at excitation peak" : ""}`
     legend.push(
       node("rect", {
         x: "0",

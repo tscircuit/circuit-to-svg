@@ -393,8 +393,8 @@
     "excitations": [
       {
         "type": "simulation_return_current_excitation",
-        "simulation_return_current_excitation_id": "simulation_return_current_excitation_explicit_ports",
-        "simulation_experiment_id": "simulation_experiment_explicit_port_1mhz",
+        "simulation_return_current_excitation_id": "simulation_return_current_excitation_explicit_port_100mhz",
+        "simulation_experiment_id": "simulation_experiment_explicit_port_100mhz",
         "pcb_trace_id": "pcb_trace_0",
         "ground_source_net_id": "source_net_0",
         "current": 0.005,
@@ -527,10 +527,7 @@
       },
       "reference": {
         "x": -2,
-        "y": 1.5,
-        "layer": "top",
-        "contact_type": "pcb_port",
-        "pcb_port_id": "pcb_port_1"
+        "y": 1.5
       },
       "referenceLayer": "top",
       "resistance": 25,
@@ -544,10 +541,7 @@
       },
       "reference": {
         "x": 2,
-        "y": 1.5,
-        "layer": "top",
-        "contact_type": "pcb_port",
-        "pcb_port_id": "pcb_port_3"
+        "y": 1.5
       },
       "referenceLayer": "top",
       "resistance": 100,
@@ -555,7 +549,7 @@
       "referencePcbPortId": "pcb_port_3"
     }
   ],
-  "frequencyHz": 1000000,
+  "frequencyHz": 100000000,
   "layerSeparation": 0.8,
   "copperThickness": 0.035,
   "copperConductivity": 58000000,
@@ -563,8 +557,14 @@
   "substrateLossTangent": 0.02,
   "portResistance": 50,
   "portWidth": 0.18,
-  "meshSize": 2,
+  "meshSize": 1,
   "airPadding": 2,
-  "order": 1,
-  "copperModel": "volumetric_copper"
+  "order": 2,
+  "copperModel": "surface_impedance_copper",
+  "surfaceImpedance": {
+    "boundaryModel": "half_space",
+    "skinDepthMm": 0.006608549310080563,
+    "minimumThicknessToSkinDepth": 5.2961699092736785,
+    "currentSampling": "sum_foil_face_surface_currents"
+  }
 }

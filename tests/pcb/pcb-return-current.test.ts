@@ -227,25 +227,25 @@ test("a real Palace field renders over its PCB with actual terminals and a numer
   ).json()) as AnyCircuitElement[]
   const svg = await convertCircuitJsonToPcbSimulationSvg(fixture, {
     simulationResultId:
-      "simulation_pcb_return_current_result_explicit_port_1mhz",
+      "simulation_pcb_return_current_result_explicit_port_100mhz",
     layer: "bottom",
     width: 1200,
     height: 900,
     includeVersion: false,
     returnCurrent: {
       showVectors: true,
-      phaseDegrees: 0,
-      densityRange: { min: 0, max: 0.04 },
+      densityRange: { min: 0, max: 0.21 },
     },
   })
-  expect(svg).toContain("1 MHz")
-  expect(svg).toContain("0.00 – 0.0400 A/mm²")
+  expect(svg).toContain("100 MHz")
+  expect(svg).toContain("average density A/mm²")
+  expect(svg).toContain("0.00 – 0.210 A/mm²")
   expect(svg).toContain('data-role="return_source"')
   expect(svg).toContain('data-role="signal_source"')
   expect(svg).toContain('data-type="simulation_pcb_return_current_vector"')
   expect(svg).toContain('data-type="simulation_pcb_return_current_cell"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-})
+}, 20_000)
 
 test("masked cells stay empty, zero-current copper stays present, and density uses thickness", () => {
   const svg = convertCircuitJsonToPcbSvg(circuit, options)
@@ -260,12 +260,11 @@ test("masked cells stay empty, zero-current copper stays present, and density us
   expect(bottom).toBeGreaterThan(top)
 })
 
-test("complex vectors use exp(+jωt) while magnitude is phase-independent", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuit, {
-    ...options,
-    returnCurrent: { ...options.returnCurrent, phaseDegrees: 90 },
-  })
-  expect(svg).toContain('data-sheet-current-y="-0.02"')
+test("complex vectors show current at excitation peak and density includes both complex components", () => {
+  const svg = convertCircuitJsonToPcbSvg(circuit, options)
+  expect(svg).toContain('data-sheet-current-x="0.01" data-sheet-current-y="0"')
+  expect(svg).toContain('data-arrow-reference="excitation-current-peak"')
+  expect(svg).toContain("arrows: current at excitation peak")
   expect(svg).toContain(
     `data-current-density="${Math.hypot(0.01, 0.02) / 0.02}"`,
   )

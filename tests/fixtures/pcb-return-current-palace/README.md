@@ -1,59 +1,65 @@
-# Palace return-current snapshot fixture
+# Real 100 MHz Palace snapshot fixture
 
-`result.circuit.json` is the unmodified output of a real Palace v0.14.0
-frequency-domain EM run. The visual snapshot in
-`tests/pcb/pcb-return-current.test.ts` loads its embedded gzip field through
-`convertCircuitJsonToPcbSimulationSvg`; it does not construct field values in
-the test. Synthetic grids in that test remain focused fixtures for numerical
-edge cases.
+![Actual Palace current over its PCB](../../pcb/__snapshots__/pcb-return-current.snap.svg)
 
-The source is the [completed CLI integration run](https://github.com/tscircuit/return-current-trace-demo/tree/7d929239e62b46d0c790eb490c9dffb3db9bfdbd/examples/circuit-json).
-The source result's SHA-256 is
-`5c5835053fce9073d26a143cc03b43cf485fe327cf7604a22ea24fa802cb6c3f`.
-`input.circuit.json`, `validation.json`, and `evidence/` are copied from that
-run. Evidence includes the actual solver configuration and log, mesh counts,
-resolved model, and raw terminal voltage/current CSVs. `validation.json`
-records the applied source-current normalization and the source repository's
-rendered-image hashes; those image hashes are not this repository's snapshot.
+`result.circuit.json` is unmodified output from a completed Palace v0.14.0
+frequency-domain Maxwell solve at **100 MHz, 5 mA peak**. The visual snapshot
+in `tests/pcb/pcb-return-current.test.ts` loads its embedded gzip field through
+`convertCircuitJsonToPcbSimulationSvg`. Synthetic grids in that test cover
+numerical edge cases; they do not supply this visual snapshot.
 
-The two-layer 8 × 6 mm board has a top-layer signal trace and a bottom GND
-plane. Source and load each use separate signal/GND pads, with plated GND vias
-joining the reference pads to the plane. The solve uses **1 MHz, 5 mA peak**,
-25 Ω source-reference resistance, and a 100 Ω load. The 80 × 60 sampled field
-has 4,792 finite complex cells and eight masked via-drill cells. Sheet current
-is in A/mm with peak phasors using exp(+jωt); the renderer uses the stored
-0.035 mm copper thickness to display A/mm².
+The source is the [CLI integration fixture](https://github.com/tscircuit/return-current-trace-demo/tree/main/examples/circuit-json).
+The result's SHA-256 is
+`f866edb7806bfda6f0879f935a8dbf6bf0332d46e57d9393f2c227aa9e8b05dd`.
+The copied input, validation receipt, model, actual solver configuration/log,
+terminal CSVs, normalization data and surface-sampling receipt document its
+origin. This generated fixture directory is excluded from automatic formatting
+to retain the original exported bytes and validation hashes.
 
-The snapshot shows the real PCB, selected signal, distinct terminal markers,
-phase-0° arrows, and an explicit 0–0.04 A/mm² color scale. Its data comes from
-the decoded field, even though the result also contains an embedded PNG.
+The same 8 × 6 mm two-layer PCB has a top signal trace, bottom GND plane,
+separate signal/GND terminals and actual plated GND vias. The 25/100 Ω ports,
+35 µm copper foil/plating and conductivity of 5.8 × 10⁷ S/m are unchanged.
+The output cell size is **0.05 mm**, reduced from the earlier 0.1 mm fixture:
+160 × 120 cells, with 19,176 finite complex conductor samples and 24 masked
+drill cells. The solve uses a 1 mm FEM mesh target, second-order elements,
+45,493 tetrahedra and 314,698 unknowns.
 
-![Real Palace return-current rendering](../../pcb/__snapshots__/pcb-return-current.snap.svg)
+The copper model is explicitly **finite-conductivity surface impedance**.
+At 100 MHz the 35 µm copper is about 5.3 skin depths thick. Palace meshes the
+air/substrate and applies its frequency-dependent conductivity boundary to
+the copper exterior. The importer sums complex currents from the actual
+exposed bottom-plane foil faces, retaining their physical signs, then applies
+the declared source-current normalization. A buried via junction can have
+only one exposed foil face. No missing conductor samples are filled or
+extrapolated.
 
-This generated fixture directory is excluded from Biome formatting to preserve
-the byte-identical solver output and provenance files, including their recorded
-SHA-256 hashes. The renderer test code follows the repository's normal format
-checks.
+Stored sheet current K is in A/mm, with peak phasors using exp(+jωt).
+Displayed |K|/0.035 mm is equivalent foil-average density, not local peak
+volumetric density in a skin layer. The snapshot shows the real PCB,
+selected trace and actual terminals, current-direction arrows at the
+excitation's positive peak, and a full-range 0–0.21 A/mm² scale. There is no
+public phase-angle control.
 
 To repeat the physical run, build the CLI from
 [simulate-return-current #16](https://github.com/tscircuit/simulate-return-current/pull/16),
-install its Python dependencies, and run from this fixture directory:
+install its Python dependencies, and run from this directory:
 
 ```sh
 node /path/to/simulate-return-current/dist/cli.js input.circuit.json \
-  --experiment-id simulation_experiment_explicit_port_1mhz \
-  --frequency-hz 1000000 --sample-layer bottom \
-  --cell-size 0.1 --mesh-size 2 --order 1 --air-padding 2 --processes 4 \
-  --output /tmp/pcb-return-current-palace \
+  --experiment-id simulation_experiment_explicit_port_100mhz \
+  --frequency-hz 100000000 --copper-model surface_impedance \
+  --sample-layer bottom --cell-size 0.05 --mesh-size 1 --order 2 \
+  --air-padding 2 --processes 4 --output /tmp/pcb-return-current-palace \
   --result-json /tmp/pcb-return-current-palace.result.circuit.json \
-  --result-id simulation_pcb_return_current_result_explicit_port_1mhz
+  --result-id simulation_pcb_return_current_result_explicit_port_100mhz
 ```
 
-Docker or a native Palace binary is required. The pinned image digest and
-physical parameters are recorded in `validation.json`. The renderer test
-uses the checked result and requires neither Palace nor Docker.
+Docker or native Palace is required for a new solve. The renderer test uses
+the checked result and requires neither. The pinned image, physical
+assumptions, SI terminal results, sampling method and hashes are recorded
+in `validation.json` and `evidence/`.
 
-This is a coarse first-order integration fixture: the sampled return-current
-cross-section differs from the source current by about 16%. It demonstrates
-rendering actual EM output; it is not evidence of mesh convergence or DDR
-operating accuracy.
+This is real EM output for a renderer integration test. Mesh/domain/local
+density convergence has not been established, particularly near via walls,
+edges and contacts. The smaller output cells improve sampling resolution
+independently of FEM resolution.
