@@ -1,0 +1,22 @@
+{
+  "nodes": 10147,
+  "tetrahedra": 45493,
+  "groundAttribute": 11,
+  "signalAttribute": 12,
+  "portAttributes": [
+    21,
+    22
+  ],
+  "copperModel": "surface_impedance_copper",
+  "copperSolidVolumeMm3": 1.8264681949905561,
+  "conductivityBoundaryAttributes": [
+    11,
+    12
+  ],
+  "surfaceImpedance": {
+    "boundaryModel": "half_space",
+    "skinDepthMm": 0.006608549310080563,
+    "minimumThicknessToSkinDepth": 5.2961699092736785,
+    "currentSampling": "sum_foil_face_surface_currents"
+  }
+}

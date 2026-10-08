@@ -1,0 +1,33 @@
+{
+  "copperModel": "surface_impedance_copper",
+  "method": "sum_foil_face_surface_currents",
+  "normalConvention": "metal-outward normal crossed with H; no additional face sign flip",
+  "units": "A/mm, complex peak phasors after source-current basis normalization",
+  "bases": [
+    {
+      "attribute": 11,
+      "fieldArrays": [
+        "J_s_real",
+        "J_s_imag"
+      ],
+      "scaleAmpsPerMm": 0.051521051323075856,
+      "declaredConductorSamples": 19176,
+      "bothFaces": 19152,
+      "oneFace": 24,
+      "faces": [
+        {
+          "physicalZMm": 0,
+          "exportedZMm": 0.0,
+          "triangles": 2198,
+          "validSamples": 19152
+        },
+        {
+          "physicalZMm": -0.035,
+          "exportedZMm": -0.03500000014901161,
+          "triangles": 2210,
+          "validSamples": 19176
+        }
+      ]
+    }
+  ]
+}

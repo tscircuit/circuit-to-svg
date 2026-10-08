@@ -135,6 +135,67 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
 - `includeVersion` – if `true`, add a `data-circuit-to-svg-version` attribute to
   the root `<svg>`.
 
+## PCB return-current simulation overlays
+
+Requires `circuit-json` 0.0.522 or later for the return-current schemas.
+
+Pass `simulationResultId` to render one completed
+`simulation_pcb_return_current_result` alongside the actual PCB. Other simulation
+results remain hidden. The selected excitation traces appear in cyan on top and
+orange on bottom; referenced signal/return pads and vias retain their actual PCB
+positions. Return contacts are magenta. Ordinary PCB rendering remains unchanged
+when this option is omitted.
+
+```typescript
+import { convertCircuitJsonToPcbSimulationSvg } from 'circuit-to-svg'
+
+const svg = await convertCircuitJsonToPcbSimulationSvg(circuitJson, {
+  simulationResultId: 'simulation_pcb_return_current_result_0',
+  layer: 'inner1',
+  returnCurrent: { opacity: 0.65, showVectors: true },
+})
+```
+
+The asynchronous API loads embedded plain JSON or gzip field Assets, validates
+decoded arrays with the official Circuit JSON schema, and then calls
+`convertCircuitJsonToPcbSvg`. Supply `resolveAsset(asset)` to read external assets
+explicitly; the library never performs network or filesystem requests itself.
+Only the selected result/layer's assets are loaded.
+
+The existing synchronous `convertCircuitJsonToPcbSvg` supports the same
+`simulationResultId` and `returnCurrent` options. It displays stored heatmap image
+URLs directly. To render fields or current arrows synchronously, supply decoded
+grids as `returnCurrent.fieldData`, indexed by
+`simulation_pcb_return_current_field_id`. Missing results, missing references,
+unsupported layers, and field-only results without decoded data fail explicitly.
+
+`returnCurrent` accepts:
+
+- `opacity` (0–1, default 0.65) and `showLegend` (default true).
+- `showVectors` (default false). Arrows show current direction when the
+  excitation current reaches its positive peak, with a fixed display length.
+  For complex fields this uses the in-phase real component. Producers should
+  normalize the complex source-current reference to its positive peak before
+  exporting results. Arrows do not represent measured via-transfer currents.
+- `densityRange: { min, max }` for a common linear color scale of the average
+  current density through the copper thickness, in A/mm². With
+  decoded fields this replaces stored images, whose color scale is baked in.
+  Without a range, sampled fields use their maximum and stored images retain
+  their producer's colors.
+- `fieldData` for already decoded field grids.
+
+Sampled sheet-current magnitudes in A/mm are divided by `copper_thickness` in
+millimeters to produce the magnitude of the current-density vector averaged
+through the foil thickness, in A/mm². This does not give the local maximum
+density within the skin layer. Complex magnitudes use the Euclidean phasor norm
+and include both real and imaginary components. Rows start at the PCB bottom-left;
+image top-left maps to `(min_x, max_y)`. Null cells remain empty; zero-current
+copper remains visible. No solver runs or frequency approximations are performed
+by the renderer. Its legend reports the frequency stored in the result, or says
+when frequency was not specified.
+
+![Return-current renderer fixture](./tests/pcb/__snapshots__/pcb-return-current.snap.svg)
+
 ## convertCircuitJsonToAssemblySvg
 
 Converts circuit JSON into an assembly view of the board and components.

@@ -1,0 +1,182 @@
+{
+  "kind": "actual Palace 100 MHz surface-impedance EM integration fixture",
+  "solver": "palace",
+  "solver_version": "v0.14.0",
+  "solver_image": "benvial/palace@sha256:f0f3a3cbbdf1ee2d8f856ddbe1f5bf4628a92ee8ab87d1e27dc33402ad9c8dda",
+  "circuit_json_version": "0.0.522",
+  "experiment_id": "simulation_experiment_explicit_port_100mhz",
+  "result_id": "simulation_pcb_return_current_result_explicit_port_100mhz",
+  "frequency_hz": 100000000.0,
+  "source_peak_current_a": 0.005,
+  "copper_model": "surface_impedance_copper",
+  "physical_parameters": {
+    "layerSeparation": 0.8,
+    "copperThickness": 0.035,
+    "copperConductivity": 58000000,
+    "substratePermittivity": 4.3,
+    "substrateLossTangent": 0.02,
+    "portResistance": 50,
+    "portWidth": 0.18,
+    "meshSize": 1,
+    "airPadding": 2,
+    "order": 2
+  },
+  "mesh": {
+    "nodes": 10147,
+    "tetrahedra": 45493,
+    "groundAttribute": 11,
+    "signalAttribute": 12,
+    "portAttributes": [
+      21,
+      22
+    ],
+    "copperModel": "surface_impedance_copper",
+    "copperSolidVolumeMm3": 1.8264681949905561,
+    "conductivityBoundaryAttributes": [
+      11,
+      12
+    ],
+    "surfaceImpedance": {
+      "boundaryModel": "half_space",
+      "skinDepthMm": 0.006608549310080563,
+      "minimumThicknessToSkinDepth": 5.2961699092736785,
+      "currentSampling": "sum_foil_face_surface_currents"
+    }
+  },
+  "copper_volume_unchanged_analytic_mm3": 1.8264681949905548,
+  "sample_grid": {
+    "layer": "bottom",
+    "units": "A/mm",
+    "phasor_convention": "peak, exp(+j omega t)",
+    "columns": 160,
+    "rows": 120,
+    "cell_width_mm": 0.05,
+    "cell_height_mm": 0.05,
+    "conductor_cells": 19176,
+    "masked_drill_cells": 24
+  },
+  "surface_current_import": {
+    "copperModel": "surface_impedance_copper",
+    "method": "sum_foil_face_surface_currents",
+    "normalConvention": "metal-outward normal crossed with H; no additional face sign flip",
+    "units": "A/mm, complex peak phasors after source-current basis normalization",
+    "bases": [
+      {
+        "attribute": 11,
+        "fieldArrays": [
+          "J_s_real",
+          "J_s_imag"
+        ],
+        "scaleAmpsPerMm": 0.051521051323075856,
+        "declaredConductorSamples": 19176,
+        "bothFaces": 19152,
+        "oneFace": 24,
+        "faces": [
+          {
+            "physicalZMm": 0,
+            "exportedZMm": 0.0,
+            "triangles": 2198,
+            "validSamples": 19152
+          },
+          {
+            "physicalZMm": -0.035,
+            "exportedZMm": -0.03500000014901161,
+            "triangles": 2210,
+            "validSamples": 19176
+          }
+        ]
+      }
+    ]
+  },
+  "electrical_results": {
+    "source_currents_a": [
+      {
+        "real": 0.005000000000000001,
+        "imag": -3.3881317890172014e-21
+      }
+    ],
+    "load_currents_a": [
+      {
+        "real": 0.0049970389786567395,
+        "imag": -0.00011372145755927368
+      }
+    ],
+    "input_impedance_ohms": {
+      "real": 100.01624830271393,
+      "imag": 0.3914992794115042
+    },
+    "input_average_power_w": 0.0012502031037839242,
+    "load_average_power_w": 0.001249166556206209,
+    "input_minus_load_power_w": 1.0365475777152078e-06,
+    "sampled_ground_conduction_flux": {
+      "x_mm": 0.025,
+      "complex_a": {
+        "real": -0.004929156862398759,
+        "imag": 6.179192901905584e-05
+      },
+      "interpretation": "Tangential foil-face sum only. Do not treat a difference from terminal current as mesh error without including displacement current and total-current balance."
+    }
+  },
+  "checks": {
+    "palace_linear_solve_converged": true,
+    "official_simulation_schemas": true,
+    "official_decoded_grid_schema": true,
+    "field_exactly_equals_completed_reference_samples": true,
+    "geometry_contacts_and_current_unchanged_from_1mhz": true,
+    "copper_volume_unchanged": true,
+    "all_simulation_links_resolve": true,
+    "embedded_asset_portability": true,
+    "shared_finite_complex_conductor_mask": true,
+    "masked_cells_exactly_match_drill_voids": true,
+    "every_conductor_sample_has_actual_exposed_foil_face": true,
+    "source_current_normalization": true,
+    "positive_input_and_load_power": true
+  },
+  "limitations": [
+    "Uses explicitly labeled half-space finite-conductivity surface impedance, not a resolved copper-volume skin-depth mesh. Foil and plating remain 35 \u00b5m, approximately 5.296 skin depths at 100 MHz.",
+    "The attempted 12-layer volume-normal meshes failed Gmsh boundary recovery and were not used for this completed result.",
+    "Grid K sums tangential x/y currents on the actual exposed top and bottom ground-foil faces; buried via junctions contribute only their exposed face. It is not a converged bulk-J grid near barrels, edges, or contacts.",
+    "Displayed K/copperThickness is foil-average density, not skin-layer peak volumetric J.",
+    "Second-order FEM on this mesh does not establish mesh/domain/local-density convergence.",
+    "One actual P2 solve completed; sampling was rerun after correcting float32 exported plane-coordinate rounding. No face filling or extrapolation occurred."
+  ],
+  "sha256": {
+    "fixture_input": "99eafdff8688cd9c3217c9c290fc004a3535cc396994272fe19181dd53ba407d",
+    "result_circuit_json": "f866edb7806bfda6f0879f935a8dbf6bf0332d46e57d9393f2c227aa9e8b05dd",
+    "circuitSha256": "ebdf0f6e4fdc607fe7b49124a2d6980e0f866695a0238ff05cf9b323d6e2dbd9",
+    "modelSha256": "d8e027131f8b7682c418fc67fd6365ee399ac265107cd5c53fd547af60859f48",
+    "meshSha256": "15c0f993b86aecfc4a9965ec8f286096d215498a9da08c1ca8ffa3c2810f8b3d"
+  },
+  "source_resistance_ohms": 25,
+  "load_resistance_ohms": 100,
+  "resolved_terminals": [
+    {
+      "signal": {
+        "x": -2,
+        "y": 0
+      },
+      "reference": {
+        "x": -2,
+        "y": 1.5
+      },
+      "referenceLayer": "top",
+      "resistance": 25,
+      "signalPcbPortId": "pcb_port_0",
+      "referencePcbPortId": "pcb_port_1"
+    },
+    {
+      "signal": {
+        "x": 2,
+        "y": 0
+      },
+      "reference": {
+        "x": 2,
+        "y": 1.5
+      },
+      "referenceLayer": "top",
+      "resistance": 100,
+      "signalPcbPortId": "pcb_port_2",
+      "referencePcbPortId": "pcb_port_3"
+    }
+  ]
+}

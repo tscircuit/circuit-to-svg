@@ -1,0 +1,2 @@
+# Keep the generated Palace log byte-identical, including its final blank line.
+tests/fixtures/pcb-return-current-palace/evidence/palace.log whitespace=-blank-at-eof
