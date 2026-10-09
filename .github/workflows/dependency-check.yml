@@ -26,6 +26,9 @@ jobs:
           #  - bundled_lib: No peer dependencies, no dependencies
           INPUT_PACKAGE_TYPE: internal_lib
 
+          # Temporary preview pin: noise rendering requires these runtime validators.
+          # Replace with an appropriate minimum peer version when released.
+          INPUT_IGNORE_PACKAGES: circuit-json
+
           # INPUT_PEER_DEPS_SHOULD_BE_ASTERISK: false
-          # INPUT_IGNORE_PACKAGES: "circuit-json,..."
           # INPUT_ADDITIONAL_INTERNAL_PACKAGES: "circuit-json,..."

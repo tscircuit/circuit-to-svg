@@ -6,11 +6,19 @@ const FONT_STYLE_ATTRIBUTE = "data-tscircuit-alphabet-font"
 
 /** Embed the font once per document, including composed SVGs. */
 export function stringifySvg(svg: INode): string {
+  // svgson escapes only one CDATA terminator per text node.
   const withoutEmbeddedFont = (node: INode): INode => ({
     ...node,
     children: (node.children ?? [])
       .filter((child) => !(FONT_STYLE_ATTRIBUTE in (child.attributes ?? {})))
-      .map(withoutEmbeddedFont),
+      .flatMap((child) =>
+        child.type === "text" &&
+        child.value.indexOf("]]>") !== child.value.lastIndexOf("]]>")
+          ? child.value
+              .split(/(?<=\]\]>)/)
+              .map((value) => ({ ...child, value }))
+          : [withoutEmbeddedFont(child)],
+      ),
   })
   const root = withoutEmbeddedFont(svg)
   root.children.push({

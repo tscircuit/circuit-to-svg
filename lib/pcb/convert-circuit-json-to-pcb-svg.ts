@@ -1,6 +1,10 @@
 import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
 import { createReturnCurrentSvgObjects } from "./return-current/create-return-current-svg-objects"
 import type { PcbReturnCurrentOptions } from "./return-current/types"
+import {
+  createNoiseContactSvgObjects,
+  type PcbNoiseContactHighlight,
+} from "./noise/create-noise-contact-svg-objects"
 import { createSoldermaskOpeningLayers } from "./create-soldermask-opening-layers"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
@@ -104,6 +108,8 @@ export interface PcbSvgOptions {
   /** Overlay one completed PCB return-current result. Rendering remains opt-in. */
   simulationResultId?: string
   returnCurrent?: PcbReturnCurrentOptions
+  /** Physical contacts from an explicitly selected, validated noise observation. */
+  noiseContacts?: readonly PcbNoiseContactHighlight[]
   /** Resolved PCB element IDs to inspect together. Empty or omitted disables X-Ray. */
   xRayElementIds?: readonly string[]
   /** Opacity of other copper during X-Ray, between 0 and 1. Defaults to 0.2. */
@@ -520,6 +526,17 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   children.push(...svgObjects)
+
+  if (options?.noiseContacts) {
+    children.push(
+      ...createNoiseContactSvgObjects(
+        options.noiseContacts,
+        transform,
+        { width: svgWidth, height: svgHeight },
+        options.layer,
+      ),
+    )
+  }
 
   if (options?.simulationResultId) {
     children.push(

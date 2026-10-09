@@ -44,6 +44,7 @@ import {
   formatNumber,
   getYAxisTitle,
   svgElement,
+  textNode,
 } from "./simulation-graph-svg/simulation-graph-svg-shared"
 import {
   type CircuitJsonWithSimulation,
@@ -61,6 +62,13 @@ interface ConvertSimulationGraphParams {
   width?: number
   height?: number
   includeVersion?: boolean
+  /** Override labels when rendering an already validated scalar preview. */
+  x_axis_title?: string
+  x_axis_display_scale?: number
+  y_axis_title?: string
+  y_axis_min?: number
+  show_points?: boolean
+  subtitle?: string
 }
 
 export function convertCircuitJsonToSimulationGraphSvg({
@@ -73,6 +81,12 @@ export function convertCircuitJsonToSimulationGraphSvg({
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
+  x_axis_title,
+  x_axis_display_scale,
+  y_axis_title,
+  y_axis_min,
+  show_points = true,
+  subtitle,
 }: ConvertSimulationGraphParams): string {
   const selectedVoltageIds = simulation_transient_voltage_graph_ids
     ? new Set(simulation_transient_voltage_graph_ids)
@@ -144,10 +158,35 @@ export function convertCircuitJsonToSimulationGraphSvg({
   } else {
     timeAxis = buildAxisInfo(horizontalCoordinates)
   }
-  const valueAxis = buildAxisInfo(
+  let valueAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
   )
+  if (y_axis_min !== undefined) {
+    if (!Number.isFinite(y_axis_min) || y_axis_min >= valueAxis.domainMax)
+      throw new Error("Axis minimum must be finite and below its maximum")
+    valueAxis = {
+      ...valueAxis,
+      domainMin: y_axis_min,
+      ticks: [
+        y_axis_min,
+        ...valueAxis.ticks.filter((tick) => tick > y_axis_min),
+      ],
+    }
+  }
+  if (x_axis_display_scale !== undefined) {
+    if (!Number.isFinite(x_axis_display_scale) || x_axis_display_scale <= 0)
+      throw new Error("Axis display scale must be positive and finite")
+    timeAxis = {
+      ...timeAxis,
+      tickLabelOverrides: new Map(
+        timeAxis.ticks.map((tick) => [
+          tick,
+          formatNumber(tick * x_axis_display_scale),
+        ]),
+      ),
+    }
+  }
   const usesScopeTraceDisplay = preparedGraphs.some(
     (entry) => entry.usesScopeTraceDisplay,
   )
@@ -186,6 +225,8 @@ export function convertCircuitJsonToSimulationGraphSvg({
   const version = CIRCUIT_TO_SVG_VERSION
 
   const titleNode = createTitleNode(experiment, outputWidth)
+  if (titleNode && subtitle)
+    titleNode.attributes.style = `font-size: ${Math.min(18, (outputWidth - 32) / ((experiment?.name?.length ?? 1) * 0.6))}px`
 
   const svgChildren: SvgObject[] = [
     createStyleNode(),
@@ -201,7 +242,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotWidth,
       plotHeight,
     }),
-    createDataGroup(preparedGraphs, clipPathId, scaleX, scaleY),
+    createDataGroup(preparedGraphs, clipPathId, scaleX, scaleY, show_points),
     createAxes({
       timeAxis,
       valueAxis,
@@ -211,14 +252,32 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotLeft,
       plotWidth,
       plotHeight,
-      yAxisTitle: normalizedResults.yAxisTitle ?? getYAxisTitle(preparedGraphs),
-      xAxisTitle: normalizedResults.xAxisTitle,
+      yAxisTitle:
+        y_axis_title ??
+        normalizedResults.yAxisTitle ??
+        getYAxisTitle(preparedGraphs),
+      xAxisTitle: x_axis_title ?? normalizedResults.xAxisTitle,
       usesScopeTraceDisplay,
     }),
     usesScopeTraceDisplay
       ? createScopeLegend(preparedGraphs, outputWidth, height)
       : createLegend(preparedGraphs, outputWidth),
     ...(titleNode ? [titleNode] : []),
+    ...(subtitle
+      ? [
+          svgElement(
+            "text",
+            {
+              class: "legend-label",
+              x: String(outputWidth / 2),
+              y: "45",
+              "text-anchor": "middle",
+              style: `font-size: ${Math.min(12, (outputWidth - 32) / (subtitle.length * 0.6))}px`,
+            },
+            [textNode(subtitle)],
+          ),
+        ]
+      : []),
   ]
 
   const svgObject: SvgObject = svgElement(

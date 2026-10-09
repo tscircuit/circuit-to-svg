@@ -6,9 +6,10 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 
-export type SimulationTransientGraph =
+export type SimulationTransientGraph = (
   | SimulationTransientVoltageGraph
   | SimulationTransientCurrentGraph
+) & { segment_start_indices?: readonly number[] }
 
 export type SimulationProbe = SimulationVoltageProbe | SimulationCurrentProbe
 
