@@ -1,6 +1,7 @@
 import type { NinePointAnchor, PcbNoteText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { debugPcb } from "lib/utils/debug"
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { colorMap } from "lib/utils/colors"
@@ -86,7 +87,7 @@ export function createSvgObjectsFromPcbNoteText(
       x: x.toString(),
       y: y.toString(),
       fill: color ?? DEFAULT_OVERLAY_COLOR,
-      "font-family": "Arial, sans-serif",
+      "font-family": ALPHABET_FONT_FAMILY,
       "font-size": transformedFontSize.toString(),
       "text-anchor": textAnchor,
       "dominant-baseline": dominantBaseline,
