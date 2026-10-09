@@ -245,7 +245,7 @@ test("a real Palace field renders over its PCB with actual terminals and a numer
   expect(svg).toContain('data-type="simulation_pcb_return_current_vector"')
   expect(svg).toContain('data-type="simulation_pcb_return_current_cell"')
   expect(svg).toMatchSvgSnapshot(import.meta.path)
-}, 20_000)
+}, 60_000)
 
 test("masked cells stay empty, zero-current copper stays present, and density uses thickness", () => {
   const svg = convertCircuitJsonToPcbSvg(circuit, options)

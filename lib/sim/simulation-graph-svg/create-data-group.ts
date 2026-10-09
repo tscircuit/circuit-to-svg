@@ -22,6 +22,7 @@ export function createDataGroup(
   clipPathId: string,
   scaleX: ScaleFn,
   scaleY: ScaleFn,
+  showPoints = true,
 ): SvgObject {
   const LINE_REPEAT_COUNT = 3
   const DASH_PATTERN = [4, 8]
@@ -44,10 +45,13 @@ export function createDataGroup(
     if (entry.points.length === 0) return
 
     const commands: string[] = []
+    const segmentStarts = new Set(entry.graph.segment_start_indices)
     entry.points.forEach((point, index) => {
       const x = formatNumber(scaleX(point.timeMs))
       const y = formatNumber(scaleY(point.displayValue))
-      commands.push(`${index === 0 ? "M" : "L"} ${x} ${y}`)
+      commands.push(
+        `${index === 0 || segmentStarts.has(index) ? "M" : "L"} ${x} ${y}`,
+      )
     })
 
     const baseAttributes: Record<string, string> = {
@@ -78,18 +82,20 @@ export function createDataGroup(
         entry.graph.subcircuit_connectivity_map_key
     }
 
-    const pointElements = entry.points.map((point) => {
-      const cx = formatNumber(scaleX(point.timeMs))
-      const cy = formatNumber(scaleY(point.displayValue))
-      return svgElement("circle", {
-        class: "simulation-point",
-        cx,
-        cy,
-        r: "2.5",
-        fill: entry.color,
-        "clip-path": `url(#${clipPathId})`,
-      })
-    })
+    const pointElements = showPoints
+      ? entry.points.map((point) => {
+          const cx = formatNumber(scaleX(point.timeMs))
+          const cy = formatNumber(scaleY(point.displayValue))
+          return svgElement("circle", {
+            class: "simulation-point",
+            cx,
+            cy,
+            r: "2.5",
+            fill: entry.color,
+            "clip-path": `url(#${clipPathId})`,
+          })
+        })
+      : []
 
     processedGraphs.push({
       entry,

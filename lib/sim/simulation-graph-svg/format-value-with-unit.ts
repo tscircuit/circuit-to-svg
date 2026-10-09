@@ -44,6 +44,8 @@ export function formatTickLabel(value: number, axis: AxisInfo): string {
   if (ticks.length <= 1) return formatNumber(value)
   const span = ticks[ticks.length - 1]! - ticks[0]!
   if (!Number.isFinite(span) || span === 0) return formatNumber(value)
+  if (Math.abs(span) < 1e-3)
+    return value === 0 ? "0" : value.toExponential(2).replace(/\.0+(?=e)/, "")
 
   const precision = getTickLabelPrecisionForSpan(span)
   const factor = 10 ** precision
