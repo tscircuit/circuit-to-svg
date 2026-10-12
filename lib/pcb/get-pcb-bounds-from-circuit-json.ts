@@ -180,10 +180,13 @@ export function getComprehensivePcbBounds(
         })
       } else if (platedHole.shape === "hole_with_polygon_pad") {
         // pad_outline points are relative to the hole position
+        const rad = ((platedHole.ccw_rotation ?? 0) * Math.PI) / 180
+        const cosR = Math.cos(rad)
+        const sinR = Math.sin(rad)
         updateTraceBounds(
           (platedHole.pad_outline ?? []).map((point) => ({
-            x: platedHole.x + point.x,
-            y: platedHole.y + point.y,
+            x: platedHole.x + (point.x * cosR - point.y * sinR),
+            y: platedHole.y + (point.x * sinR + point.y * cosR),
           })),
         )
       }

@@ -1,11 +1,11 @@
 import type {
-  PcbPlatedHole,
   PcbHoleCircularWithRectPad,
   PcbHolePillWithRectPad,
   PcbHoleRotatedPillWithRectPad,
+  PcbPlatedHole,
 } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadDataAttributes } from "./get-pad-data-attributes"
 
@@ -939,19 +939,31 @@ export function createSvgObjectsFromPcbPlatedHole(
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const rotation = polygonHole.ccw_rotation ?? 0
+    const rad = (rotation * Math.PI) / 180
+    const cosR = Math.cos(rad)
+    const sinR = Math.sin(rad)
+    const rotatePoint = (px: number, py: number) => ({
+      x: px * cosR - py * sinR,
+      y: px * sinR + py * cosR,
+    })
 
-    // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    // Transform polygon pad outline points with ccw_rotation
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rot = rotatePoint(point.x, point.y)
+      return applyToPoint(transform, [holeX + rot.x, holeY + rot.y])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Calculate hole position with rotated offset
+    const rawOffsetX = polygonHole.hole_offset_x ?? 0
+    const rawOffsetY = polygonHole.hole_offset_y ?? 0
+    const rotOffset = rotatePoint(rawOffsetX, rawOffsetY)
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + rotOffset.x,
+      holeY + rotOffset.y,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
