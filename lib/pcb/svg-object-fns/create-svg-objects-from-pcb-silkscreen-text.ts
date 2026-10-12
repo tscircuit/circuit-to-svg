@@ -1,18 +1,18 @@
-import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { PcbSilkscreenText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
   compose,
-  rotate,
-  translate,
-  scale,
   toString as matrixToString,
+  rotate,
+  scale,
+  translate,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getAnchorOffsetForBounds } from "./create-pcb-alphabet-text-geometry"
 import { createAlphabetKnockoutText } from "./create-alphabet-knockout-text"
+import { getAnchorOffsetForBounds } from "./create-pcb-alphabet-text-geometry"
 
 let silkscreenMaskIdCounter = 0
 
@@ -209,7 +209,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       textAnchor = "end"
       dominantBaseline = "text-after-edge"
       break
-    case "center":
     default:
       textAnchor = "middle"
       dominantBaseline = "central"
@@ -241,7 +240,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
           value: "",
           attributes: {
             x: "0",
-            ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
+            y: (idx * transformedFontSize).toString(),
           },
           children: [
             {
