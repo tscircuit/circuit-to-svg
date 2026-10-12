@@ -7,14 +7,14 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
 import { getSvg, symbols } from "schematic-symbols"
 import { parseSync } from "svgson"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { type Matrix, applyToPoint } from "transformation-matrix"
+import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 import { createSvgObjectsFromSchematicComponentWithSymbol } from "./create-svg-objects-from-sch-component-with-symbol"
 import { createSvgObjectsFromSchPortOnBox } from "./create-svg-objects-from-sch-port-on-box"
-import { getSchStrokeSize } from "lib/utils/get-sch-stroke-size"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 
 export const createSvgObjectsFromSchematicComponentWithBox = ({
   component: schComponent,
@@ -29,13 +29,20 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
+  const componentWidth = Number.isFinite(schComponent.size.width)
+    ? schComponent.size.width
+    : 0
+  const componentHeight = Number.isFinite(schComponent.size.height)
+    ? schComponent.size.height
+    : 0
+
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - componentWidth / 2,
+    y: schComponent.center.y + componentHeight / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + componentWidth / 2,
+    y: schComponent.center.y - componentHeight / 2,
   })
   const componentScreenWidth =
     componentScreenBottomRight.x - componentScreenTopLeft.x
