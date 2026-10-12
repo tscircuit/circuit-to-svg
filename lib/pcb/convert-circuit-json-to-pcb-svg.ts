@@ -730,6 +730,7 @@ function createSvgObjects({
         ? createSvgObjectsFromPcbBoard(elm, ctx)
         : []
     case "pcb_via":
+      if (ctx.layer && !elm.layers.includes(ctx.layer)) return []
       return createSvgObjectsFromPcbVia(elm, ctx)
     case "pcb_cutout":
       const cutout = elm as PcbCutout
