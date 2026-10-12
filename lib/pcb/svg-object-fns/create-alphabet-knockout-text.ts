@@ -1,10 +1,10 @@
-import { lineAlphabet } from "@tscircuit/alphabet"
-import type { INode } from "svgson"
+import { glyphAdvanceRatio, lineAlphabet } from "@tscircuit/alphabet"
 import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
+import type { INode } from "svgson"
 import type { AlphabetTextBounds } from "./create-pcb-alphabet-text-geometry"
 
 // Metrics used by @tscircuit/alphabet's scripts/build-font.ts. Glyphs retain
-// their original x coordinates, use a fixed advance, and scale y by 940/1000.
+// their original x coordinates, use exported advances, and scale y by 940/1000.
 const ASCENDER = 0.94
 const STROKE_RADIUS = 0.09 / 2
 const glyphBounds = Object.fromEntries(
@@ -31,6 +31,10 @@ const CHAR_ADVANCE =
     ) * 1000,
   ) / 1000
 
+const glyphAdvances: Record<string, number> = glyphAdvanceRatio
+const getCharAdvance = (char: string) =>
+  Math.round((glyphAdvances[char] ?? CHAR_ADVANCE) * 1000) / 1000
+
 /** Measure the font's ink for the knockout rectangle; render real SVG text. */
 export function createAlphabetKnockoutText(
   text: string,
@@ -43,15 +47,21 @@ export function createAlphabetKnockoutText(
   const lines = text.split("\n")
   const children: INode[] = lines.map((line, index) => {
     const chars = Array.from(line)
-    const x = -(chars.length * CHAR_ADVANCE * fontSize) / 2
+    const lineAdvance = chars.reduce(
+      (width, char) => width + getCharAdvance(char),
+      0,
+    )
+    const x = -(lineAdvance * fontSize) / 2
     const y = index * fontSize * 1.1
-    chars.forEach((char, charIndex) => {
+    let offset = x
+    for (const char of chars) {
+      const glyphOffset = offset
+      offset += getCharAdvance(char) * fontSize
       const glyph = glyphBounds[char]
-      if (!glyph) return
-      const offset = x + charIndex * CHAR_ADVANCE * fontSize
+      if (!glyph) continue
       const ink = {
-        minX: offset + glyph.minX * fontSize,
-        maxX: offset + glyph.maxX * fontSize,
+        minX: glyphOffset + glyph.minX * fontSize,
+        maxX: glyphOffset + glyph.maxX * fontSize,
         minY: y + glyph.minY * fontSize,
         maxY: y + glyph.maxY * fontSize,
       }
@@ -63,7 +73,7 @@ export function createAlphabetKnockoutText(
             maxY: Math.max(bounds.maxY, ink.maxY),
           }
         : ink
-    })
+    }
     return {
       name: "tspan",
       type: "element",
