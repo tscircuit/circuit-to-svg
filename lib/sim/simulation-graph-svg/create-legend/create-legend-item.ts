@@ -19,7 +19,7 @@ export function createLegendItem(
       "tspan",
       {
         x: "20",
-        dy: index === 0 ? "0" : String(LEGEND_LINE_HEIGHT),
+        y: String(index * LEGEND_LINE_HEIGHT),
       },
       [textNode(line)],
     )
