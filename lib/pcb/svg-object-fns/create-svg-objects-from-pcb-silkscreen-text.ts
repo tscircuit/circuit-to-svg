@@ -1,18 +1,18 @@
-import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { PcbSilkscreenText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
+import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { INode as SvgObject } from "svgson"
 import {
   applyToPoint,
   compose,
-  rotate,
-  translate,
-  scale,
   toString as matrixToString,
+  rotate,
+  scale,
+  translate,
 } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { getAnchorOffsetForBounds } from "./create-pcb-alphabet-text-geometry"
 import { createAlphabetKnockoutText } from "./create-alphabet-knockout-text"
+import { getAnchorOffsetForBounds } from "./create-pcb-alphabet-text-geometry"
 
 let silkscreenMaskIdCounter = 0
 
@@ -32,6 +32,8 @@ export function createSvgObjectsFromPcbSilkscreenText(
     knockout_padding,
     is_mirrored = false,
   } = pcbSilkscreenText
+
+  const safeFontSize = Number.isFinite(font_size) ? font_size : 1
 
   if (layerFilter && layer !== layerFilter) return []
 
@@ -61,13 +63,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   // Handle knockout rendering
   if (is_knockout) {
-    const geometry = createAlphabetKnockoutText(text, font_size)
+    const geometry = createAlphabetKnockoutText(text, safeFontSize)
     if (!geometry.bounds) return []
 
-    const padLeft = knockout_padding?.left ?? font_size * 0.5
-    const padRight = knockout_padding?.right ?? font_size * 0.5
-    const padTop = knockout_padding?.top ?? font_size * 0.3
-    const padBottom = knockout_padding?.bottom ?? font_size * 0.3
+    const padLeft = knockout_padding?.left ?? safeFontSize * 0.5
+    const padRight = knockout_padding?.right ?? safeFontSize * 0.5
+    const padTop = knockout_padding?.top ?? safeFontSize * 0.3
+    const padBottom = knockout_padding?.bottom ?? safeFontSize * 0.3
 
     const rectX = geometry.bounds.minX - padLeft
     const rectY = geometry.bounds.minY - padTop
@@ -171,7 +173,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
     ]
   }
 
-  const transformedFontSize = font_size * scaleFactor
+  const transformedFontSize = safeFontSize * scaleFactor
 
   let textAnchor = "middle"
   let dominantBaseline = "central"
@@ -209,7 +211,6 @@ export function createSvgObjectsFromPcbSilkscreenText(
       textAnchor = "end"
       dominantBaseline = "text-after-edge"
       break
-    case "center":
     default:
       textAnchor = "middle"
       dominantBaseline = "central"
