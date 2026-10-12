@@ -1,12 +1,12 @@
-import {
-  createNetLabelTextChildren,
-  type SchematicTextWithSuperscript,
-} from "lib/utils/net-label-superscript"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { createSvgTextPartLines } from "lib/utils/create-svg-text-parts"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import {
+  type SchematicTextWithSuperscript,
+  createNetLabelTextChildren,
+} from "lib/utils/net-label-superscript"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 export const createSvgSchText = ({
   elm,
@@ -19,6 +19,11 @@ export const createSvgSchText = ({
 }): SvgObject => {
   // Apply transformation
   const center = applyToPoint(transform, elm.position)
+  const fontSize = getSchScreenFontSize(
+    transform,
+    "reference_designator",
+    elm.font_size,
+  )
 
   const textAnchorMap: Record<
     | "center"
@@ -104,7 +109,7 @@ export const createSvgSchText = ({
           value: "",
           attributes: {
             x: center.x.toString(),
-            ...(idx > 0 ? { dy: "1em" } : {}),
+            y: (center.y + idx * fontSize).toString(),
           },
           children: elm.text_parts?.length
             ? (styledLines[idx] ?? [])
@@ -127,7 +132,7 @@ export const createSvgSchText = ({
       ...createNetLabelTextChildren(
         "",
         elm.display_superscript,
-        getSchScreenFontSize(transform, "reference_designator", elm.font_size),
+        fontSize,
         dominantBaselineMap[elm.anchor],
       ).slice(1),
     )
@@ -146,7 +151,7 @@ export const createSvgSchText = ({
       "text-anchor": textAnchorMap[elm.anchor],
       "dominant-baseline": dominantBaselineMap[elm.anchor],
       "font-family": "sans-serif",
-      "font-size": `${getSchScreenFontSize(transform, "reference_designator", elm.font_size)}px`,
+      "font-size": `${fontSize}px`,
       transform: `rotate(${elm.rotation}, ${center.x}, ${center.y})`,
     },
     children,
