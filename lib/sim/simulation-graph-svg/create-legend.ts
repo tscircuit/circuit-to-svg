@@ -12,6 +12,17 @@ import {
 
 const LEGEND_MIN_SPACING = 24
 
+const getLegendItemHeight = (lines: string[]) =>
+  Math.max(lines.length * LEGEND_LINE_HEIGHT, LEGEND_MIN_SPACING)
+
+export function getLegendHeight(graphs: PreparedSimulationGraph[]): number {
+  return graphs.reduce(
+    (height, entry) =>
+      height + getLegendItemHeight(wrapLegendText(entry.label)),
+    0,
+  )
+}
+
 export function createLegend(
   graphs: PreparedSimulationGraph[],
   width: number,
@@ -22,9 +33,7 @@ export function createLegend(
     const x = width - MARGIN.right + 10
     const lines = wrapLegendText(entry.label)
     const legendItem = createLegendItem(entry, x, currentY, lines)
-    const itemHeight = lines.length * LEGEND_LINE_HEIGHT
-
-    currentY += Math.max(itemHeight, LEGEND_MIN_SPACING)
+    currentY += getLegendItemHeight(lines)
 
     return legendItem
   })
