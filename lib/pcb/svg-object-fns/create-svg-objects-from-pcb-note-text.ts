@@ -1,9 +1,9 @@
 import type { NinePointAnchor, PcbNoteText } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
+import { colorMap } from "lib/utils/colors"
 import { debugPcb } from "lib/utils/debug"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
-import { colorMap } from "lib/utils/colors"
 import { getSvgTextAnchorAlignment } from "../get-svg-text-anchor-alignment"
 
 const DEFAULT_OVERLAY_COLOR = colorMap.board.user_2
@@ -65,7 +65,7 @@ export function createSvgObjectsFromPcbNoteText(
           value: "",
           attributes: {
             x: x.toString(),
-            ...(index > 0 ? { dy: "1em" } : {}),
+            y: (y + index * transformedFontSize).toString(),
           },
           children: [
             {
