@@ -41,10 +41,10 @@ test("hole_with_polygon_pad respects ccw_rotation for pad outline and drill offs
   const polygonMatch = svg.match(
     /<polygon[^>]*class="pcb-hole-outer-pad"[^>]*points="([^"]+)"/,
   )
-  expect(polygonMatch).toBeTruthy()
-  const points = polygonMatch![1]
-    .split(" ")
-    .map((p) => p.split(",").map(Number))
+  const pointsString = polygonMatch?.[1] ?? ""
+  expect(pointsString).not.toBe("")
+  const points = pointsString.split(" ").map((p) => p.split(",").map(Number))
+  expect(points.length).toBeGreaterThanOrEqual(4)
 
   // Find drill center
   const drillMatch = svg.match(
