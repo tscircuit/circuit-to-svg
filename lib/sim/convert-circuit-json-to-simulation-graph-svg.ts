@@ -1,4 +1,3 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   AnyCircuitElement,
   SimulationAnalysisResult,
@@ -8,6 +7,7 @@ import { CIRCUIT_TO_SVG_VERSION } from "lib/package-version"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
 import { getSoftwareUsedString } from "lib/utils/get-software-used-string"
+import { stringifySvg } from "lib/utils/stringify-svg"
 import {
   type AcSweepView,
   getSimulationAnalysisResultId,
@@ -29,7 +29,10 @@ import {
   createDataGroup,
   createTitleNode,
 } from "./simulation-graph-svg/create-data-group"
-import { createLegend } from "./simulation-graph-svg/create-legend"
+import {
+  createLegend,
+  getLegendHeight,
+} from "./simulation-graph-svg/create-legend"
 import { createScopeLegend } from "./simulation-graph-svg/create-legend/create-scope-legend"
 import { getScopeAxisGutters } from "./simulation-graph-svg/create-legend/get-scope-axis-gutters"
 import { getScopeLegendGridLayout } from "./simulation-graph-svg/create-legend/get-scope-legend-grid-layout"
@@ -132,7 +135,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
   }
 
   const horizontalCoordinates = allPoints.map((point) => point.timeMs)
-  let timeAxis
+  let timeAxis: ReturnType<typeof buildAxisInfo>
   if (normalizedResults.usesLogarithmicXValues) {
     timeAxis = buildLogarithmicAxisInfo(horizontalCoordinates)
   } else if (normalizedResults.xAxisTitle === "Time (ms)") {
@@ -160,7 +163,10 @@ export function convertCircuitJsonToSimulationGraphSvg({
     : null
   const outputHeight = scopeLegendLayout
     ? height + SCOPE_LEGEND_GAP + scopeLegendLayout.height + SCOPE_LEGEND_GAP
-    : height
+    : Math.max(
+        height,
+        MARGIN.top + getLegendHeight(preparedGraphs) + MARGIN.bottom,
+      )
 
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
