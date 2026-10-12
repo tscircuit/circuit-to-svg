@@ -1,12 +1,12 @@
 import type {
-  PcbComponent,
-  LayerRef,
-  Point,
   AnyCircuitElement,
+  LayerRef,
+  PcbComponent,
+  Point,
 } from "circuit-json"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
@@ -52,7 +52,6 @@ export function createSvgObjectsFromAssemblyComponent(
       createPin1Indicator(
         scaledWidth,
         scaledHeight,
-        rotation,
         layer,
         isPinTop,
         isPinLeft,
@@ -147,7 +146,6 @@ function createComponentLabel(
 function createPin1Indicator(
   scaledWidth: number,
   scaledHeight: number,
-  rotation: number,
   layer: LayerRef,
   isPinTop: boolean,
   isPinLeft: boolean,
@@ -198,7 +196,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],
