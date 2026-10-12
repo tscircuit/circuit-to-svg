@@ -7,7 +7,7 @@ import {
   vias,
 } from "./pcb-via-layer-visibility.fixture"
 
-test.failing("PCB copper views respect each via's physical layers", () => {
+test("PCB copper views respect each via's physical layers", () => {
   const original = structuredClone(circuit)
   const cases: [LayerRef | undefined, boolean[]][] = [
     [undefined, [true, true, true, true]],
