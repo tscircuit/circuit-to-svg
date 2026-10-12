@@ -42,10 +42,19 @@ export function createSvgObjectsFromPcbPlatedHole(
   const solderMaskColor = colorMap.soldermaskWithCopperUnderneath.top
 
   if (hole.shape === "pill") {
-    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledOuterWidth = Math.max(
+      0,
+      hole.outer_width * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = Math.max(
+      0,
+      hole.outer_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHoleHeight = Math.max(
+      0,
+      hole.hole_height * Math.abs(transform.a),
+    )
 
     const rotation = hole.ccw_rotation || 0
 
@@ -204,10 +213,19 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Handle oval shape
   if (hole.shape === "oval") {
-    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledOuterWidth = Math.max(
+      0,
+      hole.outer_width * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = Math.max(
+      0,
+      hole.outer_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHoleHeight = Math.max(
+      0,
+      hole.hole_height * Math.abs(transform.a),
+    )
     const rotation = hole.ccw_rotation || 0
 
     const transformStr = rotation
@@ -269,13 +287,31 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
-    const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+    const scaledOuterWidth = Math.max(
+      0,
+      hole.outer_diameter * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = Math.max(
+      0,
+      hole.outer_diameter * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(
+      0,
+      hole.hole_diameter * Math.abs(transform.a),
+    )
+    const scaledHoleHeight = Math.max(
+      0,
+      hole.hole_diameter * Math.abs(transform.a),
+    )
 
-    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+    const outerRadius = Math.max(
+      0,
+      Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+    )
+    const innerRadius = Math.max(
+      0,
+      Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+    )
 
     let children: SvgObject[] = [
       {
@@ -313,7 +349,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskRadius = outerRadius + soldermaskMargin
+      const maskRadius = Math.max(0, outerRadius + soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -392,11 +428,22 @@ export function createSvgObjectsFromPcbPlatedHole(
   // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
   if (hole.shape === "circular_hole_with_rect_pad") {
     const h = hole as PcbHoleCircularWithRectPad
-    const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
-    const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledHoleDiameter = Math.max(
+      0,
+      hole.hole_diameter * Math.abs(transform.a),
+    )
+    const scaledRectPadWidth = Math.max(
+      0,
+      hole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = Math.max(
+      0,
+      hole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = Math.max(
+      0,
+      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
     const rectCcwRotation = (hole as any).rect_ccw_rotation ?? 0
 
     const rotation = h.rect_ccw_rotation ?? 0
@@ -470,9 +517,12 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
-      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
-      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      const maskWidth = Math.max(0, scaledRectPadWidth + 2 * soldermaskMargin)
+      const maskHeight = Math.max(0, scaledRectPadHeight + 2 * soldermaskMargin)
+      const maskBorderRadius = Math.max(
+        0,
+        scaledRectBorderRadius + soldermaskMargin,
+      )
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -597,13 +647,27 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   if (hole.shape === "pill_hole_with_rect_pad") {
     const pillHole = hole as PcbHolePillWithRectPad
-    const scaledRectPadWidth = pillHole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight = pillHole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      (pillHole.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledRectPadWidth = Math.max(
+      0,
+      pillHole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = Math.max(
+      0,
+      pillHole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = Math.max(
+      0,
+      (pillHole.rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
 
-    const scaledHoleHeight = pillHole.hole_height * Math.abs(transform.a)
-    const scaledHoleWidth = pillHole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = Math.max(
+      0,
+      pillHole.hole_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(
+      0,
+      pillHole.hole_width * Math.abs(transform.a),
+    )
 
     const pillHoleWithOffsets = pillHole as PcbHolePillWithRectPad &
       HoleWithRectPadOffsets
@@ -765,15 +829,27 @@ export function createSvgObjectsFromPcbPlatedHole(
 
   if (hole.shape === "rotated_pill_hole_with_rect_pad") {
     const rotatedHole = hole as PcbHoleRotatedPillWithRectPad
-    const scaledRectPadWidth =
-      rotatedHole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight =
-      rotatedHole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      (rotatedHole.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledRectPadWidth = Math.max(
+      0,
+      rotatedHole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = Math.max(
+      0,
+      rotatedHole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = Math.max(
+      0,
+      (rotatedHole.rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
 
-    const scaledHoleHeight = rotatedHole.hole_height * Math.abs(transform.a)
-    const scaledHoleWidth = rotatedHole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = Math.max(
+      0,
+      rotatedHole.hole_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = Math.max(
+      0,
+      rotatedHole.hole_width * Math.abs(transform.a),
+    )
 
     const rotatedHoleWithOffsets =
       rotatedHole as PcbHoleRotatedPillWithRectPad & HoleWithRectPadOffsets
@@ -957,8 +1033,10 @@ export function createSvgObjectsFromPcbPlatedHole(
     // Helper function to create hole SVG object based on hole_shape
     const createHoleSvgObject = (): SvgObject => {
       if (polygonHole.hole_shape === "circle") {
-        const scaledDiameter =
-          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a)
+        const scaledDiameter = Math.max(
+          0,
+          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a),
+        )
         const radius = scaledDiameter / 2
         return {
           name: "circle",
@@ -978,10 +1056,14 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
 
       if (polygonHole.hole_shape === "oval") {
-        const scaledWidth =
-          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
-        const scaledHeight =
-          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const scaledWidth = Math.max(
+          0,
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a),
+        )
+        const scaledHeight = Math.max(
+          0,
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a),
+        )
         const rx = scaledWidth / 2
         const ry = scaledHeight / 2
         return {
@@ -1006,10 +1088,14 @@ export function createSvgObjectsFromPcbPlatedHole(
         polygonHole.hole_shape === "pill" ||
         polygonHole.hole_shape === "rotated_pill"
       ) {
-        const scaledWidth =
-          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
-        const scaledHeight =
-          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const scaledWidth = Math.max(
+          0,
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a),
+        )
+        const scaledHeight = Math.max(
+          0,
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a),
+        )
 
         // Create pill path (same logic as regular pill holes)
         const isHorizontal = scaledWidth > scaledHeight
