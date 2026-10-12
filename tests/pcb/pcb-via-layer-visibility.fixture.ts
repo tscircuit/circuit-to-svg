@@ -1,5 +1,10 @@
 import type { AnyCircuitElement, LayerRef, PcbVia } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
+import { type INode, parseSync } from "svgson"
+
+const viewWidth = 800
+const viewHeight = 300
+const viewport = { minX: -8, maxX: 8, minY: -3, maxY: 3 }
 
 export const vias: PcbVia[] = [
   {
@@ -100,9 +105,69 @@ export function renderViaLayerView(layer?: LayerRef): string {
     ],
     {
       layer,
-      width: 640,
-      height: 240,
-      viewport: { minX: -8, maxX: 8, minY: -3, maxY: 3 },
+      width: viewWidth,
+      height: viewHeight,
+      viewport,
     },
   )
+}
+
+const getRenderedViaXs = (svg: string): number[] => {
+  const xs: number[] = []
+  const visit = (node: INode) => {
+    if (
+      node.name === "circle" &&
+      node.attributes.class === "pcb-hole-outer" &&
+      node.attributes["data-type"] === "pcb_via"
+    ) {
+      xs.push(Number(node.attributes.cx))
+    }
+    node.children.forEach(visit)
+  }
+  visit(parseSync(svg))
+  return xs.sort((a, b) => a - b)
+}
+
+export function renderViaLayerStack(): string {
+  const layers: (LayerRef | undefined)[] = [
+    "top",
+    "inner1",
+    "inner2",
+    "bottom",
+    undefined,
+  ]
+  const views = layers.map((layer) => ({
+    layer,
+    svg: renderViaLayerView(layer),
+  }))
+  const passing = views.every(({ layer, svg }) => {
+    const expectedXs = vias
+      .filter((via) => !layer || via.layers.includes(layer))
+      .map(
+        (via) =>
+          ((via.x - viewport.minX) * viewWidth) /
+          (viewport.maxX - viewport.minX),
+      )
+      .sort((a, b) => a - b)
+    return getRenderedViaXs(svg).join(",") === expectedXs.join(",")
+  })
+  const headerHeight = 100
+  const gap = 16
+  const height =
+    headerHeight + views.length * viewHeight + (views.length - 1) * gap
+  const panels = views
+    .map(
+      ({ svg }, index) =>
+        `<g transform="translate(0, ${headerHeight + index * (viewHeight + gap)})">${svg}</g>`,
+    )
+    .join("")
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${viewWidth}" height="${height}" viewBox="0 0 ${viewWidth} ${height}">
+    <rect width="${viewWidth}" height="${height}" fill="#000" />
+    <rect width="${viewWidth}" height="${headerHeight}" fill="#141414" />
+    <text x="${viewWidth / 2}" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="${passing ? "#4ade80" : "#fb7185"}">Repro: ${passing ? "PASSING" : "FAILING"}</text>
+    <text x="${viewWidth / 2}" y="64" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#f4f4f4">PCB views must show vias only on their physical copper layers.</text>
+    <text x="${viewWidth / 2}" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#a3a3a3">Compare the rendered vias with their listed layers in each view below.</text>
+    ${panels}
+  </svg>`
 }
