@@ -1,7 +1,7 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point } from "circuit-json"
+import { stringifySvg } from "lib/utils/stringify-svg"
+import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -9,14 +9,14 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -83,13 +83,14 @@ export function convertCircuitJsonToAssemblySvg(
 
   const ctx: AssemblySvgContext = { transform }
 
-  const svgObjects = soup
-    .sort(
-      (a, b) =>
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999),
-    )
-    .flatMap((item) => createSvgObjects(item, ctx, soup))
+  const drawingSoup = [...soup].sort(
+    (a, b) =>
+      (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
+      (OBJECT_ORDER.indexOf(a.type) ?? 9999),
+  )
+  const svgObjects = drawingSoup.flatMap((item) =>
+    createSvgObjects(item, ctx, drawingSoup),
+  )
 
   const softwareUsedString = getSoftwareUsedString(soup)
   const version = CIRCUIT_TO_SVG_VERSION
@@ -150,7 +151,7 @@ export function convertCircuitJsonToAssemblySvg(
   ].filter((child): child is SvgObject => child !== null)
 
   if (options?.showErrorsInTextOverlay) {
-    const errorOverlay = createErrorTextOverlay(soup)
+    const errorOverlay = createErrorTextOverlay(drawingSoup)
     if (errorOverlay) {
       children.push(errorOverlay)
     }
