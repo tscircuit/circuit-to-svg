@@ -15,6 +15,7 @@ function fixture(layer: "top" | "bottom"): AnyCircuitElement[] {
       height: 20,
       thickness: 1.6,
       num_layers: 2,
+      material: "fr4",
     },
   ]
   for (let row = 0; row < 4; row++) {
