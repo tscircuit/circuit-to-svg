@@ -14,15 +14,25 @@ export function createSvgObjectsFromSmtPad(
   const padDataAttributes = getPadDataAttributes(pad, ctx.circuitJson)
 
   const isCoveredWithSolderMask = Boolean(pad?.is_covered_with_solder_mask)
-  const shouldShowSolderMask = showSolderMask && isCoveredWithSolderMask
+  const margin = pad.soldermask_margin ?? 0
+  const hasSoldermaskMargin =
+    pad.shape === "rect" || pad.shape === "rotated_rect"
+      ? [
+          pad.soldermask_margin_left ?? margin,
+          pad.soldermask_margin_right ?? margin,
+          pad.soldermask_margin_top ?? margin,
+          pad.soldermask_margin_bottom ?? margin,
+        ].some((value) => value !== 0)
+      : margin !== 0
+  const shouldShowSolderMask =
+    showSolderMask && (isCoveredWithSolderMask || hasSoldermaskMargin)
 
   const soldermaskWithCopperUnderneathColor =
     colorMap.soldermaskWithCopperUnderneath[
       pad.layer as keyof typeof colorMap.soldermaskWithCopperUnderneath
     ] ?? colorMap.soldermaskWithCopperUnderneath.top
 
-  // Positive margin: mask extends beyond pad (less copper exposed)
-  // Negative margin: mask is smaller than pad (spacing/copper visible around edges)
+  // Positive margins expand the opening; negative margins leave a masked ring.
   const soldermaskMargin = (pad.soldermask_margin ?? 0) * Math.abs(transform.a)
 
   if (pad.shape === "rect" || pad.shape === "rotated_rect") {

@@ -12,15 +12,11 @@ export function createSvgObjectsFromPcbHole(
   const layer = ctx.layer ?? "top"
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
 
-  const isCoveredWithSolderMask = Boolean(hole.is_covered_with_solder_mask)
-
-  // Positive margin: mask extends beyond hole (less hole exposed)
-  // Negative margin: mask is smaller than hole (spacing around edges)
+  // Positive margins expand the opening; negative margins leave a masked ring.
   const soldermaskMargin = (hole.soldermask_margin ?? 0) * Math.abs(transform.a)
 
-  // Show soldermask if it's enabled, the hole is covered, and there's a margin defined
-  const shouldShowSolderMask =
-    showSolderMask && isCoveredWithSolderMask && soldermaskMargin !== 0
+  // Margins define openings independently of the coverage flag.
+  const shouldShowSolderMask = showSolderMask && soldermaskMargin !== 0
 
   const solderMaskColor = colorMap.soldermask.top
 
