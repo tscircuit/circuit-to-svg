@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -664,6 +664,45 @@ export function getComprehensivePcbBounds(
         height: item.height,
         ccwRotationDegrees: item.ccw_rotation,
       })
+      const rotation = item.ccw_rotation ?? 0
+      if (
+        Number.isFinite(item.center?.x) &&
+        Number.isFinite(item.center?.y) &&
+        Number.isFinite(item.width) &&
+        item.width > 0 &&
+        Number.isFinite(item.height) &&
+        item.height > 0 &&
+        Number.isFinite(item.stroke_width) &&
+        item.stroke_width > 0 &&
+        Number.isFinite(rotation) &&
+        (item.has_stroke === undefined || item.has_stroke === true)
+      ) {
+        const outerWidth = item.width + item.stroke_width
+        const outerHeight = item.height + item.stroke_width
+        const radians = (rotation * Math.PI) / 180
+        const absCos = Math.abs(Math.cos(radians))
+        const absSin = Math.abs(Math.sin(radians))
+        const halfWidth = (outerWidth * absCos + outerHeight * absSin) / 2
+        const halfHeight = (outerWidth * absSin + outerHeight * absCos) / 2
+        if (
+          [
+            outerWidth,
+            outerHeight,
+            item.center.x - halfWidth,
+            item.center.x + halfWidth,
+            item.center.y - halfHeight,
+            item.center.y + halfHeight,
+          ].every(Number.isFinite)
+        ) {
+          // 回転前の外周へ半線幅を加え、矩形の角も表示範囲へ含めます。
+          updateBounds({
+            center: item.center,
+            width: outerWidth,
+            height: outerHeight,
+            ccwRotationDegrees: rotation,
+          })
+        }
+      }
     } else if (item.type === "pcb_silkscreen_circle") {
       const radius = distance.parse(item.radius)
       if (radius !== undefined) {
