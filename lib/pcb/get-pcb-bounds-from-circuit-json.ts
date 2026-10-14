@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -229,6 +229,41 @@ export function getComprehensivePcbBounds(
         width: 0,
         height: 0,
       })
+    } else if (
+      circuitJsonElm.type === "pcb_silkscreen_path" &&
+      Array.isArray(circuitJsonElm.route)
+    ) {
+      updateTraceBounds(circuitJsonElm.route)
+      const { route, stroke_width } = circuitJsonElm
+      const strokeRadius = stroke_width / 2
+      const firstPoint = route[0]
+      if (
+        firstPoint &&
+        Number.isFinite(stroke_width) &&
+        stroke_width > 0 &&
+        route.some(
+          (point) => point.x !== firstPoint.x || point.y !== firstPoint.y,
+        ) &&
+        route.every((point) =>
+          [
+            point.x,
+            point.y,
+            point.x - strokeRadius,
+            point.x + strokeRadius,
+            point.y - strokeRadius,
+            point.y + strokeRadius,
+          ].every(Number.isFinite),
+        )
+      ) {
+        // 丸端・丸joinの線幅を含め、退化routeの旧境界は維持します。
+        for (const point of route) {
+          updateBounds({
+            center: point,
+            width: stroke_width,
+            height: stroke_width,
+          })
+        }
+      }
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
     } else if (
