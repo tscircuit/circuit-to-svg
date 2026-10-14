@@ -1,11 +1,9 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
 
-// pcb_note_line uses x1/y1/x2/y2 endpoints — it has neither an `x`/`y` nor a
-// `route`, so getComprehensivePcbBounds skips it entirely. The line then
-// contributes nothing to the bounds and is rendered off the svg viewport.
+// 端点だけの境界ではround端が欠けるため、線幅の半分も表示範囲へ含めます。
 const noteLine: AnyCircuitElement[] = [
   {
     type: "pcb_note_line",
@@ -38,10 +36,10 @@ const diamond: AnyCircuitElement[] = [
 
 test("getComprehensivePcbBounds includes a pcb_note_line", () => {
   const bounds = getComprehensivePcbBounds(noteLine)
-  expect(bounds.minX).toBeCloseTo(-6, 6)
-  expect(bounds.maxX).toBeCloseTo(6, 6)
-  expect(bounds.minY).toBeCloseTo(2, 6)
-  expect(bounds.maxY).toBeCloseTo(2, 6)
+  expect(bounds.minX).toBeCloseTo(-6.15, 6)
+  expect(bounds.maxX).toBeCloseTo(6.15, 6)
+  expect(bounds.minY).toBeCloseTo(1.85, 6)
+  expect(bounds.maxY).toBeCloseTo(2.15, 6)
 })
 
 test("note line svg viewport snapshot", () => {
