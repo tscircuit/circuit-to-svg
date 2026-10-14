@@ -17,7 +17,7 @@
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
         "@resvg/resvg-js": "^2.6.2",
-        "@tscircuit/alphabet": "https://pkg.pr.new/@tscircuit/alphabet@f344544",
+        "@tscircuit/alphabet": "https://pkg.pr.new/@tscircuit/alphabet@61bf8c6",
         "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
         "@tscircuit/circuit-json-util": "^0.0.115",
         "@types/bun": "^1.2.8",
@@ -285,7 +285,7 @@
 
     "@thednp/dommatrix": ["@thednp/dommatrix@3.0.4", "", {}, "sha512-xpKtQZqFOuAPfQDbePIh9f48YKfmULV7z9C+anPBSHiOG4P+T3ct7Cx2AZOoUeXbxiDkz7SONANy1bB7p2uysg=="],
 
-    "@tscircuit/alphabet": ["@tscircuit/alphabet@https://pkg.pr.new/@tscircuit/alphabet@f344544", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-s0YqjjyqLH2JkUuY24EKAWa9pc0k4nOfyXFo06gf5SUSt6nIW+njmu6IHSs0V/l6fW+MFYq0jETgwivIE2165A=="],
+    "@tscircuit/alphabet": ["@tscircuit/alphabet@https://pkg.pr.new/@tscircuit/alphabet@61bf8c6", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-B6+KmI1Q1GnZZImXiQOgXGQWOzdvufewN5tILwaGARS1b7Czgb68I1pNzlnCZP5OeBcdN0kO0Pl9+tf6y0X7Hg=="],
 
     "@tscircuit/capacity-autorouter": ["@tscircuit/capacity-autorouter@0.0.919", "", { "dependencies": { "fast-json-stable-stringify": "^2.1.0", "object-hash": "^3.0.0", "stack-svgs": "^0.0.1" } }, "sha512-iF2A9Ao8Au/Nj490Ch4nCXUpYhxIVq/WwV47jX67gvTGbo6/dodvbz+zG3nvS3ZKt1xXt7o0i6fn26K7cDD9hQ=="],
 
