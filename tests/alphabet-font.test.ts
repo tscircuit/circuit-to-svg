@@ -183,3 +183,30 @@ test("fabrication dimension labels use the embedded font", () => {
   )!
   expect(label.attributes["font-family"]).toBe("TscircuitAlphabet")
 })
+
+test("silkscreen uses a readable conventional monospace font", async () => {
+  const labels = [
+    ["SparkFun Electronics", 4, 1.4],
+    ["Qwiic Micro Pressure", 1, 1.1],
+    ["IIII MMMM WWWW 1111", -2, 1],
+    ["GPIO 0  RX  TX  3V3", -4.5, 0.8],
+  ] as const
+  const svg = convertCircuitJsonToPcbSvg([
+    { ...board, width: 32, height: 14 },
+    ...labels.map(
+      ([text, y, font_size], index): PcbSilkscreenText => ({
+        ...silkscreen,
+        pcb_silkscreen_text_id: `label_${index}`,
+        anchor_position: { x: 0, y },
+        ccw_rotation: 0,
+        font_size,
+        text,
+      }),
+    ),
+  ])
+
+  await expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "professional-monospace",
+  )
+})
