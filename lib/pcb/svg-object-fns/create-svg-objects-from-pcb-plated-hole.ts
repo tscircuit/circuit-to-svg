@@ -950,8 +950,8 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Calculate hole position with offset
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + polygonHole.hole_offset_x,
-      holeY + polygonHole.hole_offset_y,
+      holeX + (polygonHole.hole_offset_x ?? 0),
+      holeY + (polygonHole.hole_offset_y ?? 0),
     ])
 
     // Helper function to create hole SVG object based on hole_shape
