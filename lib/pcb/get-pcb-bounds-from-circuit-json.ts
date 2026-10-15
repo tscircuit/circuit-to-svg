@@ -15,6 +15,7 @@ import {
   type PcbTraceRoutePoint,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import { getBrepRingArcBounds } from "../utils/get-brep-ring-arc-bounds"
 
 export interface PcbBounds {
   minX: number
@@ -634,6 +635,17 @@ export function getComprehensivePcbBounds(
     })
   }
 
+  function updateBoundsToIncludeBrepArcs(
+    vertices: Array<Point & { bulge?: number }>,
+  ) {
+    const bounds = getBrepRingArcBounds(vertices)
+    if (!bounds) return
+    minX = Math.min(minX, bounds.minX)
+    minY = Math.min(minY, bounds.minY)
+    maxX = Math.max(maxX, bounds.maxX)
+    maxY = Math.max(maxY, bounds.maxY)
+  }
+
   function updateSilkscreenBounds(item: AnyCircuitElement) {
     if (item.type === "pcb_silkscreen_text") {
       updateBounds({ center: item.anchor_position, width: 0, height: 0 })
@@ -646,6 +658,8 @@ export function getComprehensivePcbBounds(
         })
       }
 
+      updateBoundsToIncludeBrepArcs(item.brep_shape.outer_ring.vertices)
+
       for (const innerRing of item.brep_shape.inner_rings ?? []) {
         for (const vertex of innerRing.vertices) {
           updateBounds({
@@ -654,6 +668,7 @@ export function getComprehensivePcbBounds(
             height: 0,
           })
         }
+        updateBoundsToIncludeBrepArcs(innerRing.vertices)
       }
     } else if (item.type === "pcb_silkscreen_path") {
       updateTraceBounds(item.route)
