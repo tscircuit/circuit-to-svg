@@ -459,6 +459,9 @@ export function getComprehensivePcbBounds(
         updateTraceBounds(circuitJsonElm.points)
       } else if (circuitJsonElm.shape === "brep") {
         updateTraceBounds(circuitJsonElm.brep_shape.outer_ring.vertices)
+        updateBoundsToIncludeBrepArcs(
+          circuitJsonElm.brep_shape.outer_ring.vertices,
+        )
       }
     }
   }
