@@ -19,9 +19,8 @@ export function createSvgObjectsFromPinoutPlatedHole(
     const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
 
-    const outerRadiusX = scaledOuterWidth / 2
-    const straightLength = scaledOuterHeight - scaledOuterWidth
-    const innerRadiusX = scaledHoleWidth / 2
+    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
+    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
 
     return [
       {
@@ -30,36 +29,34 @@ export function createSvgObjectsFromPinoutPlatedHole(
         children: [
           // Outer pill shape
           {
-            name: "path",
+            name: "rect",
             type: "element",
             attributes: {
               class: "pinout-hole-outer",
               fill: PAD_COLOR,
-              d:
-                `M${x - outerRadiusX},${y - straightLength / 2} ` +
-                `v${straightLength} ` +
-                `a${outerRadiusX},${outerRadiusX} 0 0 0 ${scaledOuterWidth},0 ` +
-                `v-${straightLength} ` +
-                `a${outerRadiusX},${outerRadiusX} 0 0 0 -${scaledOuterWidth},0 z`,
+              x: (x - scaledOuterWidth / 2).toString(),
+              y: (y - scaledOuterHeight / 2).toString(),
+              width: scaledOuterWidth.toString(),
+              height: scaledOuterHeight.toString(),
+              rx: outerRadius.toString(),
+              ry: outerRadius.toString(),
             },
             value: "",
             children: [],
           },
           // Inner pill shape
           {
-            name: "path",
+            name: "rect",
             type: "element",
             attributes: {
               class: "pinout-hole-inner",
               fill: HOLE_COLOR,
-              d:
-                `M${x - innerRadiusX},${
-                  y - (scaledHoleHeight - scaledHoleWidth) / 2
-                } ` +
-                `v${scaledHoleHeight - scaledHoleWidth} ` +
-                `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
-                `v-${scaledHoleHeight - scaledHoleWidth} ` +
-                `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+              x: (x - scaledHoleWidth / 2).toString(),
+              y: (y - scaledHoleHeight / 2).toString(),
+              width: scaledHoleWidth.toString(),
+              height: scaledHoleHeight.toString(),
+              rx: innerRadius.toString(),
+              ry: innerRadius.toString(),
             },
             value: "",
             children: [],
