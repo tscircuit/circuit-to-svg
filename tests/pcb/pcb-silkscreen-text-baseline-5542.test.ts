@@ -110,12 +110,7 @@ test("silkscreen text baseline aligns the reference advance box (#5542)", () => 
 test("silkscreen text multi-line pitch matches the core solver (#5542)", () => {
   const svg = convertCircuitJsonToPcbSvg([
     board,
-    makeSilkscreenText(
-      "multiline",
-      "center",
-      { x: 0, y: 0 },
-      "Q1\nQ2",
-    ),
+    makeSilkscreenText("multiline", "center", { x: 0, y: 0 }, "Q1\nQ2"),
   ])
 
   const nodes = findSilkscreenTextNodes(svg)
