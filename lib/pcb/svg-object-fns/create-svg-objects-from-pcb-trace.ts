@@ -233,7 +233,7 @@ export function createSvgObjectsFromPcbTrace(
 
   for (const [index, point] of trace.route.entries()) {
     if (!point || point.route_type !== "via") continue
-    if (getStandaloneViaPositionKeys(ctx).has(getPositionKey(point))) continue
+    if (hasMatchingStandaloneVia(ctx, trace, point)) continue
 
     svgObjects.push(
       ...createSvgObjectsFromPcbVia(
@@ -326,8 +326,9 @@ function createSyntheticViaFromRoutePoint(
     pcb_group_id: trace.pcb_group_id,
     x: point.x,
     y: point.y,
-    outer_diameter: outerDiameter,
-    hole_diameter: holeDiameter,
+    outer_diameter:
+      parseOptionalDistance(point.outer_diameter) ?? outerDiameter,
+    hole_diameter: parseOptionalDistance(point.hole_diameter) ?? holeDiameter,
     layers: [point.from_layer, point.to_layer],
     tented_on_top: point.tented_on_top,
     tented_on_bottom: point.tented_on_bottom,
@@ -393,12 +394,35 @@ function getRouteViaDiameters(
   }
 }
 
-function getStandaloneViaPositionKeys(ctx: PcbContext): Set<string> {
-  return (ctx.standaloneViaPositionKeys ??= new Set(
-    ctx.circuitJson
-      ?.filter((elm): elm is PCBVia => elm.type === "pcb_via")
-      .map((via) => getPositionKey(via)) ?? [],
-  ))
+function hasMatchingStandaloneVia(
+  ctx: PcbContext,
+  trace: PcbTrace,
+  point: Extract<PcbTrace["route"][number], { route_type: "via" }>,
+): boolean {
+  const keyFor = (id: string, position: Pick<Point, "x" | "y">) =>
+    JSON.stringify([
+      ctx.boardOwnerMap?.get(id)?.pcb_board_id,
+      getPositionKey(position),
+    ])
+  if (!ctx.standaloneViasByPosition) {
+    ctx.standaloneViasByPosition = new Map()
+    for (const via of ctx.circuitJson ?? []) {
+      if (via.type !== "pcb_via") continue
+      const key = keyFor(via.pcb_via_id, via)
+      const vias = ctx.standaloneViasByPosition.get(key) ?? []
+      vias.push(via)
+      ctx.standaloneViasByPosition.set(key, vias)
+    }
+  }
+  return (
+    ctx.standaloneViasByPosition
+      .get(keyFor(trace.pcb_trace_id, point))
+      ?.some(
+        (via) =>
+          via.layers.includes(point.from_layer) &&
+          via.layers.includes(point.to_layer),
+      ) ?? false
+  )
 }
 
 function getPositionKey(point: Pick<Point, "x" | "y">): string {
