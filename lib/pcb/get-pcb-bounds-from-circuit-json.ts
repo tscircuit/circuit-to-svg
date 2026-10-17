@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -341,6 +341,35 @@ export function getComprehensivePcbBounds(
       }
       updateBounds({ center: toArrowP2, width: 0, height: 0 })
       updateBounds({ center: toArrowP3, width: 0, height: 0 })
+
+      if (dimension.type === "pcb_fabrication_note_dimension") {
+        const strokeDiameter = arrow_size / 5
+        const strokeRadius = strokeDiameter / 2
+        const strokePoints = [from, to, fromExtEnd, toExtEnd, fromBase, toBase]
+        if (
+          Number.isFinite(arrow_size) &&
+          strokeDiameter > 0 &&
+          strokePoints.every((point) =>
+            [
+              point.x,
+              point.y,
+              point.x - strokeRadius,
+              point.x + strokeRadius,
+              point.y - strokeRadius,
+              point.y + strokeRadius,
+            ].every(Number.isFinite),
+          )
+        ) {
+          // 加工寸法注記の線幅とround端を含めます。文字・矢印の境界は維持します。
+          for (const point of strokePoints) {
+            updateBounds({
+              center: point,
+              width: strokeDiameter,
+              height: strokeDiameter,
+            })
+          }
+        }
+      }
 
       if (text) {
         const midPoint = {
