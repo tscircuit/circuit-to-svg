@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
-import { Resvg } from "@resvg/resvg-js"
 import { fileURLToPath } from "node:url"
+import { Resvg } from "@resvg/resvg-js"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { circuit } from "./pcb-via-tenting-silkscreen.fixture"
 
@@ -39,23 +39,38 @@ test("silkscreen text remains visible over tented vias on the viewed face", () =
     }).render()
     return {
       svg,
-      pixel(x: number, y: number) {
-        const offset =
-          (Math.round((5 - y) * 50) * 1200 + Math.round((x + 12) * 50)) * 4
-        return Array.from(pixels.subarray(offset, offset + 4))
+      whitePixelCountInCircle(x: number, y: number, radius = 0.65) {
+        const centerX = Math.round((x + 12) * 50)
+        const centerY = Math.round((5 - y) * 50)
+        const radiusPx = Math.round(radius * 50)
+        let count = 0
+        for (let dy = -radiusPx; dy <= radiusPx; dy++) {
+          for (let dx = -radiusPx; dx <= radiusPx; dx++) {
+            if (dx * dx + dy * dy > radiusPx * radiusPx) continue
+            const offset = ((centerY + dy) * 1200 + centerX + dx) * 4
+            if (
+              pixels[offset] === 255 &&
+              pixels[offset + 1] === 255 &&
+              pixels[offset + 2] === 255 &&
+              pixels[offset + 3] === 255
+            ) {
+              count++
+            }
+          }
+        }
+        return count
       },
     }
   }
   const top = render("top")
   const bottom = render("bottom")
-  const white = [255, 255, 255, 255]
-  expect(top.pixel(-8, -0.8)).toEqual(white)
-  expect(top.pixel(0, -0.8)).not.toEqual(white)
-  expect(top.pixel(8, -0.8)).toEqual(white)
-  expect(bottom.pixel(-8, -0.8)).toEqual(white)
-  expect(bottom.pixel(0, -0.8)).not.toEqual(white)
-  expect(bottom.pixel(8, -0.8)).not.toEqual(white)
-  expect(render("top", false).pixel(-8, -0.8)).not.toEqual(white)
+  expect(top.whitePixelCountInCircle(-8, -0.8)).toBeGreaterThan(0)
+  expect(top.whitePixelCountInCircle(0, -0.8)).toBe(0)
+  expect(top.whitePixelCountInCircle(8, -0.8)).toBeGreaterThan(0)
+  expect(bottom.whitePixelCountInCircle(-8, -0.8)).toBeGreaterThan(0)
+  expect(bottom.whitePixelCountInCircle(0, -0.8)).toBe(0)
+  expect(bottom.whitePixelCountInCircle(8, -0.8)).toBe(0)
+  expect(render("top", false).whitePixelCountInCircle(-8, -0.8)).toBe(0)
   expect(
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000">${top.svg}<g transform="translate(0 500)">${bottom.svg}</g></svg>`,
   ).toMatchSvgSnapshot(import.meta.path)
