@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -217,12 +217,37 @@ export function getComprehensivePcbBounds(
         })
       }
     } else if (circuitJsonElm.type === "pcb_note_line") {
-      // pcb_note_line uses x1/y1/x2/y2 endpoints (no x/y or route), so it
-      // would otherwise contribute nothing to the bounds and be clipped.
-      updateTraceBounds([
+      const endpoints = [
         { x: circuitJsonElm.x1, y: circuitJsonElm.y1 },
         { x: circuitJsonElm.x2, y: circuitJsonElm.y2 },
-      ])
+      ]
+      const strokeWidth =
+        Number.isFinite(circuitJsonElm.stroke_width) &&
+        circuitJsonElm.stroke_width > 0 &&
+        (!circuitJsonElm.is_dashed ||
+          circuitJsonElm.x1 !== circuitJsonElm.x2 ||
+          circuitJsonElm.y1 !== circuitJsonElm.y2)
+          ? circuitJsonElm.stroke_width
+          : 0
+      const halfStrokeWidth = strokeWidth / 2
+      const hasFiniteStrokeBounds = endpoints.every((point) =>
+        [
+          point.x,
+          point.y,
+          point.x - halfStrokeWidth,
+          point.x + halfStrokeWidth,
+          point.y - halfStrokeWidth,
+          point.y + halfStrokeWidth,
+        ].every(Number.isFinite),
+      )
+      // round端の外周を含めます。不正値とoverflowは従来の端点境界へ戻します。
+      for (const point of endpoints) {
+        updateBounds({
+          center: point,
+          width: hasFiniteStrokeBounds ? strokeWidth : 0,
+          height: hasFiniteStrokeBounds ? strokeWidth : 0,
+        })
+      }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({
         center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
