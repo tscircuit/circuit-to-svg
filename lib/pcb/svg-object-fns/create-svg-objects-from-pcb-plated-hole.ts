@@ -8,6 +8,7 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadDataAttributes } from "./get-pad-data-attributes"
+import { rotatePointCcwDeg } from "lib/utils/rotate-point"
 
 type HoleWithRectPadOffsets = {
   hole_offset_x?: number
@@ -939,19 +940,30 @@ export function createSvgObjectsFromPcbPlatedHole(
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
+    const ccwRotation = polygonHole.ccw_rotation ?? 0
+
+    // pad_outline and the hole offset are relative to the hole position in
+    // the pad's local frame; ccw_rotation rotates that frame about the hole
+    const rotateLocal = (px: number, py: number) =>
+      rotatePointCcwDeg(px, py, ccwRotation)
 
     // Transform polygon pad outline points
-    const padPoints = padOutline.map((point: { x: number; y: number }) =>
-      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
-    )
+    const padPoints = padOutline.map((point: { x: number; y: number }) => {
+      const rotated = rotateLocal(point.x, point.y)
+      return applyToPoint(transform, [holeX + rotated.x, holeY + rotated.y])
+    })
     const padPointsString = padPoints
       .map((p: number[]) => p.join(","))
       .join(" ")
 
-    // Calculate hole position with offset
+    // Calculate hole position with rotated offset
+    const rotatedOffset = rotateLocal(
+      polygonHole.hole_offset_x ?? 0,
+      polygonHole.hole_offset_y ?? 0,
+    )
     const [holeCenterX, holeCenterY] = applyToPoint(transform, [
-      holeX + (polygonHole.hole_offset_x ?? 0),
-      holeY + (polygonHole.hole_offset_y ?? 0),
+      holeX + rotatedOffset.x,
+      holeY + rotatedOffset.y,
     ])
 
     // Helper function to create hole SVG object based on hole_shape
@@ -984,16 +996,21 @@ export function createSvgObjectsFromPcbPlatedHole(
           (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
         const rx = scaledWidth / 2
         const ry = scaledHeight / 2
+        const holeTransform = ccwRotation
+          ? `translate(${holeCenterX} ${holeCenterY}) rotate(${-ccwRotation})`
+          : undefined
+
         return {
           name: "ellipse",
           type: "element",
           attributes: {
             class: "pcb-hole-inner",
             fill: colorMap.drill,
-            cx: holeCenterX.toString(),
-            cy: holeCenterY.toString(),
+            cx: holeTransform ? "0" : holeCenterX.toString(),
+            cy: holeTransform ? "0" : holeCenterY.toString(),
             rx: rx.toString(),
             ry: ry.toString(),
+            ...(holeTransform ? { transform: holeTransform } : {}),
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },
@@ -1032,6 +1049,10 @@ export function createSvgObjectsFromPcbPlatedHole(
             `v-${straightLength} ` +
             `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
 
+        const transformStr = ccwRotation
+          ? `translate(${holeCenterX} ${holeCenterY}) rotate(${-ccwRotation})`
+          : `translate(${holeCenterX} ${holeCenterY})`
+
         return {
           name: "path",
           type: "element",
@@ -1039,7 +1060,7 @@ export function createSvgObjectsFromPcbPlatedHole(
             class: "pcb-hole-inner",
             fill: colorMap.drill,
             d: pathD,
-            transform: `translate(${holeCenterX} ${holeCenterY})`,
+            transform: transformStr,
             "data-type": "pcb_plated_hole_drill",
             "data-pcb-layer": "drill",
           },
