@@ -10,10 +10,10 @@ test("repro: include rectangular courtyard in PCB bounds", () => {
   ) as AnyCircuitElement[]
   const bounds = getComprehensivePcbBounds(rectangularCourtyard)
 
-  expect(bounds.minX).toBeCloseTo(-4.31, 6)
-  expect(bounds.maxX).toBeCloseTo(4.31, 6)
-  expect(bounds.minY).toBeCloseTo(-1.77, 6)
-  expect(bounds.maxY).toBeCloseTo(1.77, 6)
+  expect(bounds.minX).toBeCloseTo(-4.335, 6)
+  expect(bounds.maxX).toBeCloseTo(4.335, 6)
+  expect(bounds.minY).toBeCloseTo(-1.795, 6)
+  expect(bounds.maxY).toBeCloseTo(1.795, 6)
 })
 
 test("repro: render pinrow3_smd_ra_male circuit JSON", () => {

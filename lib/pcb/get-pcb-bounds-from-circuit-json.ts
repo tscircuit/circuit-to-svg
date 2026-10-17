@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -86,6 +86,7 @@ export function getComprehensivePcbBounds(
         width: circuitJsonElm.width,
         height: circuitJsonElm.height,
         ccwRotationDegrees: circuitJsonElm.ccw_rotation,
+        roundStrokeWidth: 0.05,
       })
     } else if (circuitJsonElm.type === "pcb_soldermask_opening") {
       if (circuitJsonElm.shape === "polygon") {
@@ -480,11 +481,13 @@ export function getComprehensivePcbBounds(
     width,
     height,
     ccwRotationDegrees,
+    roundStrokeWidth = 0,
   }: {
     center: Point
     width?: number
     height?: number
     ccwRotationDegrees?: number
+    roundStrokeWidth?: number
   }) {
     if (!center) return
     const centerX = distance.parse(center.x)
@@ -504,6 +507,18 @@ export function getComprehensivePcbBounds(
       const rotatedHalfHeight = halfWidth * absSin + halfHeight * absCos
       halfWidth = rotatedHalfWidth
       halfHeight = rotatedHalfHeight
+    }
+    if (
+      roundStrokeWidth > 0 &&
+      numericWidth > 0 &&
+      numericHeight > 0 &&
+      [center.x, center.y, width, height, halfWidth, halfHeight].every(
+        Number.isFinite,
+      )
+    ) {
+      // round角の輪郭は、回転後の各方向へ線幅の半分を含みます。
+      halfWidth += roundStrokeWidth / 2
+      halfHeight += roundStrokeWidth / 2
     }
     minX = Math.min(minX, centerX - halfWidth)
     minY = Math.min(minY, centerY - halfHeight)
