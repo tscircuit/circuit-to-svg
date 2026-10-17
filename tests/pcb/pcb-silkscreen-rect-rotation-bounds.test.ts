@@ -1,12 +1,9 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
 
-// A wide silkscreen rect rotated 90deg. The renderer rotates it (rotate(-90)),
-// but getComprehensivePcbBounds measures the un-rotated width/height box, so
-// the exported bounds are too small on the rotated axis and the shape gets
-// clipped by the SVG viewport.
+// The viewport must contain both the rotated rectangle and its stroke.
 const wideRotatedRect: AnyCircuitElement[] = [
   {
     type: "pcb_silkscreen_rect",
@@ -21,14 +18,13 @@ const wideRotatedRect: AnyCircuitElement[] = [
   },
 ]
 
-// Rotating the 7.778 x 1 rect by 90deg swaps its extents: the true axis-aligned
-// bounds are +/-0.5 in x and +/-3.889 in y.
+// The 0.1mm stroke extends the rotated shape by 0.05mm on each side.
 test("getComprehensivePcbBounds accounts for a rotated pcb_silkscreen_rect", () => {
   const bounds = getComprehensivePcbBounds(wideRotatedRect)
-  expect(bounds.minX).toBeCloseTo(-0.5, 6)
-  expect(bounds.maxX).toBeCloseTo(0.5, 6)
-  expect(bounds.minY).toBeCloseTo(-3.889, 6)
-  expect(bounds.maxY).toBeCloseTo(3.889, 6)
+  expect(bounds.minX).toBeCloseTo(-0.55, 6)
+  expect(bounds.maxX).toBeCloseTo(0.55, 6)
+  expect(bounds.minY).toBeCloseTo(-3.939, 6)
+  expect(bounds.maxY).toBeCloseTo(3.939, 6)
 })
 
 test("wide rotated silkscreen rect is not clipped by the svg viewport", () => {
