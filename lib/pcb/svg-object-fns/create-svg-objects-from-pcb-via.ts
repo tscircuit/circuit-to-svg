@@ -4,6 +4,7 @@ import type { SvgObject } from "lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createSoldermaskOverlayElement } from "./create-soldermask-overlay-element"
+import { toSvgLength } from "lib/utils/to-svg-length"
 
 export function createSvgObjectsFromPcbVia(
   hole: PCBVia,
@@ -32,8 +33,12 @@ export function createSvgObjectsFromPcbVia(
   const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
   const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
 
-  const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-  const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+  const outerRadius = toSvgLength(
+    Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+  )
+  const innerRadius = toSvgLength(
+    Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+  )
   const via: SvgObject = {
     name: "g",
     type: "element",
