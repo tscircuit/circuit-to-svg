@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -676,6 +676,37 @@ export function getComprehensivePcbBounds(
     } else if (item.type === "pcb_silkscreen_line") {
       updateBounds({ center: { x: item.x1, y: item.y1 }, width: 0, height: 0 })
       updateBounds({ center: { x: item.x2, y: item.y2 }, width: 0, height: 0 })
+      if (
+        [item.x1, item.y1, item.x2, item.y2, item.stroke_width].every(
+          Number.isFinite,
+        ) &&
+        item.stroke_width > 0
+      ) {
+        const dx = item.x2 - item.x1
+        const dy = item.y2 - item.y1
+        const length = Math.hypot(dx, dy)
+        if (Number.isFinite(length) && length > 0) {
+          const halfStroke = item.stroke_width / 2
+          const offsetX = (-dy / length) * halfStroke
+          const offsetY = (dx / length) * halfStroke
+          const exterior = [
+            { x: item.x1 - offsetX, y: item.y1 - offsetY },
+            { x: item.x1 + offsetX, y: item.y1 + offsetY },
+            { x: item.x2 - offsetX, y: item.y2 - offsetY },
+            { x: item.x2 + offsetX, y: item.y2 + offsetY },
+          ]
+          if (
+            exterior.every(
+              ({ x, y }) => Number.isFinite(x) && Number.isFinite(y),
+            )
+          ) {
+            // butt端は線分方向へ伸びないため、法線方向の半幅だけを含めます。
+            for (const center of exterior) {
+              updateBounds({ center, width: 0, height: 0 })
+            }
+          }
+        }
+      }
     } else if (item.type === "pcb_silkscreen_oval") {
       const radiusX = distance.parse(item.radius_x)
       const radiusY = distance.parse(item.radius_y)
