@@ -13,7 +13,6 @@ export function createSvgObjectsFromSchematicArc({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
-  const center = applyToPoint(transform, schArc.center)
   const transformedRadius = Math.abs(transform.a) * schArc.radius
 
   const strokeWidth = schArc.stroke_width ?? 0.02
@@ -23,11 +22,16 @@ export function createSvgObjectsFromSchematicArc({
   const startAngleRad = (schArc.start_angle_degrees * Math.PI) / 180
   const endAngleRad = (schArc.end_angle_degrees * Math.PI) / 180
 
-  // Calculate start and end points
-  const startX = center.x + transformedRadius * Math.cos(startAngleRad)
-  const startY = center.y + transformedRadius * Math.sin(startAngleRad)
-  const endX = center.x + transformedRadius * Math.cos(endAngleRad)
-  const endY = center.y + transformedRadius * Math.sin(endAngleRad)
+  // Angles are in schematic coordinates (+X right, +Y up). Transform the
+  // endpoints as points so the screen's inverted Y axis is applied once.
+  const start = applyToPoint(transform, {
+    x: schArc.center.x + schArc.radius * Math.cos(startAngleRad),
+    y: schArc.center.y + schArc.radius * Math.sin(startAngleRad),
+  })
+  const end = applyToPoint(transform, {
+    x: schArc.center.x + schArc.radius * Math.cos(endAngleRad),
+    y: schArc.center.y + schArc.radius * Math.sin(endAngleRad),
+  })
 
   // Calculate if arc is large (> 180 degrees)
   let angleDiff = schArc.end_angle_degrees - schArc.start_angle_degrees
@@ -43,7 +47,7 @@ export function createSvgObjectsFromSchematicArc({
   const sweepFlag = schArc.direction === "clockwise" ? 1 : 0
 
   // Create SVG path for the arc
-  const pathData = `M ${startX} ${startY} A ${transformedRadius} ${transformedRadius} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`
+  const pathData = `M ${start.x} ${start.y} A ${transformedRadius} ${transformedRadius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`
 
   return [
     {
