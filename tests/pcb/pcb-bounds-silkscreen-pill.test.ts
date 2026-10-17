@@ -1,11 +1,9 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
 
-// pcb_silkscreen_pill is rendered but missing from getComprehensivePcbBounds'
-// silkscreen handling, so it contributes nothing to the viewport and gets
-// clipped.
+// カプセルの固定線幅0.1mmも、自動viewportの境界へ含めます。
 const silkscreenPillWithMarker: AnyCircuitElement[] = [
   {
     type: "pcb_silkscreen_pill",
@@ -31,10 +29,10 @@ const silkscreenPillWithMarker: AnyCircuitElement[] = [
 
 test("getComprehensivePcbBounds includes a silkscreen pill", () => {
   const bounds = getComprehensivePcbBounds(silkscreenPillWithMarker)
-  expect(bounds.minX).toBeCloseTo(-5, 6)
-  expect(bounds.maxX).toBeCloseTo(5, 6)
-  expect(bounds.minY).toBeCloseTo(-2, 6)
-  expect(bounds.maxY).toBeCloseTo(2, 6)
+  expect(bounds.minX).toBeCloseTo(-5.05, 6)
+  expect(bounds.maxX).toBeCloseTo(5.05, 6)
+  expect(bounds.minY).toBeCloseTo(-2.05, 6)
+  expect(bounds.maxY).toBeCloseTo(2.05, 6)
 })
 
 test("silkscreen pill svg viewport snapshot", () => {

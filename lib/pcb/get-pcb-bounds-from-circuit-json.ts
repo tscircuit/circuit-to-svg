@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -693,6 +693,48 @@ export function getComprehensivePcbBounds(
         height: item.height,
         ccwRotationDegrees: item.ccw_rotation,
       })
+      const rotation = item.ccw_rotation === undefined ? 0 : item.ccw_rotation
+      if (
+        Number.isFinite(item.center?.x) &&
+        Number.isFinite(item.center?.y) &&
+        Number.isFinite(item.width) &&
+        item.width > 0 &&
+        Number.isFinite(item.height) &&
+        item.height > 0 &&
+        Number.isFinite(rotation)
+      ) {
+        const radians = (rotation * Math.PI) / 180
+        const absCos = Math.abs(Math.cos(radians))
+        const absSin = Math.abs(Math.sin(radians))
+        const radius = Math.min(item.width, item.height) / 2
+        const straightHalfWidth = item.width / 2 - radius
+        const straightHalfHeight = item.height / 2 - radius
+        // カプセルの直線部分と円弧へ、固定線幅0.1mmの半分を含めます。
+        const halfWidth =
+          straightHalfWidth * absCos +
+          straightHalfHeight * absSin +
+          radius +
+          0.05
+        const halfHeight =
+          straightHalfWidth * absSin +
+          straightHalfHeight * absCos +
+          radius +
+          0.05
+        const width = halfWidth * 2
+        const height = halfHeight * 2
+        if (
+          [
+            width,
+            height,
+            item.center.x - halfWidth,
+            item.center.x + halfWidth,
+            item.center.y - halfHeight,
+            item.center.y + halfHeight,
+          ].every(Number.isFinite)
+        ) {
+          updateBounds({ center: item.center, width, height })
+        }
+      }
     } else if (item.type === "pcb_cutout") {
       const cutout = item as PcbCutout
       if (cutout.shape === "rect") {
