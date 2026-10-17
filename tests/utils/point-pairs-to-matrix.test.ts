@@ -28,3 +28,40 @@ test("anchors both symbol pins when scaling about a nonzero origin", () => {
     }
   }
 })
+
+test("maps rotated and scaled pin pairs in either order", () => {
+  const a = { x: 1, y: 2 }
+  const b = { x: 4, y: 2 }
+  const c = { x: 1, y: 3 }
+  const targetA = { x: -5, y: 7 }
+  // A 2x scale followed by 90, 180, and 270 degree counterclockwise turns.
+  for (const [targetB, targetC] of [
+    [
+      { x: -5, y: 13 },
+      { x: -7, y: 7 },
+    ],
+    [
+      { x: -11, y: 7 },
+      { x: -5, y: 5 },
+    ],
+    [
+      { x: -5, y: 1 },
+      { x: -3, y: 7 },
+    ],
+  ] as const) {
+    for (const reverse of [false, true]) {
+      const matrix = reverse
+        ? pointPairsToMatrix(b, targetB, a, targetA)
+        : pointPairsToMatrix(a, targetA, b, targetB)
+      for (const [source, target] of [
+        [a, targetA],
+        [b, targetB],
+        [c, targetC],
+      ] as const) {
+        const result = applyToPoint(matrix, source)
+        expect(result.x).toBeCloseTo(target.x, 10)
+        expect(result.y).toBeCloseTo(target.y, 10)
+      }
+    }
+  }
+})

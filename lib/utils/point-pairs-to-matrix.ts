@@ -1,7 +1,16 @@
-import { type Matrix, compose, scale, translate } from "transformation-matrix"
+import {
+  type Matrix,
+  compose,
+  rotate,
+  scale,
+  translate,
+} from "transformation-matrix"
 
 type Point = { x: number; y: number }
 
+/** Map symbol-local points to circuit-world points (mm, +X right, +Y up),
+ * preserving handedness with uniform scale and counterclockwise rotation.
+ */
 export function pointPairsToMatrix(
   a1: Point,
   a2: Point,
@@ -14,14 +23,15 @@ export function pointPairsToMatrix(
 
   const a = transformedDistance / originalDistance
 
-  // Scaling also moves the anchor. Translate its scaled position to A', so
-  // symbols with non-native pin spacing remain attached to both traces.
-  const tx = a2.x - a * a1.x
-  const ty = a2.y - a * a1.y
+  const rotation =
+    Math.atan2(b2.y - a2.y, b2.x - a2.x) - Math.atan2(b1.y - a1.y, b1.x - a1.x)
 
-  // Create and compose the transformations
-  const translateMatrix = translate(tx, ty)
-  const scaleMatrix = scale(a, a)
-
-  return compose(translateMatrix, scaleMatrix)
+  // Move the local anchor to the origin before scaling and rotating, then
+  // place it at its circuit-world position. Both matched pins stay attached.
+  return compose(
+    translate(a2.x, a2.y),
+    rotate(rotation),
+    scale(a, a),
+    translate(-a1.x, -a1.y),
+  )
 }
