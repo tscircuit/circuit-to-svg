@@ -287,12 +287,14 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     })
   }
 
+  const circleTransform = compose(
+    realToScreenTransform,
+    transformFromSymbolToReal,
+  )
   for (const circle of circles) {
-    const screenCirclePos = applyToPoint(
-      compose(realToScreenTransform, transformFromSymbolToReal),
-      circle,
-    )
-    const screenRadius = Math.abs(circle.radius * realToScreenTransform.a)
+    const screenCirclePos = applyToPoint(circleTransform, circle)
+    const screenRadius =
+      circle.radius * Math.hypot(circleTransform.a, circleTransform.b)
     svgObjects.push({
       type: "element",
       name: "circle",
