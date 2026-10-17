@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -685,6 +685,37 @@ export function getComprehensivePcbBounds(
           width: radiusX * 2,
           height: radiusY * 2,
         })
+        const rotation = item.ccw_rotation === undefined ? 0 : item.ccw_rotation
+        if (
+          Number.isFinite(item.center?.x) &&
+          Number.isFinite(item.center?.y) &&
+          Number.isFinite(item.radius_x) &&
+          item.radius_x > 0 &&
+          Number.isFinite(item.radius_y) &&
+          item.radius_y > 0 &&
+          Number.isFinite(rotation)
+        ) {
+          const radians = (rotation * Math.PI) / 180
+          const cos = Math.cos(radians)
+          const sin = Math.sin(radians)
+          // 楕円の回転投影へ、描画時の固定線幅0.1mmの半分を含めます。
+          const outerRadiusX = Math.hypot(radiusX * cos, radiusY * sin) + 0.05
+          const outerRadiusY = Math.hypot(radiusX * sin, radiusY * cos) + 0.05
+          const width = outerRadiusX * 2
+          const height = outerRadiusY * 2
+          if (
+            [
+              width,
+              height,
+              item.center.x - outerRadiusX,
+              item.center.x + outerRadiusX,
+              item.center.y - outerRadiusY,
+              item.center.y + outerRadiusY,
+            ].every(Number.isFinite)
+          ) {
+            updateBounds({ center: item.center, width, height })
+          }
+        }
       }
     } else if (item.type === "pcb_silkscreen_pill") {
       updateBounds({
