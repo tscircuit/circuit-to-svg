@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -231,10 +231,39 @@ export function getComprehensivePcbBounds(
       })
     } else if ("route" in circuitJsonElm) {
       updateTraceBounds(circuitJsonElm.route)
-    } else if (
-      circuitJsonElm.type === "pcb_note_rect" ||
-      circuitJsonElm.type === "pcb_fabrication_note_rect"
-    ) {
+    } else if (circuitJsonElm.type === "pcb_fabrication_note_rect") {
+      let width = circuitJsonElm.width
+      let height = circuitJsonElm.height
+      const hasVisibleStroke =
+        circuitJsonElm.has_stroke !== false &&
+        Number.isFinite(circuitJsonElm.stroke_width) &&
+        circuitJsonElm.stroke_width > 0
+      const strokeWidth = hasVisibleStroke ? circuitJsonElm.stroke_width : 0
+      const outerWidth = Math.abs(width) + strokeWidth
+      const outerHeight = Math.abs(height) + strokeWidth
+      const center = circuitJsonElm.center
+      if (
+        (hasVisibleStroke || circuitJsonElm.is_filled) &&
+        width !== 0 &&
+        height !== 0 &&
+        center &&
+        [
+          center.x,
+          center.y,
+          width,
+          height,
+          center.x - outerWidth / 2,
+          center.x + outerWidth / 2,
+          center.y - outerHeight / 2,
+          center.y + outerHeight / 2,
+        ].every(Number.isFinite)
+      ) {
+        // 公式描画の絶対寸法と輪郭を含めます。角丸・破線は保守的な外枠です。
+        width = outerWidth
+        height = outerHeight
+      }
+      updateBounds({ center, width, height })
+    } else if (circuitJsonElm.type === "pcb_note_rect") {
       updateBounds({
         center: circuitJsonElm.center,
         width: circuitJsonElm.width,
