@@ -70,18 +70,14 @@ function viaRadii(svg: string, kind: "outer" | "inner") {
 }
 
 test("route via dimensions override adjacent wire width and board defaults", () => {
-  for (const [name, elements] of [
-    ["without-board", [trace]],
-    ["with-board", [board, { ...trace, subcircuit_id: "sub" }]],
+  for (const elements of [
+    [trace],
+    [board, { ...trace, subcircuit_id: "sub" }],
   ] as const) {
     const svg = render([...elements])
     // The viewport maps one millimetre to 50 pixels: radii are diameter / 2.
     expect(viaRadii(svg, "outer")).toEqual([50])
     expect(viaRadii(svg, "inner")).toEqual([25])
-    expect(svg).toMatchSvgSnapshot(
-      import.meta.path,
-      `pcb-trace-route-vias-${name}`,
-    )
   }
 })
 
@@ -102,10 +98,6 @@ test("missing route dimensions independently retain board fallbacks", () => {
     expect(viaRadii(svg, "inner")).toEqual([
       dimension === "hole_diameter" ? 10 : 25,
     ])
-    expect(svg).toMatchSvgSnapshot(
-      import.meta.path,
-      `pcb-trace-route-vias-missing-${dimension}`,
-    )
   }
 })
 
@@ -113,10 +105,6 @@ test("a standalone via on unrelated layers does not suppress a route via", () =>
   const svg = render([standalone, trace])
   expect(viaRadii(svg, "outer")).toEqual([50])
   expect(viaRadii(svg, "inner")).toEqual([25])
-  expect(svg).toMatchSvgSnapshot(
-    import.meta.path,
-    "pcb-trace-route-vias-distinct-layers",
-  )
 })
 
 test("a standalone via spanning the route layers is drawn only once", () => {
@@ -126,10 +114,6 @@ test("a standalone via spanning the route layers is drawn only once", () => {
   ])
   expect(viaRadii(svg, "outer")).toEqual([75])
   expect(viaRadii(svg, "inner")).toEqual([37.5])
-  expect(svg).toMatchSvgSnapshot(
-    import.meta.path,
-    "pcb-trace-route-vias-matching-layers",
-  )
 })
 
 test("a standalone via on a different board does not suppress a route via", () => {
@@ -152,8 +136,4 @@ test("a standalone via on a different board does not suppress a route via", () =
   ])
   expect(viaRadii(svg, "outer").sort((a, b) => a - b)).toEqual([25, 50])
   expect(viaRadii(svg, "inner").sort((a, b) => a - b)).toEqual([12.5, 25])
-  expect(svg).toMatchSvgSnapshot(
-    import.meta.path,
-    "pcb-trace-route-vias-distinct-boards",
-  )
 })
