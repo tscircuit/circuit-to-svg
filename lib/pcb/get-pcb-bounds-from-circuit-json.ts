@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -223,6 +223,45 @@ export function getComprehensivePcbBounds(
         { x: circuitJsonElm.x1, y: circuitJsonElm.y1 },
         { x: circuitJsonElm.x2, y: circuitJsonElm.y2 },
       ])
+    } else if (
+      circuitJsonElm.type === "pcb_note_path" &&
+      Array.isArray(circuitJsonElm.route)
+    ) {
+      const { route, stroke_width } = circuitJsonElm
+      // 既定miterlimit=4の接続外周も含めます。単一線分は半線幅で足ります。
+      const padding = stroke_width * (route.length > 2 ? 2 : 0.5)
+      const firstPoint = route[0]
+      const hasVisibleStroke =
+        Number.isFinite(stroke_width) &&
+        stroke_width > 0 &&
+        firstPoint &&
+        route.some(
+          (point) => point.x !== firstPoint.x || point.y !== firstPoint.y,
+        )
+      if (
+        hasVisibleStroke &&
+        Number.isFinite(padding * 2) &&
+        route.every((point) =>
+          [
+            point.x,
+            point.y,
+            point.x - padding,
+            point.x + padding,
+            point.y - padding,
+            point.y + padding,
+          ].every(Number.isFinite),
+        )
+      ) {
+        for (const point of route) {
+          updateBounds({
+            center: point,
+            width: padding * 2,
+            height: padding * 2,
+          })
+        }
+      } else {
+        updateTraceBounds(route)
+      }
     } else if ("x" in circuitJsonElm && "y" in circuitJsonElm) {
       updateBounds({
         center: { x: circuitJsonElm.x, y: circuitJsonElm.y },
