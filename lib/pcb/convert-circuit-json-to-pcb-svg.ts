@@ -149,6 +149,8 @@ export interface PcbSvgOptions {
   }
 }
 
+export type PcbViaPositionKey = string
+
 export interface PcbContext {
   transform: Matrix
   layer?: LayerRef
@@ -180,7 +182,7 @@ export interface PcbContext {
    */
   usedCopperPourTraceMaskIds?: Set<string>
   copperPourTraceMaskIdsByLayer?: Map<string, string | undefined>
-  standaloneViasByPosition?: Map<string, PCBVia[]>
+  standaloneViasByPosition?: Map<PcbViaPositionKey, PCBVia[]>
 }
 
 export function convertCircuitJsonToPcbSvg(

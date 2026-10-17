@@ -4,6 +4,23 @@ import { convertCircuitJsonToPcbSvg } from "lib"
 import RouteViaReproduction from "./pcb-trace-route-vias-repro.fixture"
 import { parseSync, type INode } from "svgson"
 
+function collectViaRadii({
+  node,
+  outerRadii,
+  innerRadii,
+}: {
+  node: INode
+  outerRadii: string[]
+  innerRadii: string[]
+}) {
+  if (node.attributes.class === "pcb-hole-outer")
+    outerRadii.push(node.attributes.r!)
+  if (node.attributes.class === "pcb-hole-inner")
+    innerRadii.push(node.attributes.r!)
+  for (const child of node.children)
+    collectViaRadii({ node: child, outerRadii, innerRadii })
+}
+
 test("TSX route vias match the labelled standalone controls", () => {
   const circuit = new Circuit()
   circuit.add(<RouteViaReproduction />)
@@ -19,14 +36,7 @@ test("TSX route vias match the labelled standalone controls", () => {
   })
   const outerRadii: string[] = []
   const innerRadii: string[] = []
-  const visit = (node: INode) => {
-    if (node.attributes.class === "pcb-hole-outer")
-      outerRadii.push(node.attributes.r!)
-    if (node.attributes.class === "pcb-hole-inner")
-      innerRadii.push(node.attributes.r!)
-    for (const child of node.children) visit(child)
-  }
-  visit(parseSync(svg))
+  collectViaRadii({ node: parseSync(svg), outerRadii, innerRadii })
   // Two route vias and two standalone controls must have identical pad/drill sizes.
   expect(outerRadii).toHaveLength(4)
   expect(innerRadii).toHaveLength(4)

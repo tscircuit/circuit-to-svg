@@ -58,14 +58,24 @@ const render = (elements: AnyCircuitElement[]) =>
     includeVersion: false,
   })
 
+function collectViaRadii({
+  node,
+  kind,
+  radii,
+}: {
+  node: INode
+  kind: "outer" | "inner"
+  radii: number[]
+}) {
+  if (node.attributes.class === `pcb-hole-${kind}`)
+    radii.push(Number(node.attributes.r))
+  for (const child of node.children)
+    collectViaRadii({ node: child, kind, radii })
+}
+
 function viaRadii(svg: string, kind: "outer" | "inner") {
   const radii: number[] = []
-  const visit = (node: INode) => {
-    if (node.attributes.class === `pcb-hole-${kind}`)
-      radii.push(Number(node.attributes.r))
-    for (const child of node.children) visit(child)
-  }
-  visit(parseSync(svg))
+  collectViaRadii({ node: parseSync(svg), kind, radii })
   return radii
 }
 
