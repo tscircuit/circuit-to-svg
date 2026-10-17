@@ -1,7 +1,3 @@
-import {
-  getWireTaperSegments,
-  getWireTaperPolygon,
-} from "./get-wire-taper-polygon"
 import type {
   AnyCircuitElement,
   NinePointAnchor,
@@ -11,10 +7,14 @@ import type {
 } from "circuit-json"
 import { distance } from "circuit-json"
 import {
-  getPcbTracePoints,
   type PcbTraceRoutePoint,
+  getPcbTracePoints,
 } from "./get-pcb-trace-segments"
 import { getTextCenterFromAnchorPosition } from "./get-text-center-from-anchor-position"
+import {
+  getWireTaperPolygon,
+  getWireTaperSegments,
+} from "./get-wire-taper-polygon"
 
 export interface PcbBounds {
   minX: number
@@ -672,6 +672,34 @@ export function getComprehensivePcbBounds(
           width: radius * 2,
           height: radius * 2,
         })
+        const { stroke_width = 1 } = item
+        if (
+          Number.isFinite(item.radius) &&
+          item.radius > 0 &&
+          Number.isFinite(item.center?.x) &&
+          Number.isFinite(item.center?.y) &&
+          Number.isFinite(stroke_width) &&
+          stroke_width > 0
+        ) {
+          const diameter = radius * 2 + stroke_width
+          const outerRadius = diameter / 2
+          if (
+            [
+              diameter,
+              item.center.x - outerRadius,
+              item.center.x + outerRadius,
+              item.center.y - outerRadius,
+              item.center.y + outerRadius,
+            ].every(Number.isFinite)
+          ) {
+            // 塗りつぶしも輪郭線を描くため、既定の線幅も外周へ含めます。
+            updateBounds({
+              center: item.center,
+              width: diameter,
+              height: diameter,
+            })
+          }
+        }
       }
     } else if (item.type === "pcb_silkscreen_line") {
       updateBounds({ center: { x: item.x1, y: item.y1 }, width: 0, height: 0 })
