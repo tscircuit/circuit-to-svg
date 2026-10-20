@@ -2,6 +2,7 @@ import type { PCBHole } from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+import { toSvgLength } from "lib/utils/to-svg-length"
 
 export function createSvgObjectsFromPcbHole(
   hole: PCBHole,
@@ -25,8 +26,10 @@ export function createSvgObjectsFromPcbHole(
   const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-    const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
-    const radius = scaledDiameter / 2
+    const scaledDiameter = toSvgLength(
+      hole.hole_diameter * Math.abs(transform.a),
+    )
+    const radius = toSvgLength(scaledDiameter / 2)
 
     if (hole.hole_shape === "circle") {
       const holeElement: SvgObject = {
