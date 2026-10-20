@@ -3,7 +3,7 @@ import type { AnyCircuitElement, PcbHoleWithPolygonPad } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
 
-test.failing("polygon pads and offset drills at 0 and 90 degrees", async () => {
+test("polygon pads and offset drills at 0 and 90 degrees", async () => {
   const pad: PcbHoleWithPolygonPad = {
     type: "pcb_plated_hole",
     pcb_plated_hole_id: "polygon_pad_0",
