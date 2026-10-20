@@ -10,6 +10,7 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
+import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
 import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
@@ -179,12 +180,14 @@ export function getComprehensivePcbBounds(
           ccwRotationDegrees: platedHole.rect_ccw_rotation,
         })
       } else if (platedHole.shape === "hole_with_polygon_pad") {
-        // pad_outline points are relative to the hole position
+        const padTransform = compose(
+          translate(platedHole.x, platedHole.y),
+          rotate(((platedHole.ccw_rotation ?? 0) * Math.PI) / 180),
+        )
         updateTraceBounds(
-          (platedHole.pad_outline ?? []).map((point) => ({
-            x: platedHole.x + point.x,
-            y: platedHole.y + point.y,
-          })),
+          (platedHole.pad_outline ?? []).map((point) =>
+            applyToPoint(padTransform, point),
+          ),
         )
       }
     } else if (circuitJsonElm.type === "pcb_hole") {
