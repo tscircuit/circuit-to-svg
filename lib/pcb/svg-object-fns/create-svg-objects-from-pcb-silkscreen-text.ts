@@ -173,48 +173,62 @@ export function createSvgObjectsFromPcbSilkscreenText(
 
   const transformedFontSize = font_size * scaleFactor
 
+  // The reference renderer (circuit-json-to-gerber) positions the text advance
+  // box (height 0.7 x font_size) on the anchor per anchor_alignment, with the
+  // stroke baseline at the box bottom. The TTF's alphabetic baseline is that
+  // stroke baseline, so we place it explicitly instead of relying on
+  // dominant-baseline heuristics: baseline_y = (boxTopOffsetRatio + 0.7) x F.
+  // The TTF's own ink extends slightly past the reference box (cap height
+  // 0.727 em vs the reference 0.7); that ~4% is accepted rather than
+  // rescaling the font. See tscircuit/tscircuit#5542.
+  const ADVANCE_BOX_HEIGHT_RATIO = 0.7
+  const LINE_PITCH_RATIO = 1.152
+
   let textAnchor = "middle"
-  let dominantBaseline = "central"
+  let boxTopOffsetRatio = -0.35
 
   switch (anchor_alignment) {
     case "top_left":
       textAnchor = "start"
-      dominantBaseline = "text-before-edge"
+      boxTopOffsetRatio = 0
       break
     case "top_center":
       textAnchor = "middle"
-      dominantBaseline = "text-before-edge"
+      boxTopOffsetRatio = 0
       break
     case "top_right":
       textAnchor = "end"
-      dominantBaseline = "text-before-edge"
+      boxTopOffsetRatio = 0
       break
     case "center_left":
       textAnchor = "start"
-      dominantBaseline = "central"
+      boxTopOffsetRatio = -0.35
       break
     case "center_right":
       textAnchor = "end"
-      dominantBaseline = "central"
+      boxTopOffsetRatio = -0.35
       break
     case "bottom_left":
       textAnchor = "start"
-      dominantBaseline = "text-after-edge"
+      boxTopOffsetRatio = -0.7
       break
     case "bottom_center":
       textAnchor = "middle"
-      dominantBaseline = "text-after-edge"
+      boxTopOffsetRatio = -0.7
       break
     case "bottom_right":
       textAnchor = "end"
-      dominantBaseline = "text-after-edge"
+      boxTopOffsetRatio = -0.7
       break
-    case "center":
     default:
+      // "center" and any unknown value
       textAnchor = "middle"
-      dominantBaseline = "central"
+      boxTopOffsetRatio = -0.35
       break
   }
+
+  const baselineY =
+    (boxTopOffsetRatio + ADVANCE_BOX_HEIGHT_RATIO) * transformedFontSize
 
   const textTransform = compose(
     translate(transformedX, transformedY),
@@ -241,7 +255,9 @@ export function createSvgObjectsFromPcbSilkscreenText(
           value: "",
           attributes: {
             x: "0",
-            ...(idx > 0 ? { dy: transformedFontSize.toString() } : {}),
+            ...(idx > 0
+              ? { dy: (LINE_PITCH_RATIO * transformedFontSize).toString() }
+              : {}),
           },
           children: [
             {
@@ -260,14 +276,14 @@ export function createSvgObjectsFromPcbSilkscreenText(
       type: "element",
       attributes: {
         x: "0",
-        y: "0",
+        y: baselineY.toString(),
         dx: "0",
         dy: "0",
         fill: silkscreenColor,
         "font-family": ALPHABET_FONT_FAMILY,
         "font-size": transformedFontSize.toString(),
         "text-anchor": textAnchor,
-        "dominant-baseline": dominantBaseline,
+        "dominant-baseline": "alphabetic",
         transform: matrixToString(textTransform),
         class: `pcb-silkscreen-text pcb-silkscreen-${layer}`,
         "data-pcb-silkscreen-text-id": pcbSilkscreenText.pcb_silkscreen_text_id,
