@@ -88,6 +88,16 @@ export function getComprehensivePcbBounds(
         height: circuitJsonElm.height,
         ccwRotationDegrees: circuitJsonElm.ccw_rotation,
       })
+    } else if (circuitJsonElm.type === "pcb_courtyard_circle") {
+      updateBounds({
+        center: circuitJsonElm.center,
+        width: circuitJsonElm.radius * 2,
+        height: circuitJsonElm.radius * 2,
+      })
+    } else if (circuitJsonElm.type === "pcb_courtyard_polygon") {
+      updateBoundsToIncludeOutline(circuitJsonElm.points)
+    } else if (circuitJsonElm.type === "pcb_courtyard_outline") {
+      updateBoundsToIncludeOutline(circuitJsonElm.outline)
     } else if (circuitJsonElm.type === "pcb_soldermask_opening") {
       if (circuitJsonElm.shape === "polygon") {
         updateTraceBounds(circuitJsonElm.points)
