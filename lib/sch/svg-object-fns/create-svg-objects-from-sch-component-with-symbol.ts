@@ -124,25 +124,19 @@ export const createSvgObjectsFromSchematicComponentWithSymbol = ({
     }
   }
 
-  const bounds = {
-    minX: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
-    maxX: Math.max(...paths.flatMap((p) => p.points.map((pt) => pt.x))),
-    minY: Math.min(...paths.flatMap((p) => p.points.map((pt) => pt.y))),
-    maxY: Math.max(...paths.flatMap((p) => p.points.map((pt) => pt.y))),
-  }
-  const [screenMinX, screenMinY] = applyToPoint(
-    compose(realToScreenTransform, transformFromSymbolToReal),
-    [bounds.minX, bounds.minY],
+  // Find bounds after transforming the paths. Two opposite local corners do
+  // not necessarily remain the minimum and maximum corners after rotation.
+  const symbolToScreenTransform = compose(
+    realToScreenTransform,
+    transformFromSymbolToReal,
   )
-
-  const [screenMaxX, screenMaxY] = applyToPoint(
-    compose(realToScreenTransform, transformFromSymbolToReal),
-    [bounds.maxX, bounds.maxY],
+  const screenPoints = paths.flatMap((path) =>
+    path.points.map((point) => applyToPoint(symbolToScreenTransform, point)),
   )
-  const rectHeight = Math.abs(screenMaxY - screenMinY)
-  const rectY = Math.min(screenMinY, screenMaxY)
-  const rectWidth = Math.abs(screenMaxX - screenMinX)
-  const rectX = Math.min(screenMinX, screenMaxX)
+  const rectX = Math.min(...screenPoints.map((point) => point.x))
+  const rectY = Math.min(...screenPoints.map((point) => point.y))
+  const rectWidth = Math.max(...screenPoints.map((point) => point.x)) - rectX
+  const rectHeight = Math.max(...screenPoints.map((point) => point.y)) - rectY
   svgObjects.push({
     name: "rect",
     type: "element",
