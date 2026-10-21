@@ -683,10 +683,13 @@ export function getComprehensivePcbBounds(
       const radiusX = distance.parse(item.radius_x)
       const radiusY = distance.parse(item.radius_y)
       if (radiusX !== undefined && radiusY !== undefined) {
+        const angle = ((item.ccw_rotation ?? 0) * Math.PI) / 180
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
         updateBounds({
           center: item.center,
-          width: radiusX * 2,
-          height: radiusY * 2,
+          width: 2 * Math.hypot(radiusX * cos, radiusY * sin),
+          height: 2 * Math.hypot(radiusX * sin, radiusY * cos),
         })
       }
     } else if (item.type === "pcb_silkscreen_pill") {
