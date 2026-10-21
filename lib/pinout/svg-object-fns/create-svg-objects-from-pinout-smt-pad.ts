@@ -56,7 +56,8 @@ export function createSvgObjectsFromPinoutSmtPad(
     ]
   }
 
-  if (pad.shape === "pill") {
+  if (pad.shape === "pill" || pad.shape === "rotated_pill") {
+    const isRotated = pad.shape === "rotated_pill"
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
@@ -69,12 +70,15 @@ export function createSvgObjectsFromPinoutSmtPad(
         attributes: {
           class: "pinout-pad",
           fill: PAD_COLOR,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
+          x: (isRotated ? -width / 2 : x - width / 2).toString(),
+          y: (isRotated ? -height / 2 : y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
+          ...(isRotated && {
+            transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
+          }),
           "data-layer": pad.layer,
         },
         value: "",
