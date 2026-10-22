@@ -275,11 +275,22 @@ export function getSchematicBoundsFromCircuitJson(
   return { minX, minY, maxX, maxY }
 
   function updateBounds(center: any, size: any, rotation: number) {
+    if (!center || !Number.isFinite(center.x) || !Number.isFinite(center.y))
+      return
+    const rawWidth = size?.width
+    const rawHeight = size?.height
+    const width =
+      typeof rawWidth === "number" && Number.isFinite(rawWidth) ? rawWidth : 0
+    const height =
+      typeof rawHeight === "number" && Number.isFinite(rawHeight)
+        ? rawHeight
+        : 0
+
     const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
+      { x: -width / 2, y: -height / 2 },
+      { x: width / 2, y: -height / 2 },
+      { x: width / 2, y: height / 2 },
+      { x: -width / 2, y: height / 2 },
     ]
 
     for (const corner of corners) {

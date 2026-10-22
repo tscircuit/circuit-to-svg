@@ -29,13 +29,24 @@ export const createSvgObjectsFromSchematicComponentWithBox = ({
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
 
+  const rawWidth = schComponent.size?.width
+  const rawHeight = schComponent.size?.height
+  // A missing or unparseable dimension reaches here as NaN and would produce
+  // x="NaN", y="NaN", width="NaN", height="NaN" attributes in the output SVG.
+  // Renderers discard these elements, so the component silently vanishes.
+  // Fall back to 0 so geometry stays well-formed while preserving valid sizes verbatim.
+  const width =
+    typeof rawWidth === "number" && Number.isFinite(rawWidth) ? rawWidth : 0
+  const height =
+    typeof rawHeight === "number" && Number.isFinite(rawHeight) ? rawHeight : 0
+
   const componentScreenTopLeft = applyToPoint(transform, {
-    x: schComponent.center.x - schComponent.size.width / 2,
-    y: schComponent.center.y + schComponent.size.height / 2,
+    x: schComponent.center.x - width / 2,
+    y: schComponent.center.y + height / 2,
   })
   const componentScreenBottomRight = applyToPoint(transform, {
-    x: schComponent.center.x + schComponent.size.width / 2,
-    y: schComponent.center.y - schComponent.size.height / 2,
+    x: schComponent.center.x + width / 2,
+    y: schComponent.center.y - height / 2,
   })
   const componentScreenWidth =
     componentScreenBottomRight.x - componentScreenTopLeft.x
