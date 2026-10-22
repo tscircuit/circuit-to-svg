@@ -60,6 +60,10 @@ export function createSvgObjectsFromPcbBoard(
   path += " Z"
 
   const svgObjects: SvgObject[] = []
+  let maskOpacity = "0.8"
+  if (pcbBoard.material === "flex" && pcbBoard.coverlay_color !== undefined) {
+    maskOpacity = "1"
+  }
 
   // Add solder mask layer covering the entire board if showSolderMask is enabled
   if (showSolderMask) {
@@ -76,7 +80,7 @@ export function createSvgObjectsFromPcbBoard(
         class: "pcb-board-soldermask",
         d: path,
         fill: colorMap.soldermask.top,
-        "fill-opacity": "0.8",
+        "fill-opacity": maskOpacity,
         stroke: "none",
         "data-type": "pcb_soldermask",
         "data-pcb-layer": maskLayer,

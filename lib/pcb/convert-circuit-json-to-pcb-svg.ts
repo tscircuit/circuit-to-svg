@@ -1,4 +1,6 @@
 import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
+import { getCoverlayColorMap } from "./get-coverlay-color-map"
+import { getElementBoard } from "./get-element-board"
 import { createReturnCurrentSvgObjects } from "./return-current/create-return-current-svg-objects"
 import type { PcbReturnCurrentOptions } from "./return-current/types"
 import { createSoldermaskOpeningLayers } from "./create-soldermask-opening-layers"
@@ -157,6 +159,7 @@ export interface PcbContext {
   showPcbGroups?: boolean
   drawPaddingOutsideBoard?: boolean
   colorMap: PcbColorMap
+  colorOverrides?: PcbColorOverrides
   showSolderMask?: boolean
   showSolderPaste?: boolean
   showPcbNotes?: boolean
@@ -364,6 +367,17 @@ export function convertCircuitJsonToPcbSvg(
   const debugStrokeWidth = Math.max(1, Math.min(2, viewportScale * 0.002))
   const debugFontSize = Math.max(10, Math.min(18, viewportScale * 0.02))
 
+  let defaultColorMap = colorMap
+  const boards = circuitJson.filter(
+    (element): element is PcbBoard => element.type === "pcb_board",
+  )
+  if (boards.length === 1) {
+    defaultColorMap = getCoverlayColorMap({
+      board: boards[0],
+      colorMap,
+      colorOverrides,
+    })
+  }
   const ctx: PcbContext = {
     transform,
     layer,
@@ -372,7 +386,8 @@ export function convertCircuitJsonToPcbSvg(
     showCourtyards: options?.showCourtyards,
     showPcbGroups: options?.showPcbGroups,
     drawPaddingOutsideBoard,
-    colorMap,
+    colorMap: defaultColorMap,
+    colorOverrides,
     showSolderMask: options?.showSolderMask,
     showSolderPaste: options?.showSolderPaste,
     showPcbNotes: options?.showPcbNotes ?? true,
@@ -588,6 +603,17 @@ function createSvgObjects({
   circuitJson,
   ctx,
 }: CreateSvgObjectsParams): SvgObject[] {
+  const board = getElementBoard(elm, ctx)
+  if (board?.material === "flex" && board.coverlay_color !== undefined) {
+    ctx = {
+      ...ctx,
+      colorMap: getCoverlayColorMap({
+        board,
+        colorMap: ctx.colorMap,
+        colorOverrides: ctx.colorOverrides,
+      }),
+    }
+  }
   switch (elm.type) {
     case "pcb_debug_object":
       return ctx.showDebugObjects
