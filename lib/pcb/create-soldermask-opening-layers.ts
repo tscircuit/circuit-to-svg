@@ -4,6 +4,8 @@ import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
 import { groupCopperPourMaskedTraceObjects } from "./copper-pour-trace-mask"
+import { getCoverlayColorMap } from "./get-coverlay-color-map"
+import { getElementBoard } from "./get-element-board"
 
 const COPPER_TYPES = new Set([
   "pcb_trace",
@@ -68,7 +70,11 @@ export function createSoldermaskOpeningLayers({
           ...shape,
           attributes: {
             ...shape.attributes,
-            fill: ctx.colorMap.substrate,
+            fill: getCoverlayColorMap({
+              board: getElementBoard(openings[index]!, ctx),
+              colorMap: ctx.colorMap,
+              colorOverrides: ctx.colorOverrides,
+            }).substrate,
             "data-type": "pcb_soldermask_opening",
             "data-pcb-layer": layer,
             "data-pcb-soldermask-opening-id":
