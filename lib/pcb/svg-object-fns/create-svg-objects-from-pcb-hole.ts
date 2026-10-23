@@ -25,7 +25,7 @@ export function createSvgObjectsFromPcbHole(
   const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-    const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledDiameter = Math.max(0, hole.hole_diameter * Math.abs(transform.a))
     const radius = scaledDiameter / 2
 
     if (hole.hole_shape === "circle") {
@@ -191,8 +191,8 @@ export function createSvgObjectsFromPcbHole(
     return [substrateElement, holeElement]
   }
   if (hole.hole_shape === "oval") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
     const rx = scaledWidth / 2
     const ry = scaledHeight / 2
 
@@ -281,8 +281,8 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "rect") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
 
     const holeElement: SvgObject = {
       name: "rect",
@@ -369,8 +369,8 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "pill") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
 
     // Pill shape: two semicircles connected by straight lines
     // If width > height, it's a horizontal pill; if height > width, it's vertical
@@ -486,8 +486,8 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "rotated_pill") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = Math.max(0, hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = Math.max(0, hole.hole_height * Math.abs(transform.a))
 
     // PcbHoleRotatedPill uses ccw_rotation (not hole_ccw_rotation like plated holes)
     const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
