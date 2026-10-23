@@ -24,7 +24,7 @@ export function createSvgObjectsFromPcbSilkscreenText(
   const {
     anchor_position,
     text,
-    font_size = 1,
+    font_size: raw_font_size = 1,
     layer = "top",
     ccw_rotation = 0,
     anchor_alignment = "center",
@@ -32,6 +32,13 @@ export function createSvgObjectsFromPcbSilkscreenText(
     knockout_padding,
     is_mirrored = false,
   } = pcbSilkscreenText
+
+  const font_size =
+    typeof raw_font_size === "number" &&
+    Number.isFinite(raw_font_size) &&
+    raw_font_size > 0
+      ? raw_font_size
+      : 1
 
   if (layerFilter && layer !== layerFilter) return []
 
