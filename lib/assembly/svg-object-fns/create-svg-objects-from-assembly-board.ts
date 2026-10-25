@@ -1,6 +1,6 @@
 import type { PCBBoard, Point } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 
 interface BoardStyle {
   fill: string

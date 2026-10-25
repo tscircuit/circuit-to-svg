@@ -1,12 +1,12 @@
 import type {
-  PcbComponent,
-  LayerRef,
-  Point,
   AnyCircuitElement,
+  LayerRef,
+  PcbComponent,
+  Point,
 } from "circuit-json"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
@@ -34,13 +34,22 @@ export function createSvgObjectsFromAssemblyComponent(
   if (!center || typeof width !== "number" || typeof height !== "number")
     return null
   const [x, y] = applyToPoint(transform, [center.x, center.y])
-  const [pinX, pinY] = applyToPoint(transform, [portPosition.x, portPosition.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
 
   const isTopLayer = layer === "top"
-  const isPinTop = pinY > y
-  const isPinLeft = pinX < x
+
+  // Un-rotate port offset by -rotation to find pin 1 in component's local unrotated frame
+  const dx = portPosition.x - center.x
+  const dy = portPosition.y - center.y
+  const rad = (rotation * Math.PI) / 180
+  const cos = Math.cos(rad)
+  const sin = Math.sin(rad)
+  const localX = dx * cos + dy * sin
+  const localY = -dx * sin + dy * cos
+
+  const isPinLeft = localX < 0
+  const isPinTop = localY < 0
 
   const children: SvgObject[] = [
     createComponentPath(scaledWidth, scaledHeight, rotation, layer),

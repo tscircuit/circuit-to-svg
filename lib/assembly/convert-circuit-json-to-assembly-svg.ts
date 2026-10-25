@@ -1,7 +1,7 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point } from "circuit-json"
+import { stringifySvg } from "lib/utils/stringify-svg"
+import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -9,14 +9,14 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -195,15 +195,53 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
 
-      // Proceed only if both sourceComponent and firstPort are found
-      if (sourceComponent && firstPort) {
+      const sourcePorts = su(soup).source_port.list()
+
+      // Find pin 1: look for source_port matching pin 1 / A1 / pin1
+      let pin1Port = ports.find((p) => {
+        if (!p.source_port_id) return false
+        const sp = sourcePorts.find(
+          (s) => s.source_port_id === p.source_port_id,
+        )
+        if (!sp) return false
+        return (
+          sp.pin_number === 1 ||
+          sp.pin_number === "1" ||
+          sp.name === "1" ||
+          sp.name === "pin1" ||
+          sp.name === "A1" ||
+          sp.port_hints?.includes("1") ||
+          sp.port_hints?.includes("pin1") ||
+          sp.port_hints?.includes("A1")
+        )
+      })
+
+      // Fallback: if no source_port matched pin 1, check pcb_port hints or IDs
+      if (!pin1Port) {
+        pin1Port = ports.find((p) => {
+          const hint = (p as any).port_hints
+          return (
+            hint?.includes("1") ||
+            hint?.includes("pin1") ||
+            hint?.includes("A1") ||
+            p.pcb_port_id?.endsWith("_1") ||
+            p.pcb_port_id?.endsWith("pin1")
+          )
+        })
+      }
+
+      if (!pin1Port) {
+        pin1Port = ports[0]
+      }
+
+      // Proceed only if both sourceComponent and pin1Port are found
+      if (sourceComponent && pin1Port) {
         const arePinsInterchangeable = sourceComponent.are_pins_interchangeable
         const obj = createSvgObjectsFromAssemblyComponent(
           {
             elm,
-            portPosition: { x: firstPort.x, y: firstPort.y },
+            portPosition: { x: pin1Port.x, y: pin1Port.y },
             name: sourceComponent.name,
             arePinsInterchangeable,
           },
