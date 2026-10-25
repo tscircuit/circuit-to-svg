@@ -200,6 +200,14 @@ when frequency was not specified.
 
 Converts circuit JSON into an assembly view of the board and components.
 
+Pin-1 markers follow the PCB port's linked `source_port`, independently of array
+order. A formal `pin_number` of `1` takes precedence over pin aliases; `port_hints`
+such as `pin1`, `pin_1`, `pin1_1`, `1`, and `A1` support inputs without a formal
+pin number. Inputs
+without either kind of metadata retain the first-port fallback. Components with
+`are_pins_interchangeable` do not get a marker. The renderer uses placed board-space
+ports and component bounds, where placement rotation has already been applied.
+
 ```typescript
 import { convertCircuitJsonToAssemblySvg } from 'circuit-to-svg'
 

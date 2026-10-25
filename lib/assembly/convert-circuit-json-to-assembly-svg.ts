@@ -1,7 +1,7 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point, SourcePort } from "circuit-json"
+import { stringifySvg } from "lib/utils/stringify-svg"
+import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -9,14 +9,24 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+
+const PIN1_IDENTIFIERS = new Set(["1", "pin1", "pin_1", "pin1_1", "a1"])
+const isPin1Identifier = (identifier: string) =>
+  PIN1_IDENTIFIERS.has(identifier.trim().toLowerCase())
+
+type SourcePortId = SourcePort["source_port_id"]
+type Pin1SourcePortIds = {
+  numbered: ReadonlySet<SourcePortId>
+  hinted: ReadonlySet<SourcePortId>
+}
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -83,13 +93,27 @@ export function convertCircuitJsonToAssemblySvg(
 
   const ctx: AssemblySvgContext = { transform }
 
+  const sourcePorts = su(soup).source_port.list()
+  const pin1SourcePortIds: Pin1SourcePortIds = {
+    numbered: new Set(
+      sourcePorts
+        .filter((sourcePort) => isPin1Identifier(String(sourcePort.pin_number)))
+        .map((sourcePort) => sourcePort.source_port_id),
+    ),
+    hinted: new Set(
+      sourcePorts
+        .filter((sourcePort) => sourcePort.port_hints?.some(isPin1Identifier))
+        .map((sourcePort) => sourcePort.source_port_id),
+    ),
+  }
+
   const svgObjects = soup
     .sort(
       (a, b) =>
         (OBJECT_ORDER.indexOf(b.type) ?? 9999) -
         (OBJECT_ORDER.indexOf(a.type) ?? 9999),
     )
-    .flatMap((item) => createSvgObjects(item, ctx, soup))
+    .flatMap((item) => createSvgObjects(item, ctx, soup, pin1SourcePortIds))
 
   const softwareUsedString = getSoftwareUsedString(soup)
   const version = CIRCUIT_TO_SVG_VERSION
@@ -181,6 +205,7 @@ function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
   soup: AnyCircuitElement[],
+  pin1SourcePortIds: Pin1SourcePortIds,
 ): SvgObject[] {
   const sourceComponents = su(soup).source_component.list()
 
@@ -195,15 +220,24 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      // Resolve placed PCB ports through canonical source-port metadata, not
+      // array order. Formal pin numbers take precedence over aliases such as A1.
+      // Keep the first-port fallback for legacy inputs without either metadata.
+      const pin1Port =
+        ports.find((port) =>
+          pin1SourcePortIds.numbered.has(port.source_port_id),
+        ) ??
+        ports.find((port) =>
+          pin1SourcePortIds.hinted.has(port.source_port_id),
+        ) ??
+        ports[0]
 
-      // Proceed only if both sourceComponent and firstPort are found
-      if (sourceComponent && firstPort) {
+      if (sourceComponent && pin1Port) {
         const arePinsInterchangeable = sourceComponent.are_pins_interchangeable
         const obj = createSvgObjectsFromAssemblyComponent(
           {
             elm,
-            portPosition: { x: firstPort.x, y: firstPort.y },
+            portPosition: { x: pin1Port.x, y: pin1Port.y },
             name: sourceComponent.name,
             arePinsInterchangeable,
           },

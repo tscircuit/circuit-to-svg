@@ -1,12 +1,12 @@
 import type {
-  PcbComponent,
-  LayerRef,
-  Point,
   AnyCircuitElement,
+  LayerRef,
+  PcbComponent,
+  Point,
 } from "circuit-json"
+import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { INode as SvgObject } from "svgson"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import type { AssemblySvgContext } from "../convert-circuit-json-to-assembly-svg"
 
 export interface AssemblyComponentParams {
@@ -24,6 +24,12 @@ interface ComponentProps {
   layer?: LayerRef
 }
 
+/**
+ * Component bounds and portPosition are already placed board-world points in mm
+ * (+X right, +Y up). Compare them after board-to-SVG projection. The component
+ * group's Y reflection below maps local pixel coordinates into SVG; applying
+ * component rotation again would move the marker away from its placed pin.
+ */
 export function createSvgObjectsFromAssemblyComponent(
   params: AssemblyComponentParams,
   ctx: AssemblySvgContext,
@@ -38,8 +44,7 @@ export function createSvgObjectsFromAssemblyComponent(
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)
 
-  const isTopLayer = layer === "top"
-  const isPinTop = pinY > y
+  const isPinBelowCenter = pinY > y
   const isPinLeft = pinX < x
 
   const children: SvgObject[] = [
@@ -52,9 +57,7 @@ export function createSvgObjectsFromAssemblyComponent(
       createPin1Indicator(
         scaledWidth,
         scaledHeight,
-        rotation,
-        layer,
-        isPinTop,
+        isPinBelowCenter,
         isPinLeft,
       ),
     )
@@ -147,9 +150,7 @@ function createComponentLabel(
 function createPin1Indicator(
   scaledWidth: number,
   scaledHeight: number,
-  rotation: number,
-  layer: LayerRef,
-  isPinTop: boolean,
+  isPinBelowCenter: boolean,
   isPinLeft: boolean,
 ): SvgObject {
   const w = scaledWidth / 2
@@ -158,33 +159,33 @@ function createPin1Indicator(
 
   let points: [number, number][]
 
-  if (isPinTop && isPinLeft) {
-    // Top-left corner
+  if (isPinBelowCenter && isPinLeft) {
+    // Projected bottom-left corner
     points = [
       [-w, -h], // Corner point
-      [-w + indicatorSize, -h], // Point along top edge
-      [-w, -h + indicatorSize], // Point along left edge
+      [-w + indicatorSize, -h], // Point along horizontal edge
+      [-w, -h + indicatorSize], // Point along vertical edge
     ]
-  } else if (isPinTop && !isPinLeft) {
-    // Top-right corner
+  } else if (isPinBelowCenter && !isPinLeft) {
+    // Projected bottom-right corner
     points = [
       [w, -h], // Corner point
-      [w - indicatorSize, -h], // Point along top edge
-      [w, -h + indicatorSize], // Point along right edge
+      [w - indicatorSize, -h], // Point along horizontal edge
+      [w, -h + indicatorSize], // Point along vertical edge
     ]
-  } else if (!isPinTop && isPinLeft) {
-    // Bottom-left corner
+  } else if (!isPinBelowCenter && isPinLeft) {
+    // Projected top-left corner
     points = [
       [-w, h], // Corner point
-      [-w + indicatorSize, h], // Point along bottom edge
-      [-w, h - indicatorSize], // Point along left edge
+      [-w + indicatorSize, h], // Point along horizontal edge
+      [-w, h - indicatorSize], // Point along vertical edge
     ]
   } else {
-    // Bottom-right corner
+    // Projected top-right corner
     points = [
       [w, h], // Corner point
-      [w - indicatorSize, h], // Point along bottom edge
-      [w, h - indicatorSize], // Point along right edge
+      [w - indicatorSize, h], // Point along horizontal edge
+      [w, h - indicatorSize], // Point along vertical edge
     ]
   }
 
@@ -198,7 +199,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],
