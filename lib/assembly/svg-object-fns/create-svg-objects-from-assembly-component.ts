@@ -49,14 +49,7 @@ export function createSvgObjectsFromAssemblyComponent(
 
   if (!arePinsInterchangeable) {
     children.push(
-      createPin1Indicator(
-        scaledWidth,
-        scaledHeight,
-        rotation,
-        layer,
-        isPinTop,
-        isPinLeft,
-      ),
+      createPin1Indicator(scaledWidth, scaledHeight, isPinTop, isPinLeft),
     )
   }
 
@@ -147,8 +140,6 @@ function createComponentLabel(
 function createPin1Indicator(
   scaledWidth: number,
   scaledHeight: number,
-  rotation: number,
-  layer: LayerRef,
   isPinTop: boolean,
   isPinLeft: boolean,
 ): SvgObject {
@@ -190,6 +181,10 @@ function createPin1Indicator(
 
   const pointsString = points.map((p) => p.join(",")).join(" ")
 
+  // No rotation here: pcb_component.width/height are already axis-aligned in the
+  // board frame (a 90° part reports its width and height swapped), so the corner
+  // picked from the board-frame port position is already the right one. Rotating
+  // the triangle again put it on the opposite corner of every rotated part.
   return {
     name: "polygon",
     type: "element",
@@ -198,7 +193,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],

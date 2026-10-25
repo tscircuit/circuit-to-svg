@@ -1,5 +1,5 @@
 import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement } from "circuit-json"
+import type { Point, AnyCircuitElement, PcbPort } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
 import {
@@ -177,6 +177,43 @@ export function convertCircuitJsonToAssemblySvg(
   return stringifySvg(svgObject)
 }
 
+/**
+ * Pin 1 is not `ports[0]`: port order follows render order, so a part whose pin-1
+ * port happens to be listed later got the indicator on another pin's corner.
+ * Resolve it from `source_port.port_hints` ("pin1", "1", "A1") and fall back to
+ * the lowest numeric hint, then to the first port.
+ */
+function getPin1PcbPort(
+  ports: PcbPort[],
+  soup: AnyCircuitElement[],
+): PcbPort | undefined {
+  const sourcePorts = su(soup).source_port
+  const hintsFor = (port: PcbPort): string[] =>
+    (sourcePorts.get(port.source_port_id)?.port_hints ?? []).map((hint) =>
+      String(hint).toLowerCase().trim(),
+    )
+  const PIN_ONE = new Set(["pin1", "pin_1", "1", "a1", "pin1_1"])
+  const withHints = ports.map((port) => ({ port, hints: hintsFor(port) }))
+
+  const exact = withHints.find((entry) =>
+    entry.hints.some((hint) => PIN_ONE.has(hint)),
+  )
+  if (exact) return exact.port
+
+  const numeric = withHints
+    .map((entry) => ({
+      entry,
+      n: entry.hints.map((hint) => Number(hint)).find((n) => !Number.isNaN(n)),
+    }))
+    .filter(
+      (item): item is { entry: (typeof withHints)[number]; n: number } =>
+        item.n !== undefined,
+    )
+    .sort((a, b) => a.n - b.n)
+
+  return numeric[0]?.entry.port ?? ports[0]
+}
+
 function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
@@ -195,7 +232,7 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      const firstPort = getPin1PcbPort(ports, soup)
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
