@@ -9,7 +9,12 @@ function pin1CornerSigns(svg: string): { x: number; y: number } {
   if (!tag) throw new Error("no pin-1 indicator in svg")
   const points = tag.match(/points="([^"]+)"/)?.[1]
   if (!points) throw new Error("pin-1 indicator has no points")
-  const [rawX, rawY] = points.split(" ")[0].split(",").map(Number)
+  const first = points.split(" ")[0]?.split(",") ?? []
+  const rawX = Number(first[0])
+  const rawY = Number(first[1])
+  if (!Number.isFinite(rawX) || !Number.isFinite(rawY)) {
+    throw new Error("pin-1 indicator has no usable points")
+  }
 
   // Honour whatever transform the polygon carries, so a triangle that is drawn
   // on the right corner and then rotated onto the wrong one still fails.
