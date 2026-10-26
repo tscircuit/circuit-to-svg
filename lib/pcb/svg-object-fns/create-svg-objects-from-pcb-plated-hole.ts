@@ -941,6 +941,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 
   if (hole.shape === "hole_with_polygon_pad") {
     const polygonHole = hole
+    const rotation = polygonHole.ccw_rotation ?? 0
     const padOutline = polygonHole.pad_outline || []
     const holeX = polygonHole.x ?? 0
     const holeY = polygonHole.y ?? 0
@@ -1070,6 +1071,7 @@ export function createSvgObjectsFromPcbPlatedHole(
         attributes: {
           "data-type": "pcb_plated_hole",
           "data-pcb-layer": "through",
+          ...(rotation ? { transform: `rotate(${-rotation} ${x} ${y})` } : {}),
           ...padDataAttributes,
         },
         children: [
