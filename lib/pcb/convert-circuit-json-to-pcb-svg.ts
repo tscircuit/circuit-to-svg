@@ -90,7 +90,7 @@ import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
-import { createSvgObjectsFromPcbCopperPourStyleWarning } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour-style-warning"
+import { createSvgObjectsFromPcbCopperPourIsolatedWarning } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour-isolated-warning"
 import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
 import {
   createBoardOwnerMap,
@@ -644,8 +644,8 @@ function createSvgObjects({
     case "pcb_connector_not_in_accessible_orientation_warning":
     case "pcb_manual_edit_conflict_warning":
       return createSvgObjectsFromPcbComponentWarning(elm, circuitJson, ctx)
-    case "pcb_copper_pour_style_warning":
-      return createSvgObjectsFromPcbCopperPourStyleWarning(
+    case "pcb_copper_pour_isolated_warning":
+      return createSvgObjectsFromPcbCopperPourIsolatedWarning(
         elm,
         circuitJson,
         ctx,

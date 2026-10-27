@@ -2,9 +2,12 @@ import { expect, test } from "bun:test"
 import { readFileSync } from "node:fs"
 import { gunzipSync } from "node:zlib"
 import { createHash } from "node:crypto"
-import type { AnyCircuitElement, PcbCopperPourStyleWarning } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PcbCopperPourIsolatedWarning,
+} from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
-import detectedWarnings from "../assets/am3352-pour-style-warnings.json"
+import detectedWarnings from "../assets/am3352-isolated-pour-warnings.json"
 
 // Complete published board, byte-for-byte, compressed only for repository size:
 // https://am3352-six-layer-routing-proof.seveibar.chatgpt.site/am3352/circuit.json.gz
@@ -14,15 +17,15 @@ const originalJson = gunzipSync(
   ),
 )
 const board = JSON.parse(originalJson.toString()) as AnyCircuitElement[]
-const warnings = detectedWarnings as PcbCopperPourStyleWarning[]
+const warnings = detectedWarnings as PcbCopperPourIsolatedWarning[]
 // Keep every original geometry record. Hide pre-existing unrelated diagnostics
-// so the snapshot isolates the newly supported pour style warnings.
+// so the snapshot isolates the newly supported isolated pour warnings.
 const circuit = [
   ...board.filter((element) => !element.type.endsWith("_warning")),
   ...warnings,
 ]
 const options = { width: 1400, height: 1160, layer: "inner1" as const }
-const warningSelector = 'class="pcb-copper-pour-style-warning"'
+const warningSelector = 'class="pcb-copper-pour-isolated-warning"'
 
 test("native warning highlights on the complete AM3352 inner1 layer", () => {
   expect(createHash("sha256").update(originalJson).digest("hex")).toBe(

@@ -1,9 +1,8 @@
 [
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_1",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -15,10 +14,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_2",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -30,10 +28,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_3",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -45,10 +42,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_4",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_4",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_4",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -60,10 +56,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_5",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -75,10 +70,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_7",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_7",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_7",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -90,10 +84,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_8",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_8",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_8",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -105,10 +98,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_9",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_9",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_9",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -120,10 +112,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_10",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_10",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_10",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -135,10 +126,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_11",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_11",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_11",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -150,10 +140,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_12",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_12",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_12",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -165,10 +154,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_13",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_13",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_13",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -180,10 +168,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_14",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_14",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_14",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -195,10 +182,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_15",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_15",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_15",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -210,10 +196,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_16",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_16",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_16",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -225,10 +210,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_17",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_17",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_17",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -240,10 +224,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_19",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_19",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_19",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -255,10 +238,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_20",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_20",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_20",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -270,10 +252,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_21",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_21",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_21",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -285,10 +266,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_22",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_22",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_22",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -300,10 +280,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_23",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_23",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_23",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -315,10 +294,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_24",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_24",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_24",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -330,10 +308,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_25",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_25",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_25",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -345,10 +322,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_27",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_27",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_27",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -360,10 +336,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_28",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_28",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_28",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -375,10 +350,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_29",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_29",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_29",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -390,10 +364,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_30",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_30",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_30",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -405,10 +378,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_31",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_31",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_31",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -420,10 +392,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_32",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_32",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_32",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -435,10 +406,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_34",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_34",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_34",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -450,10 +420,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_36",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_36",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_36",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -465,10 +434,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_38",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_38",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_38",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -480,10 +448,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_40",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_40",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_40",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -495,10 +462,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_41",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_41",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_41",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -510,10 +476,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_42",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_42",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_42",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -525,10 +490,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_43",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_43",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_43",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -540,10 +504,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_45",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_45",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_45",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -555,10 +518,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_46",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_46",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_46",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -570,10 +532,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_48",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_48",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_48",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -585,10 +546,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_51",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_51",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_51",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -600,10 +560,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_52",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_52",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_52",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -615,10 +574,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_53",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_53",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_53",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -630,10 +588,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_56",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_56",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_56",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -645,10 +602,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_57",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_57",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_57",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -660,10 +616,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_58",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_58",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_58",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -675,10 +630,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_59",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_59",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_59",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -690,10 +644,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_60",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_60",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_60",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -705,10 +658,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_61",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_61",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_61",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -720,10 +672,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_62",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_62",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_62",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -735,10 +686,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_63",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_63",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_63",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -750,10 +700,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_64",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_64",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_64",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -765,10 +714,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_66",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_66",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_66",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -780,10 +728,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_67",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_67",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_67",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -795,10 +742,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_68",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_68",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_68",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -810,10 +756,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_69",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_133_69",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_69",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -825,10 +770,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_180_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_0",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -840,10 +784,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_180_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_3",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -855,10 +798,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_180_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_5",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -870,10 +812,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_6",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_180_6",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_6",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -885,10 +826,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_7",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_180_7",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_7",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -900,10 +840,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_182_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_182_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_182_1",
     "source_net_id": "source_net_93",
     "layer": "top",
@@ -915,10 +854,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_211_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_211_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_211_0",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -930,10 +868,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_211_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_211_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_211_2",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -945,10 +882,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_222_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_222_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_222_0",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -960,10 +896,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_222_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_222_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_222_2",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -975,10 +910,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_364_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_364_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_364_2",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -990,10 +924,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_364_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_364_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_364_3",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1005,10 +938,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_379_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_379_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_379_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1020,10 +952,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_379_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_379_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_379_2",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1035,10 +966,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_387_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1050,10 +980,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_387_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_3",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1065,10 +994,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_4",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_387_4",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_4",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1080,10 +1008,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_387_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_5",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1095,10 +1022,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_412_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_412_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_412_0",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1110,10 +1036,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_421_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_421_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_421_0",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1125,10 +1050,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_421_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_421_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_421_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1140,10 +1064,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_422_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_422_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_422_0",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1155,10 +1078,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_425_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_425_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_425_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1170,10 +1092,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_427_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_427_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_427_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1185,10 +1106,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_435_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_435_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_435_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1200,10 +1120,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_436_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_436_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_436_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1215,10 +1134,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_436_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_436_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_436_3",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1230,10 +1148,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_1",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1245,10 +1162,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_3",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1260,10 +1176,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_5",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1275,10 +1190,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_8",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_8",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_8",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1290,10 +1204,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_9",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_9",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_9",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1305,10 +1218,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_10",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_10",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_10",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1320,10 +1232,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_11",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_11",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_11",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1335,10 +1246,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_12",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_12",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_12",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1350,10 +1260,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_13",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_13",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_13",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1365,10 +1274,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_14",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_14",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_14",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1380,10 +1288,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_15",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_15",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_15",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1395,10 +1302,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_16",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_16",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_16",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1410,10 +1316,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_17",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_17",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_17",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1425,10 +1330,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_18",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_18",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_18",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1440,10 +1344,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_19",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_19",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_19",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1455,10 +1358,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_20",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_20",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_20",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1470,10 +1372,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_21",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_21",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_21",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1485,10 +1386,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_22",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_22",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_22",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1500,10 +1400,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_24",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_24",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_24",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1515,10 +1414,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_25",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_25",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_25",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1530,10 +1428,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_26",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_26",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_26",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1545,10 +1442,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_29",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_29",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_29",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1560,10 +1456,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_30",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_30",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_30",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1575,10 +1470,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_31",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_31",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_31",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1590,10 +1484,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_32",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_32",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_32",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1605,10 +1498,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_33",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_33",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_33",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1620,10 +1512,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_34",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_34",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_34",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1635,10 +1526,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_35",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_35",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_35",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1650,10 +1540,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_36",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_36",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_36",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1665,10 +1554,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_37",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_37",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_37",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1680,10 +1568,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_39",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_442_39",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_39",
     "source_net_id": "source_net_60",
     "layer": "top",
@@ -1695,10 +1582,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_1",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1710,10 +1596,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_3",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1725,10 +1610,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_4",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_4",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_4",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1740,10 +1624,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_5",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1755,10 +1638,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_6",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_6",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_6",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1770,10 +1652,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_7",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_7",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_7",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1785,10 +1666,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_8",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_8",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_8",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1800,10 +1680,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_10",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_10",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_10",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1815,10 +1694,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_11",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_11",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_11",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1830,10 +1708,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_12",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_12",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_12",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1845,10 +1722,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_13",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_13",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_13",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1860,10 +1736,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_15",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_15",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_15",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1875,10 +1750,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_17",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_17",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_17",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1890,10 +1764,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_18",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_18",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_18",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1905,10 +1778,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_19",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_19",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_19",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1920,10 +1792,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_20",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_446_20",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_20",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1935,10 +1806,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_449_0",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_reuse_pcb_copper_pour_449_0",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "reuse_pcb_copper_pour_449_0",
     "source_net_id": "source_net_56",
     "layer": "bottom",
@@ -1950,10 +1820,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_2",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_2",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_2",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -1965,10 +1834,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_3",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_3",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_3",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -1980,10 +1848,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_4",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_4",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_4",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -1995,10 +1862,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_5",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2010,10 +1876,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_7",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_7",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_7",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2025,10 +1890,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_8",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_8",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_8",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2040,10 +1904,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_9",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_9",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_9",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2055,10 +1918,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_10",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_10",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_10",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2070,10 +1932,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_11",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_11",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_11",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2085,10 +1946,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_12",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_12",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_12",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2100,10 +1960,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_13",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_13",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_13",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2115,10 +1974,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_14",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_14",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_14",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2130,10 +1988,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_16",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_16",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_16",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2145,10 +2002,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_17",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_17",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_17",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2160,10 +2016,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_18",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_18",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_18",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2175,10 +2030,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_19",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_19",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_19",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2190,10 +2044,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_20",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_20",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_20",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2205,10 +2058,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_21",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_21",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_21",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2220,10 +2072,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_22",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_22",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_22",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2235,10 +2086,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_23",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_23",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_23",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2250,10 +2100,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_25",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_25",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_25",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2265,10 +2114,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_26",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_26",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_26",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2280,10 +2128,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_27",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_27",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_27",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2295,10 +2142,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_30",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_30",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_30",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2310,10 +2156,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_31",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_31",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_31",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2325,10 +2170,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_33",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_33",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_33",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2340,10 +2184,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_34",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_34",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_34",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2355,10 +2198,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_35",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_35",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_35",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2370,10 +2212,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_36",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_36",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_36",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2385,10 +2226,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_37",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_37",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_37",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2400,10 +2240,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_38",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_38",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_38",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2415,10 +2254,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_39",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_39",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_39",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2430,10 +2268,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_40",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_40",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_40",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2445,10 +2282,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_41",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_41",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_41",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2460,10 +2296,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_43",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_43",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_43",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2475,10 +2310,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_44",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_44",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_44",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2490,10 +2324,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_45",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_45",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_45",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2505,10 +2338,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_46",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_46",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_46",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2520,10 +2352,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_47",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_47",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_47",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2535,10 +2366,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_48",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_48",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_48",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2550,10 +2380,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_49",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_49",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_49",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2565,10 +2394,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_50",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_50",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_50",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2580,10 +2408,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_51",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_51",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_51",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2595,10 +2422,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_52",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_52",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_52",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2610,10 +2436,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_53",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_53",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_53",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2625,10 +2450,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_54",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_54",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_54",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2640,10 +2464,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_56",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_56",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_56",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2655,10 +2478,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_57",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_57",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_57",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2670,10 +2492,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_58",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_58",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_58",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2685,10 +2506,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_59",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_59",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_59",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2700,10 +2520,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_60",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_60",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_60",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2715,10 +2534,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_61",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_61",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_61",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2730,10 +2548,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_62",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_62",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_62",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2745,10 +2562,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_63",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_63",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_63",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2760,10 +2576,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_64",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_64",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_64",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2775,10 +2590,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_65",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_65",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_65",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2790,10 +2604,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_68",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_68",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_68",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2805,10 +2618,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_69",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_69",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_69",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2820,10 +2632,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_70",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_70",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_70",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2835,10 +2646,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_73",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_73",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_73",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2850,10 +2660,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_74",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_74",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_74",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2865,10 +2674,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_77",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_77",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_77",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2880,10 +2688,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_78",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_78",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_78",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2895,10 +2702,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_79",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_79",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_79",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2910,10 +2716,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_80",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_80",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_80",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2925,10 +2730,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_81",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_81",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_81",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2940,10 +2744,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_82",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_82",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_82",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2955,10 +2758,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_83",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_83",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_83",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2970,10 +2772,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_85",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_85",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_85",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -2985,10 +2786,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_86",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_86",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_86",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3000,10 +2800,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_87",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_87",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_87",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3015,10 +2814,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_88",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_88",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_88",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3030,10 +2828,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_89",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_89",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_89",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3045,10 +2842,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_91",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_91",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_91",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3060,10 +2856,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_92",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_92",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_92",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3075,10 +2870,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_93",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_93",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_93",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3090,10 +2884,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_94",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_94",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_94",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3105,10 +2898,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_95",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_95",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_95",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3120,10 +2912,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_96",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_96",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_96",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3135,10 +2926,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_97",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_97",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_97",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3150,10 +2940,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_98",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_98",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_98",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3165,10 +2954,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_99",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_99",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_99",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3180,10 +2968,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_100",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_100",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_100",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3195,10 +2982,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_102",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_102",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_102",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3210,10 +2996,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_103",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_103",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_103",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3225,10 +3010,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_105",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_105",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_105",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3240,10 +3024,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_106",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_106",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_106",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3255,10 +3038,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_108",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_108",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_108",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3270,10 +3052,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_109",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_109",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_109",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3285,10 +3066,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_110",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_110",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_110",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3300,10 +3080,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_111",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_111",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_111",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3315,10 +3094,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_114",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_114",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_114",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3330,10 +3108,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_115",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_115",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_115",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3345,10 +3122,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_118",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_118",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_118",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3360,10 +3136,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_119",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_119",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_119",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3375,10 +3150,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_120",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_120",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_120",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3390,10 +3164,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_121",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_121",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_121",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3405,10 +3178,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_122",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_122",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_122",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3420,10 +3192,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_123",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_123",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_123",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3435,10 +3206,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_124",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_124",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_124",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3450,10 +3220,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_125",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_125",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_125",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3465,10 +3234,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_126",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_126",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_126",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3480,10 +3248,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_127",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_127",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_127",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3495,10 +3262,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_128",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_128",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_128",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3510,10 +3276,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_129",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner1_129",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner1_129",
     "source_net_id": "source_net_56",
     "layer": "inner1",
@@ -3525,10 +3290,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_1",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_1",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_1",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3540,10 +3304,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_4",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_4",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_4",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3555,10 +3318,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_5",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_5",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_5",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3570,10 +3332,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_7",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_7",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_7",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3585,10 +3346,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_8",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_8",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_8",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3600,10 +3360,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_11",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_11",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_11",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3615,10 +3374,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_12",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_12",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_12",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3630,10 +3388,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_14",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_14",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_14",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3645,10 +3402,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_15",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_15",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_15",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3660,10 +3416,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_16",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_16",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_16",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3675,10 +3430,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_17",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_17",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_17",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3690,10 +3444,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_18",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_18",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_18",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3705,10 +3458,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_19",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_19",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_19",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3720,10 +3472,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_20",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_20",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_20",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3735,10 +3486,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_21",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_21",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_21",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3750,10 +3500,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_22",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_22",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_22",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3765,10 +3514,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_23",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_23",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_23",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3780,10 +3528,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_24",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_24",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_24",
     "source_net_id": "source_net_56",
     "layer": "inner4",
@@ -3795,10 +3542,9 @@
     "subcircuit_id": "subcircuit_source_group_0"
   },
   {
-    "type": "pcb_copper_pour_style_warning",
-    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_25",
-    "warning_type": "pcb_copper_pour_style_warning",
-    "styling_issue_type": "isolated_island",
+    "type": "pcb_copper_pour_isolated_warning",
+    "pcb_copper_pour_isolated_warning_id": "pcb_copper_pour_isolated_warning_plane_inner4_25",
+    "warning_type": "pcb_copper_pour_isolated_warning",
     "pcb_copper_pour_id": "plane_inner4_25",
     "source_net_id": "source_net_56",
     "layer": "inner4",

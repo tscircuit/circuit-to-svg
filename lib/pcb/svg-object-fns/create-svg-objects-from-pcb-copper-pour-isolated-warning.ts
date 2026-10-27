@@ -1,12 +1,15 @@
-import type { AnyCircuitElement, PcbCopperPourStyleWarning } from "circuit-json"
+import type {
+  AnyCircuitElement,
+  PcbCopperPourIsolatedWarning,
+} from "circuit-json"
 import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "../../svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getCopperPourShape } from "./get-copper-pour-shape"
 
 /** Highlight the actual copper, preserving BRep holes and curved boundaries. */
-export function createSvgObjectsFromPcbCopperPourStyleWarning(
-  warning: PcbCopperPourStyleWarning,
+export function createSvgObjectsFromPcbCopperPourIsolatedWarning(
+  warning: PcbCopperPourIsolatedWarning,
   circuitJson: AnyCircuitElement[],
   ctx: PcbContext,
 ): SvgObject[] {
@@ -28,11 +31,11 @@ export function createSvgObjectsFromPcbCopperPourStyleWarning(
       type: "element",
       value: "",
       attributes: {
-        class: "pcb-copper-pour-style-warning",
+        class: "pcb-copper-pour-isolated-warning",
         "data-type": warning.type,
         "data-pcb-layer": "overlay",
         "data-pcb-copper-pour-id": pour.pcb_copper_pour_id,
-        "data-warning-id": warning.pcb_copper_pour_style_warning_id,
+        "data-warning-id": warning.pcb_copper_pour_isolated_warning_id,
         "aria-label": warning.message,
       },
       children: [
