@@ -11,7 +11,9 @@ import {
 } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { createSvgTextParts } from "lib/utils/create-svg-text-parts"
+import { estimateTextWidth } from "lib/sch/estimate-text-width"
 import { type Matrix, applyToPoint } from "transformation-matrix"
+import { getClearanceFromSchematicComponentGraphics } from "./get-clearance-from-schematic-component-graphics"
 
 const LABEL_DIST_FROM_EDGE_MM = 0.1
 const LABEL_CLEARANCE_FROM_PIN_AXIS_MM = 0.02
@@ -22,17 +24,20 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   transform: Matrix
   circuitJson: AnyCircuitElement[]
   labelColor?: string
+  labelBackgroundColor?: string
   labelClassName?: string
-  offsetLabelFromPinAxis?: boolean
+  maskLabelPrimitiveOverlap?: boolean
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
   const {
     schPort,
     schComponent,
     transform,
+    circuitJson,
     labelColor = colorMap.schematic.pin_number,
+    labelBackgroundColor = colorMap.schematic.background,
     labelClassName = "pin-number sch-pin-label",
-    offsetLabelFromPinAxis = false,
+    maskLabelPrimitiveOverlap = false,
   } = params
 
   const realPinNumberPos = {
@@ -68,20 +73,38 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       ? "negated_pin_number"
       : "pin_number"
 
-  if (offsetLabelFromPinAxis) {
+  let shouldMaskLabelPrimitiveOverlap = false
+  if (maskLabelPrimitiveOverlap) {
     const fontSizeMm = getSchMmFontSize(
       fontType,
       schPort.display_pin_label_font_size,
     )
-    const perpendicularToPinAxis = {
-      x: -vecToEdge.y,
-      y: vecToEdge.x,
-    }
-    const perpendicularOffset =
-      fontSizeMm / 2 + LABEL_CLEARANCE_FROM_PIN_AXIS_MM
+    const labelText =
+      textParts?.map((part) => part.text).join("") || displayLabel
+    const estimatedLabelWidth = estimateTextWidth(labelText) * fontSizeMm
+    const requiredClearance = fontSizeMm / 2 + LABEL_CLEARANCE_FROM_PIN_AXIS_MM
 
-    realPinNumberPos.x += perpendicularToPinAxis.x * perpendicularOffset
-    realPinNumberPos.y += perpendicularToPinAxis.y * perpendicularOffset
+    const getLabelClearance = (position: { x: number; y: number }) => {
+      let minimumClearance = Number.POSITIVE_INFINITY
+      for (const progress of [0, 0.25, 0.5, 0.75, 1]) {
+        minimumClearance = Math.min(
+          minimumClearance,
+          getClearanceFromSchematicComponentGraphics({
+            point: {
+              x: position.x + vecToEdge.x * estimatedLabelWidth * progress,
+              y: position.y + vecToEdge.y * estimatedLabelWidth * progress,
+            },
+            schPort,
+            schComponent,
+            circuitJson,
+          }),
+        )
+      }
+      return minimumClearance
+    }
+
+    shouldMaskLabelPrimitiveOverlap =
+      getLabelClearance(realPinNumberPos) < requiredClearance
   }
 
   // Transform the pin position from local to global coordinates
@@ -109,6 +132,14 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
           : "end",
       "dominant-baseline": "middle",
       "font-size": `${fontSizePx}px`,
+      ...(shouldMaskLabelPrimitiveOverlap
+        ? {
+            "paint-order": "stroke",
+            stroke: labelBackgroundColor,
+            "stroke-width": `${fontSizePx * 0.3}px`,
+            "stroke-linejoin": "round",
+          }
+        : {}),
       transform:
         schPort.side_of_component === "top" ||
         schPort.side_of_component === "bottom"

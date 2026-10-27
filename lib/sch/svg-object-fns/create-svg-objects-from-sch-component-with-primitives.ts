@@ -15,6 +15,7 @@ import { createSvgObjectsFromSchematicPath } from "./create-svg-objects-from-sch
 import { createSvgObjectsForSchPortPinLabel } from "./create-svg-objects-for-sch-port-pin-label"
 import { createSvgSchText } from "./create-svg-objects-for-sch-text"
 import { getSchematicPrimitivePaintOrder } from "./get-schematic-primitive-paint-order"
+import { offsetOverlappingSchPinLabels } from "./offset-overlapping-sch-pin-labels"
 
 export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
   component: schComponent,
@@ -93,6 +94,10 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
   }
 
   if (schComponent.is_box_with_pins === false) {
+    const pinLabels: Array<{
+      label: SvgObject
+      side: "top" | "bottom" | "left" | "right"
+    }> = []
     const schLines = circuitJson.filter(
       (elm): elm is SchematicLine =>
         elm.type === "schematic_line" && elm.schematic_component_id === compId,
@@ -126,22 +131,24 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
             : "top"
       const stemLength = Math.max(Math.abs(dx), Math.abs(dy))
 
-      svgObjects.push(
-        ...createSvgObjectsForSchPortPinLabel({
-          schPort: {
-            ...schPort,
-            side_of_component: side,
-            distance_from_component_edge: stemLength,
-          },
-          schComponent,
-          transform,
-          circuitJson,
-          labelClassName: "port-label sch-pin-label",
-          labelColor: colorMap.schematic.pin_name,
-          offsetLabelFromPinAxis: true,
-        }),
-      )
+      const labels = createSvgObjectsForSchPortPinLabel({
+        schPort: {
+          ...schPort,
+          side_of_component: side,
+          distance_from_component_edge: stemLength,
+        },
+        schComponent,
+        transform,
+        circuitJson,
+        labelClassName: "port-label sch-pin-label",
+        labelColor: colorMap.schematic.pin_name,
+        labelBackgroundColor: colorMap.schematic.background,
+        maskLabelPrimitiveOverlap: true,
+      })
+      for (const label of labels) pinLabels.push({ label, side })
     }
+
+    svgObjects.push(...offsetOverlappingSchPinLabels(pinLabels))
   }
 
   return svgObjects

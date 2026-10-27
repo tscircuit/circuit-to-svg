@@ -20,7 +20,10 @@ const schComponent: SchematicComponent = {
 
 const renderPinLabel = (
   overrides: Partial<SchematicPort> = {},
-  options: { offsetLabelFromPinAxis?: boolean } = {},
+  options: {
+    maskLabelPrimitiveOverlap?: boolean
+    circuitJson?: AnyCircuitElement[]
+  } = {},
 ) => {
   const schPort: SchematicPort = {
     type: "schematic_port",
@@ -37,8 +40,8 @@ const renderPinLabel = (
     schPort,
     schComponent,
     transform,
-    circuitJson: [],
-    ...options,
+    circuitJson: options.circuitJson ?? [],
+    maskLabelPrimitiveOverlap: options.maskLabelPrimitiveOverlap,
   })[0]
 
   if (!label) throw new Error("Expected a schematic pin label")
@@ -114,38 +117,77 @@ test("font-size overrides do not change vertical label rotation", () => {
   expect(label.attributes.transform).toStartWith("rotate(-90 ")
 })
 
-test("custom-symbol labels offset perpendicular to the pin axis", () => {
+test("custom-symbol labels mask component graphics without moving", () => {
+  const crossingGraphics: AnyCircuitElement[] = [
+    {
+      type: "schematic_path",
+      schematic_path_id: "schematic_path_horizontal",
+      schematic_component_id: schComponent.schematic_component_id,
+      points: [
+        { x: -1, y: 0 },
+        { x: 1, y: 0 },
+      ],
+      is_dashed: false,
+    },
+    {
+      type: "schematic_path",
+      schematic_path_id: "schematic_path_vertical",
+      schematic_component_id: schComponent.schematic_component_id,
+      points: [
+        { x: 0, y: -1 },
+        { x: 0, y: 1 },
+      ],
+      is_dashed: false,
+    },
+  ]
+  const options = {
+    maskLabelPrimitiveOverlap: true,
+    circuitJson: crossingGraphics,
+  }
   const labels = [
     renderPinLabel(
       { center: { x: -1.2, y: 0 }, side_of_component: "left" },
-      { offsetLabelFromPinAxis: true },
+      options,
     ),
     renderPinLabel(
       { center: { x: 1.2, y: 0 }, side_of_component: "right" },
-      { offsetLabelFromPinAxis: true },
+      options,
     ),
     renderPinLabel(
       { center: { x: 0, y: 1.2 }, side_of_component: "top" },
-      { offsetLabelFromPinAxis: true },
+      options,
     ),
     renderPinLabel(
       { center: { x: 0, y: -1.2 }, side_of_component: "bottom" },
-      { offsetLabelFromPinAxis: true },
+      options,
     ),
   ]
 
   expect(labels.map((label) => label.attributes.x)).toEqual([
     "-70",
     "70",
-    "9.5",
-    "-9.5",
+    "0",
+    "0",
   ])
   expect(labels.map((label) => label.attributes.y)).toEqual([
-    "-9.5",
-    "9.5",
+    "0",
+    "0",
     "-70",
     "70",
   ])
+  expect(labels.map((label) => label.attributes["paint-order"])).toEqual([
+    "stroke",
+    "stroke",
+    "stroke",
+    "stroke",
+  ])
+
+  const clearLabel = renderPinLabel(
+    { center: { x: -1.2, y: 0 }, side_of_component: "left" },
+    { maskLabelPrimitiveOverlap: true },
+  )
+  expect(clearLabel.attributes.y).toBe("0")
+  expect(clearLabel.attributes["paint-order"]).toBeUndefined()
 })
 
 test("schematic pin-label font-size overrides", () => {
