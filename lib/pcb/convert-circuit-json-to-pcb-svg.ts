@@ -90,6 +90,7 @@ import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
 import { getViewportBounds } from "../utils/get-viewport-bounds"
 import { createSvgObjectFromPcbPadPinNumber } from "./svg-object-fns/create-svg-object-from-pcb-pad-pin-number"
 import { createSvgObjectsFromPcbComponentWarning } from "./svg-object-fns/create-svg-objects-from-pcb-component-warning"
+import { createSvgObjectsFromPcbCopperPourIsolatedWarning } from "./svg-object-fns/create-svg-objects-from-pcb-copper-pour-isolated-warning"
 import { createSvgObjectsFromPcbDebugObject } from "./svg-object-fns/create-svg-objects-from-pcb-debug-object"
 import {
   createBoardOwnerMap,
@@ -112,7 +113,7 @@ export interface PcbSvgOptions {
   width?: number
   height?: number
   shouldDrawErrors?: boolean
-  /** Draw supported PCB warning elements as yellow component highlights. */
+  /** Draw supported PCB warnings as yellow highlights on their target copper or components. */
   shouldDrawWarnings?: boolean
   showErrorsInTextOverlay?: boolean
   shouldDrawRatsNest?: boolean
@@ -643,6 +644,12 @@ function createSvgObjects({
     case "pcb_connector_not_in_accessible_orientation_warning":
     case "pcb_manual_edit_conflict_warning":
       return createSvgObjectsFromPcbComponentWarning(elm, circuitJson, ctx)
+    case "pcb_copper_pour_isolated_warning":
+      return createSvgObjectsFromPcbCopperPourIsolatedWarning(
+        elm,
+        circuitJson,
+        ctx,
+      )
     case "pcb_component":
       return createSvgObjectsFromPcbComponent(elm, ctx).filter(Boolean)
     case "pcb_trace":
