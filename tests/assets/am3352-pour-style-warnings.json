@@ -1,0 +1,3812 @@
+[
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_1",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -35.34261837689295,
+      "y": -29.45492685721974
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-35.34 mm, -29.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_2",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -33.04069529230791,
+      "y": -27.568315595543552
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-33.04 mm, -27.57 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_3",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -29.853657833814573,
+      "y": -15.634594823305665
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-29.85 mm, -15.63 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_4",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_4",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -22.13902251016402,
+      "y": -18.468556562867754
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-22.14 mm, -18.47 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_5",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -6.382942745660048,
+      "y": -5.79777003475121
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-6.38 mm, -5.80 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_7",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_7",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -5.5497765968918635,
+      "y": -4.5860557151829635
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-5.55 mm, -4.59 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_8",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_8",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -5.407659640766325,
+      "y": -3.4441885923407503
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-5.41 mm, -3.44 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_9",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_9",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -4.626337935457774,
+      "y": -3.8258816786286345
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-4.63 mm, -3.83 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_10",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_10",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -6.030365403933473,
+      "y": -6.4
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-6.03 mm, -6.40 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_11",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_11",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -6.388091576057954,
+      "y": -6.783806070936226
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-6.39 mm, -6.78 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_12",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_12",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -5.412117058750399,
+      "y": -7.53041707389535
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-5.41 mm, -7.53 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_13",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_13",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -5.012117058750405,
+      "y": -7.580417073895359
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-5.01 mm, -7.58 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_14",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_14",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -1.3212893354472763,
+      "y": -7.5441259535545395
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-1.32 mm, -7.54 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_15",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_15",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -0.7279856634404869,
+      "y": -7.550858261948218
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-0.73 mm, -7.55 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_16",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_16",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -0.7999999999999972,
+      "y": -8.309113864285012
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-0.80 mm, -8.31 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_17",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_17",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 0.30000000000000426,
+      "y": -8.495586306826336
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (0.30 mm, -8.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_19",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_19",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 4.440282220274812,
+      "y": -6.4
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (4.44 mm, -6.40 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_20",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_20",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 4.440282220274812,
+      "y": -5.60483551379909
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (4.44 mm, -5.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_21",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_21",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 4.8000000000000025,
+      "y": -4.799999999999996
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (4.80 mm, -4.80 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_22",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_22",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.544767988413389,
+      "y": -4.15571692456034
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.54 mm, -4.16 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_23",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_23",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 6.0508346595419855,
+      "y": -4.0055878165528
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (6.05 mm, -4.01 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_24",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_24",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.83727122495424,
+      "y": -4.830809328276519
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.84 mm, -4.83 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_25",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_25",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 6.262840821897926,
+      "y": -5.0049500439216565
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (6.26 mm, -5.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_27",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_27",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 36.02010931096814,
+      "y": -16.95381509017254
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (36.02 mm, -16.95 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_28",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_28",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 37.93083963901164,
+      "y": -22.61032938456226
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (37.93 mm, -22.61 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_29",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_29",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.200000000000003,
+      "y": -5.628504021821712
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.20 mm, -5.63 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_30",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_30",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.487598060177488,
+      "y": -6.554819830896588
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.49 mm, -6.55 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_31",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_31",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.505000000000003,
+      "y": -7.997708201022059
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.51 mm, -8.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_32",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_32",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -4.618738289741897,
+      "y": -30.682771000000002
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-4.62 mm, -30.68 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_34",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_34",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -5.180180618623267,
+      "y": -33.0460094136489
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-5.18 mm, -33.05 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_36",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_36",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.741608297168758,
+      "y": -7.455190854162928
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.74 mm, -7.46 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_38",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_38",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 6.283119401821921,
+      "y": -6.464606140427858
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (6.28 mm, -6.46 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_40",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_40",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 0.05280535864202984,
+      "y": -26.420170530958828
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (0.05 mm, -26.42 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_41",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_41",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -3.106107272109919,
+      "y": -35.32446751038367
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-3.11 mm, -35.32 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_42",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_42",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.799969,
+      "y": -31.68779962185099
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.80 mm, -31.69 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_43",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_43",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.6400560826651445,
+      "y": -32.05474192741532
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.64 mm, -32.05 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_45",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_45",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.3682476828389993,
+      "y": -32.96786436783228
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.37 mm, -32.97 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_46",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_46",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.831154276900688,
+      "y": -33.29118613285691
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.83 mm, -33.29 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_48",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_48",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.799969,
+      "y": -30.9775
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.80 mm, -30.98 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_51",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_51",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.0641522125528757,
+      "y": -31.986959877864827
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.06 mm, -31.99 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_52",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_52",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -1.6000972375655946,
+      "y": -26.60012264232228
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-1.60 mm, -26.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_53",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_53",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -1.9198350364992067,
+      "y": -26.294394488673
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-1.92 mm, -26.29 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_56",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_56",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.8203371569954196,
+      "y": -27.847731463153732
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.82 mm, -27.85 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_57",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_57",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 3.412446000000001,
+      "y": -23.400189
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (3.41 mm, -23.40 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_58",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_58",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.8481499294177133,
+      "y": -23.49914742661715
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.85 mm, -23.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_59",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_59",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -1.8474924480619572,
+      "y": -24.38398032894879
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-1.85 mm, -24.38 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_60",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_60",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -2.1879059412495945,
+      "y": -22.349664110795814
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-2.19 mm, -22.35 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_61",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_61",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -1.0329206247629217,
+      "y": -23.576981701883035
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-1.03 mm, -23.58 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_62",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_62",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.052835547882991,
+      "y": -33.59924628712814
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.05 mm, -33.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_63",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_63",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 1.7733957857443787,
+      "y": -32.06688899677949
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (1.77 mm, -32.07 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_64",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_64",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.799969,
+      "y": -33.242691923756766
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.80 mm, -33.24 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_66",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_66",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.6608627023351814,
+      "y": -31.80015919226689
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.66 mm, -31.80 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_67",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_67",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 3.997736708318609,
+      "y": -31.023666631024692
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (4.00 mm, -31.02 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_68",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_68",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 6.583252350314412,
+      "y": -30.518114370145717
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (6.58 mm, -30.52 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_133_69",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_133_69",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 5.975018900957098,
+      "y": -30.60297092073932
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (5.98 mm, -30.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_0",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -0.5095337903945609,
+      "y": -5.386055715182964
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-0.51 mm, -5.39 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_3",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 2.4170572543399524,
+      "y": -4.173662064542225
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (2.42 mm, -4.17 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_5",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 0.8,
+      "y": -4.359717779725191
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (0.80 mm, -4.36 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_6",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_6",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 0.31973832900788884,
+      "y": -4.786449553776205
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (0.32 mm, -4.79 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_180_7",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_180_7",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": 0.359717779725191,
+      "y": -5.6384438245163135
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (0.36 mm, -5.64 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_182_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_182_1",
+    "source_net_id": "source_net_93",
+    "layer": "top",
+    "center": {
+      "x": -15.142905662062315,
+      "y": -7.790374623273367
+    },
+    "message": "Copper pour for DDR_1V5 has an isolated island on top near (-15.14 mm, -7.79 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_211_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_211_0",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 22.45054692836431,
+      "y": -4.860162554270927
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (22.45 mm, -4.86 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_211_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_211_2",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 23.20663982350288,
+      "y": -6.211920259325867
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (23.21 mm, -6.21 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_222_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_222_0",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 11.871508015754166,
+      "y": -6.207986197355892
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (11.87 mm, -6.21 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_222_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_222_2",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 7.234695040544084,
+      "y": -4.317430673028488
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (7.23 mm, -4.32 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_364_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_364_2",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -5.193615345940039,
+      "y": 4.0301716437261526
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-5.19 mm, 4.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_364_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_364_3",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -3.207358838409948,
+      "y": 4.449719938211297
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-3.21 mm, 4.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_379_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_379_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -6.117797431693532,
+      "y": 6.553942291539942
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-6.12 mm, 6.55 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_379_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_379_2",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -5.9011712091133806,
+      "y": 7.17506669954154
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-5.90 mm, 7.18 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -25.723455568595686,
+      "y": 4.900167667795967
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-25.72 mm, 4.90 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_3",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -14.732618434315611,
+      "y": 1.240901184613401
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-14.73 mm, 1.24 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_4",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_4",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -18.107483712459874,
+      "y": 5.112975652873288
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-18.11 mm, 5.11 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_387_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_387_5",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -18.087128341145334,
+      "y": 5.719191007147108
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-18.09 mm, 5.72 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_412_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_412_0",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -14.870897341157843,
+      "y": 11.056928772355118
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-14.87 mm, 11.06 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_421_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_421_0",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 8.00677619304059,
+      "y": 9.253050009396379
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (8.01 mm, 9.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_421_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_421_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 6.098961907884322,
+      "y": 10.115059529103931
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (6.10 mm, 10.12 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_422_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_422_0",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 1.314541789573802,
+      "y": 11.395187843545813
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (1.31 mm, 11.40 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_425_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_425_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -31.116613628568494,
+      "y": 14.854099300283826
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-31.12 mm, 14.85 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_427_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_427_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -17.224298252891273,
+      "y": 13.840218307718139
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-17.22 mm, 13.84 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_435_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_435_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -16.592531677048665,
+      "y": 15.058263396397532
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-16.59 mm, 15.06 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_436_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_436_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -25.00687711651407,
+      "y": 19.6032969252103
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-25.01 mm, 19.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_436_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_436_3",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -21.967023408764945,
+      "y": 16.94207072476462
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-21.97 mm, 16.94 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_1",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 14.564633492210426,
+      "y": -5.54033042398099
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (14.56 mm, -5.54 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_3",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 11.147927582998616,
+      "y": -5.071393265991693
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (11.15 mm, -5.07 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_5",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 4.775077476654442,
+      "y": -3.1777530099013047
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (4.78 mm, -3.18 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_8",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_8",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 17.35258683001917,
+      "y": -7.16793015178229
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (17.35 mm, -7.17 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_9",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_9",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 20.22082482838351,
+      "y": -0.8276993320808547
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (20.22 mm, -0.83 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_10",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_10",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 17.765154683892625,
+      "y": 7.210269058315317
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (17.77 mm, 7.21 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_11",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_11",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 36.443586730702606,
+      "y": -0.45351180313624617
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (36.44 mm, -0.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_12",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_12",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 34.27286427852084,
+      "y": 8.134570317946476
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (34.27 mm, 8.13 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_13",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_13",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 35.05599728099743,
+      "y": 7.937367395307099
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (35.06 mm, 7.94 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_14",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_14",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 34.07986035545909,
+      "y": 6.867549854573012
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (34.08 mm, 6.87 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_15",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_15",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 19.030091936875863,
+      "y": 10.08632583142844
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (19.03 mm, 10.09 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_16",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_16",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 4.677914481441842,
+      "y": 13.232450756623914
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (4.68 mm, 13.23 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_17",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_17",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 1.324082767728504,
+      "y": 22.98186160445514
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (1.32 mm, 22.98 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_18",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_18",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -0.33562057628301467,
+      "y": 21.957856138111993
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-0.34 mm, 21.96 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_19",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_19",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 0.16370573931720311,
+      "y": 16.252192854068518
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (0.16 mm, 16.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_20",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_20",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 6.098810043491946,
+      "y": 11.541189956508054
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (6.10 mm, 11.54 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_21",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_21",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 12.200887158563894,
+      "y": 6.948465249804999
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (12.20 mm, 6.95 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_22",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_22",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 13.16950883853604,
+      "y": 6.1942926686447395
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (13.17 mm, 6.19 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_24",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_24",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -7.48763858191373,
+      "y": 19.73754384174751
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-7.49 mm, 19.74 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_25",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_25",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -5.455350706654091,
+      "y": 18.257969281915877
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-5.46 mm, 18.26 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_26",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_26",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -6.5,
+      "y": 18.035863830886363
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-6.50 mm, 18.04 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_29",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_29",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -17.086302539357234,
+      "y": 24.69022533323556
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-17.09 mm, 24.69 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_30",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_30",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -18.64637848813628,
+      "y": 25.669956278545115
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-18.65 mm, 25.67 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_31",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_31",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -20.290022999999998,
+      "y": 26.916018206016858
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-20.29 mm, 26.92 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_32",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_32",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -21.49854201184209,
+      "y": 25.300321073189046
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-21.50 mm, 25.30 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_33",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_33",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -26.427439777285212,
+      "y": 10.010006854964725
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-26.43 mm, 10.01 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_34",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_34",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -34.18879728398912,
+      "y": -6.755160561071548
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-34.19 mm, -6.76 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_35",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_35",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": -36.194460167733936,
+      "y": -8.702383540123053
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (-36.19 mm, -8.70 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_36",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_36",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 39.36445391466431,
+      "y": 19.068101760488275
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (39.36 mm, 19.07 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_37",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_37",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 27.4049478555917,
+      "y": 17.720675594569606
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (27.40 mm, 17.72 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_442_39",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_442_39",
+    "source_net_id": "source_net_60",
+    "layer": "top",
+    "center": {
+      "x": 32.75302621448895,
+      "y": 7.1429541369110545
+    },
+    "message": "Copper pour for V3V3 has an isolated island on top near (32.75 mm, 7.14 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_1",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -4.327513222011118,
+      "y": -3.591982191208208
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-4.33 mm, -3.59 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_3",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -8.928860525674942,
+      "y": 6.336519568407317
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-8.93 mm, 6.34 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_4",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_4",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -15.286248554929623,
+      "y": 3.9541918356277446
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-15.29 mm, 3.95 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_5",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -15.844943342300166,
+      "y": 9.345816852921672
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-15.84 mm, 9.35 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_6",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_6",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -18.136086071138628,
+      "y": 12.449864599321021
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-18.14 mm, 12.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_7",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_7",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -17.61338960942122,
+      "y": 11.966362539152193
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-17.61 mm, 11.97 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_8",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_8",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 6.704536307052027,
+      "y": -3.7274950000000002
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (6.70 mm, -3.73 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_10",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_10",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 8.89010310121429,
+      "y": -3.4537673115254606
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (8.89 mm, -3.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_11",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_11",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 5.614129519078297,
+      "y": -3.5217560800258645
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (5.61 mm, -3.52 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_12",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_12",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 0.31686630268626037,
+      "y": -4.7827711284870515
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (0.32 mm, -4.78 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_13",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_13",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 1.1986051354422749,
+      "y": -4.664842174353472
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (1.20 mm, -4.66 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_15",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_15",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 5.149059073746549,
+      "y": -7.8509409262534495
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (5.15 mm, -7.85 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_17",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_17",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -2.5671698944373613,
+      "y": -33.802342349249386
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-2.57 mm, -33.80 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_18",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_18",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": -2.765074499999997,
+      "y": -33.30019362826362
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (-2.77 mm, -33.30 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_19",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_19",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 5.943495408304887,
+      "y": -6.40694882641968
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (5.94 mm, -6.41 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_446_20",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_446_20",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 4.309552968658816,
+      "y": 0.132339704456083
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (4.31 mm, 0.13 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_reuse_pcb_copper_pour_449_0",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "reuse_pcb_copper_pour_449_0",
+    "source_net_id": "source_net_56",
+    "layer": "bottom",
+    "center": {
+      "x": 3.213939860878378,
+      "y": -2.2194838766768705
+    },
+    "message": "Copper pour for GND has an isolated island on bottom near (3.21 mm, -2.22 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_2",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_2",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.076539129468834,
+      "y": 18.00276531918744
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.08 mm, 18.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_3",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_3",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.546103358258197,
+      "y": 15.726918636718633
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.55 mm, 15.73 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_4",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_4",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.6686880863510956,
+      "y": 14.648681779917716
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.67 mm, 14.65 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_5",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.053518365134062,
+      "y": 13.934166504467326
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.05 mm, 13.93 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_7",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_7",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -1.9945827965617373,
+      "y": 4.460299476948371
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-1.99 mm, 4.46 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_8",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_8",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -6.28980189046295,
+      "y": 9.758124096571327
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-6.29 mm, 9.76 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_9",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_9",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.0627016364498525,
+      "y": 6.725213894488319
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.06 mm, 6.73 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_10",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_10",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.301517731890847,
+      "y": 6.022876836042755
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.30 mm, 6.02 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_11",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_11",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.6914318634404637,
+      "y": 5.412868709618294
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.69 mm, 5.41 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_12",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_12",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.0727006431086417,
+      "y": 4.991700501591245
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.07 mm, 4.99 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_13",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_13",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -2.7085712030604316,
+      "y": 4.349745272035577
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-2.71 mm, 4.35 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_14",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_14",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -1.9726637228658526,
+      "y": 3.6324740591702716
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-1.97 mm, 3.63 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_16",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_16",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 2.647254745193682,
+      "y": -4.870650967092618
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (2.65 mm, -4.87 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_17",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_17",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 2.717499999999999,
+      "y": -5.936554221478236
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (2.72 mm, -5.94 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_18",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_18",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.0625370292380243,
+      "y": -7.029593048931336
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.06 mm, -7.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_19",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_19",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.7856888901531045,
+      "y": -7.088404887464505
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.79 mm, -7.09 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_20",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_20",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -13.370842691311921,
+      "y": 15.109967387407528
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-13.37 mm, 15.11 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_21",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_21",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -12.5686680955314,
+      "y": 13.758077360853108
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-12.57 mm, 13.76 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_22",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_22",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -13.313506197611648,
+      "y": 8.836386486258679
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-13.31 mm, 8.84 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_23",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_23",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -16.792073288104174,
+      "y": 13.52627434467904
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-16.79 mm, 13.53 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_25",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_25",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -19.996667002066133,
+      "y": 10.268419830837914
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-20.00 mm, 10.27 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_26",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_26",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -25.298987501496836,
+      "y": 1.3555850818659465
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-25.30 mm, 1.36 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_27",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_27",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -15.061669118077235,
+      "y": 12.715563868367646
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-15.06 mm, 12.72 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_30",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_30",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -10.288723307836914,
+      "y": 2.0935681945029336
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-10.29 mm, 2.09 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_31",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_31",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -17.286599519569855,
+      "y": -5.01231046002071
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-17.29 mm, -5.01 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_33",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_33",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -14.084557774234153,
+      "y": 8.302076781083596
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-14.08 mm, 8.30 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_34",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_34",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -8.00726379915703,
+      "y": 3.820473929475096
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-8.01 mm, 3.82 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_35",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_35",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -6.53174331732097,
+      "y": 3.182934011848343
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-6.53 mm, 3.18 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_36",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_36",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.707246780357107,
+      "y": 1.301829144307681
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.71 mm, 1.30 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_37",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_37",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.999831250372532,
+      "y": 6.00351694877822
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-6.00 mm, 6.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_38",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_38",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.371748283800919,
+      "y": 4.422285763123611
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.37 mm, 4.42 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_39",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_39",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.49715438284357,
+      "y": -0.11400878312427418
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.50 mm, -0.11 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_40",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_40",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -7.213686323206997,
+      "y": 5.163084716517414
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-7.21 mm, 5.16 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_41",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_41",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -7.19182674379225,
+      "y": 5.867060663715117
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-7.19 mm, 5.87 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_43",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_43",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.850740076823184,
+      "y": 3.6247936188971552
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.85 mm, 3.62 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_44",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_44",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.085925246952737,
+      "y": 3.382479052089782
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.09 mm, 3.38 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_45",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_45",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.24171514191003,
+      "y": 2.294255281707625
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.24 mm, 2.29 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_46",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_46",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -8.899464863930582,
+      "y": 9.583306954830938
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-8.90 mm, 9.58 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_47",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_47",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -10.9583840652334,
+      "y": 12.252927886176389
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-10.96 mm, 12.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_48",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_48",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -11.545563066989263,
+      "y": 13.026597049305014
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-11.55 mm, 13.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_49",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_49",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.730232669292306,
+      "y": 13.708236809943102
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.73 mm, 13.71 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_50",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_50",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.007135596909549,
+      "y": 12.635360323249612
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.01 mm, 12.64 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_51",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_51",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.387866786157652,
+      "y": 11.147784765636324
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.39 mm, 11.15 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_52",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_52",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.455721227810507,
+      "y": 10.601983762020646
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.46 mm, 10.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_53",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_53",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -10.594219535604735,
+      "y": 12.98562904032075
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-10.59 mm, 12.99 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_54",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_54",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -9.601069380931154,
+      "y": 11.483598193092586
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-9.60 mm, 11.48 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_56",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_56",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.895904719373459,
+      "y": 14.546065172307998
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.90 mm, 14.55 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_57",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_57",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.041938290702222,
+      "y": 4.826970926397728
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.04 mm, 4.83 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_58",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_58",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -5.492815657793065,
+      "y": 6.105578466226834
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-5.49 mm, 6.11 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_59",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_59",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -2.7803106409055545,
+      "y": 3.6182367164531914
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-2.78 mm, 3.62 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_60",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_60",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.5711020682551826,
+      "y": 6.945247921123693
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.57 mm, 6.95 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_61",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_61",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -1.2063710772724874,
+      "y": 10.565973446220358
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-1.21 mm, 10.57 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_62",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_62",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -4.119999999999998,
+      "y": 12.655776543816224
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-4.12 mm, 12.66 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_63",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_63",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -3.2199999999999984,
+      "y": 14.777873288967008
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-3.22 mm, 14.78 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_64",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_64",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -2.4018840516237363,
+      "y": 15.586391429416734
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-2.40 mm, 15.59 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_65",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_65",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.2365072294065556,
+      "y": 11.239273860135883
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.24 mm, 11.24 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_68",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_68",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.4225664590616915,
+      "y": 2.2770305729819684
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.42 mm, 2.28 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_69",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_69",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 7.11303013107127,
+      "y": 0.1964290865325247
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (7.11 mm, 0.20 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_70",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_70",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 8.255010078212038,
+      "y": -2.6420420865907155
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (8.26 mm, -2.64 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_73",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_73",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.649695618337635,
+      "y": -2.9154310026460886
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.65 mm, -2.92 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_74",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_74",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.932560654392986,
+      "y": -4.5084275177516115
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.93 mm, -4.51 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_77",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_77",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 7.014296497704404,
+      "y": -7.904635326754145
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (7.01 mm, -7.90 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_78",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_78",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.363619967859604,
+      "y": -6.270614825818265
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.36 mm, -6.27 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_79",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_79",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.3236675469984416,
+      "y": -5.742251936204552
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.32 mm, -5.74 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_80",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_80",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.6946308572569033,
+      "y": -4.780381857099126
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.69 mm, -4.78 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_81",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_81",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.16248107125724,
+      "y": -2.3627100940433072
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.16 mm, -2.36 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_82",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_82",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": -0.13444399528839157,
+      "y": 7.577615286538464
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (-0.13 mm, 7.58 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_83",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_83",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.720834558667221,
+      "y": -4.198887560873905
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.72 mm, -4.20 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_85",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_85",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.612332123991014,
+      "y": -4.028221366117085
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.61 mm, -4.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_86",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_86",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.6019107454273143,
+      "y": -3.040266357112526
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.60 mm, -3.04 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_87",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_87",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.052684408382871,
+      "y": 5.468287930526499
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.05 mm, 5.47 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_88",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_88",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.402775970924445,
+      "y": 4.501724014320867
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.40 mm, 4.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_89",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_89",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.046802512755207,
+      "y": -6.018678291809427
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.05 mm, -6.02 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_91",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_91",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.701726515615807,
+      "y": -6.8704690658661765
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.70 mm, -6.87 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_92",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_92",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 4.8608401877116325,
+      "y": -6.707973878177015
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (4.86 mm, -6.71 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_93",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_93",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.481122058713355,
+      "y": -6.049787232331129
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.48 mm, -6.05 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_94",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_94",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 4.870507476445069,
+      "y": -4.604387977379197
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (4.87 mm, -4.60 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_95",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_95",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 4.547101624251427,
+      "y": -3.4066525866117354
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (4.55 mm, -3.41 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_96",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_96",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.140550130990961,
+      "y": -3.1662879703775126
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.14 mm, -3.17 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_97",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_97",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 4.552520029768379,
+      "y": -2.9366375966855927
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (4.55 mm, -2.94 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_98",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_98",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.465441787377211,
+      "y": -6.981769041596884
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.47 mm, -6.98 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_99",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_99",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.927695233246977,
+      "y": -5.638533073606674
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.93 mm, -5.64 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_100",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_100",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.132041505137687,
+      "y": -4.891356381907054
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.13 mm, -4.89 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_102",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_102",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 5.226051775752223,
+      "y": 5.746095551960641
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (5.23 mm, 5.75 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_103",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_103",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.166499865175858,
+      "y": 8.44647080080426
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.17 mm, 8.45 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_105",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_105",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 3.1525765615215153,
+      "y": 9.02756990937446
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (3.15 mm, 9.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_106",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_106",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 8.76102287996854,
+      "y": 2.8726377262452973
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (8.76 mm, 2.87 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_108",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_108",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 9.507054796871357,
+      "y": -5.331012644071382
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (9.51 mm, -5.33 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_109",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_109",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 8.226639054487274,
+      "y": -3.8570639335992634
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (8.23 mm, -3.86 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_110",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_110",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 10.193752933746325,
+      "y": -3.082104592307824
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (10.19 mm, -3.08 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_111",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_111",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 6.099924564748127,
+      "y": 7.984042132162
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (6.10 mm, 7.98 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_114",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_114",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 12.078323073129884,
+      "y": 0.6121386406741582
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (12.08 mm, 0.61 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_115",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_115",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 13.371443285399263,
+      "y": -1.2457264429361077
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (13.37 mm, -1.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_118",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_118",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 10.763222730943756,
+      "y": -0.14321621820788977
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (10.76 mm, -0.14 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_119",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_119",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 11.953579260202346,
+      "y": -0.23982165224987526
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (11.95 mm, -0.24 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_120",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_120",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 7.57860999430196,
+      "y": 3.4987814603876783
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (7.58 mm, 3.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_121",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_121",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 9.32265267054953,
+      "y": 6.017275251872578
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (9.32 mm, 6.02 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_122",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_122",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.173359974860098,
+      "y": -18.001266
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.17 mm, -18.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_123",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_123",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.359910505406567,
+      "y": -17.251204
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.36 mm, -17.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_124",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_124",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.173359974860098,
+      "y": -16.501142
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.17 mm, -16.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_125",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_125",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.360036658239878,
+      "y": -15.751206999999999
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.36 mm, -15.75 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_126",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_126",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.173359974860094,
+      "y": -15.001272
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.17 mm, -15.00 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_127",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_127",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.359910505406567,
+      "y": -14.25121
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.36 mm, -14.25 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_128",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_128",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 31.173486974860094,
+      "y": -13.501397922333144
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (31.17 mm, -13.50 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner1_129",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner1_129",
+    "source_net_id": "source_net_56",
+    "layer": "inner1",
+    "center": {
+      "x": 41.00428208047991,
+      "y": -19.097786217570377
+    },
+    "message": "Copper pour for GND has an isolated island on inner1 near (41.00 mm, -19.10 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_1",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_1",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 3.1685880476358994,
+      "y": -6.1099073879284305
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (3.17 mm, -6.11 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_4",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_4",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": -4.906675233738007,
+      "y": 3.8043347775753533
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (-4.91 mm, 3.80 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_5",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_5",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": -6.306707510706961,
+      "y": 4.356186183173896
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (-6.31 mm, 4.36 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_7",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_7",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 5.965052559356787,
+      "y": -3.6709368590286315
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (5.97 mm, -3.67 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_8",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_8",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 6.920600513636135,
+      "y": -4.026864387328471
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (6.92 mm, -4.03 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_11",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_11",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 7.9636505226681376,
+      "y": -2.971389878729985
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (7.96 mm, -2.97 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_12",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_12",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 8.342421091908953,
+      "y": -3.5618986761339793
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (8.34 mm, -3.56 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_14",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_14",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 6.49717622208554,
+      "y": -7.568597766253639
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (6.50 mm, -7.57 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_15",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_15",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 4.730387721564846,
+      "y": -2.7165084813302744
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (4.73 mm, -2.72 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_16",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_16",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 5.077214664246181,
+      "y": -3.2911705526587536
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (5.08 mm, -3.29 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_17",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_17",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 5.374142893054707,
+      "y": -2.5259312705887687
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (5.37 mm, -2.53 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_18",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_18",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 7.051410274419323,
+      "y": -0.2165132647555872
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (7.05 mm, -0.22 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_19",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_19",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 8.522780375013625,
+      "y": -1.4370205765435002
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (8.52 mm, -1.44 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_20",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_20",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 4.559601624251426,
+      "y": -3.416126785068073
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (4.56 mm, -3.42 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_21",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_21",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 8.403567343886952,
+      "y": -4.562012222705722
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (8.40 mm, -4.56 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_22",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_22",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 7.233655311276938,
+      "y": -4.440938096638716
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (7.23 mm, -4.44 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_23",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_23",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 12.942921217327296,
+      "y": -4.5322755502076655
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (12.94 mm, -4.53 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_24",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_24",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 11.68059004818679,
+      "y": 0.6137220545903411
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (11.68 mm, 0.61 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  },
+  {
+    "type": "pcb_copper_pour_style_warning",
+    "pcb_copper_pour_style_warning_id": "pcb_copper_pour_style_warning_island_plane_inner4_25",
+    "warning_type": "pcb_copper_pour_style_warning",
+    "styling_issue_type": "isolated_island",
+    "pcb_copper_pour_id": "plane_inner4_25",
+    "source_net_id": "source_net_56",
+    "layer": "inner4",
+    "center": {
+      "x": 8.707187809957862,
+      "y": -1.9571878099578601
+    },
+    "message": "Copper pour for GND has an isolated island on inner4 near (8.71 mm, -1.96 mm) with no physical connection to a same-net pad or via",
+    "subcircuit_id": "subcircuit_source_group_0"
+  }
+]

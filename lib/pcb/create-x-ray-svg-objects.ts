@@ -89,8 +89,17 @@ export function createXRaySvgObjects({
     )
       layers.add(element.layer as LayerRef)
     if ("layers" in element && Array.isArray(element.layers))
-      for (const layer of element.layers)
-        if (/^(top|bottom|inner\d+)$/.test(layer)) layers.add(layer as LayerRef)
+      for (const layer of element.layers) {
+        // Board stackups use structured layers; copper primitives use names.
+        const name =
+          typeof layer === "string"
+            ? layer
+            : layer.layer_type === "copper"
+              ? layer.layer
+              : undefined
+        if (name && /^(top|bottom|inner\d+)$/.test(name))
+          layers.add(name as LayerRef)
+      }
     if (element.type === "pcb_trace")
       for (const point of element.route)
         if (point.route_type === "wire") layers.add(point.layer)
@@ -175,7 +184,12 @@ export function createXRaySvgObjects({
               (candidate) =>
                 !("layers" in element) ||
                 !Array.isArray(element.layers) ||
-                element.layers.includes(candidate),
+                element.layers.some((layer) =>
+                  typeof layer === "string"
+                    ? layer === candidate
+                    : layer.layer_type === "copper" &&
+                      layer.layer === candidate,
+                ),
             )
             .at(-1)
         )
