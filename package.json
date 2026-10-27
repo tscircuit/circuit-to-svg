@@ -37,7 +37,7 @@
     "@vitejs/plugin-react": "5.0.0",
     "biome": "^0.3.3",
     "bun-match-svg": "^0.0.12",
-    "circuit-json": "https://pkg.pr.new/circuit-json@7150486",
+    "circuit-json": "^0.0.537",
     "circuit-json-to-connectivity-map": "^0.0.23",
     "esbuild": "^0.20.2",
     "format-si-unit": "^0.0.12",
@@ -55,12 +55,9 @@
   "peerDependencies": {
     "@tscircuit/alphabet": "*",
     "@tscircuit/circuit-json-util": "*",
-    "circuit-json": "*",
+    "circuit-json": ">=0.0.537",
     "circuit-json-to-connectivity-map": "*",
     "schematic-symbols": "*"
-  },
-  "overrides": {
-    "circuit-json": "https://pkg.pr.new/circuit-json@7150486"
   },
   "dependencies": {
     "@types/node": "^22.5.5",
