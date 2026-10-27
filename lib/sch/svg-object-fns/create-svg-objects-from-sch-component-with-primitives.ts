@@ -138,6 +138,7 @@ export const createSvgObjectsFromSchematicComponentWithPrimitives = ({
           circuitJson,
           labelClassName: "port-label sch-pin-label",
           labelColor: colorMap.schematic.pin_name,
+          offsetLabelFromPinAxis: true,
         }),
       )
     }

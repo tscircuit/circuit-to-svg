@@ -5,12 +5,16 @@ import type {
 } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { colorMap } from "lib/utils/colors"
-import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
+import {
+  getSchMmFontSize,
+  getSchScreenFontSize,
+} from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
 import { createSvgTextParts } from "lib/utils/create-svg-text-parts"
 import { type Matrix, applyToPoint } from "transformation-matrix"
 
 const LABEL_DIST_FROM_EDGE_MM = 0.1
+const LABEL_CLEARANCE_FROM_PIN_AXIS_MM = 0.02
 
 export const createSvgObjectsForSchPortPinLabel = (params: {
   schPort: SchematicPort
@@ -19,6 +23,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   circuitJson: AnyCircuitElement[]
   labelColor?: string
   labelClassName?: string
+  offsetLabelFromPinAxis?: boolean
 }): SvgObject[] => {
   const svgObjects: SvgObject[] = []
   const {
@@ -27,6 +32,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
     transform,
     labelColor = colorMap.schematic.pin_number,
     labelClassName = "pin-number sch-pin-label",
+    offsetLabelFromPinAxis = false,
   } = params
 
   const realPinNumberPos = {
@@ -46,9 +52,6 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   realPinNumberPos.y +=
     vecToEdge.y * (realPinEdgeDistance + LABEL_DIST_FROM_EDGE_MM)
 
-  // Transform the pin position from local to global coordinates
-  const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
-
   const label =
     schPort.display_pin_label ??
     schComponent.port_labels?.[`${schPort.pin_number}`]
@@ -60,12 +63,33 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
   const textParts = schPort.display_pin_label_text_parts
   const is_drawn_with_inversion_circle =
     schPort.is_drawn_with_inversion_circle ?? false
+  const fontType =
+    isNegated || is_drawn_with_inversion_circle
+      ? "negated_pin_number"
+      : "pin_number"
+
+  if (offsetLabelFromPinAxis) {
+    const fontSizeMm = getSchMmFontSize(
+      fontType,
+      schPort.display_pin_label_font_size,
+    )
+    const perpendicularToPinAxis = {
+      x: -vecToEdge.y,
+      y: vecToEdge.x,
+    }
+    const perpendicularOffset =
+      fontSizeMm / 2 + LABEL_CLEARANCE_FROM_PIN_AXIS_MM
+
+    realPinNumberPos.x += perpendicularToPinAxis.x * perpendicularOffset
+    realPinNumberPos.y += perpendicularToPinAxis.y * perpendicularOffset
+  }
+
+  // Transform the pin position from local to global coordinates
+  const screenPinNumberTextPos = applyToPoint(transform, realPinNumberPos)
 
   const fontSizePx = getSchScreenFontSize(
     transform,
-    isNegated || is_drawn_with_inversion_circle
-      ? "negated_pin_number"
-      : "pin_number",
+    fontType,
     schPort.display_pin_label_font_size,
   )
 

@@ -18,7 +18,10 @@ const schComponent: SchematicComponent = {
   is_box_with_pins: true,
 }
 
-const renderPinLabel = (overrides: Partial<SchematicPort> = {}) => {
+const renderPinLabel = (
+  overrides: Partial<SchematicPort> = {},
+  options: { offsetLabelFromPinAxis?: boolean } = {},
+) => {
   const schPort: SchematicPort = {
     type: "schematic_port",
     schematic_port_id: "schematic_port_1",
@@ -35,6 +38,7 @@ const renderPinLabel = (overrides: Partial<SchematicPort> = {}) => {
     schComponent,
     transform,
     circuitJson: [],
+    ...options,
   })[0]
 
   if (!label) throw new Error("Expected a schematic pin label")
@@ -108,6 +112,40 @@ test("font-size overrides do not change vertical label rotation", () => {
 
   expect(label.attributes["font-size"]).toBe("10px")
   expect(label.attributes.transform).toStartWith("rotate(-90 ")
+})
+
+test("custom-symbol labels offset perpendicular to the pin axis", () => {
+  const labels = [
+    renderPinLabel(
+      { center: { x: -1.2, y: 0 }, side_of_component: "left" },
+      { offsetLabelFromPinAxis: true },
+    ),
+    renderPinLabel(
+      { center: { x: 1.2, y: 0 }, side_of_component: "right" },
+      { offsetLabelFromPinAxis: true },
+    ),
+    renderPinLabel(
+      { center: { x: 0, y: 1.2 }, side_of_component: "top" },
+      { offsetLabelFromPinAxis: true },
+    ),
+    renderPinLabel(
+      { center: { x: 0, y: -1.2 }, side_of_component: "bottom" },
+      { offsetLabelFromPinAxis: true },
+    ),
+  ]
+
+  expect(labels.map((label) => label.attributes.x)).toEqual([
+    "-70",
+    "70",
+    "9.5",
+    "-9.5",
+  ])
+  expect(labels.map((label) => label.attributes.y)).toEqual([
+    "-9.5",
+    "9.5",
+    "-70",
+    "70",
+  ])
 })
 
 test("schematic pin-label font-size overrides", () => {
