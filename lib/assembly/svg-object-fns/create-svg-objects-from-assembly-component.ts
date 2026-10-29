@@ -49,14 +49,7 @@ export function createSvgObjectsFromAssemblyComponent(
 
   if (!arePinsInterchangeable) {
     children.push(
-      createPin1Indicator(
-        scaledWidth,
-        scaledHeight,
-        rotation,
-        layer,
-        isPinTop,
-        isPinLeft,
-      ),
+      createPin1Indicator(scaledWidth, scaledHeight, isPinTop, isPinLeft),
     )
   }
 
@@ -147,8 +140,6 @@ function createComponentLabel(
 function createPin1Indicator(
   scaledWidth: number,
   scaledHeight: number,
-  rotation: number,
-  layer: LayerRef,
   isPinTop: boolean,
   isPinLeft: boolean,
 ): SvgObject {
@@ -198,7 +189,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],
