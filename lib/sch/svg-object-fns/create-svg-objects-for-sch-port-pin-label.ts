@@ -68,6 +68,13 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       : "pin_number",
     schPort.display_pin_label_font_size,
   )
+  let fontFamily = "sans-serif"
+  if (
+    "display_pin_label_font_family" in schPort &&
+    typeof schPort.display_pin_label_font_family === "string"
+  ) {
+    fontFamily = schPort.display_pin_label_font_family
+  }
 
   svgObjects.push({
     name: "text",
@@ -76,7 +83,7 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      "font-family": schPort.display_pin_label_font_family ?? "sans-serif",
+      "font-family": fontFamily,
       ...(isNegated && !textParts?.length
         ? { "text-decoration": "overline" }
         : {}),
