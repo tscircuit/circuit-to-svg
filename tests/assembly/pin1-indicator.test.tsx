@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToAssemblySvg } from "lib/index"
-import { parseSync, type INode } from "svgson"
+import { type INode, parseSync } from "svgson"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 function findNodesByClass(node: INode, className: string): INode[] {
@@ -31,7 +31,7 @@ function getIndicatorCornerSigns(svg: string): [number, number] {
   return [Math.sign(x), Math.sign(y)]
 }
 
-test("assembly pin1 indicator stays in pin1 corner across rotations", () => {
+test("assembly pin1 indicator stays in pin1 corner across rotations", async () => {
   // In the component group's local coordinate system (scale(1, -1)),
   // positive local Y points upward on the PCB (negative screen Y):
   // PCB top-left (rot 0) -> (-1, +1)
@@ -65,6 +65,21 @@ test("assembly pin1 indicator stays in pin1 corner across rotations", () => {
     )
     expect(getIndicatorCornerSigns(svg)).toEqual(expectedSigns)
   }
+
+  const { circuit: snapshotCircuit } = getTestFixture()
+  snapshotCircuit.add(
+    <board width="30mm" height="30mm">
+      <chip name="U1" footprint="soic8" pcbX={-7} pcbY={7} pcbRotation={0} />
+      <chip name="U2" footprint="soic8" pcbX={7} pcbY={7} pcbRotation={90} />
+      <chip name="U3" footprint="soic8" pcbX={-7} pcbY={-7} pcbRotation={180} />
+      <chip name="U4" footprint="soic8" pcbX={7} pcbY={-7} pcbRotation={270} />
+    </board>,
+  )
+
+  const snapshotSvg = convertCircuitJsonToAssemblySvg(
+    snapshotCircuit.getCircuitJson() as AnyCircuitElement[],
+  )
+  await expect(snapshotSvg).toMatchSvgSnapshot(import.meta.path)
 })
 
 test("assembly pin1 indicator resolves pin1 via source_port when ports[0] is not pin1", () => {
