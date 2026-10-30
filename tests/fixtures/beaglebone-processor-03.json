@@ -10,10 +10,7 @@
   {
     "type": "source_port",
     "name": "OSC1_IN",
-    "port_hints": [
-      "A6",
-      "OSC1_IN"
-    ],
+    "port_hints": ["A6", "OSC1_IN"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_671"
   },
@@ -39,10 +36,7 @@
   {
     "type": "source_port",
     "name": "OSC1_OUT",
-    "port_hints": [
-      "A4",
-      "OSC1_OUT"
-    ],
+    "port_hints": ["A4", "OSC1_OUT"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_673"
   },
@@ -68,10 +62,7 @@
   {
     "type": "source_port",
     "name": "OSC0_IN",
-    "port_hints": [
-      "V10",
-      "OSC0_IN"
-    ],
+    "port_hints": ["V10", "OSC0_IN"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_675"
   },
@@ -97,10 +88,7 @@
   {
     "type": "source_port",
     "name": "OSC0_OUT",
-    "port_hints": [
-      "U11",
-      "OSC0_OUT"
-    ],
+    "port_hints": ["U11", "OSC0_OUT"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_677"
   },
@@ -157,10 +145,7 @@
   {
     "type": "source_port",
     "name": "GPMC_CSN0/GPIO1_29",
-    "port_hints": [
-      "V6",
-      "GPMC_CSN0/GPIO1_29"
-    ],
+    "port_hints": ["V6", "GPMC_CSN0/GPIO1_29"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_681"
   },
@@ -250,10 +235,7 @@
   {
     "type": "source_port",
     "name": "GPMC_WEN/TIMER6/GPIO2_4",
-    "port_hints": [
-      "U6",
-      "GPMC_WEN/TIMER6/GPIO2_4"
-    ],
+    "port_hints": ["U6", "GPMC_WEN/TIMER6/GPIO2_4"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_687"
   },
@@ -281,10 +263,7 @@
   {
     "type": "source_port",
     "name": "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3",
-    "port_hints": [
-      "T7",
-      "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3"
-    ],
+    "port_hints": ["T7", "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_689"
   },
@@ -312,10 +291,7 @@
   {
     "type": "source_port",
     "name": "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0",
-    "port_hints": [
-      "T13",
-      "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0"
-    ],
+    "port_hints": ["T13", "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_691"
   },
@@ -343,10 +319,7 @@
   {
     "type": "source_port",
     "name": "GPMC_ADVN_ALE/TIMER4/GPIO2_2",
-    "port_hints": [
-      "R7",
-      "GPMC_ADVN_ALE/TIMER4/GPIO2_2"
-    ],
+    "port_hints": ["R7", "GPMC_ADVN_ALE/TIMER4/GPIO2_2"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_693"
   },
@@ -374,10 +347,7 @@
   {
     "type": "source_port",
     "name": "GPMC_BE0N_CLE/TIMER5/GPIO2_5",
-    "port_hints": [
-      "T6",
-      "GPMC_BE0N_CLE/TIMER5/GPIO2_5"
-    ],
+    "port_hints": ["T6", "GPMC_BE0N_CLE/TIMER5/GPIO2_5"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_695"
   },
@@ -467,10 +437,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD0/MMC1_DAT0//////GPIO1_0",
-    "port_hints": [
-      "U7",
-      "GPMC_AD0/MMC1_DAT0//////GPIO1_0"
-    ],
+    "port_hints": ["U7", "GPMC_AD0/MMC1_DAT0//////GPIO1_0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_701"
   },
@@ -498,10 +465,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD1/MMC1_DAT1//////GPIO1_1",
-    "port_hints": [
-      "V7",
-      "GPMC_AD1/MMC1_DAT1//////GPIO1_1"
-    ],
+    "port_hints": ["V7", "GPMC_AD1/MMC1_DAT1//////GPIO1_1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_703"
   },
@@ -529,10 +493,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD2/MMC1_DAT2//////GPIO1_2",
-    "port_hints": [
-      "R8",
-      "GPMC_AD2/MMC1_DAT2//////GPIO1_2"
-    ],
+    "port_hints": ["R8", "GPMC_AD2/MMC1_DAT2//////GPIO1_2"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_705"
   },
@@ -560,10 +521,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD3/MMC1_DAT3//////GPIO1_3",
-    "port_hints": [
-      "T8",
-      "GPMC_AD3/MMC1_DAT3//////GPIO1_3"
-    ],
+    "port_hints": ["T8", "GPMC_AD3/MMC1_DAT3//////GPIO1_3"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_707"
   },
@@ -591,10 +549,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD4/MMC1_DAT4//////GPIO1_4",
-    "port_hints": [
-      "U8",
-      "GPMC_AD4/MMC1_DAT4//////GPIO1_4"
-    ],
+    "port_hints": ["U8", "GPMC_AD4/MMC1_DAT4//////GPIO1_4"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_709"
   },
@@ -622,10 +577,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD5/MMC1_DAT5//////GPIO1_5",
-    "port_hints": [
-      "V8",
-      "GPMC_AD5/MMC1_DAT5//////GPIO1_5"
-    ],
+    "port_hints": ["V8", "GPMC_AD5/MMC1_DAT5//////GPIO1_5"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_711"
   },
@@ -653,10 +605,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD6/MMC1_DAT6//////GPIO1_6",
-    "port_hints": [
-      "R9",
-      "GPMC_AD6/MMC1_DAT6//////GPIO1_6"
-    ],
+    "port_hints": ["R9", "GPMC_AD6/MMC1_DAT6//////GPIO1_6"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_713"
   },
@@ -684,10 +633,7 @@
   {
     "type": "source_port",
     "name": "GPMC_AD7/MMC1_DAT7//////GPIO1_7",
-    "port_hints": [
-      "T9",
-      "GPMC_AD7/MMC1_DAT7//////GPIO1_7"
-    ],
+    "port_hints": ["T9", "GPMC_AD7/MMC1_DAT7//////GPIO1_7"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_715"
   },
@@ -1509,10 +1455,7 @@
   {
     "type": "source_port",
     "name": "PORZ",
-    "port_hints": [
-      "B15",
-      "PORZ"
-    ],
+    "port_hints": ["B15", "PORZ"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_769"
   },
@@ -1538,10 +1481,7 @@
   {
     "type": "source_port",
     "name": "NRESET_INOUT",
-    "port_hints": [
-      "A10",
-      "NRESET_INOUT"
-    ],
+    "port_hints": ["A10", "NRESET_INOUT"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_771"
   },
@@ -1569,10 +1509,7 @@
   {
     "type": "source_port",
     "name": "NNMI",
-    "port_hints": [
-      "B18",
-      "NNMI"
-    ],
+    "port_hints": ["B18", "NNMI"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_773"
   },
@@ -1660,10 +1597,7 @@
   {
     "type": "source_port",
     "name": "TMS",
-    "port_hints": [
-      "C11",
-      "TMS"
-    ],
+    "port_hints": ["C11", "TMS"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_779"
   },
@@ -1689,10 +1623,7 @@
   {
     "type": "source_port",
     "name": "NTRST",
-    "port_hints": [
-      "B10",
-      "NTRST"
-    ],
+    "port_hints": ["B10", "NTRST"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_781"
   },
@@ -1718,10 +1649,7 @@
   {
     "type": "source_port",
     "name": "TCK",
-    "port_hints": [
-      "A12",
-      "TCK"
-    ],
+    "port_hints": ["A12", "TCK"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_783"
   },
@@ -1747,10 +1675,7 @@
   {
     "type": "source_port",
     "name": "TDI",
-    "port_hints": [
-      "B11",
-      "TDI"
-    ],
+    "port_hints": ["B11", "TDI"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_785"
   },
@@ -1776,10 +1701,7 @@
   {
     "type": "source_port",
     "name": "TDO",
-    "port_hints": [
-      "A11",
-      "TDO"
-    ],
+    "port_hints": ["A11", "TDO"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_787"
   },
@@ -1805,10 +1727,7 @@
   {
     "type": "source_port",
     "name": "EMU0/GPIO3_7",
-    "port_hints": [
-      "C14",
-      "EMU0/GPIO3_7"
-    ],
+    "port_hints": ["C14", "EMU0/GPIO3_7"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_789"
   },
@@ -1834,10 +1753,7 @@
   {
     "type": "source_port",
     "name": "DDR_A0",
-    "port_hints": [
-      "F3",
-      "DDR_A0"
-    ],
+    "port_hints": ["F3", "DDR_A0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_791"
   },
@@ -1864,10 +1780,7 @@
   {
     "type": "source_port",
     "name": "DDR_A1",
-    "port_hints": [
-      "H1",
-      "DDR_A1"
-    ],
+    "port_hints": ["H1", "DDR_A1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_793"
   },
@@ -1894,10 +1807,7 @@
   {
     "type": "source_port",
     "name": "DDR_A2",
-    "port_hints": [
-      "E4",
-      "DDR_A2"
-    ],
+    "port_hints": ["E4", "DDR_A2"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_795"
   },
@@ -1924,10 +1834,7 @@
   {
     "type": "source_port",
     "name": "DDR_A3",
-    "port_hints": [
-      "C3",
-      "DDR_A3"
-    ],
+    "port_hints": ["C3", "DDR_A3"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_797"
   },
@@ -1954,10 +1861,7 @@
   {
     "type": "source_port",
     "name": "DDR_A4",
-    "port_hints": [
-      "C2",
-      "DDR_A4"
-    ],
+    "port_hints": ["C2", "DDR_A4"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_799"
   },
@@ -1984,10 +1888,7 @@
   {
     "type": "source_port",
     "name": "DDR_A5",
-    "port_hints": [
-      "B1",
-      "DDR_A5"
-    ],
+    "port_hints": ["B1", "DDR_A5"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_801"
   },
@@ -2014,10 +1915,7 @@
   {
     "type": "source_port",
     "name": "DDR_A6",
-    "port_hints": [
-      "D5",
-      "DDR_A6"
-    ],
+    "port_hints": ["D5", "DDR_A6"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_803"
   },
@@ -2044,10 +1942,7 @@
   {
     "type": "source_port",
     "name": "DDR_A7",
-    "port_hints": [
-      "E2",
-      "DDR_A7"
-    ],
+    "port_hints": ["E2", "DDR_A7"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_805"
   },
@@ -2074,10 +1969,7 @@
   {
     "type": "source_port",
     "name": "DDR_A8",
-    "port_hints": [
-      "D4",
-      "DDR_A8"
-    ],
+    "port_hints": ["D4", "DDR_A8"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_807"
   },
@@ -2104,10 +1996,7 @@
   {
     "type": "source_port",
     "name": "DDR_A9",
-    "port_hints": [
-      "C1",
-      "DDR_A9"
-    ],
+    "port_hints": ["C1", "DDR_A9"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_809"
   },
@@ -2134,10 +2023,7 @@
   {
     "type": "source_port",
     "name": "DDR_A10",
-    "port_hints": [
-      "F4",
-      "DDR_A10"
-    ],
+    "port_hints": ["F4", "DDR_A10"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_811"
   },
@@ -2164,10 +2050,7 @@
   {
     "type": "source_port",
     "name": "DDR_A11",
-    "port_hints": [
-      "F2",
-      "DDR_A11"
-    ],
+    "port_hints": ["F2", "DDR_A11"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_813"
   },
@@ -2194,10 +2077,7 @@
   {
     "type": "source_port",
     "name": "DDR_A12",
-    "port_hints": [
-      "E3",
-      "DDR_A12"
-    ],
+    "port_hints": ["E3", "DDR_A12"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_815"
   },
@@ -2224,10 +2104,7 @@
   {
     "type": "source_port",
     "name": "DDR_A13",
-    "port_hints": [
-      "H3",
-      "DDR_A13"
-    ],
+    "port_hints": ["H3", "DDR_A13"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_817"
   },
@@ -2254,10 +2131,7 @@
   {
     "type": "source_port",
     "name": "DDR_A14",
-    "port_hints": [
-      "H4",
-      "DDR_A14"
-    ],
+    "port_hints": ["H4", "DDR_A14"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_819"
   },
@@ -2284,10 +2158,7 @@
   {
     "type": "source_port",
     "name": "DDR_D0",
-    "port_hints": [
-      "M3",
-      "DDR_D0"
-    ],
+    "port_hints": ["M3", "DDR_D0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_821"
   },
@@ -2315,10 +2186,7 @@
   {
     "type": "source_port",
     "name": "DDR_D1",
-    "port_hints": [
-      "M4",
-      "DDR_D1"
-    ],
+    "port_hints": ["M4", "DDR_D1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_823"
   },
@@ -2346,10 +2214,7 @@
   {
     "type": "source_port",
     "name": "DDR_D2",
-    "port_hints": [
-      "N1",
-      "DDR_D2"
-    ],
+    "port_hints": ["N1", "DDR_D2"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_825"
   },
@@ -2377,10 +2242,7 @@
   {
     "type": "source_port",
     "name": "DDR_D3",
-    "port_hints": [
-      "N2",
-      "DDR_D3"
-    ],
+    "port_hints": ["N2", "DDR_D3"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_827"
   },
@@ -2408,10 +2270,7 @@
   {
     "type": "source_port",
     "name": "DDR_D4",
-    "port_hints": [
-      "N3",
-      "DDR_D4"
-    ],
+    "port_hints": ["N3", "DDR_D4"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_829"
   },
@@ -2439,10 +2298,7 @@
   {
     "type": "source_port",
     "name": "DDR_D5",
-    "port_hints": [
-      "N4",
-      "DDR_D5"
-    ],
+    "port_hints": ["N4", "DDR_D5"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_831"
   },
@@ -2470,10 +2326,7 @@
   {
     "type": "source_port",
     "name": "DDR_D6",
-    "port_hints": [
-      "P3",
-      "DDR_D6"
-    ],
+    "port_hints": ["P3", "DDR_D6"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_833"
   },
@@ -2501,10 +2354,7 @@
   {
     "type": "source_port",
     "name": "DDR_D7",
-    "port_hints": [
-      "P4",
-      "DDR_D7"
-    ],
+    "port_hints": ["P4", "DDR_D7"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_835"
   },
@@ -2532,10 +2382,7 @@
   {
     "type": "source_port",
     "name": "DDR_D8",
-    "port_hints": [
-      "J1",
-      "DDR_D8"
-    ],
+    "port_hints": ["J1", "DDR_D8"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_837"
   },
@@ -2563,10 +2410,7 @@
   {
     "type": "source_port",
     "name": "DDR_D9",
-    "port_hints": [
-      "K1",
-      "DDR_D9"
-    ],
+    "port_hints": ["K1", "DDR_D9"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_839"
   },
@@ -2594,10 +2438,7 @@
   {
     "type": "source_port",
     "name": "DDR_D10",
-    "port_hints": [
-      "K2",
-      "DDR_D10"
-    ],
+    "port_hints": ["K2", "DDR_D10"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_841"
   },
@@ -2625,10 +2466,7 @@
   {
     "type": "source_port",
     "name": "DDR_D11",
-    "port_hints": [
-      "K3",
-      "DDR_D11"
-    ],
+    "port_hints": ["K3", "DDR_D11"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_843"
   },
@@ -2656,10 +2494,7 @@
   {
     "type": "source_port",
     "name": "DDR_D12",
-    "port_hints": [
-      "K4",
-      "DDR_D12"
-    ],
+    "port_hints": ["K4", "DDR_D12"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_845"
   },
@@ -2687,10 +2522,7 @@
   {
     "type": "source_port",
     "name": "DDR_D13",
-    "port_hints": [
-      "L3",
-      "DDR_D13"
-    ],
+    "port_hints": ["L3", "DDR_D13"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_847"
   },
@@ -2718,10 +2550,7 @@
   {
     "type": "source_port",
     "name": "DDR_D14",
-    "port_hints": [
-      "L4",
-      "DDR_D14"
-    ],
+    "port_hints": ["L4", "DDR_D14"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_849"
   },
@@ -2749,10 +2578,7 @@
   {
     "type": "source_port",
     "name": "DDR_D15",
-    "port_hints": [
-      "M1",
-      "DDR_D15"
-    ],
+    "port_hints": ["M1", "DDR_D15"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_851"
   },
@@ -2780,10 +2606,7 @@
   {
     "type": "source_port",
     "name": "DDR_CK",
-    "port_hints": [
-      "D2",
-      "DDR_CK"
-    ],
+    "port_hints": ["D2", "DDR_CK"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_853"
   },
@@ -2810,10 +2633,7 @@
   {
     "type": "source_port",
     "name": "DDR_NCK",
-    "port_hints": [
-      "D1",
-      "DDR_NCK"
-    ],
+    "port_hints": ["D1", "DDR_NCK"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_855"
   },
@@ -2840,10 +2660,7 @@
   {
     "type": "source_port",
     "name": "DDR_CSN0",
-    "port_hints": [
-      "H2",
-      "DDR_CSN0"
-    ],
+    "port_hints": ["H2", "DDR_CSN0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_857"
   },
@@ -2870,10 +2687,7 @@
   {
     "type": "source_port",
     "name": "DDR_CASN",
-    "port_hints": [
-      "F1",
-      "DDR_CASN"
-    ],
+    "port_hints": ["F1", "DDR_CASN"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_859"
   },
@@ -2900,10 +2714,7 @@
   {
     "type": "source_port",
     "name": "DDR_RASN",
-    "port_hints": [
-      "G4",
-      "DDR_RASN"
-    ],
+    "port_hints": ["G4", "DDR_RASN"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_861"
   },
@@ -2930,10 +2741,7 @@
   {
     "type": "source_port",
     "name": "DDR_WEn",
-    "port_hints": [
-      "B2",
-      "DDR_WEn"
-    ],
+    "port_hints": ["B2", "DDR_WEn"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_863"
   },
@@ -2960,10 +2768,7 @@
   {
     "type": "source_port",
     "name": "DDR_BA0",
-    "port_hints": [
-      "C4",
-      "DDR_BA0"
-    ],
+    "port_hints": ["C4", "DDR_BA0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_865"
   },
@@ -2990,10 +2795,7 @@
   {
     "type": "source_port",
     "name": "DDR_BA1",
-    "port_hints": [
-      "E1",
-      "DDR_BA1"
-    ],
+    "port_hints": ["E1", "DDR_BA1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_867"
   },
@@ -3020,10 +2822,7 @@
   {
     "type": "source_port",
     "name": "DDR_BA2",
-    "port_hints": [
-      "B3",
-      "DDR_BA2"
-    ],
+    "port_hints": ["B3", "DDR_BA2"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_869"
   },
@@ -3050,10 +2849,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQM0",
-    "port_hints": [
-      "M2",
-      "DDR_DQM0"
-    ],
+    "port_hints": ["M2", "DDR_DQM0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_871"
   },
@@ -3080,10 +2876,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQS0",
-    "port_hints": [
-      "P1",
-      "DDR_DQS0"
-    ],
+    "port_hints": ["P1", "DDR_DQS0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_873"
   },
@@ -3111,10 +2904,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQSN0",
-    "port_hints": [
-      "P2",
-      "DDR_DQSN0"
-    ],
+    "port_hints": ["P2", "DDR_DQSN0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_875"
   },
@@ -3142,10 +2932,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQM1",
-    "port_hints": [
-      "J2",
-      "DDR_DQM1"
-    ],
+    "port_hints": ["J2", "DDR_DQM1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_877"
   },
@@ -3172,10 +2959,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQS1",
-    "port_hints": [
-      "L1",
-      "DDR_DQS1"
-    ],
+    "port_hints": ["L1", "DDR_DQS1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_879"
   },
@@ -3203,10 +2987,7 @@
   {
     "type": "source_port",
     "name": "DDR_DQSN1",
-    "port_hints": [
-      "L2",
-      "DDR_DQSN1"
-    ],
+    "port_hints": ["L2", "DDR_DQSN1"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_881"
   },
@@ -3234,10 +3015,7 @@
   {
     "type": "source_port",
     "name": "DDR_ODT",
-    "port_hints": [
-      "G1",
-      "DDR_ODT"
-    ],
+    "port_hints": ["G1", "DDR_ODT"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_883"
   },
@@ -3263,10 +3041,7 @@
   {
     "type": "source_port",
     "name": "EMU1/GPIO3_8",
-    "port_hints": [
-      "B14",
-      "EMU1/GPIO3_8"
-    ],
+    "port_hints": ["B14", "EMU1/GPIO3_8"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_885"
   },
@@ -3292,10 +3067,7 @@
   {
     "type": "source_port",
     "name": "VSS_RTC",
-    "port_hints": [
-      "A5",
-      "VSS_RTC"
-    ],
+    "port_hints": ["A5", "VSS_RTC"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_887"
   },
@@ -3321,10 +3093,7 @@
   {
     "type": "source_port",
     "name": "VSS_OSC0",
-    "port_hints": [
-      "V11",
-      "VSS_OSC0"
-    ],
+    "port_hints": ["V11", "VSS_OSC0"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_889"
   },
@@ -3381,10 +3150,7 @@
   {
     "type": "source_port",
     "name": "DDR_CKE",
-    "port_hints": [
-      "G3",
-      "DDR_CKE"
-    ],
+    "port_hints": ["G3", "DDR_CKE"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_893"
   },
@@ -3411,10 +3177,7 @@
   {
     "type": "source_port",
     "name": "DDR_RESETN",
-    "port_hints": [
-      "G2",
-      "DDR_RESETN"
-    ],
+    "port_hints": ["G2", "DDR_RESETN"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_895"
   },
@@ -3441,10 +3204,7 @@
   {
     "type": "source_port",
     "name": "DDR_VTP",
-    "port_hints": [
-      "J3",
-      "DDR_VTP"
-    ],
+    "port_hints": ["J3", "DDR_VTP"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_897"
   },
@@ -3470,10 +3230,7 @@
   {
     "type": "source_port",
     "name": "DDR_A15",
-    "port_hints": [
-      "D3",
-      "DDR_A15"
-    ],
+    "port_hints": ["D3", "DDR_A15"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_899"
   },
@@ -3500,10 +3257,7 @@
   {
     "type": "source_port",
     "name": "RTC_PORZ",
-    "port_hints": [
-      "B5",
-      "RTC_PORZ"
-    ],
+    "port_hints": ["B5", "RTC_PORZ"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_901"
   },
@@ -3529,10 +3283,7 @@
   {
     "type": "source_port",
     "name": "VREFSSTL",
-    "port_hints": [
-      "J4",
-      "VREFSSTL"
-    ],
+    "port_hints": ["J4", "VREFSSTL"],
     "source_component_id": "source_component_altium_426",
     "source_port_id": "source_port_altium_903"
   },

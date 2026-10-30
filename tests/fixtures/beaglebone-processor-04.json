@@ -10,10 +10,7 @@
   {
     "type": "source_port",
     "name": "AIN0",
-    "port_hints": [
-      "B6",
-      "AIN0"
-    ],
+    "port_hints": ["B6", "AIN0"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_816"
   },
@@ -39,10 +36,7 @@
   {
     "type": "source_port",
     "name": "AIN1",
-    "port_hints": [
-      "C7",
-      "AIN1"
-    ],
+    "port_hints": ["C7", "AIN1"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_818"
   },
@@ -68,10 +62,7 @@
   {
     "type": "source_port",
     "name": "AIN2",
-    "port_hints": [
-      "B7",
-      "AIN2"
-    ],
+    "port_hints": ["B7", "AIN2"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_820"
   },
@@ -97,10 +88,7 @@
   {
     "type": "source_port",
     "name": "AIN3",
-    "port_hints": [
-      "A7",
-      "AIN3"
-    ],
+    "port_hints": ["A7", "AIN3"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_822"
   },
@@ -126,10 +114,7 @@
   {
     "type": "source_port",
     "name": "AIN4",
-    "port_hints": [
-      "C8",
-      "AIN4"
-    ],
+    "port_hints": ["C8", "AIN4"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_824"
   },
@@ -155,10 +140,7 @@
   {
     "type": "source_port",
     "name": "AIN5",
-    "port_hints": [
-      "B8",
-      "AIN5"
-    ],
+    "port_hints": ["B8", "AIN5"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_826"
   },
@@ -184,10 +166,7 @@
   {
     "type": "source_port",
     "name": "AIN6",
-    "port_hints": [
-      "A8",
-      "AIN6"
-    ],
+    "port_hints": ["A8", "AIN6"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_828"
   },
@@ -213,10 +192,7 @@
   {
     "type": "source_port",
     "name": "AIN7",
-    "port_hints": [
-      "C9",
-      "AIN7"
-    ],
+    "port_hints": ["C9", "AIN7"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_830"
   },
@@ -242,10 +218,7 @@
   {
     "type": "source_port",
     "name": "VREFP",
-    "port_hints": [
-      "B9",
-      "VREFP"
-    ],
+    "port_hints": ["B9", "VREFP"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_832"
   },
@@ -271,10 +244,7 @@
   {
     "type": "source_port",
     "name": "VREFN",
-    "port_hints": [
-      "A9",
-      "VREFN"
-    ],
+    "port_hints": ["A9", "VREFN"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_834"
   },
@@ -424,10 +394,7 @@
   {
     "type": "source_port",
     "name": "USB0_DP",
-    "port_hints": [
-      "N17",
-      "USB0_DP"
-    ],
+    "port_hints": ["N17", "USB0_DP"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_844"
   },
@@ -455,10 +422,7 @@
   {
     "type": "source_port",
     "name": "USB0_DM",
-    "port_hints": [
-      "N18",
-      "USB0_DM"
-    ],
+    "port_hints": ["N18", "USB0_DM"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_846"
   },
@@ -486,10 +450,7 @@
   {
     "type": "source_port",
     "name": "USB0_CE",
-    "port_hints": [
-      "M15",
-      "USB0_CE"
-    ],
+    "port_hints": ["M15", "USB0_CE"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_848"
   },
@@ -515,10 +476,7 @@
   {
     "type": "source_port",
     "name": "USB0_VBUS",
-    "port_hints": [
-      "P15",
-      "USB0_VBUS"
-    ],
+    "port_hints": ["P15", "USB0_VBUS"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_850"
   },
@@ -544,10 +502,7 @@
   {
     "type": "source_port",
     "name": "USB0_DRVVBUS/GPIO0_18",
-    "port_hints": [
-      "F16",
-      "USB0_DRVVBUS/GPIO0_18"
-    ],
+    "port_hints": ["F16", "USB0_DRVVBUS/GPIO0_18"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_852"
   },
@@ -573,10 +528,7 @@
   {
     "type": "source_port",
     "name": "USB1_DP",
-    "port_hints": [
-      "R17",
-      "USB1_DP"
-    ],
+    "port_hints": ["R17", "USB1_DP"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_854"
   },
@@ -604,10 +556,7 @@
   {
     "type": "source_port",
     "name": "USB1_DM",
-    "port_hints": [
-      "R18",
-      "USB1_DM"
-    ],
+    "port_hints": ["R18", "USB1_DM"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_856"
   },
@@ -635,10 +584,7 @@
   {
     "type": "source_port",
     "name": "USB1_ID",
-    "port_hints": [
-      "P17",
-      "USB1_ID"
-    ],
+    "port_hints": ["P17", "USB1_ID"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_858"
   },
@@ -664,10 +610,7 @@
   {
     "type": "source_port",
     "name": "USB0_ID",
-    "port_hints": [
-      "P16",
-      "USB0_ID"
-    ],
+    "port_hints": ["P16", "USB0_ID"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_860"
   },
@@ -693,10 +636,7 @@
   {
     "type": "source_port",
     "name": "USB1_CE",
-    "port_hints": [
-      "P18",
-      "USB1_CE"
-    ],
+    "port_hints": ["P18", "USB1_CE"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_862"
   },
@@ -722,10 +662,7 @@
   {
     "type": "source_port",
     "name": "USB1_VBUS",
-    "port_hints": [
-      "T18",
-      "USB1_VBUS"
-    ],
+    "port_hints": ["T18", "USB1_VBUS"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_864"
   },
@@ -751,10 +688,7 @@
   {
     "type": "source_port",
     "name": "USB1_DRVVBUS/GPIO3_13",
-    "port_hints": [
-      "F15",
-      "USB1_DRVVBUS/GPIO3_13"
-    ],
+    "port_hints": ["F15", "USB1_DRVVBUS/GPIO3_13"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_866"
   },
@@ -2294,10 +2228,7 @@
   {
     "type": "source_port",
     "name": "PMIC_POWER_EN",
-    "port_hints": [
-      "C6",
-      "PMIC_POWER_EN"
-    ],
+    "port_hints": ["C6", "PMIC_POWER_EN"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_966"
   },
@@ -2324,10 +2255,7 @@
   {
     "type": "source_port",
     "name": "EXT_WAKEUP",
-    "port_hints": [
-      "C5",
-      "EXT_WAKEUP"
-    ],
+    "port_hints": ["C5", "EXT_WAKEUP"],
     "source_component_id": "source_component_altium_328",
     "source_port_id": "source_port_altium_968"
   },
