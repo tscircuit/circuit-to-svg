@@ -76,7 +76,10 @@ export const createSvgObjectsForSchPortPinLabel = (params: {
       class: labelClassName,
       x: screenPinNumberTextPos.x.toString(),
       y: screenPinNumberTextPos.y.toString(),
-      style: `font-family: sans-serif;${isNegated && !textParts?.length ? " text-decoration: overline;" : ""}`,
+      "font-family": schPort.display_pin_label_font_family ?? "sans-serif",
+      ...(isNegated && !textParts?.length
+        ? { "text-decoration": "overline" }
+        : {}),
       fill: labelColor,
       "text-anchor":
         schPort.side_of_component === "left" ||
