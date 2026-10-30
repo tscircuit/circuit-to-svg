@@ -26,7 +26,7 @@
         "@vitejs/plugin-react": "5.0.0",
         "biome": "^0.3.3",
         "bun-match-svg": "^0.0.12",
-        "circuit-json": "https://pkg.pr.new/circuit-json@48bfd43",
+        "circuit-json": "^0.0.537",
         "circuit-json-to-connectivity-map": "^0.0.23",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.12",
@@ -495,7 +495,7 @@
 
     "chownr": ["chownr@1.1.4", "", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
 
-    "circuit-json": ["circuit-json@https://pkg.pr.new/circuit-json@48bfd43", { "dependencies": { "zod": "3" }, "peerDependencies": { "format-si-unit": "*" } }, "sha512-AC0eLZjHIZgSJVhKlXrLPWGukRJ30JdaGoBh0j6xCmpNTAl6IEWvwM3GJ3tdom/7M2Y2zypHszWe8Wm/baNbSQ=="],
+    "circuit-json": ["circuit-json@0.0.537", "", { "dependencies": { "zod": "3" }, "peerDependencies": { "format-si-unit": "*" } }, "sha512-ETdNYF4n+6OAMHYdXpM5Zqfqe1xXJVG2YWGt0duLYkj+3xZdrhGuV/YAXbuG5Io+q38ZEhyglvoY/hydBOl6kw=="],
 
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 
