@@ -1,0 +1,3574 @@
+[
+  {
+    "type": "source_component",
+    "display_name": "U5",
+    "display_value": "IC_AM335X_ZCE_1",
+    "name": "U5",
+    "source_component_id": "source_component_altium_426",
+    "ftype": "simple_chip"
+  },
+  {
+    "type": "source_port",
+    "name": "OSC1_IN",
+    "port_hints": [
+      "A6",
+      "OSC1_IN"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_671"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 11.5
+    },
+    "display_pin_label": "OSC1_IN",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_671",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_671",
+    "true_ccw_index": 0,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "OSC1_OUT",
+    "port_hints": [
+      "A4",
+      "OSC1_OUT"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_673"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 11.3
+    },
+    "display_pin_label": "OSC1_OUT",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_673",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_673",
+    "true_ccw_index": 1,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "OSC0_IN",
+    "port_hints": [
+      "V10",
+      "OSC0_IN"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_675"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 12
+    },
+    "display_pin_label": "OSC0_IN",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_675",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_675",
+    "true_ccw_index": 2,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "OSC0_OUT",
+    "port_hints": [
+      "U11",
+      "OSC0_OUT"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_677"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 11.8
+    },
+    "display_pin_label": "OSC0_OUT",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_677",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_677",
+    "true_ccw_index": 3,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_CLK/LCD_MEM_CLK/GPMC_WAIT1/MMC2_CLK/PRT1_MII1_TXEN/MCASP0_FSR/GPIO2_1",
+    "port_hints": [
+      "V12",
+      "GPMC_CLK/LCD_MEM_CLK/GPMC_WAIT1/MMC2_CLK/PRT1_MII1_TXEN/MCASP0_FSR/GPIO2_1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_679"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.4
+    },
+    "display_pin_label": "GPMC_CLK/LCD_MEM_CLK/GPMC_WAIT1/MMC2_CLK/PRT1_MII1_TXEN/MCASP0_FSR/GPIO2_1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_679",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_679",
+    "true_ccw_index": 4,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_CSN0/GPIO1_29",
+    "port_hints": [
+      "V6",
+      "GPMC_CSN0/GPIO1_29"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_681"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.3
+    },
+    "display_pin_label": "GPMC_CSN0/GPIO1_29",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_681",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_681",
+    "true_ccw_index": 5,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_CSN1/GPMC_CLK/MMC1_CLK/PRT1EDIO_DATA_IN6/PRT1_EDIO_DATA_OUT6/PR1_PRU1_PRU_R30_12/PR1_PRU1_PRU_R31_12/GPIO1_30",
+    "port_hints": [
+      "U9",
+      "GPMC_CSN1/GPMC_CLK/MMC1_CLK/PRT1EDIO_DATA_IN6/PRT1_EDIO_DATA_OUT6/PR1_PRU1_PRU_R30_12/PR1_PRU1_PRU_R31_12/GPIO1_30"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_683"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.200000000000001
+    },
+    "display_pin_label": "GPMC_CSN1/GPMC_CLK/MMC1_CLK/PRT1EDIO_DATA_IN6/PRT1_EDIO_DATA_OUT6/PR1_PRU1_PRU_R30_12/PR1_PRU1_PRU_R31_12/GPIO1_30",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_683",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_683",
+    "true_ccw_index": 6,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_CSN2/GPMC_BE1N/MMC1_CMD/PR1_EDIO_DATA_IN7/PR1_EDIO_DATA_OUT7/PR1_PRU1_PRU_R30_13/PR1_PRU1_PRU_R31_13/GPIO1_31",
+    "port_hints": [
+      "V9",
+      "GPMC_CSN2/GPMC_BE1N/MMC1_CMD/PR1_EDIO_DATA_IN7/PR1_EDIO_DATA_OUT7/PR1_PRU1_PRU_R30_13/PR1_PRU1_PRU_R31_13/GPIO1_31"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_685"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.1
+    },
+    "display_pin_label": "GPMC_CSN2/GPMC_BE1N/MMC1_CMD/PR1_EDIO_DATA_IN7/PR1_EDIO_DATA_OUT7/PR1_PRU1_PRU_R30_13/PR1_PRU1_PRU_R31_13/GPIO1_31",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_685",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_685",
+    "true_ccw_index": 7,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_WEN/TIMER6/GPIO2_4",
+    "port_hints": [
+      "U6",
+      "GPMC_WEN/TIMER6/GPIO2_4"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_687"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.9
+    },
+    "display_pin_label": "GPMC_WEN/TIMER6/GPIO2_4",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_687",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_687",
+    "true_ccw_index": 8,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3",
+    "port_hints": [
+      "T7",
+      "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_689"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.8
+    },
+    "display_pin_label": "GPMC_OEN_REN/TIMER7/EMU4/GPIO2_3",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_689",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_689",
+    "true_ccw_index": 9,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0",
+    "port_hints": [
+      "T13",
+      "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_691"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10
+    },
+    "display_pin_label": "GPMC_CSN3/MMC2_CMD/PR1_MDIO_DATA/GPIO2_0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_691",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_691",
+    "true_ccw_index": 10,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_ADVN_ALE/TIMER4/GPIO2_2",
+    "port_hints": [
+      "R7",
+      "GPMC_ADVN_ALE/TIMER4/GPIO2_2"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_693"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.700000000000001
+    },
+    "display_pin_label": "GPMC_ADVN_ALE/TIMER4/GPIO2_2",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_693",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_693",
+    "true_ccw_index": 11,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_BE0N_CLE/TIMER5/GPIO2_5",
+    "port_hints": [
+      "T6",
+      "GPMC_BE0N_CLE/TIMER5/GPIO2_5"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_695"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.6
+    },
+    "display_pin_label": "GPMC_BE0N_CLE/TIMER5/GPIO2_5",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_695",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_695",
+    "true_ccw_index": 12,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_BE1N/GMII2_COL/GPMC_CSN6/MMC2_DAT3/GPMC_DIR/PR1_MII1_RXLINK/MCASP0_ACLKR/GPIO1_28",
+    "port_hints": [
+      "U18",
+      "GPMC_BE1N/GMII2_COL/GPMC_CSN6/MMC2_DAT3/GPMC_DIR/PR1_MII1_RXLINK/MCASP0_ACLKR/GPIO1_28"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_697"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.5
+    },
+    "display_pin_label": "GPMC_BE1N/GMII2_COL/GPMC_CSN6/MMC2_DAT3/GPMC_DIR/PR1_MII1_RXLINK/MCASP0_ACLKR/GPIO1_28",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_697",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_697",
+    "true_ccw_index": 13,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_WAIT0/GM112_CRS/GPMC_CSN4/RMII2_CRS_DV/MMC1_SDCD/PR1_MII1_RXDV/UART4_RXD/GPIO0_30",
+    "port_hints": [
+      "T17",
+      "GPMC_WAIT0/GM112_CRS/GPMC_CSN4/RMII2_CRS_DV/MMC1_SDCD/PR1_MII1_RXDV/UART4_RXD/GPIO0_30"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_699"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.4
+    },
+    "display_pin_label": "GPMC_WAIT0/GM112_CRS/GPMC_CSN4/RMII2_CRS_DV/MMC1_SDCD/PR1_MII1_RXDV/UART4_RXD/GPIO0_30",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_699",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_699",
+    "true_ccw_index": 14,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD0/MMC1_DAT0//////GPIO1_0",
+    "port_hints": [
+      "U7",
+      "GPMC_AD0/MMC1_DAT0//////GPIO1_0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_701"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.1
+    },
+    "display_pin_label": "GPMC_AD0/MMC1_DAT0//////GPIO1_0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_701",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_701",
+    "true_ccw_index": 15,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD1/MMC1_DAT1//////GPIO1_1",
+    "port_hints": [
+      "V7",
+      "GPMC_AD1/MMC1_DAT1//////GPIO1_1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_703"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9
+    },
+    "display_pin_label": "GPMC_AD1/MMC1_DAT1//////GPIO1_1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_703",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_703",
+    "true_ccw_index": 16,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD2/MMC1_DAT2//////GPIO1_2",
+    "port_hints": [
+      "R8",
+      "GPMC_AD2/MMC1_DAT2//////GPIO1_2"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_705"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.9
+    },
+    "display_pin_label": "GPMC_AD2/MMC1_DAT2//////GPIO1_2",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_705",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_705",
+    "true_ccw_index": 17,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD3/MMC1_DAT3//////GPIO1_3",
+    "port_hints": [
+      "T8",
+      "GPMC_AD3/MMC1_DAT3//////GPIO1_3"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_707"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.8
+    },
+    "display_pin_label": "GPMC_AD3/MMC1_DAT3//////GPIO1_3",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_707",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_707",
+    "true_ccw_index": 18,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD4/MMC1_DAT4//////GPIO1_4",
+    "port_hints": [
+      "U8",
+      "GPMC_AD4/MMC1_DAT4//////GPIO1_4"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_709"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.700000000000001
+    },
+    "display_pin_label": "GPMC_AD4/MMC1_DAT4//////GPIO1_4",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_709",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_709",
+    "true_ccw_index": 19,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD5/MMC1_DAT5//////GPIO1_5",
+    "port_hints": [
+      "V8",
+      "GPMC_AD5/MMC1_DAT5//////GPIO1_5"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_711"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.6
+    },
+    "display_pin_label": "GPMC_AD5/MMC1_DAT5//////GPIO1_5",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_711",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_711",
+    "true_ccw_index": 20,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD6/MMC1_DAT6//////GPIO1_6",
+    "port_hints": [
+      "R9",
+      "GPMC_AD6/MMC1_DAT6//////GPIO1_6"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_713"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.5
+    },
+    "display_pin_label": "GPMC_AD6/MMC1_DAT6//////GPIO1_6",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_713",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_713",
+    "true_ccw_index": 21,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD7/MMC1_DAT7//////GPIO1_7",
+    "port_hints": [
+      "T9",
+      "GPMC_AD7/MMC1_DAT7//////GPIO1_7"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_715"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.4
+    },
+    "display_pin_label": "GPMC_AD7/MMC1_DAT7//////GPIO1_7",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_715",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_715",
+    "true_ccw_index": 22,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD8/LCD_DATA23/MMC1_DAT0/MMC2_DAT4/EHRPWM2A/PR1_MII_MT0_CLK//GPIO0_22",
+    "port_hints": [
+      "U10",
+      "GPMC_AD8/LCD_DATA23/MMC1_DAT0/MMC2_DAT4/EHRPWM2A/PR1_MII_MT0_CLK//GPIO0_22"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_717"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.3
+    },
+    "display_pin_label": "GPMC_AD8/LCD_DATA23/MMC1_DAT0/MMC2_DAT4/EHRPWM2A/PR1_MII_MT0_CLK//GPIO0_22",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_717",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_717",
+    "true_ccw_index": 23,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD9/LCD_DATA22/MMC1_DAT1/MMC2_DAT5/EHRPWM2B/PR1_MII0_CRS//GPIO0_23",
+    "port_hints": [
+      "T10",
+      "GPMC_AD9/LCD_DATA22/MMC1_DAT1/MMC2_DAT5/EHRPWM2B/PR1_MII0_CRS//GPIO0_23"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_719"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.2
+    },
+    "display_pin_label": "GPMC_AD9/LCD_DATA22/MMC1_DAT1/MMC2_DAT5/EHRPWM2B/PR1_MII0_CRS//GPIO0_23",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_719",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_719",
+    "true_ccw_index": 24,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD10/LCD_DATA21/MMC1_DAT2/MMC2_DAT6/EHRPWM2_TRIPZONE_INPUT/PR1_MII0_TXEN//GPIO0_26",
+    "port_hints": [
+      "T11",
+      "GPMC_AD10/LCD_DATA21/MMC1_DAT2/MMC2_DAT6/EHRPWM2_TRIPZONE_INPUT/PR1_MII0_TXEN//GPIO0_26"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_721"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8.1
+    },
+    "display_pin_label": "GPMC_AD10/LCD_DATA21/MMC1_DAT2/MMC2_DAT6/EHRPWM2_TRIPZONE_INPUT/PR1_MII0_TXEN//GPIO0_26",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_721",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_721",
+    "true_ccw_index": 25,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD11/LCD_DATA20/MMC1_DAT3/MMC2_DAT7/EHRPWM2_SYNCI_O/PR1_MII0_TXD3//GPIO0_27",
+    "port_hints": [
+      "U12",
+      "GPMC_AD11/LCD_DATA20/MMC1_DAT3/MMC2_DAT7/EHRPWM2_SYNCI_O/PR1_MII0_TXD3//GPIO0_27"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_723"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 8
+    },
+    "display_pin_label": "GPMC_AD11/LCD_DATA20/MMC1_DAT3/MMC2_DAT7/EHRPWM2_SYNCI_O/PR1_MII0_TXD3//GPIO0_27",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_723",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_723",
+    "true_ccw_index": 26,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD12/LCD_DATA19/MMC1_DAT4/MMC2_DAT0/EQEP2A_IN/PR1_MII0_TXD2/PR1_PRU0_PRU_R30_14/GPIO1_12",
+    "port_hints": [
+      "T12",
+      "GPMC_AD12/LCD_DATA19/MMC1_DAT4/MMC2_DAT0/EQEP2A_IN/PR1_MII0_TXD2/PR1_PRU0_PRU_R30_14/GPIO1_12"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_725"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.9
+    },
+    "display_pin_label": "GPMC_AD12/LCD_DATA19/MMC1_DAT4/MMC2_DAT0/EQEP2A_IN/PR1_MII0_TXD2/PR1_PRU0_PRU_R30_14/GPIO1_12",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_725",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_725",
+    "true_ccw_index": 27,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD13/LCD_DATA18/MMC1_DAT5/MMC2_DAT1/EQEP2B_IN/PR1_MII0_TXD1/PR1_PRU0_PRU_R30_15/GPIO1_13",
+    "port_hints": [
+      "R12",
+      "GPMC_AD13/LCD_DATA18/MMC1_DAT5/MMC2_DAT1/EQEP2B_IN/PR1_MII0_TXD1/PR1_PRU0_PRU_R30_15/GPIO1_13"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_727"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.8
+    },
+    "display_pin_label": "GPMC_AD13/LCD_DATA18/MMC1_DAT5/MMC2_DAT1/EQEP2B_IN/PR1_MII0_TXD1/PR1_PRU0_PRU_R30_15/GPIO1_13",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_727",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_727",
+    "true_ccw_index": 28,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD14/LCD_DATA17/MMC1_DAT6/MMC2_DAT2/EQEP2_INDEX/PR1_MII0_TXD0/PR1_PRU0_PRU_R31_14/GPIO1_14",
+    "port_hints": [
+      "V13",
+      "GPMC_AD14/LCD_DATA17/MMC1_DAT6/MMC2_DAT2/EQEP2_INDEX/PR1_MII0_TXD0/PR1_PRU0_PRU_R31_14/GPIO1_14"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_729"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.7
+    },
+    "display_pin_label": "GPMC_AD14/LCD_DATA17/MMC1_DAT6/MMC2_DAT2/EQEP2_INDEX/PR1_MII0_TXD0/PR1_PRU0_PRU_R31_14/GPIO1_14",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_729",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_729",
+    "true_ccw_index": 29,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_AD15/LCD_DATA16/MMC1_DAT7/MMC2_DAT3/EQEP2_STROBE/PR1_ECAP0_ECAP_CAPIN_APWM_O/PR1_PRU0_PRU_R31_15/GPIO1_15",
+    "port_hints": [
+      "U13",
+      "GPMC_AD15/LCD_DATA16/MMC1_DAT7/MMC2_DAT3/EQEP2_STROBE/PR1_ECAP0_ECAP_CAPIN_APWM_O/PR1_PRU0_PRU_R31_15/GPIO1_15"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_731"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.6000000000000005
+    },
+    "display_pin_label": "GPMC_AD15/LCD_DATA16/MMC1_DAT7/MMC2_DAT3/EQEP2_STROBE/PR1_ECAP0_ECAP_CAPIN_APWM_O/PR1_PRU0_PRU_R31_15/GPIO1_15",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_731",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_731",
+    "true_ccw_index": 30,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A0/GMII2_TXEN/RGMII2_TCTL/RMII2_TXEN/GPMC_A16/PR1_MII_MT1_CLK/EHRPWM1_TRIPZONE_INPUT/GPIO1_16",
+    "port_hints": [
+      "R13",
+      "GPMC_A0/GMII2_TXEN/RGMII2_TCTL/RMII2_TXEN/GPMC_A16/PR1_MII_MT1_CLK/EHRPWM1_TRIPZONE_INPUT/GPIO1_16"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_733"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.4
+    },
+    "display_pin_label": "GPMC_A0/GMII2_TXEN/RGMII2_TCTL/RMII2_TXEN/GPMC_A16/PR1_MII_MT1_CLK/EHRPWM1_TRIPZONE_INPUT/GPIO1_16",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_733",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_733",
+    "true_ccw_index": 31,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A1/GMII2_RXDV/RGMII2_RCTL/MMC2_DAT0/GPMC_A17/PR1_MII1_TXD3/EHRPWM1_SYNCI_O/GPIO1_17",
+    "port_hints": [
+      "V14",
+      "GPMC_A1/GMII2_RXDV/RGMII2_RCTL/MMC2_DAT0/GPMC_A17/PR1_MII1_TXD3/EHRPWM1_SYNCI_O/GPIO1_17"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_735"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.3
+    },
+    "display_pin_label": "GPMC_A1/GMII2_RXDV/RGMII2_RCTL/MMC2_DAT0/GPMC_A17/PR1_MII1_TXD3/EHRPWM1_SYNCI_O/GPIO1_17",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_735",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_735",
+    "true_ccw_index": 32,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A2/GMII2_TXD3/RGMII2_TD3/MMC2_DAT1/GPMC_A18/PR1_MII1_TXD2/EHRPWM1A/GPIO1_18",
+    "port_hints": [
+      "U14",
+      "GPMC_A2/GMII2_TXD3/RGMII2_TD3/MMC2_DAT1/GPMC_A18/PR1_MII1_TXD2/EHRPWM1A/GPIO1_18"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_737"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.2
+    },
+    "display_pin_label": "GPMC_A2/GMII2_TXD3/RGMII2_TD3/MMC2_DAT1/GPMC_A18/PR1_MII1_TXD2/EHRPWM1A/GPIO1_18",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_737",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_737",
+    "true_ccw_index": 33,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A3/GMII2_TXD2/RGMII2_TD2/MMC2_DAT2/GPMC_A19/PR1_MII1_TXD1/EHRPWM1B/GPIO1_19",
+    "port_hints": [
+      "T14",
+      "GPMC_A3/GMII2_TXD2/RGMII2_TD2/MMC2_DAT2/GPMC_A19/PR1_MII1_TXD1/EHRPWM1B/GPIO1_19"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_739"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7.1000000000000005
+    },
+    "display_pin_label": "GPMC_A3/GMII2_TXD2/RGMII2_TD2/MMC2_DAT2/GPMC_A19/PR1_MII1_TXD1/EHRPWM1B/GPIO1_19",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_739",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_739",
+    "true_ccw_index": 34,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A4/GMII2_TXD1/RGMII2_TD1/RMII2_TXD1/GPMC_A20/PR1_MII1_TXD0/EQEP1A_IN/GPIO1_20",
+    "port_hints": [
+      "R14",
+      "GPMC_A4/GMII2_TXD1/RGMII2_TD1/RMII2_TXD1/GPMC_A20/PR1_MII1_TXD0/EQEP1A_IN/GPIO1_20"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_741"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 7
+    },
+    "display_pin_label": "GPMC_A4/GMII2_TXD1/RGMII2_TD1/RMII2_TXD1/GPMC_A20/PR1_MII1_TXD0/EQEP1A_IN/GPIO1_20",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_741",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_741",
+    "true_ccw_index": 35,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A5/GMII2_TXD0/RGMII2_TD0/RMII2_TXD0/GPMC_A21/PR1_MII1_RXD3/EQEP1B_IN/GPIO1_21",
+    "port_hints": [
+      "V15",
+      "GPMC_A5/GMII2_TXD0/RGMII2_TD0/RMII2_TXD0/GPMC_A21/PR1_MII1_RXD3/EQEP1B_IN/GPIO1_21"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_743"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.9
+    },
+    "display_pin_label": "GPMC_A5/GMII2_TXD0/RGMII2_TD0/RMII2_TXD0/GPMC_A21/PR1_MII1_RXD3/EQEP1B_IN/GPIO1_21",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_743",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_743",
+    "true_ccw_index": 36,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A6/GMII2_TXCLK/RGMII2_TCLK/MMC2_DAT4/GPMC_A22/PR1_MII1_RXD2/EQEP1_INDEX/GPIO1_22",
+    "port_hints": [
+      "U15",
+      "GPMC_A6/GMII2_TXCLK/RGMII2_TCLK/MMC2_DAT4/GPMC_A22/PR1_MII1_RXD2/EQEP1_INDEX/GPIO1_22"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_745"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.8
+    },
+    "display_pin_label": "GPMC_A6/GMII2_TXCLK/RGMII2_TCLK/MMC2_DAT4/GPMC_A22/PR1_MII1_RXD2/EQEP1_INDEX/GPIO1_22",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_745",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_745",
+    "true_ccw_index": 37,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A7/GMII2_RXCLK/RGMII2_RCLK/MMC2_DAT5/GPMC_A23/PR1_MII1_RXD1/EQEP1_STROBE/GPIO1_23",
+    "port_hints": [
+      "T15",
+      "GPMC_A7/GMII2_RXCLK/RGMII2_RCLK/MMC2_DAT5/GPMC_A23/PR1_MII1_RXD1/EQEP1_STROBE/GPIO1_23"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_747"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.7
+    },
+    "display_pin_label": "GPMC_A7/GMII2_RXCLK/RGMII2_RCLK/MMC2_DAT5/GPMC_A23/PR1_MII1_RXD1/EQEP1_STROBE/GPIO1_23",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_747",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_747",
+    "true_ccw_index": 38,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A8/GMII2_RXD3/RGMII2_RD3/MMC2_DAT6/GPMC_A24/PR1_MII1_RXD0/MCASP0_ACLKX/GPIO1_24",
+    "port_hints": [
+      "V16",
+      "GPMC_A8/GMII2_RXD3/RGMII2_RD3/MMC2_DAT6/GPMC_A24/PR1_MII1_RXD0/MCASP0_ACLKX/GPIO1_24"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_749"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.6000000000000005
+    },
+    "display_pin_label": "GPMC_A8/GMII2_RXD3/RGMII2_RD3/MMC2_DAT6/GPMC_A24/PR1_MII1_RXD0/MCASP0_ACLKX/GPIO1_24",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_749",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_749",
+    "true_ccw_index": 39,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A9/GMII2_RXD2/RGMII2_RD2/MMC2_DAT7/GPMC_A25/PR1_MII_MR1_CLK/MCASP0_FSX/GPIO1_25",
+    "port_hints": [
+      "U16",
+      "GPMC_A9/GMII2_RXD2/RGMII2_RD2/MMC2_DAT7/GPMC_A25/PR1_MII_MR1_CLK/MCASP0_FSX/GPIO1_25"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_751"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.5
+    },
+    "display_pin_label": "GPMC_A9/GMII2_RXD2/RGMII2_RD2/MMC2_DAT7/GPMC_A25/PR1_MII_MR1_CLK/MCASP0_FSX/GPIO1_25",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_751",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_751",
+    "true_ccw_index": 40,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A10/GMII2_RXD1/RGMII2_RD1/RMII2_RXD1/GPMC_A26/PR1_MII1_CRS/MCASP0_AXR0/GPIO1_26",
+    "port_hints": [
+      "T16",
+      "GPMC_A10/GMII2_RXD1/RGMII2_RD1/RMII2_RXD1/GPMC_A26/PR1_MII1_CRS/MCASP0_AXR0/GPIO1_26"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_753"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.4
+    },
+    "display_pin_label": "GPMC_A10/GMII2_RXD1/RGMII2_RD1/RMII2_RXD1/GPMC_A26/PR1_MII1_CRS/MCASP0_AXR0/GPIO1_26",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_753",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_753",
+    "true_ccw_index": 41,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_A11/GMII2_RXD0/RGMII2_RD0/RMII2_RXD0/GPMC_A27/PR1_MII1_RXER/MCASP0_AXR1/GPIO1_27",
+    "port_hints": [
+      "V17",
+      "GPMC_A11/GMII2_RXD0/RGMII2_RD0/RMII2_RXD0/GPMC_A27/PR1_MII1_RXER/MCASP0_AXR1/GPIO1_27"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_755"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6.3
+    },
+    "display_pin_label": "GPMC_A11/GMII2_RXD0/RGMII2_RD0/RMII2_RXD0/GPMC_A27/PR1_MII1_RXER/MCASP0_AXR1/GPIO1_27",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_755",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_755",
+    "true_ccw_index": 42,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_CLK/GPMC_A24/UART3_CTSN/UART2_RXD/DCAN1_TX/PR1_PRU0_PRU_R30_12/PR1_PRU0_PRU_R31_12/GPIO2_30",
+    "port_hints": [
+      "G17",
+      "MMC0_CLK/GPMC_A24/UART3_CTSN/UART2_RXD/DCAN1_TX/PR1_PRU0_PRU_R30_12/PR1_PRU0_PRU_R31_12/GPIO2_30"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_757"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 6
+    },
+    "display_pin_label": "MMC0_CLK/GPMC_A24/UART3_CTSN/UART2_RXD/DCAN1_TX/PR1_PRU0_PRU_R30_12/PR1_PRU0_PRU_R31_12/GPIO2_30",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_757",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_757",
+    "true_ccw_index": 43,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_CMD/GPMC_A25/UART3_RTSN/UART2_TXD/DCAN1_RX/PR1_PRU0_PRU_R30_13/PR1_PRU0_PRU_R31_13/GPIO2_31",
+    "port_hints": [
+      "G18",
+      "MMC0_CMD/GPMC_A25/UART3_RTSN/UART2_TXD/DCAN1_RX/PR1_PRU0_PRU_R30_13/PR1_PRU0_PRU_R31_13/GPIO2_31"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_759"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 5.9
+    },
+    "display_pin_label": "MMC0_CMD/GPMC_A25/UART3_RTSN/UART2_TXD/DCAN1_RX/PR1_PRU0_PRU_R30_13/PR1_PRU0_PRU_R31_13/GPIO2_31",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_759",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_759",
+    "true_ccw_index": 44,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_DAT0/GPMC_A23/UART5_RTSN/UART3_TXD/UART1_RIN/PR1_PRU0_PRU_R30_11/PR1_PRU0_PRU_R31_11/GPIO2_29",
+    "port_hints": [
+      "G16",
+      "MMC0_DAT0/GPMC_A23/UART5_RTSN/UART3_TXD/UART1_RIN/PR1_PRU0_PRU_R30_11/PR1_PRU0_PRU_R31_11/GPIO2_29"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_761"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 5.8
+    },
+    "display_pin_label": "MMC0_DAT0/GPMC_A23/UART5_RTSN/UART3_TXD/UART1_RIN/PR1_PRU0_PRU_R30_11/PR1_PRU0_PRU_R31_11/GPIO2_29",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_761",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_761",
+    "true_ccw_index": 45,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_DAT1/GPMC_A22/UART5_CTSN/UART3_RXD/UART1_DTRN/PR1_PRU0_PRU_R30_10/PR1_PRU0_PRU_R31_10/GPIO2_28",
+    "port_hints": [
+      "G15",
+      "MMC0_DAT1/GPMC_A22/UART5_CTSN/UART3_RXD/UART1_DTRN/PR1_PRU0_PRU_R30_10/PR1_PRU0_PRU_R31_10/GPIO2_28"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_763"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 5.7
+    },
+    "display_pin_label": "MMC0_DAT1/GPMC_A22/UART5_CTSN/UART3_RXD/UART1_DTRN/PR1_PRU0_PRU_R30_10/PR1_PRU0_PRU_R31_10/GPIO2_28",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_763",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_763",
+    "true_ccw_index": 46,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_DAT2/GPMC_A21/UART4_RTSN/TIMER6/UART1_DSRN/PR1_PRU0_PRU_R30_9/PR1_PRU0_PRU_R31_9/GPIO2_27",
+    "port_hints": [
+      "F18",
+      "MMC0_DAT2/GPMC_A21/UART4_RTSN/TIMER6/UART1_DSRN/PR1_PRU0_PRU_R30_9/PR1_PRU0_PRU_R31_9/GPIO2_27"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_765"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 5.6000000000000005
+    },
+    "display_pin_label": "MMC0_DAT2/GPMC_A21/UART4_RTSN/TIMER6/UART1_DSRN/PR1_PRU0_PRU_R30_9/PR1_PRU0_PRU_R31_9/GPIO2_27",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_765",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_765",
+    "true_ccw_index": 47,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "MMC0_DAT3/GPMC_A20/UART4_CTSN/TIMER5/UART1_DCDN/PR1_PRU0_PRU_R30_8/PR1_PRU0_PRU_R31_8/GPIO2_26",
+    "port_hints": [
+      "F17",
+      "MMC0_DAT3/GPMC_A20/UART4_CTSN/TIMER5/UART1_DCDN/PR1_PRU0_PRU_R30_8/PR1_PRU0_PRU_R31_8/GPIO2_26"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_767"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 5.5
+    },
+    "display_pin_label": "MMC0_DAT3/GPMC_A20/UART4_CTSN/TIMER5/UART1_DCDN/PR1_PRU0_PRU_R30_8/PR1_PRU0_PRU_R31_8/GPIO2_26",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_767",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_767",
+    "true_ccw_index": 48,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "PORZ",
+    "port_hints": [
+      "B15",
+      "PORZ"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_769"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 12
+    },
+    "display_pin_label": "PORZ",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_769",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_769",
+    "true_ccw_index": 49,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "NRESET_INOUT",
+    "port_hints": [
+      "A10",
+      "NRESET_INOUT"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_771"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.9
+    },
+    "display_pin_label": "NRESET_INOUT",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_771",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_771",
+    "true_ccw_index": 50,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "NNMI",
+    "port_hints": [
+      "B18",
+      "NNMI"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_773"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.6
+    },
+    "display_pin_label": "NNMI",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_773",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_773",
+    "true_ccw_index": 51,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "EVENT_INTR0/TIMER4/CLKOUT1/SPI1_CS1/PR1PRU1R31_16/EMU2/GPIO0_19",
+    "port_hints": [
+      "A15",
+      "EVENT_INTR0/TIMER4/CLKOUT1/SPI1_CS1/PR1PRU1R31_16/EMU2/GPIO0_19"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_775"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.5
+    },
+    "display_pin_label": "EVENT_INTR0/TIMER4/CLKOUT1/SPI1_CS1/PR1PRU1R31_16/EMU2/GPIO0_19",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_775",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_775",
+    "true_ccw_index": 52,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "EVENT_INTR1/TCLKIN/CLKOUT2/TIMER7/PR1PRU0_PRUR31_16/EMU3/GPIO0_20",
+    "port_hints": [
+      "D14",
+      "EVENT_INTR1/TCLKIN/CLKOUT2/TIMER7/PR1PRU0_PRUR31_16/EMU3/GPIO0_20"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_777"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.4
+    },
+    "display_pin_label": "EVENT_INTR1/TCLKIN/CLKOUT2/TIMER7/PR1PRU0_PRUR31_16/EMU3/GPIO0_20",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_777",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_777",
+    "true_ccw_index": 53,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "TMS",
+    "port_hints": [
+      "C11",
+      "TMS"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_779"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.1
+    },
+    "display_pin_label": "TMS",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_779",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_779",
+    "true_ccw_index": 54,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "NTRST",
+    "port_hints": [
+      "B10",
+      "NTRST"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_781"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.200000000000001
+    },
+    "display_pin_label": "NTRST",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_781",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_781",
+    "true_ccw_index": 55,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "TCK",
+    "port_hints": [
+      "A12",
+      "TCK"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_783"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.9
+    },
+    "display_pin_label": "TCK",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_783",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_783",
+    "true_ccw_index": 56,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "TDI",
+    "port_hints": [
+      "B11",
+      "TDI"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_785"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11
+    },
+    "display_pin_label": "TDI",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_785",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_785",
+    "true_ccw_index": 57,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "TDO",
+    "port_hints": [
+      "A11",
+      "TDO"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_787"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.8
+    },
+    "display_pin_label": "TDO",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_787",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_787",
+    "true_ccw_index": 58,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "EMU0/GPIO3_7",
+    "port_hints": [
+      "C14",
+      "EMU0/GPIO3_7"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_789"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.700000000000001
+    },
+    "display_pin_label": "EMU0/GPIO3_7",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_789",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_789",
+    "true_ccw_index": 59,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A0",
+    "port_hints": [
+      "F3",
+      "DDR_A0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_791"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.9
+    },
+    "display_pin_label": "DDR_A0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_791",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_791",
+    "true_ccw_index": 60,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A1",
+    "port_hints": [
+      "H1",
+      "DDR_A1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_793"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.8
+    },
+    "display_pin_label": "DDR_A1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_793",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_793",
+    "true_ccw_index": 61,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A2",
+    "port_hints": [
+      "E4",
+      "DDR_A2"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_795"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.700000000000001
+    },
+    "display_pin_label": "DDR_A2",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_795",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_795",
+    "true_ccw_index": 62,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A3",
+    "port_hints": [
+      "C3",
+      "DDR_A3"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_797"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.6
+    },
+    "display_pin_label": "DDR_A3",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_797",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_797",
+    "true_ccw_index": 63,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A4",
+    "port_hints": [
+      "C2",
+      "DDR_A4"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_799"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.5
+    },
+    "display_pin_label": "DDR_A4",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_799",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_799",
+    "true_ccw_index": 64,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A5",
+    "port_hints": [
+      "B1",
+      "DDR_A5"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_801"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.4
+    },
+    "display_pin_label": "DDR_A5",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_801",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_801",
+    "true_ccw_index": 65,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A6",
+    "port_hints": [
+      "D5",
+      "DDR_A6"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_803"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.3
+    },
+    "display_pin_label": "DDR_A6",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_803",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_803",
+    "true_ccw_index": 66,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A7",
+    "port_hints": [
+      "E2",
+      "DDR_A7"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_805"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.200000000000001
+    },
+    "display_pin_label": "DDR_A7",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_805",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_805",
+    "true_ccw_index": 67,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A8",
+    "port_hints": [
+      "D4",
+      "DDR_A8"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_807"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10.1
+    },
+    "display_pin_label": "DDR_A8",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_807",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_807",
+    "true_ccw_index": 68,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A9",
+    "port_hints": [
+      "C1",
+      "DDR_A9"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_809"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 10
+    },
+    "display_pin_label": "DDR_A9",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_809",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_809",
+    "true_ccw_index": 69,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A10",
+    "port_hints": [
+      "F4",
+      "DDR_A10"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_811"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.9
+    },
+    "display_pin_label": "DDR_A10",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_811",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_811",
+    "true_ccw_index": 70,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A11",
+    "port_hints": [
+      "F2",
+      "DDR_A11"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_813"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.8
+    },
+    "display_pin_label": "DDR_A11",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_813",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_813",
+    "true_ccw_index": 71,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A12",
+    "port_hints": [
+      "E3",
+      "DDR_A12"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_815"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.700000000000001
+    },
+    "display_pin_label": "DDR_A12",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_815",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_815",
+    "true_ccw_index": 72,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A13",
+    "port_hints": [
+      "H3",
+      "DDR_A13"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_817"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.6
+    },
+    "display_pin_label": "DDR_A13",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_817",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_817",
+    "true_ccw_index": 73,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A14",
+    "port_hints": [
+      "H4",
+      "DDR_A14"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_819"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.5
+    },
+    "display_pin_label": "DDR_A14",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_819",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_819",
+    "true_ccw_index": 74,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D0",
+    "port_hints": [
+      "M3",
+      "DDR_D0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_821"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.9
+    },
+    "display_pin_label": "DDR_D0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_821",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_821",
+    "true_ccw_index": 75,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D1",
+    "port_hints": [
+      "M4",
+      "DDR_D1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_823"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.8
+    },
+    "display_pin_label": "DDR_D1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_823",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_823",
+    "true_ccw_index": 76,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D2",
+    "port_hints": [
+      "N1",
+      "DDR_D2"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_825"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.700000000000001
+    },
+    "display_pin_label": "DDR_D2",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_825",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_825",
+    "true_ccw_index": 77,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D3",
+    "port_hints": [
+      "N2",
+      "DDR_D3"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_827"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.6
+    },
+    "display_pin_label": "DDR_D3",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_827",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_827",
+    "true_ccw_index": 78,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D4",
+    "port_hints": [
+      "N3",
+      "DDR_D4"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_829"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.5
+    },
+    "display_pin_label": "DDR_D4",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_829",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_829",
+    "true_ccw_index": 79,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D5",
+    "port_hints": [
+      "N4",
+      "DDR_D5"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_831"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.4
+    },
+    "display_pin_label": "DDR_D5",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_831",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_831",
+    "true_ccw_index": 80,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D6",
+    "port_hints": [
+      "P3",
+      "DDR_D6"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_833"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.3
+    },
+    "display_pin_label": "DDR_D6",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_833",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_833",
+    "true_ccw_index": 81,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D7",
+    "port_hints": [
+      "P4",
+      "DDR_D7"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_835"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.2
+    },
+    "display_pin_label": "DDR_D7",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_835",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_835",
+    "true_ccw_index": 82,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D8",
+    "port_hints": [
+      "J1",
+      "DDR_D8"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_837"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8.1
+    },
+    "display_pin_label": "DDR_D8",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_837",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_837",
+    "true_ccw_index": 83,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D9",
+    "port_hints": [
+      "K1",
+      "DDR_D9"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_839"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 8
+    },
+    "display_pin_label": "DDR_D9",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_839",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_839",
+    "true_ccw_index": 84,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D10",
+    "port_hints": [
+      "K2",
+      "DDR_D10"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_841"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.9
+    },
+    "display_pin_label": "DDR_D10",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_841",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_841",
+    "true_ccw_index": 85,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D11",
+    "port_hints": [
+      "K3",
+      "DDR_D11"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_843"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.8
+    },
+    "display_pin_label": "DDR_D11",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_843",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_843",
+    "true_ccw_index": 86,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D12",
+    "port_hints": [
+      "K4",
+      "DDR_D12"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_845"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.7
+    },
+    "display_pin_label": "DDR_D12",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_845",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_845",
+    "true_ccw_index": 87,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D13",
+    "port_hints": [
+      "L3",
+      "DDR_D13"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_847"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.6000000000000005
+    },
+    "display_pin_label": "DDR_D13",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_847",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_847",
+    "true_ccw_index": 88,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D14",
+    "port_hints": [
+      "L4",
+      "DDR_D14"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_849"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.5
+    },
+    "display_pin_label": "DDR_D14",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_849",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_849",
+    "true_ccw_index": 89,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_D15",
+    "port_hints": [
+      "M1",
+      "DDR_D15"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_851"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.4
+    },
+    "display_pin_label": "DDR_D15",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_851",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_851",
+    "true_ccw_index": 90,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_CK",
+    "port_hints": [
+      "D2",
+      "DDR_CK"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_853"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.2
+    },
+    "display_pin_label": "DDR_CK",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_853",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_853",
+    "true_ccw_index": 91,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_NCK",
+    "port_hints": [
+      "D1",
+      "DDR_NCK"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_855"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7.1000000000000005
+    },
+    "display_pin_label": "DDR_NCK",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_855",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_855",
+    "true_ccw_index": 92,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_CSN0",
+    "port_hints": [
+      "H2",
+      "DDR_CSN0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_857"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.9
+    },
+    "display_pin_label": "DDR_CSN0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_857",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_857",
+    "true_ccw_index": 93,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_CASN",
+    "port_hints": [
+      "F1",
+      "DDR_CASN"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_859"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.8
+    },
+    "display_pin_label": "DDR_CASN",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_859",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_859",
+    "true_ccw_index": 94,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_RASN",
+    "port_hints": [
+      "G4",
+      "DDR_RASN"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_861"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.7
+    },
+    "display_pin_label": "DDR_RASN",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_861",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_861",
+    "true_ccw_index": 95,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_WEn",
+    "port_hints": [
+      "B2",
+      "DDR_WEn"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_863"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.6000000000000005
+    },
+    "display_pin_label": "DDR_WEn",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_863",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_863",
+    "true_ccw_index": 96,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_BA0",
+    "port_hints": [
+      "C4",
+      "DDR_BA0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_865"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.3
+    },
+    "display_pin_label": "DDR_BA0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_865",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_865",
+    "true_ccw_index": 97,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_BA1",
+    "port_hints": [
+      "E1",
+      "DDR_BA1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_867"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.200000000000001
+    },
+    "display_pin_label": "DDR_BA1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_867",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_867",
+    "true_ccw_index": 98,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_BA2",
+    "port_hints": [
+      "B3",
+      "DDR_BA2"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_869"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.1
+    },
+    "display_pin_label": "DDR_BA2",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_869",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_869",
+    "true_ccw_index": 99,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQM0",
+    "port_hints": [
+      "M2",
+      "DDR_DQM0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_871"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.4
+    },
+    "display_pin_label": "DDR_DQM0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_871",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_871",
+    "true_ccw_index": 100,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQS0",
+    "port_hints": [
+      "P1",
+      "DDR_DQS0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_873"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.3
+    },
+    "display_pin_label": "DDR_DQS0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_873",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_873",
+    "true_ccw_index": 101,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQSN0",
+    "port_hints": [
+      "P2",
+      "DDR_DQSN0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_875"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.2
+    },
+    "display_pin_label": "DDR_DQSN0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_875",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_875",
+    "true_ccw_index": 102,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQM1",
+    "port_hints": [
+      "J2",
+      "DDR_DQM1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_877"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6.1000000000000005
+    },
+    "display_pin_label": "DDR_DQM1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_877",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_877",
+    "true_ccw_index": 103,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQS1",
+    "port_hints": [
+      "L1",
+      "DDR_DQS1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_879"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 6
+    },
+    "display_pin_label": "DDR_DQS1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_879",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_879",
+    "true_ccw_index": 104,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_DQSN1",
+    "port_hints": [
+      "L2",
+      "DDR_DQSN1"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_881"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 5.9
+    },
+    "display_pin_label": "DDR_DQSN1",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_881",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_881",
+    "true_ccw_index": 105,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_ODT",
+    "port_hints": [
+      "G1",
+      "DDR_ODT"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_883"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 5.7
+    },
+    "display_pin_label": "DDR_ODT",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_883",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_883",
+    "true_ccw_index": 106,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "EMU1/GPIO3_8",
+    "port_hints": [
+      "B14",
+      "EMU1/GPIO3_8"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_885"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 10.6
+    },
+    "display_pin_label": "EMU1/GPIO3_8",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_885",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_885",
+    "true_ccw_index": 107,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "VSS_RTC",
+    "port_hints": [
+      "A5",
+      "VSS_RTC"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_887"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 11.200000000000001
+    },
+    "display_pin_label": "VSS_RTC",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_887",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_887",
+    "true_ccw_index": 108,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "VSS_OSC0",
+    "port_hints": [
+      "V11",
+      "VSS_OSC0"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_889"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 11.700000000000001
+    },
+    "display_pin_label": "VSS_OSC0",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_889",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_889",
+    "true_ccw_index": 109,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "GPMC_WPN/GMII2_RXERR/GPMC_CSN5/RMII2_RXERR/MMC2_SDCD/PR1_MDIO_MDCLK/UART4_TXD/GPIO0_31",
+    "port_hints": [
+      "U17",
+      "GPMC_WPN/GMII2_RXERR/GPMC_CSN5/RMII2_RXERR/MMC2_SDCD/PR1_MDIO_MDCLK/UART4_TXD/GPIO0_31"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_891"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 9.3
+    },
+    "display_pin_label": "GPMC_WPN/GMII2_RXERR/GPMC_CSN5/RMII2_RXERR/MMC2_SDCD/PR1_MDIO_MDCLK/UART4_TXD/GPIO0_31",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_891",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_891",
+    "true_ccw_index": 110,
+    "has_input_arrow": true,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_CKE",
+    "port_hints": [
+      "G3",
+      "DDR_CKE"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_893"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 7
+    },
+    "display_pin_label": "DDR_CKE",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_893",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_893",
+    "true_ccw_index": 111,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_RESETN",
+    "port_hints": [
+      "G2",
+      "DDR_RESETN"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_895"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 5.6000000000000005
+    },
+    "display_pin_label": "DDR_RESETN",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_895",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_895",
+    "true_ccw_index": 112,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_VTP",
+    "port_hints": [
+      "J3",
+      "DDR_VTP"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_897"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 5.5
+    },
+    "display_pin_label": "DDR_VTP",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_897",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_897",
+    "true_ccw_index": 113,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "DDR_A15",
+    "port_hints": [
+      "D3",
+      "DDR_A15"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_899"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 9.4
+    },
+    "display_pin_label": "DDR_A15",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_899",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_899",
+    "true_ccw_index": 114,
+    "has_output_arrow": true,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "RTC_PORZ",
+    "port_hints": [
+      "B5",
+      "RTC_PORZ"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_901"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 14.6,
+      "y": 11.8
+    },
+    "display_pin_label": "RTC_PORZ",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "right",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_901",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "right",
+    "source_port_id": "source_port_altium_901",
+    "true_ccw_index": 115,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "source_port",
+    "name": "VREFSSTL",
+    "port_hints": [
+      "J4",
+      "VREFSSTL"
+    ],
+    "source_component_id": "source_component_altium_426",
+    "source_port_id": "source_port_altium_903"
+  },
+  {
+    "type": "schematic_port",
+    "center": {
+      "x": 6.5,
+      "y": 5.3
+    },
+    "display_pin_label": "VREFSSTL",
+    "display_pin_label_font_size": 0.1,
+    "distance_from_component_edge": 0.3,
+    "facing_direction": "left",
+    "is_connected": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_port_id": "schematic_port_altium_903",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "side_of_component": "left",
+    "source_port_id": "source_port_altium_903",
+    "true_ccw_index": 116,
+    "display_pin_label_font_family": "Times New Roman"
+  },
+  {
+    "type": "schematic_component",
+    "center": {
+      "x": 10.55,
+      "y": 8.65
+    },
+    "is_box_with_pins": true,
+    "schematic_component_id": "schematic_component_altium_426",
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "size": {
+      "height": 6.9,
+      "width": 7.5
+    },
+    "source_component_id": "source_component_altium_426",
+    "symbol_display_value": "IC_AM335X_ZCE_1"
+  }
+]
