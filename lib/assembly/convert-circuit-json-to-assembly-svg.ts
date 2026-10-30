@@ -181,7 +181,9 @@ function createSvgObjects(
   ctx: AssemblySvgContext,
   soup: AnyCircuitElement[],
 ): SvgObject[] {
-  const sourceComponents = soup.filter((item) => item.type === "source_component")
+  const sourceComponents = soup.filter(
+    (item) => item.type === "source_component",
+  )
 
   switch (elm.type) {
     case "pcb_board":
@@ -191,10 +193,9 @@ function createSvgObjects(
       const sourceComponent = sourceComponents.find(
         (item) => item.source_component_id === elm.source_component_id,
       )
-      const ports = soup.filter(
-        (item) => item.type === "pcb_port" && item.pcb_component_id === elm.pcb_component_id,
-      )
-      const firstPort = ports[0]
+      const firstPort = soup
+        .filter((item) => item.type === "pcb_port")
+        .find((port) => port.pcb_component_id === elm.pcb_component_id)
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
