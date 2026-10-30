@@ -68,5 +68,8 @@
     "svg-path-commander": "^2.1.11",
     "svgson": "^5.3.1",
     "transformation-matrix": "^2.16.1"
+  },
+  "overrides": {
+    "circuit-json": "https://pkg.pr.new/circuit-json@b2eeece"
   }
 }

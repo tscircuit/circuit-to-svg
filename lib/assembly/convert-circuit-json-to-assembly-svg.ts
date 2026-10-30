@@ -1,6 +1,7 @@
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type { Point, AnyCircuitElement } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
+import { su } from "@tscircuit/circuit-json-util"
 import {
   type Matrix,
   applyToPoint,
@@ -181,9 +182,7 @@ function createSvgObjects(
   ctx: AssemblySvgContext,
   soup: AnyCircuitElement[],
 ): SvgObject[] {
-  const sourceComponents = soup.filter(
-    (item) => item.type === "source_component",
-  )
+  const sourceComponents = su(soup).source_component.list()
 
   switch (elm.type) {
     case "pcb_board":
@@ -193,9 +192,10 @@ function createSvgObjects(
       const sourceComponent = sourceComponents.find(
         (item) => item.source_component_id === elm.source_component_id,
       )
-      const firstPort = soup
-        .filter((item) => item.type === "pcb_port")
-        .find((port) => port.pcb_component_id === elm.pcb_component_id)
+      const ports = su(soup)
+        .pcb_port.list()
+        .filter((port) => port.pcb_component_id === elm.pcb_component_id)
+      const firstPort = ports[0]
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
