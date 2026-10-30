@@ -6,6 +6,7 @@ import {
   toString as matrixToString,
   translate,
 } from "transformation-matrix"
+import { ringToPathD } from "../../utils/ring-to-path-d"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 const KEEPOUT_PATTERN_ID = "pcb-keepout-pattern"
@@ -227,6 +228,46 @@ export function createSvgObjectsFromPcbKeepout(
           attributes: patternAttributes,
           children: [],
           value: "",
+        },
+      )
+    } else if (keepout.shape === "brep") {
+      const { outer_ring, inner_rings = [] } = keepout.brep_shape
+      const d = [outer_ring, ...inner_rings]
+        .map((ring) => ringToPathD(ring.vertices, transform))
+        .join(" ")
+      svgObjects.push(
+        {
+          name: "path",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            ...createKeepoutBaseAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-brep",
+              keepout.description,
+            ),
+            d,
+            fill: KEEPOUT_BACKGROUND_COLOR,
+            "fill-rule": "evenodd",
+          },
+        },
+        {
+          name: "path",
+          type: "element",
+          value: "",
+          children: [],
+          attributes: {
+            ...createKeepoutPatternAttributes(
+              keepout.pcb_keepout_id,
+              layer,
+              "pcb-keepout-brep",
+              keepout.description,
+            ),
+            d,
+            "fill-rule": "evenodd",
+          },
         },
       )
     } else if (keepout.shape === "outline") {

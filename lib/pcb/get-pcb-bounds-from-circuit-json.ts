@@ -10,7 +10,15 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
-import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
+import SVGPathCommander from "svg-path-commander"
+import { ringToPathD } from "../utils/ring-to-path-d"
+import {
+  applyToPoint,
+  compose,
+  rotate,
+  scale,
+  translate,
+} from "transformation-matrix"
 import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
@@ -422,6 +430,19 @@ export function getComprehensivePcbBounds(
             center: keepout.center,
             width: radius * 2,
             height: radius * 2,
+          })
+        }
+      } else if (keepout.shape === "brep") {
+        const vertices = keepout.brep_shape.outer_ring.vertices
+        if (vertices.length > 0) {
+          // Use the same Y reflection as rendering, then return to PCB coordinates.
+          // Arc extrema can extend past every vertex (e.g. two semicircles).
+          const path = ringToPathD(vertices, scale(1, -1))
+          const { x, y, x2, y2 } = SVGPathCommander.getPathBBox(path)
+          updateBounds({
+            center: { x: (x + x2) / 2, y: -(y + y2) / 2 },
+            width: x2 - x,
+            height: y2 - y,
           })
         }
       } else if (keepout.shape === "outline") {
