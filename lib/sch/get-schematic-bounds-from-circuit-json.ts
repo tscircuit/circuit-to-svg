@@ -1,10 +1,10 @@
-import {
-  getNetLabelTextWidth,
-  type SchematicTextWithSuperscript,
-} from "lib/utils/net-label-superscript"
 import type { AnyCircuitElement } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import {
+  type SchematicTextWithSuperscript,
+  getNetLabelTextWidth,
+} from "lib/utils/net-label-superscript"
 import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
@@ -275,11 +275,18 @@ export function getSchematicBoundsFromCircuitJson(
   return { minX, minY, maxX, maxY }
 
   function updateBounds(center: any, size: any, rotation: number) {
+    if (!Number.isFinite(center?.x) || !Number.isFinite(center?.y)) {
+      return
+    }
+
+    const width = Number.isFinite(size?.width) ? size.width : 0
+    const height = Number.isFinite(size?.height) ? size.height : 0
+
     const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
+      { x: -width / 2, y: -height / 2 },
+      { x: width / 2, y: -height / 2 },
+      { x: width / 2, y: height / 2 },
+      { x: -width / 2, y: height / 2 },
     ]
 
     for (const corner of corners) {
