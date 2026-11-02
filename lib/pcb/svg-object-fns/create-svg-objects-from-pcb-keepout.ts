@@ -131,8 +131,18 @@ export function createSvgObjectsFromPcbKeepout(
         rectKeepout.center.x,
         rectKeepout.center.y,
       ])
-      const scaledWidth = rectKeepout.width * Math.abs(transform.a)
-      const scaledHeight = rectKeepout.height * Math.abs(transform.d)
+      const scaledWidth = Math.max(
+        0,
+        Number.isFinite(rectKeepout.width)
+          ? rectKeepout.width * Math.abs(transform.a)
+          : 0,
+      )
+      const scaledHeight = Math.max(
+        0,
+        Number.isFinite(rectKeepout.height)
+          ? rectKeepout.height * Math.abs(transform.d)
+          : 0,
+      )
       const baseTransform = matrixToString(compose(translate(cx, cy)))
 
       const backgroundAttributes = {
@@ -186,7 +196,12 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const scaledRadius = Math.max(
+        0,
+        Number.isFinite(circleKeepout.radius)
+          ? circleKeepout.radius * Math.abs(transform.a)
+          : 0,
+      )
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
@@ -237,8 +252,12 @@ export function createSvgObjectsFromPcbKeepout(
           return pointIndex === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
         })
         .join(" ")
-      const scaledStrokeWidth =
-        outlineKeepout.stroke_width * Math.abs(transform.a)
+      const scaledStrokeWidth = Math.max(
+        0,
+        Number.isFinite(outlineKeepout.stroke_width)
+          ? outlineKeepout.stroke_width * Math.abs(transform.a)
+          : 0,
+      )
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
