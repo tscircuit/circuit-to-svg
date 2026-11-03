@@ -1,6 +1,6 @@
 # circuit-to-svg
 
-A TypeScript library for converting Circuit JSON to Schematic, PCB and Assembly SVG representations.
+A TypeScript library for converting Circuit JSON to Schematic, PCB, Assembly and System SVG representations.
 
 [Getting Started Contributor Video](https://share.cleanshot.com/6zXbLGF7)
 
@@ -17,7 +17,7 @@ bun add circuit-to-svg
 
 ## Overview
 
-This library provides functionality to convert Circuit JSON into SVG (Scalable Vector Graphics) representations. It supports both schematic and PCB (Printed Circuit Board), and Assembly layouts.
+This library provides functionality to convert Circuit JSON into SVG (Scalable Vector Graphics) representations. It supports schematic, PCB (Printed Circuit Board), Assembly layouts, and system block diagrams.
 
 ## Installation
 
@@ -37,7 +37,7 @@ const schematicSvg = convertCircuitJsonToSchematicSvg(circuitJson)
 writeFileSync('schematic.svg', schematicSvg)
 ```
 
-Explore the API sections below to render PCB, assembly, pinout, simulation, and solder paste views.
+Explore the API sections below to render PCB, assembly, system, pinout, simulation, and solder paste views.
 
 | Function | Description |
 | --- | --- |
@@ -46,10 +46,70 @@ Explore the API sections below to render PCB, assembly, pinout, simulation, and 
 | [`convertCircuitJsonToPcbSvg`](#convertcircuitjsontopcbsvg) | Render PCB layouts as SVG graphics. |
 | [`convertCircuitJsonToSolderPasteMask`](#convertcircuitjsontosolderpastemask) | Create solder paste mask layers for fabrication. |
 | [`convertCircuitJsonToAssemblySvg`](#convertcircuitjsontoassemblysvg) | Produce assembly view SVGs for board visualization. |
+| [`convertCircuitJsonToSystemSvg`](#convertcircuitjsontosystemsvg) | Render resolved system block diagrams. |
 | [`convertCircuitJsonToPinoutSvg`](#convertcircuitjsontopinoutsvg) | Build annotated pinout diagrams for boards and modules. |
 | [`convertCircuitJsonToSimulationGraphSvg`](#convertcircuitjsontosimulationgraphsvg) | Plot simulation experiment results as SVG graphs. |
 
 ## API
+
+## convertCircuitJsonToSystemSvg
+
+`convertCircuitJsonToSystemSvg(circuitJson: AnyCircuitElement[], options?: SystemSvgOptions): string`
+
+Requires `circuit-json` 0.0.542 or later. Renders `system_block_page`,
+`system_block_group`, `system_block_component`, and `system_block_connection`
+records. See the [complete Circuit JSON example](./tests/fixtures/system-block-example.json).
+
+```typescript
+import { convertCircuitJsonToSystemSvg } from 'circuit-to-svg'
+
+const systemSvg = convertCircuitJsonToSystemSvg(circuitJson, {
+  systemBlockPageId: 'overview',
+  width: 1000,
+})
+```
+
+![System block diagram](./tests/system/__snapshots__/nested-groups.snap.svg)
+
+### Options
+
+- `systemBlockPageId` – select a page by ID; defaults to the first page in document order.
+- `width` and `height` – output dimensions in pixels. Defaults to width `1000`
+  with height derived from the page aspect ratio. Supplying only one dimension
+  derives the other; supplying both fits the page without stretching, leaving
+  transparent margins if the aspect ratios differ.
+- `colorOverrides` – override entries in the exported `DEFAULT_SYSTEM_COLOR_MAP`.
+- `includeVersion` – add `data-circuit-to-svg-version` to the root SVG.
+
+The page bounds, block centers and sizes, route waypoints, and
+`label_anchor_center` are already resolved in Circuit JSON. Coordinates are
+page-local millimeters with the origin at the page center, +X right, and +Y up.
+Nested groups use the same absolute coordinates. The renderer preserves this
+geometry and does not perform layout or routing. Producers should leave space
+for group headings and place routes and labels clear of blocks.
+
+Block text uses `display_name`, then `name`, then the element ID, with optional
+descriptions. Text wraps and shrinks within the supplied rectangle. Page titles
+and descriptions are included as accessible SVG metadata.
+
+Connections support `forward`, `both`, and `none` directions, including self-loops.
+The independent flags control their default appearance:
+
+| `is_signal` | `is_power` | Appearance |
+| --- | --- | --- |
+| `true` | `false` | Blue solid line |
+| `false` | `true` | Orange dashed line |
+| `true` | `true` | Purple dash-dot line |
+| `false` | `false` | Gray solid line |
+
+SVG elements retain their system IDs in `data-system-block-*-id` attributes.
+Blocks also retain `data-pcb-group-id` and JSON-encoded `data-pcb-component-ids`
+when supplied, so consumers can associate them with PCB views.
+
+The selected page is validated against the Circuit JSON schemas. Missing pages,
+invalid geometry, duplicate IDs, cyclic groups, and missing group or connection
+endpoint references throw errors. Other pages and unrelated circuit elements
+are ignored; referenced PCB records need not be present to render the diagram.
 
 ## convertCircuitJsonToSchematicSvg
 
