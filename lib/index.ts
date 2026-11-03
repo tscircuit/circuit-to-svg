@@ -1,4 +1,6 @@
 export * from "./pcb/convert-circuit-json-to-pcb-svg"
+export * from "./system/convert-circuit-json-to-system-svg"
+export { DEFAULT_SYSTEM_COLOR_MAP, type SystemColorMap } from "./system/colors"
 export * from "./pcb/return-current/convert-circuit-json-to-pcb-simulation-svg"
 export * from "./pcb/return-current/types"
 export * from "./assembly/convert-circuit-json-to-assembly-svg"
