@@ -1,10 +1,10 @@
-import {
-  getNetLabelTextWidth,
-  type SchematicTextWithSuperscript,
-} from "lib/utils/net-label-superscript"
 import type { AnyCircuitElement } from "circuit-json"
 import { getSchMmFontSize } from "lib/utils/get-sch-font-size"
 import { getUnitVectorFromOutsideToEdge } from "lib/utils/get-unit-vector-from-outside-to-edge"
+import {
+  type SchematicTextWithSuperscript,
+  getNetLabelTextWidth,
+} from "lib/utils/net-label-superscript"
 import {
   ARROW_POINT_WIDTH_FSR,
   END_PADDING_EXTRA_PER_CHARACTER_FSR,
@@ -244,7 +244,12 @@ export function getSchematicBoundsFromCircuitJson(
   }
 
   // Add padding to bounds
-  if (!Number.isFinite(minX)) {
+  if (
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
     minX = -1
     minY = -1
     maxX = 1
@@ -275,18 +280,30 @@ export function getSchematicBoundsFromCircuitJson(
   return { minX, minY, maxX, maxY }
 
   function updateBounds(center: any, size: any, rotation: number) {
+    if (!Number.isFinite(center?.x) || !Number.isFinite(center?.y)) {
+      return
+    }
+
+    const width = Number.isFinite(size?.width) ? size.width : 0
+    const height = Number.isFinite(size?.height) ? size.height : 0
+    const safeRotation = Number.isFinite(rotation) ? rotation : 0
+
     const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
+      { x: -width / 2, y: -height / 2 },
+      { x: width / 2, y: -height / 2 },
+      { x: width / 2, y: height / 2 },
+      { x: -width / 2, y: height / 2 },
     ]
 
     for (const corner of corners) {
       const rotatedX =
-        corner.x * Math.cos(rotation) - corner.y * Math.sin(rotation) + center.x
+        corner.x * Math.cos(safeRotation) -
+        corner.y * Math.sin(safeRotation) +
+        center.x
       const rotatedY =
-        corner.x * Math.sin(rotation) + corner.y * Math.cos(rotation) + center.y
+        corner.x * Math.sin(safeRotation) +
+        corner.y * Math.cos(safeRotation) +
+        center.y
       minX = Math.min(minX, rotatedX)
       minY = Math.min(minY, rotatedY)
       maxX = Math.max(maxX, rotatedX)
