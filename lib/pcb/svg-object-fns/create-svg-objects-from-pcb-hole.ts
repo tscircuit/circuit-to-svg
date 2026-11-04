@@ -1,6 +1,7 @@
 import type { PCBHole } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { toSvgLength } from "lib/utils/to-svg-length"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 
 export function createSvgObjectsFromPcbHole(
@@ -25,7 +26,9 @@ export function createSvgObjectsFromPcbHole(
   const solderMaskColor = colorMap.soldermask.top
 
   if (hole.hole_shape === "circle" || hole.hole_shape === "square") {
-    const scaledDiameter = hole.hole_diameter * Math.abs(transform.a)
+    const scaledDiameter = toSvgLength(
+      hole.hole_diameter * Math.abs(transform.a),
+    )
     const radius = scaledDiameter / 2
 
     if (hole.hole_shape === "circle") {
@@ -49,7 +52,7 @@ export function createSvgObjectsFromPcbHole(
         return [holeElement]
       }
 
-      const maskRadius = radius + soldermaskMargin
+      const maskRadius = toSvgLength(radius + soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -129,7 +132,7 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskDiameter = scaledDiameter + 2 * soldermaskMargin
+    const maskDiameter = toSvgLength(scaledDiameter + 2 * soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -191,8 +194,8 @@ export function createSvgObjectsFromPcbHole(
     return [substrateElement, holeElement]
   }
   if (hole.hole_shape === "oval") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = toSvgLength(hole.hole_height * Math.abs(transform.a))
     const rx = scaledWidth / 2
     const ry = scaledHeight / 2
 
@@ -217,8 +220,8 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskRx = rx + soldermaskMargin
-    const maskRy = ry + soldermaskMargin
+    const maskRx = toSvgLength(rx + soldermaskMargin)
+    const maskRy = toSvgLength(ry + soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -281,8 +284,8 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "rect") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = toSvgLength(hole.hole_height * Math.abs(transform.a))
 
     const holeElement: SvgObject = {
       name: "rect",
@@ -305,8 +308,8 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskWidth = scaledWidth + 2 * soldermaskMargin
-    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskWidth = toSvgLength(scaledWidth + 2 * soldermaskMargin)
+    const maskHeight = toSvgLength(scaledHeight + 2 * soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -369,13 +372,13 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "pill") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = toSvgLength(hole.hole_height * Math.abs(transform.a))
 
     // Pill shape: two semicircles connected by straight lines
     // If width > height, it's a horizontal pill; if height > width, it's vertical
     const isHorizontal = scaledWidth > scaledHeight
-    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const radius = toSvgLength(Math.min(scaledWidth, scaledHeight) / 2)
     const straightLength = Math.abs(
       isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
     )
@@ -412,10 +415,10 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskWidth = scaledWidth + 2 * soldermaskMargin
-    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskWidth = toSvgLength(scaledWidth + 2 * soldermaskMargin)
+    const maskHeight = toSvgLength(scaledHeight + 2 * soldermaskMargin)
     const maskIsHorizontal = maskWidth > maskHeight
-    const maskRadius = Math.min(maskWidth, maskHeight) / 2
+    const maskRadius = toSvgLength(Math.min(maskWidth, maskHeight) / 2)
     const maskStraightLength = Math.abs(
       maskIsHorizontal ? maskWidth - maskHeight : maskHeight - maskWidth,
     )
@@ -486,15 +489,15 @@ export function createSvgObjectsFromPcbHole(
   }
 
   if (hole.hole_shape === "rotated_pill") {
-    const scaledWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHeight = toSvgLength(hole.hole_height * Math.abs(transform.a))
 
     // PcbHoleRotatedPill uses ccw_rotation (not hole_ccw_rotation like plated holes)
     const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
 
     // Same logic as regular pill: handle horizontal and vertical orientations
     const isHorizontal = scaledWidth > scaledHeight
-    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const radius = toSvgLength(Math.min(scaledWidth, scaledHeight) / 2)
     const straightLength = Math.abs(
       isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
     )
@@ -532,10 +535,10 @@ export function createSvgObjectsFromPcbHole(
       return [holeElement]
     }
 
-    const maskWidth = scaledWidth + 2 * soldermaskMargin
-    const maskHeight = scaledHeight + 2 * soldermaskMargin
+    const maskWidth = toSvgLength(scaledWidth + 2 * soldermaskMargin)
+    const maskHeight = toSvgLength(scaledHeight + 2 * soldermaskMargin)
     const maskIsHorizontal = maskWidth > maskHeight
-    const maskRadius = Math.min(maskWidth, maskHeight) / 2
+    const maskRadius = toSvgLength(Math.min(maskWidth, maskHeight) / 2)
     const maskStraightLength = Math.abs(
       maskIsHorizontal ? maskWidth - maskHeight : maskHeight - maskWidth,
     )
