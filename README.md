@@ -56,7 +56,7 @@ Explore the API sections below to render PCB, assembly, system, pinout, simulati
 
 `convertCircuitJsonToSystemSvg(circuitJson: AnyCircuitElement[], options?: SystemSvgOptions): string`
 
-Requires `circuit-json` 0.0.542 or later. Renders `system_block_page`,
+Requires `circuit-json` 0.0.544 or later. Renders `system_block_page`,
 `system_block_group`, `system_block_component`, and `system_block_connection`
 records. See the [complete Circuit JSON example](./tests/fixtures/system-block-example.json).
 
@@ -93,6 +93,19 @@ descriptions. Text wraps and shrinks within the supplied rectangle. Page titles
 and descriptions are included as accessible SVG metadata.
 
 Connections support `forward`, `both`, and `none` directions, including self-loops.
+A route endpoint's optional `cubic_bezier_control_points: [Point, Point]` defines
+the cubic Bézier segment arriving at that endpoint. Endpoints without controls
+use straight lines; a route may mix both. Controls use the same absolute page-local
+coordinates as endpoints. Arrowheads follow curve tangents, including coincident
+handles and closed loops. Labels keep their supplied positions.
+
+Circular corners can be represented with circle-derived controls (a quarter-circle
+uses handle lengths of approximately `0.55228475 * radius`). The renderer draws
+the supplied controls; producers resolve corner radii and ensure page bounds
+include the curves before emitting Circuit JSON.
+
+![Circular corners and loops](./tests/system/__snapshots__/circular-corners-and-loops.snap.svg)
+
 The independent flags control their default appearance:
 
 | `is_signal` | `is_power` | Appearance |
