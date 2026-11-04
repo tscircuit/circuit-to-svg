@@ -110,12 +110,28 @@ export function convertCircuitJsonToSystemSvg(
         : connection.is_signal
           ? colors.signal
           : colors.connection
-    const route = connection.route.map(toSvg)
+    const route = connection.route.map((point) => ({
+      ...toSvg(point),
+      cubic_bezier_control_points:
+        point.cubic_bezier_control_points?.map(toSvg),
+    }))
+    const curved = route.some((point) => point.cubic_bezier_control_points)
+    const position = (p: Point) => `${formatNumber(p.x)},${formatNumber(p.y)}`
     const children = [
-      element("polyline", {
-        points: route
-          .map((p) => `${formatNumber(p.x)},${formatNumber(p.y)}`)
-          .join(" "),
+      element(curved ? "path" : "polyline", {
+        ...(curved
+          ? {
+              d: route
+                .map((point, index) => {
+                  if (index === 0) return `M ${position(point)}`
+                  const controls = point.cubic_bezier_control_points
+                  return controls
+                    ? `C ${controls.map(position).join(" ")} ${position(point)}`
+                    : `L ${position(point)}`
+                })
+                .join(" "),
+            }
+          : { points: route.map(position).join(" ") }),
         fill: "none",
         stroke: color,
         "stroke-width": "0.4",
@@ -128,9 +144,25 @@ export function convertCircuitJsonToSystemSvg(
       }),
     ]
     if (connection.direction !== "none") {
-      children.push(createArrow(route.at(-1)!, route.at(-2)!, color))
+      const end = route.at(-1)!
+      children.push(
+        createArrow(
+          end,
+          [
+            ...(end.cubic_bezier_control_points?.slice().reverse() ?? []),
+            route.at(-2)!,
+          ],
+          color,
+        ),
+      )
       if (connection.direction === "both")
-        children.push(createArrow(route[0]!, route[1]!, color))
+        children.push(
+          createArrow(
+            route[0]!,
+            [...(route[1]!.cubic_bezier_control_points ?? []), route[1]!],
+            color,
+          ),
+        )
     }
     paths.push(
       element(
@@ -220,11 +252,22 @@ function pcbAttributes(
 }
 
 /** Explicit triangles avoid SVG marker-ID collisions between embedded diagrams. */
-function createArrow(tip: Point, neighbor: Point, color: string): SvgObject {
+function createArrow(
+  tip: Point,
+  candidates: Point[],
+  color: string,
+): SvgObject {
+  // Coincident handles require the next nonzero derivative direction. Validation
+  // rejects fully collapsed segments, so a distinct candidate always exists.
+  const neighbor = candidates.find((p) => p.x !== tip.x || p.y !== tip.y)!
   const dx = tip.x - neighbor.x
   const dy = tip.y - neighbor.y
   const distance = Math.hypot(dx, dy)
-  const length = Math.min(2, distance / 2)
+  // Tiny tangent handles should not shrink arrows on otherwise long curves.
+  const extent = Math.max(
+    ...candidates.map((p) => Math.hypot(tip.x - p.x, tip.y - p.y)),
+  )
+  const length = Math.min(2, extent / 2)
   const ux = dx / distance
   const uy = dy / distance
   const base = { x: tip.x - ux * length, y: tip.y - uy * length }
