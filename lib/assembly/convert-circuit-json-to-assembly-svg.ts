@@ -177,6 +177,88 @@ export function convertCircuitJsonToAssemblySvg(
   return stringifySvg(svgObject)
 }
 
+function isPin1Hint(hint: string): boolean {
+  const normalized = hint.trim().toLowerCase()
+  return (
+    normalized === "1" ||
+    normalized === "pin1" ||
+    normalized === "pin_1" ||
+    normalized === "pin-1" ||
+    normalized === "p1" ||
+    normalized === "a1" ||
+    normalized === "pin1_1"
+  )
+}
+
+function getNumericPinValue(value: string): number | undefined {
+  const normalized = value.trim().toLowerCase()
+  const match = normalized.match(/^(?:pin[_-]?|p)?(\d+)$/)
+  if (!match?.[1]) return undefined
+  return Number.parseInt(match[1], 10)
+}
+
+function getPin1PcbPort(
+  ports: Array<{
+    pcb_port_id: string
+    source_port_id?: string
+    x: number
+    y: number
+    port_hints?: string[]
+  }>,
+  soup: AnyCircuitElement[],
+) {
+  if (ports.length <= 1) return ports[0]
+
+  const sourcePortsById = new Map(
+    su(soup)
+      .source_port.list()
+      .map((sp) => [sp.source_port_id, sp]),
+  )
+
+  for (const port of ports) {
+    const sourcePort = port.source_port_id
+      ? sourcePortsById.get(port.source_port_id)
+      : undefined
+    if (sourcePort?.pin_number === 1) return port
+
+    const hints = [
+      ...(sourcePort?.port_hints ?? []),
+      ...((port as { port_hints?: string[] }).port_hints ?? []),
+      ...(sourcePort?.name ? [sourcePort.name] : []),
+    ]
+    if (hints.some(isPin1Hint)) return port
+  }
+
+  let bestPort = ports[0]
+  let bestPinNumber = Number.POSITIVE_INFINITY
+
+  for (const port of ports) {
+    const sourcePort = port.source_port_id
+      ? sourcePortsById.get(port.source_port_id)
+      : undefined
+    const candidateNumbers: number[] = []
+    if (typeof sourcePort?.pin_number === "number") {
+      candidateNumbers.push(sourcePort.pin_number)
+    }
+    const hints = [
+      ...(sourcePort?.port_hints ?? []),
+      ...((port as { port_hints?: string[] }).port_hints ?? []),
+      ...(sourcePort?.name ? [sourcePort.name] : []),
+    ]
+    for (const hint of hints) {
+      const num = getNumericPinValue(hint)
+      if (num !== undefined) candidateNumbers.push(num)
+    }
+    const minCandidate = Math.min(...candidateNumbers)
+    if (minCandidate < bestPinNumber) {
+      bestPinNumber = minCandidate
+      bestPort = port
+    }
+  }
+
+  return bestPort
+}
+
 function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
@@ -195,7 +277,7 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      const firstPort = getPin1PcbPort(ports, soup)
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
