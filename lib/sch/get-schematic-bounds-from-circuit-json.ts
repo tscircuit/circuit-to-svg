@@ -103,7 +103,7 @@ export function getSchematicBoundsFromCircuitJson(
             ),
           ) * fontSize
         // Work in screen-relative coordinates, matching the SVG text anchor.
-        const anchor = item.anchor
+        const anchor = item.anchor ?? "center"
         const offsetX =
           anchor === "left" || anchor.endsWith("_left")
             ? width / 2
@@ -226,7 +226,7 @@ export function getSchematicBoundsFromCircuitJson(
       updateBounds(
         item.center,
         { width: item.width, height: item.height },
-        item.rotation,
+        item.rotation ?? 0,
       )
     } else if (item.type === "schematic_arc") {
       updateBounds(
@@ -275,6 +275,17 @@ export function getSchematicBoundsFromCircuitJson(
   return { minX, minY, maxX, maxY }
 
   function updateBounds(center: any, size: any, rotation: number) {
+    if (
+      !center ||
+      !size ||
+      !Number.isFinite(center.x) ||
+      !Number.isFinite(center.y) ||
+      !Number.isFinite(size.width) ||
+      !Number.isFinite(size.height)
+    ) {
+      return
+    }
+    const safeRotation = Number.isFinite(rotation) ? rotation : 0
     const corners = [
       { x: -size.width / 2, y: -size.height / 2 },
       { x: size.width / 2, y: -size.height / 2 },
@@ -284,9 +295,13 @@ export function getSchematicBoundsFromCircuitJson(
 
     for (const corner of corners) {
       const rotatedX =
-        corner.x * Math.cos(rotation) - corner.y * Math.sin(rotation) + center.x
+        corner.x * Math.cos(safeRotation) -
+        corner.y * Math.sin(safeRotation) +
+        center.x
       const rotatedY =
-        corner.x * Math.sin(rotation) + corner.y * Math.cos(rotation) + center.y
+        corner.x * Math.sin(safeRotation) +
+        corner.y * Math.cos(safeRotation) +
+        center.y
       minX = Math.min(minX, rotatedX)
       minY = Math.min(minY, rotatedY)
       maxX = Math.max(maxX, rotatedX)
