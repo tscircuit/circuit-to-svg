@@ -12,8 +12,27 @@ export const getElementPosition = (
 ): Position | null => {
   // Try to find the element as a pcb_smtpad
   const pcbSmtpad = su(circuitJson).pcb_smtpad.get(id)
-  if (pcbSmtpad && "x" in pcbSmtpad && "y" in pcbSmtpad) {
-    return { x: pcbSmtpad.x, y: pcbSmtpad.y }
+  if (pcbSmtpad) {
+    if ("x" in pcbSmtpad && "y" in pcbSmtpad) {
+      return { x: pcbSmtpad.x, y: pcbSmtpad.y }
+    }
+    if (
+      pcbSmtpad.shape === "polygon" &&
+      Array.isArray(pcbSmtpad.points) &&
+      pcbSmtpad.points.length > 0
+    ) {
+      const validPoints = pcbSmtpad.points.filter(
+        (pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y),
+      )
+      if (validPoints.length > 0) {
+        const xs = validPoints.map((pt) => pt.x)
+        const ys = validPoints.map((pt) => pt.y)
+        return {
+          x: (Math.min(...xs) + Math.max(...xs)) / 2,
+          y: (Math.min(...ys) + Math.max(...ys)) / 2,
+        }
+      }
+    }
   }
 
   // Try to find the element as a pcb_plated_hole
