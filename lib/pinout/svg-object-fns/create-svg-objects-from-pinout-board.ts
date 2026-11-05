@@ -82,15 +82,48 @@ export function createSvgObjectsFromPinoutBoard(
 
       const halfWidth = width / 2
       const halfHeight = height / 2
-      const [tl, tr, br, bl] = [
-        applyToPoint(transform, [x - halfWidth, y - halfHeight]),
-        applyToPoint(transform, [x + halfWidth, y - halfHeight]),
-        applyToPoint(transform, [x + halfWidth, y + halfHeight]),
-        applyToPoint(transform, [x - halfWidth, y + halfHeight]),
+      const rad = ((cutout.rotation ?? 0) * Math.PI) / 180
+      const cos = Math.cos(rad)
+      const sin = Math.sin(rad)
+      const localCorners: [number, number][] = [
+        [-halfWidth, -halfHeight],
+        [halfWidth, -halfHeight],
+        [halfWidth, halfHeight],
+        [-halfWidth, halfHeight],
+      ]
+      const [tl, tr, br, bl] = localCorners.map(([lx, ly]) =>
+        applyToPoint(transform, [
+          x + lx * cos - ly * sin,
+          y + lx * sin + ly * cos,
+        ]),
+      ) as [
+        [number, number],
+        [number, number],
+        [number, number],
+        [number, number],
       ]
       path += ` M ${tl[0]} ${tl[1]} L ${tr[0]} ${tr[1]} L ${br[0]} ${br[1]} L ${bl[0]} ${bl[1]} Z`
     } else if (cutout.shape === "circle") {
-      // svg subtract circle from path is hard, skip for now
+      const [cx, cy] = applyToPoint(transform, [
+        cutout.center.x,
+        cutout.center.y,
+      ])
+      const r = cutout.radius * Math.abs(transform.a)
+      if (r > 0) {
+        path += ` M ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} Z`
+      }
+    } else if (
+      cutout.shape === "polygon" &&
+      Array.isArray(cutout.points) &&
+      cutout.points.length >= 3
+    ) {
+      const subPath = cutout.points
+        .map((point: Point, index: number) => {
+          const [px, py] = applyToPoint(transform, [point.x, point.y])
+          return index === 0 ? `M ${px} ${py}` : `L ${px} ${py}`
+        })
+        .join(" ")
+      path += ` ${subPath} Z`
     }
   }
 

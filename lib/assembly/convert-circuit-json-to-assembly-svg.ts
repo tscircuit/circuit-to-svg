@@ -49,13 +49,27 @@ export function convertCircuitJsonToAssemblySvg(
   // Process all elements to determine bounds
   for (const item of soup) {
     if (item.type === "pcb_board") {
-      const center = item.center
-      const width = item.width || 0
-      const height = item.height || 0
-      minX = Math.min(minX, center.x - width / 2)
-      minY = Math.min(minY, center.y - height / 2)
-      maxX = Math.max(maxX, center.x + width / 2)
-      maxY = Math.max(maxY, center.y + height / 2)
+      if (
+        "outline" in item &&
+        item.outline &&
+        Array.isArray(item.outline) &&
+        item.outline.length > 0
+      ) {
+        for (const point of item.outline) {
+          minX = Math.min(minX, point.x)
+          minY = Math.min(minY, point.y)
+          maxX = Math.max(maxX, point.x)
+          maxY = Math.max(maxY, point.y)
+        }
+      } else {
+        const center = item.center
+        const width = item.width || 0
+        const height = item.height || 0
+        minX = Math.min(minX, center.x - width / 2)
+        minY = Math.min(minY, center.y - height / 2)
+        maxX = Math.max(maxX, center.x + width / 2)
+        maxY = Math.max(maxY, center.y + height / 2)
+      }
     }
   }
 
@@ -186,7 +200,7 @@ function createSvgObjects(
 
   switch (elm.type) {
     case "pcb_board":
-      return createSvgObjectsFromAssemblyBoard(elm, ctx.transform)
+      return createSvgObjectsFromAssemblyBoard(elm, ctx.transform, {}, soup)
 
     case "pcb_component": {
       const sourceComponent = sourceComponents.find(
