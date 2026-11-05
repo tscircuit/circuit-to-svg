@@ -39,7 +39,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     font_size = 1,
     color,
     arrow_size,
-    layer,
+    layer = "top",
     pcb_component_id,
     pcb_fabrication_note_dimension_id,
     offset_distance,
@@ -47,7 +47,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     text_ccw_rotation,
   } = dimension
 
-  if (layerFilter && layer && layer !== layerFilter) return []
+  if (layerFilter && layer !== layerFilter) return []
 
   if (!from || !to || typeof from !== "object" || typeof to !== "object") {
     debugPcb(
@@ -343,7 +343,7 @@ export function createSvgObjectsFromPcbFabricationNoteDimension(
     class: "pcb-fabrication-note-dimension",
     "data-type": "pcb_fabrication_note_dimension",
     "data-pcb-fabrication-note-dimension-id": pcb_fabrication_note_dimension_id,
-    "data-pcb-layer": layer ?? "overlay",
+    "data-pcb-layer": dimension.layer ?? "overlay",
   }
 
   if (pcb_component_id !== undefined) {
