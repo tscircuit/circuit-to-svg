@@ -82,6 +82,7 @@ const pcbNote: CircuitJson = [
 
 for (const layer of ["top", "bottom"] as const) {
   test(`showFabricationNotes hides all fabrication primitives on ${layer}`, () => {
+    const otherLayer = layer === "top" ? "bottom" : "top"
     const circuit = [...board, ...silkscreen, ...pcbNote, ...fabricationNotes]
     const options = { layer, includeVersion: false }
     const visible = convertCircuitJsonToPcbSvg(circuit, options)
@@ -94,6 +95,24 @@ for (const layer of ["top", "bottom"] as const) {
     for (const type of ["text", "path", "rect", "dimension"]) {
       expect(visible).toContain(`data-type="pcb_fabrication_note_${type}"`)
     }
+    expect(visible).toContain(
+      `data-pcb-fabrication-note-path-id="path_${layer}"`,
+    )
+    expect(visible).not.toContain(
+      `data-pcb-fabrication-note-path-id="path_${otherLayer}"`,
+    )
+    expect(visible).toContain(
+      `data-pcb-fabrication-note-rect-id="rect_${layer}"`,
+    )
+    expect(visible).not.toContain(
+      `data-pcb-fabrication-note-rect-id="rect_${otherLayer}"`,
+    )
+    expect(visible).toContain(
+      `data-pcb-fabrication-note-dimension-id="dimension_${layer}"`,
+    )
+    expect(visible).not.toContain(
+      `data-pcb-fabrication-note-dimension-id="dimension_${otherLayer}"`,
+    )
     const hidden = convertCircuitJsonToPcbSvg(circuit, {
       ...options,
       showFabricationNotes: false,
