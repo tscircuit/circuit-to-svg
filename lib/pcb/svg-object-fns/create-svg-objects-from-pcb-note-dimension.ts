@@ -40,7 +40,14 @@ export function createSvgObjectsFromPcbNoteDimension(
     text_ccw_rotation,
   } = dimension
 
-  if (!from || !to) {
+  if (
+    !from ||
+    !to ||
+    !Number.isFinite(from.x) ||
+    !Number.isFinite(from.y) ||
+    !Number.isFinite(to.x) ||
+    !Number.isFinite(to.y)
+  ) {
     debugPcb(
       `[pcb_note_dimension] Invalid endpoints for "${dimension.pcb_note_dimension_id}": expected {from: {x, y}, to: {x, y}}, got from=${JSON.stringify(from)}, to=${JSON.stringify(to)}`,
     )
@@ -64,15 +71,17 @@ export function createSvgObjectsFromPcbNoteDimension(
 
   const hasOffsetDirection =
     offset_direction &&
-    typeof offset_direction.x === "number" &&
-    typeof offset_direction.y === "number"
+    Number.isFinite(offset_direction.x) &&
+    Number.isFinite(offset_direction.y)
 
   const normalizedOffsetDirection = hasOffsetDirection
     ? normalize({ x: offset_direction.x, y: offset_direction.y })
     : { x: 0, y: 0 }
 
   const offsetMagnitude =
-    typeof offset_distance === "number" ? offset_distance : 0
+    typeof offset_distance === "number" && Number.isFinite(offset_distance)
+      ? offset_distance
+      : 0
 
   const offsetVector = {
     x: normalizedOffsetDirection.x * offsetMagnitude,
@@ -201,6 +210,13 @@ export function createSvgObjectsFromPcbNoteDimension(
       ? textAngle - text_ccw_rotation
       : textAngle
 
+  const resolvedFontSize =
+    typeof font_size === "number" &&
+    Number.isFinite(font_size) &&
+    font_size >= 0
+      ? font_size
+      : 1
+
   // Calculate additional offset to prevent text from intersecting the line when rotated
   let additionalOffset = 0
   if (
@@ -209,8 +225,8 @@ export function createSvgObjectsFromPcbNoteDimension(
     Number.isFinite(text_ccw_rotation)
   ) {
     // Estimate text dimensions (approximate for Arial font)
-    const textWidth = text.length * font_size * 0.6 // Approximate character width
-    const textHeight = font_size
+    const textWidth = text.length * resolvedFontSize * 0.6 // Approximate character width
+    const textHeight = resolvedFontSize
 
     // Calculate how much the rotated text extends toward the line
     // The text is rotated by text_ccw_rotation relative to the line direction
@@ -227,7 +243,7 @@ export function createSvgObjectsFromPcbNoteDimension(
     const maxExtension = halfWidth * sinRot + halfHeight * cosRot
 
     // Add padding to ensure no intersection
-    additionalOffset = maxExtension + font_size * 0.3
+    additionalOffset = maxExtension + resolvedFontSize * 0.3
   }
 
   const textOffset = arrow_size * 1.5 + additionalOffset
@@ -238,7 +254,7 @@ export function createSvgObjectsFromPcbNoteDimension(
 
   const [textX, textY] = applyToPoint(transform, [textPoint.x, textPoint.y])
 
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const transformedFontSize = resolvedFontSize * Math.abs(transform.a)
 
   const children: SvgObject[] = [
     ...extensionSegments,

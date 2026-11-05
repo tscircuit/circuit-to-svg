@@ -27,10 +27,12 @@ export function createSvgObjectsFromPcbNoteRect(
 
   if (
     !center ||
-    typeof center.x !== "number" ||
-    typeof center.y !== "number" ||
-    typeof width !== "number" ||
-    typeof height !== "number"
+    !Number.isFinite(center.x) ||
+    !Number.isFinite(center.y) ||
+    !Number.isFinite(width) ||
+    width <= 0 ||
+    !Number.isFinite(height) ||
+    height <= 0
   ) {
     debugPcb(
       `[pcb_note_rect] Invalid data for "${noteRect.pcb_note_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
@@ -55,10 +57,19 @@ export function createSvgObjectsFromPcbNoteRect(
   const rectWidth = Math.abs(bottomRightX - topLeftX)
   const rectHeight = Math.abs(bottomRightY - topLeftY)
 
-  const baseStrokeWidth = typeof stroke_width === "number" ? stroke_width : 0
+  const baseStrokeWidth =
+    typeof stroke_width === "number" &&
+    Number.isFinite(stroke_width) &&
+    stroke_width >= 0
+      ? stroke_width
+      : 0
   const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
   const baseCornerRadius =
-    typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+    typeof corner_radius === "number" &&
+    Number.isFinite(corner_radius) &&
+    corner_radius > 0
+      ? corner_radius
+      : 0
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 

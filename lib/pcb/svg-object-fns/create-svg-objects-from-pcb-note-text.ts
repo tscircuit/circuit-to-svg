@@ -24,8 +24,8 @@ export function createSvgObjectsFromPcbNoteText(
 
   if (
     !anchor_position ||
-    typeof anchor_position.x !== "number" ||
-    typeof anchor_position.y !== "number"
+    !Number.isFinite(anchor_position.x) ||
+    !Number.isFinite(anchor_position.y)
   ) {
     debugPcb(
       `[pcb_note_text] Invalid anchor_position for "${note.pcb_note_text_id}": expected {x: number, y: number}, got ${JSON.stringify(anchor_position)}`,
@@ -41,7 +41,13 @@ export function createSvgObjectsFromPcbNoteText(
   }
 
   const [x, y] = applyToPoint(transform, [anchor_position.x, anchor_position.y])
-  const transformedFontSize = font_size * Math.abs(transform.a)
+  const resolvedFontSize =
+    typeof font_size === "number" &&
+    Number.isFinite(font_size) &&
+    font_size >= 0
+      ? font_size
+      : 1
+  const transformedFontSize = resolvedFontSize * Math.abs(transform.a)
 
   const { textAnchor, dominantBaseline } = getSvgTextAnchorAlignment(
     anchor_alignment as NinePointAnchor,
