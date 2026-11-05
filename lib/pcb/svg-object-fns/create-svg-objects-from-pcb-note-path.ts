@@ -21,7 +21,7 @@ export function createSvgObjectsFromPcbNotePath(
   }
 
   for (const point of notePath.route) {
-    if (typeof point.x !== "number" || typeof point.y !== "number") {
+    if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
       debugPcb(
         `[pcb_note_path] Invalid point in route for "${notePath.pcb_note_path_id}": expected {x: number, y: number}, got ${JSON.stringify(point)}`,
       )
@@ -36,7 +36,13 @@ export function createSvgObjectsFromPcbNotePath(
     })
     .join(" ")
 
-  const strokeWidth = notePath.stroke_width * Math.abs(transform.a)
+  const baseStrokeWidth =
+    typeof notePath.stroke_width === "number" &&
+    Number.isFinite(notePath.stroke_width) &&
+    notePath.stroke_width >= 0
+      ? notePath.stroke_width
+      : 0.1
+  const strokeWidth = baseStrokeWidth * Math.abs(transform.a)
 
   const svgObject: SvgObject = {
     name: "path",

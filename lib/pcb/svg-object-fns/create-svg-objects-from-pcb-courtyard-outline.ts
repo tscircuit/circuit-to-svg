@@ -9,11 +9,19 @@ export function createSvgObjectsFromPcbCourtyardOutline(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
-  const { layer, pcb_courtyard_outline_id, outline } = pcbCourtyardOutline
+  const {
+    layer = "top",
+    pcb_courtyard_outline_id,
+    outline,
+  } = pcbCourtyardOutline
 
   if (layerFilter && layer !== layerFilter) return []
 
-  if (!outline || outline.length === 0) {
+  if (
+    !Array.isArray(outline) ||
+    outline.length < 3 ||
+    outline.some((p) => !p || !Number.isFinite(p.x) || !Number.isFinite(p.y))
+  ) {
     debugPcb(
       `[pcb_courtyard_outline] Invalid data for "${pcb_courtyard_outline_id}": expected non-empty array of points, got ${JSON.stringify(outline)}`,
     )

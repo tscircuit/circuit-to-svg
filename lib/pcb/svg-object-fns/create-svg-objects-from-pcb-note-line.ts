@@ -15,10 +15,10 @@ export function createSvgObjectsFromPcbNoteLine(
   const { x1, y1, x2, y2, stroke_width, color, is_dashed } = noteLine
 
   if (
-    typeof x1 !== "number" ||
-    typeof y1 !== "number" ||
-    typeof x2 !== "number" ||
-    typeof y2 !== "number"
+    !Number.isFinite(x1) ||
+    !Number.isFinite(y1) ||
+    !Number.isFinite(x2) ||
+    !Number.isFinite(y2)
   ) {
     debugPcb(
       `[pcb_note_line] Invalid coordinates for "${noteLine.pcb_note_line_id}": expected x1, y1, x2, y2 as numbers, got x1=${JSON.stringify(x1)}, y1=${JSON.stringify(y1)}, x2=${JSON.stringify(x2)}, y2=${JSON.stringify(y2)}`,
@@ -28,7 +28,12 @@ export function createSvgObjectsFromPcbNoteLine(
 
   const [startX, startY] = applyToPoint(transform, [x1, y1])
   const [endX, endY] = applyToPoint(transform, [x2, y2])
-  const baseStrokeWidth = typeof stroke_width === "number" ? stroke_width : 0
+  const baseStrokeWidth =
+    typeof stroke_width === "number" &&
+    Number.isFinite(stroke_width) &&
+    stroke_width >= 0
+      ? stroke_width
+      : 0
   const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
 
   const attributes: Record<string, string> = {

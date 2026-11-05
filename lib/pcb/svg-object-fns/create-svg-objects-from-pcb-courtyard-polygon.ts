@@ -18,7 +18,11 @@ export function createSvgObjectsFromPcbCourtyardPolygon(
 
   if (layerFilter && layer !== layerFilter) return []
 
-  if (!points || points.length === 0) {
+  if (
+    !Array.isArray(points) ||
+    points.length < 3 ||
+    points.some((p) => !p || !Number.isFinite(p.x) || !Number.isFinite(p.y))
+  ) {
     debugPcb(
       `[pcb_courtyard_polygon] Invalid data for "${pcb_courtyard_polygon_id}": expected non-empty array of points, got ${JSON.stringify(points)}`,
     )
