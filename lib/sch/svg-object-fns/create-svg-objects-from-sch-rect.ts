@@ -33,13 +33,17 @@ export function createSvgObjectsFromSchematicRect({
       y: y.toString(),
       width: transformedWidth.toString(),
       height: transformedHeight.toString(),
-      fill: schRect.is_filled ? (schRect.fill_color ?? schRect.color) : "none",
-      stroke: schRect.color,
+      fill: schRect.is_filled
+        ? (schRect.fill_color ??
+          schRect.color ??
+          colorMap.schematic.component_outline)
+        : "none",
+      stroke: schRect.color ?? colorMap.schematic.component_outline,
       "stroke-width": transformedStrokeWidth.toString(),
       ...(schRect.is_dashed && {
         "stroke-dasharray": (transformedStrokeWidth * 3).toString(),
       }),
-      ...(schRect.rotation !== 0 && {
+      ...(Boolean(schRect.rotation) && {
         transform: `rotate(${schRect.rotation} ${center.x} ${center.y})`,
       }),
       "data-schematic-rect-id": schRect.schematic_rect_id,

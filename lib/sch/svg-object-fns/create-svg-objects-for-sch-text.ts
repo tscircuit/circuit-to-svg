@@ -119,6 +119,9 @@ export const createSvgSchText = ({
               ],
         }))
 
+  const anchor = elm.anchor ?? "center"
+  const rotation = elm.rotation ?? 0
+
   if (elm.display_superscript) {
     // The suffix belongs to the whole text, so append it only to the last line.
     const target =
@@ -128,7 +131,7 @@ export const createSvgSchText = ({
         "",
         elm.display_superscript,
         getSchScreenFontSize(transform, "reference_designator", elm.font_size),
-        dominantBaselineMap[elm.anchor],
+        dominantBaselineMap[anchor],
       ).slice(1),
     )
   }
@@ -143,11 +146,11 @@ export const createSvgSchText = ({
       x: center.x.toString(),
       y: center.y.toString(),
       fill: elm.color ?? colorMap.schematic.sheet_label,
-      "text-anchor": textAnchorMap[elm.anchor],
-      "dominant-baseline": dominantBaselineMap[elm.anchor],
+      "text-anchor": textAnchorMap[anchor],
+      "dominant-baseline": dominantBaselineMap[anchor],
       "font-family": "sans-serif",
       "font-size": `${getSchScreenFontSize(transform, "reference_designator", elm.font_size)}px`,
-      transform: `rotate(${elm.rotation}, ${center.x}, ${center.y})`,
+      transform: `rotate(${rotation}, ${center.x}, ${center.y})`,
     },
     children,
   }
