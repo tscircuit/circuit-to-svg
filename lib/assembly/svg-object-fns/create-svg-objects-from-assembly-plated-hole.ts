@@ -16,6 +16,40 @@ type HoleWithRectPadOffsets = {
   hole_offset_y?: number
 }
 
+const createPillPath = (width: number, height: number) => {
+  if (width > height) {
+    const radius = height / 2
+    const straightLength = width - 2 * radius
+    return (
+      `M${-width / 2 + radius},${-radius} ` +
+      `h${straightLength} ` +
+      `a${radius},${radius} 0 0 1 0,${height} ` +
+      `h${-straightLength} ` +
+      `a${radius},${radius} 0 0 1 0,${-height} ` +
+      `z`
+    )
+  }
+  if (height > width) {
+    const radius = width / 2
+    const straightLength = height - 2 * radius
+    return (
+      `M${radius},${-height / 2 + radius} ` +
+      `v${straightLength} ` +
+      `a${radius},${radius} 0 0 1 ${-width},0 ` +
+      `v${-straightLength} ` +
+      `a${radius},${radius} 0 0 1 ${width},0 ` +
+      `z`
+    )
+  }
+  const radius = width / 2
+  return (
+    `M${-radius},0 ` +
+    `a${radius},${radius} 0 0 1 ${width},0 ` +
+    `a${radius},${radius} 0 0 1 ${-width},0 ` +
+    `z`
+  )
+}
+
 export function createSvgObjectsFromAssemblyPlatedHole(
   hole: PCBPlatedHole,
   ctx: AssemblySvgContext,
@@ -28,6 +62,52 @@ export function createSvgObjectsFromAssemblyPlatedHole(
     const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
     const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
     const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const rotation = hole.ccw_rotation || 0
+
+    if (
+      scaledOuterWidth > scaledOuterHeight ||
+      scaledHoleWidth > scaledHoleHeight ||
+      rotation
+    ) {
+      const pillTransform = rotation
+        ? `translate(${x} ${y}) rotate(${-rotation})`
+        : `translate(${x} ${y})`
+
+      return [
+        {
+          name: "g",
+          type: "element",
+          children: [
+            {
+              name: "path",
+              type: "element",
+              attributes: {
+                class: "assembly-hole-outer",
+                fill: PAD_COLOR,
+                d: createPillPath(scaledOuterWidth, scaledOuterHeight),
+                transform: pillTransform,
+              },
+              value: "",
+              children: [],
+            },
+            {
+              name: "path",
+              type: "element",
+              attributes: {
+                class: "assembly-hole-inner",
+                fill: HOLE_COLOR,
+                d: createPillPath(scaledHoleWidth, scaledHoleHeight),
+                transform: pillTransform,
+              },
+              value: "",
+              children: [],
+            },
+          ],
+          value: "",
+          attributes: {},
+        },
+      ]
+    }
 
     const outerRadiusX = scaledOuterWidth / 2
     const straightLength = scaledOuterHeight - scaledOuterWidth
@@ -68,6 +148,59 @@ export function createSvgObjectsFromAssemblyPlatedHole(
                 `a${innerRadiusX},${innerRadiusX} 0 0 0 ${scaledHoleWidth},0 ` +
                 `v-${scaledHoleHeight - scaledHoleWidth} ` +
                 `a${innerRadiusX},${innerRadiusX} 0 0 0 -${scaledHoleWidth},0 z`,
+            },
+            value: "",
+            children: [],
+          },
+        ],
+        value: "",
+        attributes: {},
+      },
+    ]
+  }
+
+  if (hole.shape === "oval") {
+    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
+    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
+    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const rotation = hole.ccw_rotation || 0
+
+    const transformStr = rotation
+      ? `translate(${x} ${y}) rotate(${-rotation})`
+      : `translate(${x} ${y})`
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        children: [
+          {
+            name: "ellipse",
+            type: "element",
+            attributes: {
+              class: "assembly-hole-outer",
+              fill: PAD_COLOR,
+              cx: "0",
+              cy: "0",
+              rx: (scaledOuterWidth / 2).toString(),
+              ry: (scaledOuterHeight / 2).toString(),
+              transform: transformStr,
+            },
+            value: "",
+            children: [],
+          },
+          {
+            name: "ellipse",
+            type: "element",
+            attributes: {
+              class: "assembly-hole-inner",
+              fill: HOLE_COLOR,
+              cx: "0",
+              cy: "0",
+              rx: (scaledHoleWidth / 2).toString(),
+              ry: (scaledHoleHeight / 2).toString(),
+              transform: transformStr,
             },
             value: "",
             children: [],
@@ -340,6 +473,127 @@ export function createSvgObjectsFromAssemblyPlatedHole(
         ],
         value: "",
         attributes: {},
+      },
+    ]
+  }
+
+  if (hole.shape === "hole_with_polygon_pad") {
+    const polygonHole = hole
+    const rotation = polygonHole.ccw_rotation ?? 0
+    const padOutline = polygonHole.pad_outline || []
+    const holeX = polygonHole.x ?? 0
+    const holeY = polygonHole.y ?? 0
+
+    const padPoints = padOutline.map((point: { x: number; y: number }) =>
+      applyToPoint(transform, [holeX + point.x, holeY + point.y]),
+    )
+    const padPointsString = padPoints
+      .map((p: number[]) => p.join(","))
+      .join(" ")
+
+    const [holeCenterX, holeCenterY] = applyToPoint(transform, [
+      holeX + (polygonHole.hole_offset_x ?? 0),
+      holeY + (polygonHole.hole_offset_y ?? 0),
+    ])
+
+    const createHoleSvgObject = (): SvgObject => {
+      if (polygonHole.hole_shape === "circle") {
+        const scaledDiameter =
+          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a)
+        const radius = scaledDiameter / 2
+        return {
+          name: "circle",
+          type: "element",
+          attributes: {
+            class: "assembly-hole-inner",
+            fill: HOLE_COLOR,
+            cx: holeCenterX.toString(),
+            cy: holeCenterY.toString(),
+            r: radius.toString(),
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      if (polygonHole.hole_shape === "oval") {
+        const scaledWidth =
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
+        const scaledHeight =
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const rx = scaledWidth / 2
+        const ry = scaledHeight / 2
+        return {
+          name: "ellipse",
+          type: "element",
+          attributes: {
+            class: "assembly-hole-inner",
+            fill: HOLE_COLOR,
+            cx: holeCenterX.toString(),
+            cy: holeCenterY.toString(),
+            rx: rx.toString(),
+            ry: ry.toString(),
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      if (
+        polygonHole.hole_shape === "pill" ||
+        polygonHole.hole_shape === "rotated_pill"
+      ) {
+        const scaledWidth =
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
+        const scaledHeight =
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const pathD = createPillPath(scaledWidth, scaledHeight)
+
+        return {
+          name: "path",
+          type: "element",
+          attributes: {
+            class: "assembly-hole-inner",
+            fill: HOLE_COLOR,
+            d: pathD,
+            transform: `translate(${holeCenterX} ${holeCenterY})`,
+          },
+          value: "",
+          children: [],
+        }
+      }
+
+      return {
+        name: "g",
+        type: "element",
+        attributes: {},
+        value: "",
+        children: [],
+      }
+    }
+
+    return [
+      {
+        name: "g",
+        type: "element",
+        attributes: {
+          ...(rotation ? { transform: `rotate(${-rotation} ${x} ${y})` } : {}),
+        },
+        children: [
+          {
+            name: "polygon",
+            type: "element",
+            attributes: {
+              class: "assembly-hole-outer-pad",
+              fill: PAD_COLOR,
+              points: padPointsString,
+            },
+            value: "",
+            children: [],
+          },
+          createHoleSvgObject(),
+        ],
+        value: "",
       },
     ]
   }
