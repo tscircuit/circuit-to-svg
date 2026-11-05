@@ -274,7 +274,9 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   const circuitJsonForBounds = circuitJson.filter((element) => {
-    if (element.type === "pcb_courtyard_rect" && !options?.showCourtyards)
+    if (element.type.startsWith("pcb_courtyard_") && !options?.showCourtyards)
+      return false
+    if (element.type.startsWith("pcb_note_") && options?.showPcbNotes === false)
       return false
     if (element.type === "pcb_soldermask_opening") {
       return (
