@@ -599,6 +599,7 @@ export function createSvgObjectsFromPcbHole(
         class: "pcb-soldermask-cutout",
         fill: colorMap.substrate,
         d: maskPathD,
+        transform: `translate(${x} ${y}) rotate(${-rotation})`,
         "data-type": "pcb_soldermask_opening",
         "data-pcb-layer": layer,
       },

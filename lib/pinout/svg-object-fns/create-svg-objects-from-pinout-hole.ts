@@ -74,6 +74,69 @@ export function createSvgObjectsFromPinoutHole(
       },
     ]
   }
+  if (hole.hole_shape === "rect") {
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+
+    return [
+      {
+        name: "rect",
+        type: "element",
+        attributes: {
+          class: "pinout-hole",
+          x: (x - scaledWidth / 2).toString(),
+          y: (y - scaledHeight / 2).toString(),
+          width: scaledWidth.toString(),
+          height: scaledHeight.toString(),
+          fill: HOLE_COLOR,
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
+  if (hole.hole_shape === "pill" || hole.hole_shape === "rotated_pill") {
+    const isRotated = hole.hole_shape === "rotated_pill"
+    const scaledWidth = hole.hole_width * Math.abs(transform.a)
+    const scaledHeight = hole.hole_height * Math.abs(transform.a)
+    const rotation = "ccw_rotation" in hole ? (hole.ccw_rotation ?? 0) : 0
+    const isHorizontal = scaledWidth > scaledHeight
+    const radius = Math.min(scaledWidth, scaledHeight) / 2
+    const straightLength = Math.abs(
+      isHorizontal ? scaledWidth - scaledHeight : scaledHeight - scaledWidth,
+    )
+    const originX = isRotated ? 0 : x
+    const originY = isRotated ? 0 : y
+
+    const pathD = isHorizontal
+      ? `M${originX - straightLength / 2},${originY - radius} ` +
+        `h${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,${scaledHeight} ` +
+        `h-${straightLength} ` +
+        `a${radius},${radius} 0 0 1 0,-${scaledHeight} z`
+      : `M${originX - radius},${originY - straightLength / 2} ` +
+        `v${straightLength} ` +
+        `a${radius},${radius} 0 0 0 ${scaledWidth},0 ` +
+        `v-${straightLength} ` +
+        `a${radius},${radius} 0 0 0 -${scaledWidth},0 z`
+
+    return [
+      {
+        name: "path",
+        type: "element",
+        attributes: {
+          class: "pinout-hole",
+          fill: HOLE_COLOR,
+          d: pathD,
+          ...(isRotated
+            ? { transform: `translate(${x} ${y}) rotate(${-rotation})` }
+            : {}),
+        },
+        children: [],
+        value: "",
+      },
+    ]
+  }
 
   return []
 }
