@@ -29,11 +29,25 @@ function getComponentBounds(
   ) as any
 
   if (pcbComponent?.center && pcbComponent?.width && pcbComponent?.height) {
+    const rotationRadians = ((pcbComponent.rotation ?? 0) * Math.PI) / 180
+    const cos = Math.cos(rotationRadians)
+    const sin = Math.sin(rotationRadians)
+    const halfWidth = pcbComponent.width / 2
+    const halfHeight = pcbComponent.height / 2
+    const corners = [
+      { x: -halfWidth, y: -halfHeight },
+      { x: halfWidth, y: -halfHeight },
+      { x: halfWidth, y: halfHeight },
+      { x: -halfWidth, y: halfHeight },
+    ].map((corner) => ({
+      x: pcbComponent.center.x + corner.x * cos - corner.y * sin,
+      y: pcbComponent.center.y + corner.x * sin + corner.y * cos,
+    }))
     return {
-      min_x: pcbComponent.center.x - pcbComponent.width / 2,
-      max_x: pcbComponent.center.x + pcbComponent.width / 2,
-      min_y: pcbComponent.center.y - pcbComponent.height / 2,
-      max_y: pcbComponent.center.y + pcbComponent.height / 2,
+      min_x: Math.min(...corners.map((corner) => corner.x)),
+      max_x: Math.max(...corners.map((corner) => corner.x)),
+      min_y: Math.min(...corners.map((corner) => corner.y)),
+      max_y: Math.max(...corners.map((corner) => corner.y)),
     }
   }
 

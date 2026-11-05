@@ -56,22 +56,54 @@ export function createSvgObjectsFromPcbFootprintOverlapError(
         (el) => el.type === "pcb_smtpad" && el.pcb_smtpad_id === padId,
       ) as
         | {
-            x: number
-            y: number
+            x?: number
+            y?: number
+            shape?: string
+            points?: Array<{ x: number; y: number }>
             type: string
             pcb_smtpad_id: string
             pcb_port_id?: string
           }
         | undefined
       if (pad) {
-        referencedElements.push({
-          x: pad.x,
-          y: pad.y,
-          type: "pcb_smtpad",
-          id: padId,
-          pcb_port_id: pad.pcb_port_id,
-        })
-        if (pad.pcb_port_id) padPortIds.push(pad.pcb_port_id)
+        let padX = pad.x
+        let padY = pad.y
+        if (
+          (!Number.isFinite(padX) || !Number.isFinite(padY)) &&
+          pad.shape === "polygon" &&
+          Array.isArray(pad.points) &&
+          pad.points.length > 0
+        ) {
+          const validPoints = pad.points.filter(
+            (pt) =>
+              pt &&
+              typeof pt.x === "number" &&
+              Number.isFinite(pt.x) &&
+              typeof pt.y === "number" &&
+              Number.isFinite(pt.y),
+          )
+          if (validPoints.length > 0) {
+            const xs = validPoints.map((pt) => pt.x)
+            const ys = validPoints.map((pt) => pt.y)
+            padX = (Math.min(...xs) + Math.max(...xs)) / 2
+            padY = (Math.min(...ys) + Math.max(...ys)) / 2
+          }
+        }
+        if (
+          typeof padX === "number" &&
+          Number.isFinite(padX) &&
+          typeof padY === "number" &&
+          Number.isFinite(padY)
+        ) {
+          referencedElements.push({
+            x: padX,
+            y: padY,
+            type: "pcb_smtpad",
+            id: padId,
+            pcb_port_id: pad.pcb_port_id,
+          })
+          if (pad.pcb_port_id) padPortIds.push(pad.pcb_port_id)
+        }
       }
     }
   }
