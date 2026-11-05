@@ -130,6 +130,27 @@ export function createSvgObjectsFromSolderPaste(
   if (solderPaste.shape === "oval") {
     const width = solderPaste.width * Math.abs(transform.a)
     const height = solderPaste.height * Math.abs(transform.d)
+    const ccwRotation = (solderPaste as { ccw_rotation?: number }).ccw_rotation
+
+    if (ccwRotation) {
+      return [
+        {
+          name: "ellipse",
+          type: "element",
+          attributes: {
+            class: "pcb-solder-paste",
+            fill: solderPasteLayerNameToColor(solderPaste.layer),
+            cx: "0",
+            cy: "0",
+            rx: (width / 2).toString(),
+            ry: (height / 2).toString(),
+            transform: `translate(${x} ${y}) rotate(${-ccwRotation})`,
+            "data-type": "pcb_solder_paste",
+            "data-pcb-layer": solderPaste.layer,
+          },
+        },
+      ]
+    }
 
     return [
       {

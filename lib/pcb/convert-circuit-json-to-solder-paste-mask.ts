@@ -1,5 +1,10 @@
 import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement, PcbPanel } from "circuit-json"
+import type {
+  Point,
+  AnyCircuitElement,
+  PcbCutout,
+  PcbPanel,
+} from "circuit-json"
 import { distance } from "circuit-json"
 import { type INode as SvgObject } from "svgson"
 import {
@@ -10,6 +15,9 @@ import {
   type Matrix,
 } from "transformation-matrix"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
+import { createSvgObjectsFromPcbCutout } from "./svg-object-fns/create-svg-objects-from-pcb-cutout"
+import { createSvgObjectsFromPcbCutoutPath } from "./svg-object-fns/create-svg-objects-from-pcb-cutout-path"
+import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
 import { createSvgObjectsFromSolderPaste } from "./svg-object-fns/convert-circuit-json-to-solder-paste-mask"
 import type { PcbContext } from "./convert-circuit-json-to-pcb-svg"
 import { DEFAULT_PCB_COLOR_MAP } from "./colors"
@@ -18,7 +26,9 @@ import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
+  "pcb_panel",
   "pcb_board",
+  "pcb_cutout",
   "pcb_solder_paste",
 ]
 
@@ -39,11 +49,12 @@ export function convertCircuitJsonToSolderPasteMask(
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
-  // Filter to include only pcb_board and pcb_solder_paste elements for the specified layer
+  // Filter to include only pcb_board, pcb_panel, pcb_cutout, and pcb_solder_paste elements for the specified layer
   const filteredCircuitJson = circuitJson.filter(
     (elm) =>
       elm.type === "pcb_board" ||
       elm.type === "pcb_panel" ||
+      elm.type === "pcb_cutout" ||
       (elm.type === "pcb_solder_paste" && elm.layer === options.layer),
   )
 
@@ -67,11 +78,46 @@ export function convertCircuitJsonToSolderPasteMask(
         const center = panel.center ?? { x: width / 2, y: height / 2 }
         updateBounds(center, width, height)
       }
+    } else if (item.type === "pcb_cutout") {
+      const cutout = item as PcbCutout
+      if (cutout.shape === "rect") {
+        updateBounds(
+          cutout.center,
+          cutout.width,
+          cutout.height,
+          cutout.rotation,
+        )
+      } else if (cutout.shape === "circle") {
+        const radius = distance.parse(cutout.radius)
+        if (radius !== undefined) {
+          updateBounds(cutout.center, radius * 2, radius * 2)
+        }
+      } else if (cutout.shape === "polygon") {
+        updateBoundsToIncludeOutline(cutout.points)
+      } else if (
+        cutout.shape === "path" &&
+        cutout.route &&
+        Array.isArray(cutout.route)
+      ) {
+        updateBoundsToIncludeOutline(cutout.route)
+      }
     } else if (item.type === "pcb_solder_paste" && item.shape === "polygon") {
       updateBoundsToIncludeOutline(item.points)
     } else if (item.type === "pcb_solder_paste" && "x" in item && "y" in item) {
       updateBounds({ x: item.x, y: item.y }, 0, 0)
     }
+  }
+
+  if (
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
+    minX = 0
+    minY = 0
+    maxX = 0
+    maxY = 0
   }
 
   const padding = 1 // Consistent with reference code
@@ -175,9 +221,25 @@ export function convertCircuitJsonToSolderPasteMask(
     throw error
   }
 
-  function updateBounds(center: any, width: any, height: any) {
-    const halfWidth = width / 2
-    const halfHeight = height / 2
+  function updateBounds(
+    center: any,
+    width: any,
+    height: any,
+    ccwRotationDegrees?: number,
+  ) {
+    const numericWidth = distance.parse(width) ?? 0
+    const numericHeight = distance.parse(height) ?? 0
+    let halfWidth = numericWidth / 2
+    let halfHeight = numericHeight / 2
+    if (typeof ccwRotationDegrees === "number" && ccwRotationDegrees !== 0) {
+      const angleRadians = (ccwRotationDegrees * Math.PI) / 180
+      const absCos = Math.abs(Math.cos(angleRadians))
+      const absSin = Math.abs(Math.sin(angleRadians))
+      const rotatedHalfWidth = halfWidth * absCos + halfHeight * absSin
+      const rotatedHalfHeight = halfWidth * absSin + halfHeight * absCos
+      halfWidth = rotatedHalfWidth
+      halfHeight = rotatedHalfHeight
+    }
     minX = Math.min(minX, center.x - halfWidth)
     minY = Math.min(minY, center.y - halfHeight)
     maxX = Math.max(maxX, center.x + halfWidth)
@@ -200,10 +262,18 @@ interface CreateSvgObjectsParams {
 }
 
 function createSvgObjects({ elm, ctx }: CreateSvgObjectsParams): SvgObject[] {
-  const { transform } = ctx
   switch (elm.type) {
+    case "pcb_panel":
+      return createSvgObjectsFromPcbPanel(elm as PcbPanel, ctx)
     case "pcb_board":
       return createSvgObjectsFromPcbBoard(elm, ctx)
+    case "pcb_cutout": {
+      const cutout = elm as PcbCutout
+      if (cutout.shape === "path") {
+        return createSvgObjectsFromPcbCutoutPath(cutout, ctx)
+      }
+      return createSvgObjectsFromPcbCutout(cutout, ctx)
+    }
     case "pcb_solder_paste":
       return createSvgObjectsFromSolderPaste(elm, ctx)
     default:
