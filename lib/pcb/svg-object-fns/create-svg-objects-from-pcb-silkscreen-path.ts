@@ -11,17 +11,28 @@ export function createSvgObjectsFromPcbSilkscreenPath(
   const { transform, layer: layerFilter, colorMap } = ctx
   if (!silkscreenPath.route || !Array.isArray(silkscreenPath.route)) return []
 
-  let path = silkscreenPath.route
+  const validRoute = silkscreenPath.route.filter(
+    (point: any) =>
+      point &&
+      typeof point.x === "number" &&
+      Number.isFinite(point.x) &&
+      typeof point.y === "number" &&
+      Number.isFinite(point.y),
+  )
+  if (validRoute.length === 0) return []
+
+  let path = validRoute
     .map((point: any, index: number) => {
       const [x, y] = applyToPoint(transform, [point.x, point.y])
       return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
     })
     .join(" ")
 
-  // Close the path if the first and last points match
-  const firstPoint = silkscreenPath.route[0]
-  const lastPoint = silkscreenPath.route[silkscreenPath.route.length - 1]
+  // Close the path if there are at least 3 points and the first and last points match
+  const firstPoint = validRoute[0]
+  const lastPoint = validRoute[validRoute.length - 1]
   if (
+    validRoute.length > 2 &&
     firstPoint &&
     lastPoint &&
     firstPoint.x === lastPoint.x &&
@@ -34,6 +45,11 @@ export function createSvgObjectsFromPcbSilkscreenPath(
   if (layerFilter && layer !== layerFilter) return []
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
+  const strokeWidth =
+    typeof silkscreenPath.stroke_width === "number" &&
+    Number.isFinite(silkscreenPath.stroke_width)
+      ? silkscreenPath.stroke_width
+      : 0.1
 
   return [
     {
@@ -44,9 +60,7 @@ export function createSvgObjectsFromPcbSilkscreenPath(
         d: path,
         fill: "none",
         stroke: color,
-        "stroke-width": (
-          silkscreenPath.stroke_width * Math.abs(transform.a)
-        ).toString(),
+        "stroke-width": (strokeWidth * Math.abs(transform.a)).toString(),
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
         "data-pcb-component-id": silkscreenPath.pcb_component_id,
