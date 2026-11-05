@@ -24,8 +24,14 @@ export function createSvgObjectsFromPcbCourtyardRect(
     !center ||
     typeof center.x !== "number" ||
     typeof center.y !== "number" ||
+    !Number.isFinite(center.x) ||
+    !Number.isFinite(center.y) ||
     typeof width !== "number" ||
-    typeof height !== "number"
+    typeof height !== "number" ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
   ) {
     debugPcb(
       `[pcb_courtyard_rect] Invalid data for "${pcb_courtyard_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
@@ -58,7 +64,11 @@ export function createSvgObjectsFromPcbCourtyardRect(
   }
 
   // Apply rotation if ccw_rotation is set (SVG rotates CW, so negate)
-  if (typeof ccw_rotation === "number" && ccw_rotation !== 0) {
+  const normalizedRotation =
+    typeof ccw_rotation === "number" && Number.isFinite(ccw_rotation)
+      ? ((ccw_rotation % 360) + 360) % 360
+      : 0
+  if (normalizedRotation !== 0) {
     attributes.transform = `translate(${transformedX} ${transformedY}) rotate(${-ccw_rotation})`
   } else {
     attributes.x = (transformedX - transformedWidth / 2).toString()
