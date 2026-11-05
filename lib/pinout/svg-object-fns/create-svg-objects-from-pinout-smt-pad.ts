@@ -15,6 +15,11 @@ export function createSvgObjectsFromPinoutSmtPad(
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const [x, y] = applyToPoint(transform, [pad.x, pad.y])
+    const cornerRadiusValue =
+      (pad as { corner_radius?: number }).corner_radius ??
+      pad.rect_border_radius ??
+      0
+    const scaledBorderRadius = cornerRadiusValue * Math.abs(transform.a)
 
     if (pad.shape === "rotated_rect" && pad.ccw_rotation) {
       return [
@@ -30,6 +35,12 @@ export function createSvgObjectsFromPinoutSmtPad(
             height: height.toString(),
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-layer": pad.layer,
+            ...(scaledBorderRadius
+              ? {
+                  rx: scaledBorderRadius.toString(),
+                  ry: scaledBorderRadius.toString(),
+                }
+              : {}),
           },
           value: "",
           children: [],
@@ -49,6 +60,12 @@ export function createSvgObjectsFromPinoutSmtPad(
           width: width.toString(),
           height: height.toString(),
           "data-layer": pad.layer,
+          ...(scaledBorderRadius
+            ? {
+                rx: scaledBorderRadius.toString(),
+                ry: scaledBorderRadius.toString(),
+              }
+            : {}),
         },
         value: "",
         children: [],
@@ -56,7 +73,8 @@ export function createSvgObjectsFromPinoutSmtPad(
     ]
   }
 
-  if (pad.shape === "pill") {
+  if (pad.shape === "pill" || pad.shape === "rotated_pill") {
+    const isRotated = pad.shape === "rotated_pill"
     const width = pad.width * Math.abs(transform.a)
     const height = pad.height * Math.abs(transform.d)
     const radius = pad.radius * Math.abs(transform.a)
@@ -69,12 +87,17 @@ export function createSvgObjectsFromPinoutSmtPad(
         attributes: {
           class: "pinout-pad",
           fill: PAD_COLOR,
-          x: (x - width / 2).toString(),
-          y: (y - height / 2).toString(),
+          x: isRotated ? (-width / 2).toString() : (x - width / 2).toString(),
+          y: isRotated ? (-height / 2).toString() : (y - height / 2).toString(),
           width: width.toString(),
           height: height.toString(),
           rx: radius.toString(),
           ry: radius.toString(),
+          ...(isRotated
+            ? {
+                transform: `translate(${x} ${y}) rotate(${-(pad.ccw_rotation ?? 0)})`,
+              }
+            : {}),
           "data-layer": pad.layer,
         },
         value: "",
