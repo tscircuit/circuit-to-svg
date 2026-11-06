@@ -22,17 +22,36 @@ export function createSvgObjectsFromPcbCutout(
   const { transform, colorMap } = ctx
   if (cutout.shape === "rect") {
     const rectCutout = cutout as PcbCutoutRect
+    if (
+      !rectCutout.center ||
+      !Number.isFinite(rectCutout.center.x) ||
+      !Number.isFinite(rectCutout.center.y) ||
+      !Number.isFinite(rectCutout.width) ||
+      !Number.isFinite(rectCutout.height) ||
+      rectCutout.width <= 0 ||
+      rectCutout.height <= 0
+    ) {
+      return []
+    }
     const [cx, cy] = applyToPoint(transform, [
       rectCutout.center.x,
       rectCutout.center.y,
     ])
     const scaledWidth = rectCutout.width * Math.abs(transform.a)
     const scaledHeight = rectCutout.height * Math.abs(transform.d)
-    const svgRotation = -(rectCutout.rotation ?? 0)
+    const safeRotation = Number.isFinite(rectCutout.rotation)
+      ? rectCutout.rotation!
+      : 0
+    const svgRotation = -safeRotation
 
     const { corner_radius } = rectCutout as any
+    const maxCornerRadius = Math.min(rectCutout.width, rectCutout.height) / 2
     const baseCornerRadius =
-      typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+      typeof corner_radius === "number" &&
+      Number.isFinite(corner_radius) &&
+      corner_radius > 0
+        ? Math.min(corner_radius, maxCornerRadius)
+        : 0
     const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
     const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
@@ -70,6 +89,15 @@ export function createSvgObjectsFromPcbCutout(
   }
   if (cutout.shape === "circle") {
     const circleCutout = cutout as PcbCutoutCircle
+    if (
+      !circleCutout.center ||
+      !Number.isFinite(circleCutout.center.x) ||
+      !Number.isFinite(circleCutout.center.y) ||
+      !Number.isFinite(circleCutout.radius) ||
+      circleCutout.radius <= 0
+    ) {
+      return []
+    }
     const [cx, cy] = applyToPoint(transform, [
       circleCutout.center.x,
       circleCutout.center.y,
@@ -96,9 +124,13 @@ export function createSvgObjectsFromPcbCutout(
   }
   if (cutout.shape === "polygon") {
     const polygonCutout = cutout as PcbCutoutPolygon
-    if (!polygonCutout.points || polygonCutout.points.length === 0) return []
+    if (!polygonCutout.points || !Array.isArray(polygonCutout.points)) return []
+    const validPoints = polygonCutout.points.filter(
+      (p: Point) => Boolean(p) && Number.isFinite(p.x) && Number.isFinite(p.y),
+    )
+    if (validPoints.length < 3) return []
 
-    const transformedPoints = polygonCutout.points.map((p: Point) =>
+    const transformedPoints = validPoints.map((p: Point) =>
       applyToPoint(transform, [p.x, p.y]),
     )
     const pointsString = transformedPoints

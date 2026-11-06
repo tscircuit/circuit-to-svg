@@ -13,10 +13,27 @@ export function createSvgObjectsFromSchematicArc({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
+  if (
+    !schArc.center ||
+    !Number.isFinite(schArc.center.x) ||
+    !Number.isFinite(schArc.center.y) ||
+    !Number.isFinite(schArc.radius) ||
+    schArc.radius <= 0 ||
+    !Number.isFinite(schArc.start_angle_degrees) ||
+    !Number.isFinite(schArc.end_angle_degrees)
+  ) {
+    return []
+  }
+
   const center = applyToPoint(transform, schArc.center)
   const transformedRadius = Math.abs(transform.a) * schArc.radius
 
-  const strokeWidth = schArc.stroke_width ?? 0.02
+  const strokeWidth =
+    typeof schArc.stroke_width === "number" &&
+    Number.isFinite(schArc.stroke_width) &&
+    schArc.stroke_width >= 0
+      ? schArc.stroke_width
+      : 0.02
   const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
 
   // Convert angles to radians

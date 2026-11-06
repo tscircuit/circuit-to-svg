@@ -14,10 +14,24 @@ export function createSvgObjectsFromSchematicLine({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
+  if (
+    !Number.isFinite(schLine.x1) ||
+    !Number.isFinite(schLine.y1) ||
+    !Number.isFinite(schLine.x2) ||
+    !Number.isFinite(schLine.y2)
+  ) {
+    return []
+  }
+
   const p1 = applyToPoint(transform, { x: schLine.x1, y: schLine.y1 })
   const p2 = applyToPoint(transform, { x: schLine.x2, y: schLine.y2 })
 
-  const strokeWidth = schLine.stroke_width ?? 0.02
+  const strokeWidth =
+    typeof schLine.stroke_width === "number" &&
+    Number.isFinite(schLine.stroke_width) &&
+    schLine.stroke_width >= 0
+      ? schLine.stroke_width
+      : 0.02
   const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
   const strokeDasharray = getSchematicStrokeDasharray({
     isDashed: schLine.is_dashed,

@@ -18,9 +18,15 @@ export function getSchematicStrokeDasharray({
   const scale = Math.abs(transform.a)
   const defaultDashLength = strokeWidth * scale * 3
   const transformedDashLength =
-    dashLength !== undefined ? dashLength * scale : defaultDashLength
+    typeof dashLength === "number" &&
+    Number.isFinite(dashLength) &&
+    dashLength > 0
+      ? dashLength * scale
+      : defaultDashLength
   const transformedDashGap =
-    dashGap !== undefined ? dashGap * scale : defaultDashLength
+    typeof dashGap === "number" && Number.isFinite(dashGap) && dashGap > 0
+      ? dashGap * scale
+      : defaultDashLength
 
   return `${transformedDashLength} ${transformedDashGap}`
 }

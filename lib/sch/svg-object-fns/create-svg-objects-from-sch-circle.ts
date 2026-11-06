@@ -13,10 +13,25 @@ export function createSvgObjectsFromSchematicCircle({
   transform: Matrix
   colorMap: ColorMap
 }): SvgObject[] {
+  if (
+    !schCircle.center ||
+    !Number.isFinite(schCircle.center.x) ||
+    !Number.isFinite(schCircle.center.y) ||
+    !Number.isFinite(schCircle.radius) ||
+    schCircle.radius <= 0
+  ) {
+    return []
+  }
+
   const center = applyToPoint(transform, schCircle.center)
   const transformedRadius = Math.abs(transform.a) * schCircle.radius
 
-  const strokeWidth = schCircle.stroke_width ?? 0.02
+  const strokeWidth =
+    typeof schCircle.stroke_width === "number" &&
+    Number.isFinite(schCircle.stroke_width) &&
+    schCircle.stroke_width >= 0
+      ? schCircle.stroke_width
+      : 0.02
   const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
 
   return [

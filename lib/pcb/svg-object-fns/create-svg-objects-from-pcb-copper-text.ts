@@ -43,7 +43,12 @@ export function createSvgObjectsFromPcbCopperText(
   const layerName = layer ?? "top"
 
   if (filterLayer && filterLayer !== layerName) return []
-  if (!anchor_position) return []
+  if (
+    !anchor_position ||
+    !Number.isFinite(anchor_position.x) ||
+    !Number.isFinite(anchor_position.y)
+  )
+    return []
   if (!text) return []
 
   const [ax, ay] = applyToPoint(transform, [
@@ -51,7 +56,23 @@ export function createSvgObjectsFromPcbCopperText(
     anchor_position.y,
   ])
 
-  const fontSizeNum = distance.parse(font_size) ?? 0.2
+  let parsedFontSize: number | undefined
+  if (typeof font_size === "number") {
+    parsedFontSize = font_size
+  } else if (typeof font_size === "string") {
+    try {
+      parsedFontSize = distance.parse(font_size)
+    } catch {
+      parsedFontSize = undefined
+    }
+  }
+  const fontSizeNum =
+    typeof parsedFontSize === "number" &&
+    Number.isFinite(parsedFontSize) &&
+    parsedFontSize > 0
+      ? parsedFontSize
+      : 0.2
+  const safeRotation = Number.isFinite(ccw_rotation) ? ccw_rotation : 0
   const scaleFactor = Math.abs(transform.a)
   const copperColor = layerNameToColor(layerName, colorMap)
 
@@ -77,10 +98,23 @@ export function createSvgObjectsFromPcbCopperText(
     })
     if (!geometry.bounds || !geometry.pathData) return []
 
-    const padLeft = knockout_padding?.left ?? scaledFontSize * 0.5
-    const padRight = knockout_padding?.right ?? scaledFontSize * 0.5
-    const padTop = knockout_padding?.top ?? scaledFontSize * 0.3
-    const padBottom = knockout_padding?.bottom ?? scaledFontSize * 0.3
+    const sanitizePadding = (val: number | undefined, fallback: number) =>
+      typeof val === "number" && Number.isFinite(val) && val >= 0
+        ? val
+        : fallback
+    const padLeft = sanitizePadding(
+      knockout_padding?.left,
+      scaledFontSize * 0.5,
+    )
+    const padRight = sanitizePadding(
+      knockout_padding?.right,
+      scaledFontSize * 0.5,
+    )
+    const padTop = sanitizePadding(knockout_padding?.top, scaledFontSize * 0.3)
+    const padBottom = sanitizePadding(
+      knockout_padding?.bottom,
+      scaledFontSize * 0.3,
+    )
 
     const rectX = geometry.bounds.minX - padLeft
     const rectY = geometry.bounds.minY - padTop
@@ -149,7 +183,7 @@ export function createSvgObjectsFromPcbCopperText(
     const knockoutTransform = matrixToString(
       compose(
         translate(ax, ay),
-        rotate((-ccw_rotation * Math.PI) / 180),
+        rotate((-safeRotation * Math.PI) / 180),
         ...(applyMirror ? [scale(-1, 1)] : []),
         scale(scaleFactor, scaleFactor),
       ),
