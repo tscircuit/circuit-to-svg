@@ -17,7 +17,12 @@ export function createSvgObjectsFromSchematicPath({
   const strokeColor =
     schPath.stroke_color ?? colorMap.schematic.component_outline
   const fillColor = schPath.fill_color ?? "none"
-  const strokeWidth = schPath.stroke_width ?? 0.02
+  const strokeWidth =
+    typeof schPath.stroke_width === "number" &&
+    Number.isFinite(schPath.stroke_width) &&
+    schPath.stroke_width >= 0
+      ? schPath.stroke_width
+      : 0.02
   const transformedStrokeWidth = Math.abs(transform.a) * strokeWidth
   const strokeDasharray = getSchematicStrokeDasharray({
     isDashed: schPath.is_dashed,
@@ -27,11 +32,19 @@ export function createSvgObjectsFromSchematicPath({
     transform,
   })
 
-  if (!schPath.points || schPath.points.length < 2) {
+  if (!schPath.points || !Array.isArray(schPath.points)) {
     return []
   }
 
-  const transformedPoints = schPath.points.map((p) =>
+  const validPoints = schPath.points.filter(
+    (p) => Boolean(p) && Number.isFinite(p.x) && Number.isFinite(p.y),
+  )
+
+  if (validPoints.length < 2) {
+    return []
+  }
+
+  const transformedPoints = validPoints.map((p) =>
     applyToPoint(transform, { x: p.x, y: p.y }),
   )
 
