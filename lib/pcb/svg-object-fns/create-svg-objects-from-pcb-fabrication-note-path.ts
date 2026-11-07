@@ -63,7 +63,9 @@ export function createSvgObjectsFromPcbFabricationNotePath(
         "stroke-width": (
           fabNotePath.stroke_width * Math.abs(transform.a)
         ).toString(),
-        "data-pcb-component-id": fabNotePath.pcb_component_id,
+        ...(fabNotePath.pcb_component_id === undefined
+          ? {}
+          : { "data-pcb-component-id": fabNotePath.pcb_component_id }),
         "data-pcb-fabrication-note-path-id":
           fabNotePath.pcb_fabrication_note_path_id,
         "data-type": "pcb_fabrication_note_path",

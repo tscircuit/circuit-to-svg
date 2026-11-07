@@ -442,3 +442,45 @@ test("rejects missing pages, invalid geometry, and inconsistent selected-page re
     convertCircuitJsonToSystemSvg([...circuit, ...malformedOtherPage]),
   ).not.toThrow()
 })
+
+test("per-connection colors and patterns override themes without changing arrow direction", async () => {
+  const input = connectionFixture()
+  const connections = input.filter((c) => c.type === "system_block_connection")
+  const styles = ["solid", "dashed", "dotted"] as const
+  connections.forEach((connection, index) => {
+    connection.color = ["#16856b", "#8254a6", "#c45b27"][index % 3]
+    connection.line_style = styles[index % 3]
+  })
+  const svg = convertCircuitJsonToSystemSvg(input, {
+    colorOverrides: { signal: "#000000", power: "#000000" },
+  })
+  for (const connection of connections) {
+    const group = find(
+      svg,
+      "data-system-block-connection-id",
+      connection.system_block_connection_id,
+      "g",
+    )
+    expect(group.children[0]!.attributes.stroke).toBe(connection.color!)
+    expect(group.children[0]!.attributes["stroke-dasharray"]).toBe(
+      connection.line_style === "solid"
+        ? undefined
+        : connection.line_style === "dotted"
+          ? "0.1 1.2"
+          : "2 1",
+    )
+    for (const arrow of group.children.filter((c) => c.name === "polygon"))
+      expect(arrow.attributes.fill).toBe(connection.color!)
+    const label = find(
+      svg,
+      "data-system-block-connection-id",
+      connection.system_block_connection_id,
+      "text",
+    )
+    expect(label.attributes["paint-order"]).toBe("stroke fill")
+  }
+  await expect(svg).toMatchSvgSnapshot(
+    import.meta.path,
+    "custom-connection-styles",
+  )
+})
