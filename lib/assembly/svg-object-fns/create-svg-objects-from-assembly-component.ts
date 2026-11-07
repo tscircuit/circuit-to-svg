@@ -198,7 +198,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],
