@@ -195,7 +195,20 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      const sourcePorts = su(soup).source_port.list()
+      const firstPort =
+        ports.find((port) => {
+          const sp = sourcePorts.find(
+            (s) => s.source_port_id === port.source_port_id,
+          )
+          if (!sp) return false
+          if (sp.pin_number === 1) return true
+          const tokens = [
+            ...(sp.port_hints ?? []),
+            ...(sp.name ? [sp.name] : []),
+          ].map((h) => h.trim().toLowerCase())
+          return tokens.includes("1") || tokens.includes("pin1") || tokens.includes("a1")
+        }) ?? ports[0]
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
