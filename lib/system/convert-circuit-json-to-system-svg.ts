@@ -103,13 +103,15 @@ export function convertCircuitJsonToSystemSvg(
   const labels: SvgObject[] = []
   for (const connection of connections) {
     const mixed = connection.is_signal && connection.is_power
-    const color = mixed
-      ? colors.mixed
-      : connection.is_power
-        ? colors.power
-        : connection.is_signal
-          ? colors.signal
-          : colors.connection
+    const color =
+      connection.color ??
+      (mixed
+        ? colors.mixed
+        : connection.is_power
+          ? colors.power
+          : connection.is_signal
+            ? colors.signal
+            : colors.connection)
     const route = connection.route.map((point) => ({
       ...toSvg(point),
       cubic_bezier_control_points:
@@ -136,11 +138,19 @@ export function convertCircuitJsonToSystemSvg(
         stroke: color,
         "stroke-width": "0.4",
         "stroke-linejoin": "round",
-        ...(mixed
-          ? { "stroke-dasharray": "2 1 0.5 1" }
-          : connection.is_power
-            ? { "stroke-dasharray": "2 1" }
-            : {}),
+        "stroke-linecap": "round",
+        ...(connection.line_style !== undefined
+          ? connection.line_style === "solid"
+            ? {}
+            : {
+                "stroke-dasharray":
+                  connection.line_style === "dotted" ? "0.1 1.2" : "2 1",
+              }
+          : mixed
+            ? { "stroke-dasharray": "2 1 0.5 1" }
+            : connection.is_power
+              ? { "stroke-dasharray": "2 1" }
+              : {}),
       }),
     ]
     if (connection.direction !== "none") {
@@ -193,7 +203,12 @@ export function convertCircuitJsonToSystemSvg(
           "text-anchor": "middle",
           "dominant-baseline": "central",
           "font-size": "2.5",
-          fill: colors.secondaryText,
+          fill: color,
+          // A halo makes labels legible over crossings and group backgrounds.
+          stroke: colors.background,
+          "stroke-width": "1.5",
+          "stroke-linejoin": "round",
+          "paint-order": "stroke fill",
         }),
       )
     }
