@@ -42,6 +42,7 @@ export function createSvgObjectsFromPcbComponentWarning(
   )
 
   if (!component) return []
+  if (ctx.layer && (component.layer ?? "top") !== ctx.layer) return []
 
   const rotationRadians = ((component.rotation ?? 0) * Math.PI) / 180
   const cos = Math.cos(rotationRadians)

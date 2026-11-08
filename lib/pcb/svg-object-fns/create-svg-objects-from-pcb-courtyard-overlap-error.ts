@@ -18,8 +18,8 @@ export function createSvgObjectsFromPcbCourtyardOverlapError(
   for (const compId of error.pcb_component_ids) {
     const comp = circuitJson.find(
       (el) => el.type === "pcb_component" && el.pcb_component_id === compId,
-    ) as { center: { x: number; y: number } } | undefined
-    if (comp) {
+    ) as { center: { x: number; y: number }; layer?: string } | undefined
+    if (comp && (!ctx.layer || (comp.layer ?? "top") === ctx.layer)) {
       componentCenters.push(comp.center)
     }
   }
