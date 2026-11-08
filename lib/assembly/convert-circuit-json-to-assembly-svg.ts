@@ -207,7 +207,11 @@ function createSvgObjects(
             ...(sp.port_hints ?? []),
             ...(sp.name ? [sp.name] : []),
           ].map((h) => h.trim().toLowerCase())
-          return tokens.includes("1") || tokens.includes("pin1") || tokens.includes("a1")
+          return (
+            tokens.includes("1") ||
+            tokens.includes("pin1") ||
+            tokens.includes("a1")
+          )
         }) ?? ports[0]
 
       // Proceed only if both sourceComponent and firstPort are found
