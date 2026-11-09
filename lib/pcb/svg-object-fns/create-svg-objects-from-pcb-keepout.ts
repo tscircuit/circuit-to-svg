@@ -187,10 +187,10 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.y,
       ])
       const safeRadius =
-      Number.isFinite(circleKeepout.radius) && circleKeepout.radius >= 0
-        ? circleKeepout.radius
-        : 0
-    const scaledRadius = safeRadius * Math.abs(transform.a)
+        Number.isFinite(circleKeepout.radius) && circleKeepout.radius >= 0
+          ? circleKeepout.radius
+          : 0
+      const scaledRadius = safeRadius * Math.abs(transform.a)
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
