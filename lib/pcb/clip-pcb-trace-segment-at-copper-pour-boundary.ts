@@ -68,7 +68,7 @@ function getBoundaryRings(pour: PcbCopperPour): RingPoint[][] {
     case "brep":
       return [
         pour.brep_shape.outer_ring.vertices.map(toRingPoint),
-        ...pour.brep_shape.inner_rings.map((ring) =>
+        ...(pour.brep_shape.inner_rings ?? []).map((ring) =>
           ring.vertices.map(toRingPoint),
         ),
       ]
@@ -183,21 +183,23 @@ function getLineArcIntersectionFractions(
   return [
     (-quadraticB - squareRootDiscriminant) / (2 * quadraticA),
     (-quadraticB + squareRootDiscriminant) / (2 * quadraticA),
-  ].filter((traceFraction) => {
-    if (traceFraction < -EPSILON || traceFraction > 1 + EPSILON) return false
+  ]
+    .filter((traceFraction) => {
+      if (traceFraction < -EPSILON || traceFraction > 1 + EPSILON) return false
 
-    const intersection = interpolatePoint(traceStart, traceEnd, traceFraction)
-    const intersectionAngle = Math.atan2(
-      intersection.y - center.y,
-      intersection.x - center.x,
-    )
-    const angleFromArcStart =
-      sweepAngle > 0
-        ? normalizePositiveAngle(intersectionAngle - startAngle)
-        : normalizePositiveAngle(startAngle - intersectionAngle)
+      const intersection = interpolatePoint(traceStart, traceEnd, traceFraction)
+      const intersectionAngle = Math.atan2(
+        intersection.y - center.y,
+        intersection.x - center.x,
+      )
+      const angleFromArcStart =
+        sweepAngle > 0
+          ? normalizePositiveAngle(intersectionAngle - startAngle)
+          : normalizePositiveAngle(startAngle - intersectionAngle)
 
-    return angleFromArcStart <= Math.abs(sweepAngle) + EPSILON
-  })
+      return angleFromArcStart <= Math.abs(sweepAngle) + EPSILON
+    })
+    .map((traceFraction) => Math.min(1, Math.max(0, traceFraction)))
 }
 
 function getLineSegmentIntersectionFraction(

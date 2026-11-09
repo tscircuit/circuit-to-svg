@@ -97,9 +97,45 @@ export function createSvgObjectsFromPcbTrace(
     return {}
   }
 
-  for (const point of getWireTaperSegments(trace.route)) {
+  for (const originalPoint of getWireTaperSegments(trace.route)) {
+    let point = originalPoint
     if (layerFilter && point.layer !== layerFilter) continue
     if (point.is_inside_copper_pour) continue
+    if (
+      point.copper_pour_id &&
+      point.start_is_inside_copper_pour !== point.end_is_inside_copper_pour
+    ) {
+      const copperPour = ctx.circuitJson?.find(
+        (element): element is PcbCopperPour =>
+          element.type === "pcb_copper_pour" &&
+          element.pcb_copper_pour_id === point.copper_pour_id,
+      )
+      if (copperPour) {
+        const clipped = clipPcbTraceSegmentAtCopperPourBoundary(
+          {
+            start: point.start,
+            end: point.end,
+            layer: point.layer,
+            width: point.start_width,
+            startWidth: point.start_width,
+            endWidth: point.end_width,
+            isInsideCopperPour: Boolean(point.is_inside_copper_pour),
+            startIsInsideCopperPour: Boolean(point.start_is_inside_copper_pour),
+            endIsInsideCopperPour: Boolean(point.end_is_inside_copper_pour),
+            copperPourId: point.copper_pour_id,
+          },
+          copperPour,
+        )
+        if (!clipped) continue
+        point = {
+          ...point,
+          start: clipped.start,
+          end: clipped.end,
+          start_width: clipped.startWidth,
+          end_width: clipped.endWidth,
+        }
+      }
+    }
     const polygon = getWireTaperPolygon(point).map((p) =>
       applyToPoint(transform, p),
     )
@@ -235,12 +271,15 @@ export function createSvgObjectsFromPcbTrace(
     if (!point || point.route_type !== "via") continue
     if (getStandaloneViaPositionKeys(ctx).has(getPositionKey(point))) continue
 
-    svgObjects.push(
-      ...createSvgObjectsFromPcbVia(
-        createSyntheticViaFromRoutePoint(trace, point, index, ctx),
-        ctx,
-      ),
+    const syntheticVia = createSyntheticViaFromRoutePoint(
+      trace,
+      point,
+      index,
+      ctx,
     )
+    if (layerFilter && !syntheticVia.layers.includes(layerFilter)) continue
+
+    svgObjects.push(...createSvgObjectsFromPcbVia(syntheticVia, ctx))
   }
 
   return svgObjects
@@ -355,13 +394,22 @@ function findTraceWidth(
     index += direction
   ) {
     const point = route[index]
-    if (hasWireTaper(point))
-      return direction === -1 ? point.end_width : point.start_width
-    if (!point || !("width" in point) || typeof point.width !== "number") {
+    if (hasWireTaper(point)) {
+      const taperWidth = parseOptionalDistance(
+        direction === -1 ? point.end_width : point.start_width,
+      )
+      if (taperWidth !== undefined) return taperWidth
+    }
+    if (!point || !("width" in point)) {
       continue
     }
 
-    return point.width
+    const parsedWidth = parseOptionalDistance(
+      point.width as string | number | null | undefined,
+    )
+    if (parsedWidth !== undefined) {
+      return parsedWidth
+    }
   }
 
   return undefined

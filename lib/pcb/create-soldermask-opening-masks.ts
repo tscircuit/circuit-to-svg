@@ -14,55 +14,65 @@ export function createSoldermaskOpeningMasks({
   height: number
   showSolderMask?: boolean
 }): SvgObject | null {
-  const openings = objects.filter(
-    (object) =>
-      object.attributes["data-pcb-layer"] === layer &&
-      (object.attributes.class === "pcb-pad" ||
-        object.attributes.class === "pcb-pad-exposed" ||
-        object.attributes["data-type"] === "pcb_soldermask_opening"),
-  )
-  if (openings.length === 0) return null
-
-  const tenting = objects
-    .filter((object) => object.attributes["data-type"] === "pcb_via")
-    .flatMap((object) => object.children)
-    .filter(
-      (object) =>
-        object.attributes.class === "pcb-via-tenting" ||
-        object.attributes.class === "pcb-via-tenting-hole",
-    )
-  // Pours and their mask overlays are drawn after pads. Clip both at pad
-  // openings so exposed copper is neither tinted nor covered by the pour.
-  const pours = objects.filter(
-    (object) =>
-      showSolderMask &&
-      object.attributes["data-pcb-layer"] === layer &&
-      (object.attributes["data-type"] === "pcb_copper_pour" ||
-        object.attributes.class === "pcb-soldermask-covered-pour"),
-  )
-  const padOpenings = openings.filter(
-    (object) =>
-      object.attributes.class === "pcb-pad" ||
-      object.attributes.class === "pcb-pad-exposed",
-  )
+  const targetLayers: LayerRef[] = layer === "top" ? ["top", "bottom"] : [layer]
   const masks: SvgObject[] = []
-  for (const { targets, cutouts, maskId } of [
-    {
-      targets: tenting,
-      cutouts: openings,
-      maskId: `via-tenting-mask-${layer}`,
-    },
-    {
-      targets: pours,
-      cutouts: padOpenings,
-      maskId: `copper-pour-pad-opening-mask-${layer}`,
-    },
-  ]) {
-    if (targets.length === 0 || cutouts.length === 0) continue
-    for (const object of targets) {
-      object.attributes.mask = `url(#${maskId})`
+
+  for (const targetLayer of targetLayers) {
+    const openings = objects.filter(
+      (object) =>
+        object.attributes["data-pcb-layer"] === targetLayer &&
+        (object.attributes.class === "pcb-pad" ||
+          object.attributes.class === "pcb-pad-exposed" ||
+          object.attributes["data-type"] === "pcb_soldermask_opening"),
+    )
+    if (openings.length === 0) continue
+
+    const tenting = objects
+      .filter((object) => object.attributes["data-type"] === "pcb_via")
+      .flatMap((object) => object.children)
+      .filter(
+        (object) =>
+          (object.attributes["data-pcb-layer"] ?? targetLayer) ===
+            targetLayer &&
+          (object.attributes.class === "pcb-via-tenting" ||
+            object.attributes.class === "pcb-via-tenting-hole"),
+      )
+    // Pours and their mask overlays are drawn after pads. Clip both at pad
+    // openings so exposed copper is neither tinted nor covered by the pour.
+    const pours = objects.filter(
+      (object) =>
+        showSolderMask &&
+        object.attributes["data-pcb-layer"] === targetLayer &&
+        (object.attributes["data-type"] === "pcb_copper_pour" ||
+          object.attributes.class === "pcb-soldermask-covered-pour"),
+    )
+    const padOpenings = objects.filter(
+      (object, index) =>
+        object.attributes["data-pcb-layer"] === targetLayer &&
+        (object.attributes.class === "pcb-pad" ||
+          object.attributes.class === "pcb-pad-exposed" ||
+          (object.attributes.class === "pcb-soldermask-cutout" &&
+            objects[index + 1]?.attributes.class === "pcb-pad" &&
+            objects[index + 1]?.attributes["data-pcb-layer"] === targetLayer)),
+    )
+    for (const { targets, cutouts, maskId } of [
+      {
+        targets: tenting,
+        cutouts: openings,
+        maskId: `via-tenting-mask-${targetLayer}`,
+      },
+      {
+        targets: pours,
+        cutouts: padOpenings,
+        maskId: `copper-pour-pad-opening-mask-${targetLayer}`,
+      },
+    ]) {
+      if (targets.length === 0 || cutouts.length === 0) continue
+      for (const object of targets) {
+        object.attributes.mask = `url(#${maskId})`
+      }
+      masks.push(createOpeningMask(maskId, cutouts, width, height))
     }
-    masks.push(createOpeningMask(maskId, cutouts, width, height))
   }
   if (masks.length === 0) return null
 
