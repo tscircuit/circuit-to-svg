@@ -186,7 +186,8 @@ export function createSvgObjectsFromPcbKeepout(
         circleKeepout.center.x,
         circleKeepout.center.y,
       ])
-      const scaledRadius = circleKeepout.radius * Math.abs(transform.a)
+      const rawScaledRadius = circleKeepout.radius * Math.abs(transform.a)
+    const scaledRadius = Math.max(0, rawScaledRadius)
 
       const backgroundAttributes = {
         ...createKeepoutBaseAttributes(
