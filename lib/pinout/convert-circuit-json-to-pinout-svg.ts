@@ -1,35 +1,35 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement, PcbPort, SourceBoard } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
+import { stringifySvg } from "lib/utils/stringify-svg"
+import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,
   compose,
   scale as matrixScale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
+import {
+  type LabelPosition,
+  calculateLabelPositions,
+} from "./calculate-label-positions"
+import {
+  ALIGNED_OFFSET_MARGIN,
+  CHAR_WIDTH_FACTOR,
+  FONT_HEIGHT_RATIO,
+  LABEL_RECT_HEIGHT_BASE_MM,
+  STAGGER_OFFSET_MIN,
+  STAGGER_OFFSET_PER_PIN,
+  STAGGER_OFFSET_STEP,
+} from "./constants"
+import { getClosestEdge, getPortLabelInfo } from "./pinout-utils"
 import { createSvgObjectsFromPinoutBoard } from "./svg-object-fns/create-svg-objects-from-pinout-board"
 import { createSvgObjectsFromPinoutComponent } from "./svg-object-fns/create-svg-objects-from-pinout-component"
 import { createSvgObjectsFromPinoutHole } from "./svg-object-fns/create-svg-objects-from-pinout-hole"
 import { createSvgObjectsFromPinoutPlatedHole } from "./svg-object-fns/create-svg-objects-from-pinout-plated-hole"
-import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-objects-from-pinout-smt-pad"
 import { createSvgObjectsFromPinoutPort } from "./svg-object-fns/create-svg-objects-from-pinout-port"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
-import {
-  calculateLabelPositions,
-  type LabelPosition,
-} from "./calculate-label-positions"
-import { getClosestEdge, getPortLabelInfo } from "./pinout-utils"
-import {
-  LABEL_RECT_HEIGHT_BASE_MM,
-  CHAR_WIDTH_FACTOR,
-  FONT_HEIGHT_RATIO,
-  STAGGER_OFFSET_MIN,
-  STAGGER_OFFSET_PER_PIN,
-  STAGGER_OFFSET_STEP,
-  ALIGNED_OFFSET_MARGIN,
-} from "./constants"
+import { createSvgObjectsFromPinoutSmtPad } from "./svg-object-fns/create-svg-objects-from-pinout-smt-pad"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_board",
@@ -101,8 +101,8 @@ export function convertCircuitJsonToPinoutSvg(
 
   const paddingMm = 2
 
-  let svgWidth = options?.width ?? 1200
-  let svgHeight = options?.height ?? 768
+  const svgWidth = options?.width ?? 1200
+  const svgHeight = options?.height ?? 768
 
   const boardTitle = soup.find(
     (e): e is SourceBoard => e.type === "source_board" && !!e.title,
@@ -168,6 +168,25 @@ export function convertCircuitJsonToPinoutSvg(
       return undefined
     })
     .filter((v): v is number => Number.isFinite(v))
+
+  if (padMinorDimensionsMm.length === 0) {
+    const platedHoles = soup.filter(
+      (e) => e.type === "pcb_plated_hole",
+    ) as any[]
+    for (const hole of platedHoles) {
+      const minorDimension =
+        typeof hole.outer_diameter === "number"
+          ? hole.outer_diameter
+          : typeof hole.outer_width === "number" &&
+              typeof hole.outer_height === "number"
+            ? Math.min(hole.outer_width, hole.outer_height)
+            : typeof hole.hole_diameter === "number"
+              ? hole.hole_diameter
+              : undefined
+      if (typeof minorDimension === "number" && Number.isFinite(minorDimension))
+        padMinorDimensionsMm.push(minorDimension)
+    }
+  }
 
   const averagePadMinorMm = padMinorDimensionsMm.length
     ? padMinorDimensionsMm.reduce((a, b) => a + b, 0) /
@@ -275,12 +294,13 @@ export function convertCircuitJsonToPinoutSvg(
     svgHeight,
   }
 
-  const svgObjects = soup
-    .sort(
-      (a, b) =>
-        (OBJECT_ORDER.indexOf(a.type) ?? 9999) -
-        (OBJECT_ORDER.indexOf(b.type) ?? 9999),
-    )
+  const getObjectOrderIndex = (type: AnyCircuitElement["type"]) => {
+    const index = OBJECT_ORDER.indexOf(type)
+    return index === -1 ? 9999 : index
+  }
+
+  const svgObjects = [...soup]
+    .sort((a, b) => getObjectOrderIndex(a.type) - getObjectOrderIndex(b.type))
     .flatMap((item) => createSvgObjects(item, ctx, soup))
 
   const softwareUsedString = getSoftwareUsedString(soup)
