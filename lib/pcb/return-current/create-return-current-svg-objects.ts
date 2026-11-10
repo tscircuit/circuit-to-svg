@@ -15,6 +15,7 @@ import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createSvgObjectsFromPcbTrace } from "../svg-object-fns/create-svg-objects-from-pcb-trace"
 import { createSvgObjectsFromSmtPad } from "../svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbVia } from "../svg-object-fns/create-svg-objects-from-pcb-via"
+import { createSvgObjectsFromPcbPlatedHole } from "../svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import type { PcbReturnCurrentOptions } from "./types"
 
 const node = (
@@ -180,20 +181,25 @@ export function createReturnCurrentSvgObjects({
       )
     )
       continue
-    const [left, top] = applyToPoint(ctx.transform, [
-      heatmap.min_x,
-      heatmap.max_y,
-    ])
-    const [right, bottom] = applyToPoint(ctx.transform, [
-      heatmap.max_x,
-      heatmap.min_y,
-    ])
+    const [x1, y1] = applyToPoint(ctx.transform, [heatmap.min_x, heatmap.max_y])
+    const [x2, y2] = applyToPoint(ctx.transform, [heatmap.max_x, heatmap.min_y])
+    const left = Math.min(x1, x2)
+    const top = Math.min(y1, y2)
+    const width = Math.abs(x2 - x1)
+    const height = Math.abs(y2 - y1)
+    const flipX = x2 < x1 ? -1 : 1
+    const flipY = y2 < y1 ? -1 : 1
+    const imageTransform =
+      flipX < 0 || flipY < 0
+        ? `translate(${flipX < 0 ? 2 * left + width : 0}, ${flipY < 0 ? 2 * top + height : 0}) scale(${flipX}, ${flipY})`
+        : undefined
     heat.push(
       node("image", {
         x: String(left),
         y: String(top),
-        width: String(right - left),
-        height: String(bottom - top),
+        width: String(width),
+        height: String(height),
+        ...(imageTransform ? { transform: imageTransform } : {}),
         href: heatmap.image_asset.url,
         preserveAspectRatio: "none",
         opacity: String(opacity),
@@ -372,19 +378,39 @@ export function createReturnCurrentSvgObjects({
       : "#08d9ef"
     const padObjects =
       marker.target_type === "pcb_port"
-        ? circuitJson.flatMap((el) =>
-            el.type === "pcb_smtpad" && el.pcb_port_id === marker.pcb_port_id
-              ? createSvgObjectsFromSmtPad(el, {
-                  ...ctx,
-                  layer: undefined,
-                  showSolderMask: false,
-                  colorMap: {
-                    ...ctx.colorMap,
-                    copper: { ...ctx.colorMap.copper, [el.layer]: markerColor },
+        ? circuitJson.flatMap((el) => {
+            if (
+              el.type === "pcb_smtpad" &&
+              el.pcb_port_id === marker.pcb_port_id
+            )
+              return createSvgObjectsFromSmtPad(el, {
+                ...ctx,
+                layer: undefined,
+                showSolderMask: false,
+                colorMap: {
+                  ...ctx.colorMap,
+                  copper: { ...ctx.colorMap.copper, [el.layer]: markerColor },
+                },
+              })
+            if (
+              el.type === "pcb_plated_hole" &&
+              el.pcb_port_id === marker.pcb_port_id
+            )
+              return createSvgObjectsFromPcbPlatedHole(el, {
+                ...ctx,
+                layer: undefined,
+                showSolderMask: false,
+                colorMap: {
+                  ...ctx.colorMap,
+                  copper: {
+                    ...ctx.colorMap.copper,
+                    top: markerColor,
+                    bottom: markerColor,
                   },
-                })
-              : [],
-          )
+                },
+              })
+            return []
+          })
         : []
     const viaObjects =
       target.type === "pcb_via"
