@@ -82,6 +82,46 @@ export const getSimulationAnalysisResultId = (
   }
 }
 
+const getAcSweepCoordinates = ({
+  frequenciesHz,
+  complexSamples,
+  acSweepView,
+  usesLogarithmicXValues,
+  isCurrent,
+}: {
+  frequenciesHz: number[]
+  complexSamples: Array<{ re: number; im: number }>
+  acSweepView: AcSweepView
+  usesLogarithmicXValues: boolean
+  isCurrent: boolean
+}): AnalysisGraphCoordinates => {
+  const horizontalCoordinates: number[] = []
+  const measuredLevels: number[] = []
+  const sampleCount = Math.min(frequenciesHz.length, complexSamples.length)
+
+  for (let i = 0; i < sampleCount; i++) {
+    const frequency = frequenciesHz[i]!
+    const sample = complexSamples[i]!
+    if (!Number.isFinite(frequency)) continue
+    if (usesLogarithmicXValues && frequency <= 0) continue
+
+    horizontalCoordinates.push(
+      usesLogarithmicXValues ? Math.log10(frequency) : frequency,
+    )
+    measuredLevels.push(
+      acSweepView === "phase"
+        ? (Math.atan2(sample.im, sample.re) * 180) / Math.PI
+        : Math.hypot(sample.re, sample.im),
+    )
+  }
+
+  return {
+    horizontalCoordinates,
+    measuredLevels,
+    isCurrent,
+  }
+}
+
 const getAnalysisGraphCoordinates = ({
   simulationResult,
   acSweepView,
@@ -120,29 +160,21 @@ const getAnalysisGraphCoordinates = ({
         isCurrent: true,
       }
     case "simulation_ac_sweep_voltage_graph":
-      return {
-        horizontalCoordinates: usesLogarithmicXValues
-          ? simulationResult.frequencies_hz.map(Math.log10)
-          : simulationResult.frequencies_hz,
-        measuredLevels: simulationResult.complex_voltages.map((sample) =>
-          acSweepView === "phase"
-            ? (Math.atan2(sample.im, sample.re) * 180) / Math.PI
-            : Math.hypot(sample.re, sample.im),
-        ),
+      return getAcSweepCoordinates({
+        frequenciesHz: simulationResult.frequencies_hz,
+        complexSamples: simulationResult.complex_voltages,
+        acSweepView,
+        usesLogarithmicXValues,
         isCurrent: false,
-      }
+      })
     case "simulation_ac_sweep_current_graph":
-      return {
-        horizontalCoordinates: usesLogarithmicXValues
-          ? simulationResult.frequencies_hz.map(Math.log10)
-          : simulationResult.frequencies_hz,
-        measuredLevels: simulationResult.complex_currents.map((sample) =>
-          acSweepView === "phase"
-            ? (Math.atan2(sample.im, sample.re) * 180) / Math.PI
-            : Math.hypot(sample.re, sample.im),
-        ),
+      return getAcSweepCoordinates({
+        frequenciesHz: simulationResult.frequencies_hz,
+        complexSamples: simulationResult.complex_currents,
+        acSweepView,
+        usesLogarithmicXValues,
         isCurrent: true,
-      }
+      })
   }
 }
 
@@ -239,13 +271,28 @@ export const normalizeSimulationAnalysisResults = ({
   acSweepView: AcSweepView
   experiment?: SimulationExperiment
 }): NormalizedSimulationResults => {
-  const simulationResultType = results[0]?.type
+  const nonOperatingPointResults = results.filter(
+    (result) => !result.type.startsWith("simulation_dc_operating_point_"),
+  )
+  const effectiveResults =
+    nonOperatingPointResults.length > 0 ? nonOperatingPointResults : results
+  const simulationResultType = effectiveResults[0]?.type
   const isAcSweep =
     simulationResultType?.startsWith("simulation_ac_sweep_") ?? false
+  const hasPositiveAcFrequencies = effectiveResults.some(
+    (result) =>
+      (result.type === "simulation_ac_sweep_voltage_graph" ||
+        result.type === "simulation_ac_sweep_current_graph") &&
+      result.frequencies_hz.some(
+        (frequency) => Number.isFinite(frequency) && frequency > 0,
+      ),
+  )
   const usesLogarithmicXValues =
-    isAcSweep && experiment?.ac_sweep_type !== "linear"
+    isAcSweep &&
+    experiment?.ac_sweep_type !== "linear" &&
+    hasPositiveAcFrequencies
 
-  const graphs = results.map((simulationResult) =>
+  const graphs = effectiveResults.map((simulationResult) =>
     normalizeSimulationResult({
       simulationResult,
       acSweepView,
