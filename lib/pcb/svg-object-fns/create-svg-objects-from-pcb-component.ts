@@ -14,8 +14,10 @@ export function createSvgObjectsFromPcbComponent(
   component: PcbComponent,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform, circuitJson } = ctx
+  const { transform, circuitJson, layer: layerFilter } = ctx
   const { center, width, height, rotation = 0 } = component
+  const componentLayer = component.layer ?? "top"
+  if (layerFilter && componentLayer !== layerFilter) return []
   const [x, y] = applyToPoint(transform, [center.x, center.y])
   const scaledWidth = width * Math.abs(transform.a)
   const scaledHeight = height * Math.abs(transform.d)

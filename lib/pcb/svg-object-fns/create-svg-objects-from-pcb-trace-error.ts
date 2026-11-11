@@ -1,7 +1,52 @@
-import type { PcbTraceError, PcbPort, AnyCircuitElement } from "circuit-json"
+import type {
+  PcbTraceError,
+  PcbPort,
+  PcbTrace,
+  AnyCircuitElement,
+} from "circuit-json"
 import type { SvgObject } from "../../../lib/svg-object"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
+
+function isTraceErrorVisibleOnLayer(
+  pcbTraceError: PcbTraceError,
+  circuitJson: AnyCircuitElement[],
+  port1: PcbPort | undefined,
+  port2: PcbPort | undefined,
+  via: { layers?: string[] } | undefined,
+  layerFilter: string | undefined,
+): boolean {
+  if (!layerFilter) return true
+
+  const trace = circuitJson.find(
+    (el): el is PcbTrace =>
+      el.type === "pcb_trace" && el.pcb_trace_id === pcbTraceError.pcb_trace_id,
+  )
+
+  const referencedLayers = new Set<string>()
+  for (const layer of port1?.layers ?? []) referencedLayers.add(layer)
+  for (const layer of port2?.layers ?? []) referencedLayers.add(layer)
+  for (const layer of via?.layers ?? []) referencedLayers.add(layer)
+  for (const routePoint of trace?.route ?? []) {
+    if (routePoint.route_type === "via") {
+      if (routePoint.from_layer) referencedLayers.add(routePoint.from_layer)
+      if (routePoint.to_layer) referencedLayers.add(routePoint.to_layer)
+    } else if ("layer" in routePoint && routePoint.layer) {
+      referencedLayers.add(routePoint.layer)
+    }
+  }
+  for (const compId of pcbTraceError.pcb_component_ids ?? []) {
+    const comp = circuitJson.find(
+      (el) => el.type === "pcb_component" && el.pcb_component_id === compId,
+    ) as { layer?: string } | undefined
+    if (comp?.layer) referencedLayers.add(comp.layer)
+  }
+
+  if (referencedLayers.size > 0 && !referencedLayers.has(layerFilter)) {
+    return false
+  }
+  return true
+}
 
 export function createSvgObjectsFromPcbTraceError(
   pcbTraceError: PcbTraceError,
@@ -22,15 +67,26 @@ export function createSvgObjectsFromPcbTraceError(
       el.type === "pcb_port" && el.pcb_port_id === pcb_port_ids?.[1],
   )
 
-  if (!port1 || !port2) {
-    const viaIdMatch = pcbTraceError.message?.match(
-      /pcb_via\[#?(pcb_via_\d+)\]/,
-    )
-    const viaId = viaIdMatch?.[1]
-    const via = circuitJson.find(
-      (el) => el.type === "pcb_via" && el.pcb_via_id === viaId,
-    ) as { x: number; y: number; type: string } | undefined
+  const viaIdMatch = pcbTraceError.message?.match(/pcb_via\[#?(pcb_via_\d+)\]/)
+  const viaId = viaIdMatch?.[1]
+  const via = circuitJson.find(
+    (el) => el.type === "pcb_via" && el.pcb_via_id === viaId,
+  ) as { x: number; y: number; type: string; layers?: string[] } | undefined
 
+  if (
+    !isTraceErrorVisibleOnLayer(
+      pcbTraceError,
+      circuitJson,
+      port1,
+      port2,
+      via,
+      ctx.layer,
+    )
+  ) {
+    return []
+  }
+
+  if (!port1 || !port2) {
     if (via && via.type === "pcb_via") {
       return createSvgObjectsForViaTraceError(pcbTraceError, via, ctx)
     }

@@ -162,6 +162,51 @@ function annotateError(
   }))
 }
 
+function getTraceLayers(trace: PcbTrace | undefined): string[] {
+  if (!trace) return []
+
+  const layers = new Set<string>()
+  for (const routePoint of trace.route) {
+    if (routePoint.route_type === "via") {
+      if (routePoint.from_layer) layers.add(routePoint.from_layer)
+      if (routePoint.to_layer) layers.add(routePoint.to_layer)
+    } else if ("layer" in routePoint && routePoint.layer) {
+      layers.add(routePoint.layer)
+    }
+  }
+  return Array.from(layers)
+}
+
+function getObstacleLayers(
+  obstacle: PcbTraceClearanceObstacle | undefined,
+): string[] {
+  if (!obstacle) return []
+  if (obstacle.type === "pcb_smtpad") {
+    return obstacle.layer ? [obstacle.layer] : []
+  }
+  return obstacle.layers ?? []
+}
+
+function isClearanceErrorOnLayer(
+  obstacle: PcbTraceClearanceObstacle | undefined,
+  trace: PcbTrace | undefined,
+  layerFilter: string | undefined,
+): boolean {
+  if (!layerFilter) return true
+
+  const obstacleLayers = getObstacleLayers(obstacle)
+  if (obstacleLayers.length > 0 && !obstacleLayers.includes(layerFilter)) {
+    return false
+  }
+
+  const traceLayers = getTraceLayers(trace)
+  if (traceLayers.length > 0 && !traceLayers.includes(layerFilter)) {
+    return false
+  }
+
+  return true
+}
+
 export function createSvgObjectsFromPcbTraceClearanceError(
   error: PcbTraceClearanceError,
   circuitJson: AnyCircuitElement[],
@@ -170,12 +215,14 @@ export function createSvgObjectsFromPcbTraceClearanceError(
   const { shouldDrawErrors, transform } = ctx
   if (!shouldDrawErrors) return []
 
-  const obstacleCenter = getObstacleCenter(findObstacle(error, circuitJson))
+  const obstacle = findObstacle(error, circuitJson)
+  const obstacleCenter = getObstacleCenter(obstacle)
   const trace = circuitJson.find(
     (element): element is PcbTrace =>
       element.type === "pcb_trace" &&
       element.pcb_trace_id === error.pcb_trace_id,
   )
+  if (!isClearanceErrorOnLayer(obstacle, trace, ctx.layer)) return []
   const traceEndpoints = getTraceEndpoints(trace)
   const worldErrorCenter = isFinitePoint(error.center)
     ? error.center
