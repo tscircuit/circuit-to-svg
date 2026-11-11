@@ -75,7 +75,10 @@ export function createSvgObjectsFromPcbBoard(
       attributes: {
         class: "pcb-board-soldermask",
         d: path,
-        fill: colorMap.soldermask.top,
+        fill:
+          layer === "bottom"
+            ? colorMap.soldermask.bottom
+            : colorMap.soldermask.top,
         "fill-opacity": "0.8",
         stroke: "none",
         "data-type": "pcb_soldermask",
