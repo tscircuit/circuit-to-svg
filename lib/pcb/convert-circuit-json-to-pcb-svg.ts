@@ -1,3 +1,4 @@
+import { createSvgObjectsFromPcbPlacementError } from "./svg-object-fns/create-svg-objects-from-pcb-placement-error"
 import { createXRaySvgObjects } from "./create-x-ray-svg-objects"
 import { createReturnCurrentSvgObjects } from "./return-current/create-return-current-svg-objects"
 import type { PcbReturnCurrentOptions } from "./return-current/types"
@@ -612,6 +613,8 @@ function createSvgObjects({
                 : 0,
           })
         : []
+    case "pcb_placement_error":
+      return createSvgObjectsFromPcbPlacementError(elm, ctx)
     case "pcb_trace_error":
       return createSvgObjectsFromPcbTraceError(elm, circuitJson, ctx).filter(
         Boolean,
