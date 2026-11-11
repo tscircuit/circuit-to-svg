@@ -84,10 +84,11 @@ export function createSvgObjectsFromSmtPad(
         return [padElement]
       }
 
-      const maskWidth = width + m.left + m.right
-      const maskHeight = height + m.top + m.bottom
+      const effectiveMargin = Math.min(m.left, m.right, m.top, m.bottom)
+      const maskWidth = Math.max(0, width + m.left + m.right)
+      const maskHeight = Math.max(0, height + m.top + m.bottom)
       const maskBorderRadius = scaledBorderRadius
-        ? scaledBorderRadius + soldermaskMargin
+        ? Math.max(0, scaledBorderRadius + effectiveMargin)
         : 0
 
       // For negative margins, create a ring effect
@@ -107,6 +108,7 @@ export function createSvgObjectsFromSmtPad(
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-type": "pcb_smtpad",
             "data-pcb-layer": pad.layer,
+            ...padDataAttributes,
             ...(scaledBorderRadius
               ? {
                   rx: scaledBorderRadius.toString(),
@@ -160,6 +162,7 @@ export function createSvgObjectsFromSmtPad(
             transform: `translate(${x} ${y}) rotate(${-pad.ccw_rotation})`,
             "data-type": "pcb_smtpad",
             "data-pcb-layer": pad.layer,
+            ...padDataAttributes,
             ...(scaledBorderRadius
               ? {
                   rx: scaledBorderRadius.toString(),
@@ -229,10 +232,11 @@ export function createSvgObjectsFromSmtPad(
     }
 
     // Apply soldermask margin to dimensions
-    const maskWidth = width + m.left + m.right
-    const maskHeight = height + m.top + m.bottom
+    const effectiveMargin = Math.min(m.left, m.right, m.top, m.bottom)
+    const maskWidth = Math.max(0, width + m.left + m.right)
+    const maskHeight = Math.max(0, height + m.top + m.bottom)
     const maskBorderRadius = scaledBorderRadius
-      ? scaledBorderRadius + soldermaskMargin
+      ? Math.max(0, scaledBorderRadius + effectiveMargin)
       : 0
 
     // For negative margins, create a ring effect where soldermask covers only the edges
@@ -252,6 +256,7 @@ export function createSvgObjectsFromSmtPad(
           height: height.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
           ...(scaledBorderRadius
             ? {
                 rx: scaledBorderRadius.toString(),
@@ -310,6 +315,7 @@ export function createSvgObjectsFromSmtPad(
             : {}),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
         },
       }
 
@@ -383,9 +389,9 @@ export function createSvgObjectsFromSmtPad(
     }
 
     // Apply soldermask margin to dimensions
-    const maskWidth = width + 2 * soldermaskMargin
-    const maskHeight = height + 2 * soldermaskMargin
-    const maskRadius = radius + soldermaskMargin
+    const maskWidth = Math.max(0, width + 2 * soldermaskMargin)
+    const maskHeight = Math.max(0, height + 2 * soldermaskMargin)
+    const maskRadius = Math.max(0, radius + soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -405,6 +411,7 @@ export function createSvgObjectsFromSmtPad(
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
           ...(rotationTransformAttributes ?? {}),
         },
       }
@@ -456,6 +463,7 @@ export function createSvgObjectsFromSmtPad(
           ry: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
           ...(rotationTransformAttributes ?? {}),
         },
       }
@@ -518,7 +526,7 @@ export function createSvgObjectsFromSmtPad(
     }
 
     // Apply soldermask margin to radius
-    const maskRadius = radius + soldermaskMargin
+    const maskRadius = Math.max(0, radius + soldermaskMargin)
 
     // For negative margins, create a ring effect
     if (soldermaskMargin < 0) {
@@ -535,6 +543,7 @@ export function createSvgObjectsFromSmtPad(
           r: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
         },
       }
 
@@ -572,6 +581,7 @@ export function createSvgObjectsFromSmtPad(
           r: radius.toString(),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
         },
       }
 
@@ -602,6 +612,7 @@ export function createSvgObjectsFromSmtPad(
     const points = (pad.points ?? []).map((point) =>
       applyToPoint(transform, [point.x, point.y]),
     )
+    if (points.length < 3) return []
 
     const padElement: SvgObject = {
       name: "polygon",
@@ -658,6 +669,7 @@ export function createSvgObjectsFromSmtPad(
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
         },
       }
 
@@ -691,6 +703,7 @@ export function createSvgObjectsFromSmtPad(
           points: points.map((p) => p.join(",")).join(" "),
           "data-type": "pcb_smtpad",
           "data-pcb-layer": pad.layer,
+          ...padDataAttributes,
         },
       }
 

@@ -27,7 +27,11 @@ export function createSvgObjectFromPcbPadPinNumber(
 
   if (pad.type === "pcb_smtpad") {
     if (ctx.layer && pad.layer !== ctx.layer) return []
-  } else if (ctx.layer && !pad.layers.includes(ctx.layer)) {
+  } else if (
+    ctx.layer &&
+    Array.isArray(pad.layers) &&
+    !pad.layers.includes(ctx.layer)
+  ) {
     return []
   }
 
@@ -112,7 +116,7 @@ function getPadTextGeometry(pad: PcbPad): PadTextGeometry | undefined {
       height: pad.height,
       ccwRotation:
         pad.shape === "rotated_rect" || pad.shape === "rotated_pill"
-          ? pad.ccw_rotation
+          ? (pad.ccw_rotation ?? 0)
           : 0,
     }
   }
@@ -133,7 +137,7 @@ function getPadTextGeometry(pad: PcbPad): PadTextGeometry | undefined {
       centerY: pad.y,
       width: pad.outer_width,
       height: pad.outer_height,
-      ccwRotation: pad.ccw_rotation,
+      ccwRotation: pad.ccw_rotation ?? 0,
     }
   }
 
@@ -155,17 +159,17 @@ function getPadTextGeometry(pad: PcbPad): PadTextGeometry | undefined {
   }
 
   if ("rect_pad_width" in pad) {
+    const padWithRectOffsets = pad as typeof pad & {
+      rect_pad_offset_x?: number
+      rect_pad_offset_y?: number
+      rect_ccw_rotation?: number
+    }
     return {
-      centerX: pad.x,
-      centerY: pad.y,
+      centerX: pad.x + (padWithRectOffsets.rect_pad_offset_x ?? 0),
+      centerY: pad.y + (padWithRectOffsets.rect_pad_offset_y ?? 0),
       width: pad.rect_pad_width,
       height: pad.rect_pad_height,
-      ccwRotation:
-        pad.shape === "rotated_pill_hole_with_rect_pad"
-          ? pad.rect_ccw_rotation
-          : pad.shape === "circular_hole_with_rect_pad"
-            ? (pad.rect_ccw_rotation ?? 0)
-            : 0,
+      ccwRotation: padWithRectOffsets.rect_ccw_rotation ?? 0,
     }
   }
 
