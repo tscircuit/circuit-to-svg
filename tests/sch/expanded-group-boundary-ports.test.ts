@@ -1,75 +1,39 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement, SchematicPort } from "circuit-json"
+import type { AnyCircuitElement } from "circuit-json"
 import { convertCircuitJsonToSchematicSvg } from "lib"
 import { getSchematicBoundsFromCircuitJson } from "lib/sch/get-schematic-bounds-from-circuit-json"
+import referenceCircuit from "./assets/cc2340r5-reference/circuit.json"
 
-test("expanded group has a frame and persistent public terminals on all four sides", () => {
-  const ports: SchematicPort[] = [
-    {
-      type: "schematic_port",
-      schematic_port_id: "left",
-      source_port_id: "public_in",
-      schematic_group_id: "group",
-      center: { x: 4.6, y: -3 },
-      boundary_position: { x: 5, y: -3 },
-      facing_direction: "left",
-      display_pin_label: "LONG_EXPORTED_INPUT_NAME",
-      is_connected: true,
-    },
-    {
-      type: "schematic_port",
-      schematic_port_id: "right",
-      source_port_id: "public_out",
-      schematic_group_id: "group",
-      center: { x: 11.4, y: -3 },
-      boundary_position: { x: 11, y: -3 },
-      facing_direction: "right",
-      display_pin_label: "OUTPUT",
-      is_connected: false,
-    },
-    {
-      type: "schematic_port",
-      schematic_port_id: "top",
-      source_port_id: "public_power",
-      schematic_group_id: "group",
-      center: { x: 8, y: -0.6 },
-      boundary_position: { x: 8, y: -1 },
-      facing_direction: "up",
-      display_pin_label: "VCC",
-    },
-    {
-      type: "schematic_port",
-      schematic_port_id: "bottom",
-      source_port_id: "public_ground",
-      schematic_group_id: "group",
-      center: { x: 8, y: -5.4 },
-      boundary_position: { x: 8, y: -5 },
-      facing_direction: "down",
-      display_pin_label: "GND",
-    },
-  ]
-  const json: AnyCircuitElement[] = [
-    {
-      type: "schematic_group",
-      schematic_group_id: "group",
-      source_group_id: "source_group",
-      center: { x: 8, y: -3 },
-      width: 6,
-      height: 4,
-      schematic_component_ids: [],
-      show_boundary: true,
-      name: "EXPORTED INTERFACE",
-    },
-    ...ports,
-  ]
-  const svg = convertCircuitJsonToSchematicSvg(json)
+test("CC2340R5 reference renders its complete circuit and five exported terminals", () => {
+  const json = referenceCircuit as AnyCircuitElement[]
+  const group = json.find(
+    (element) => element.type === "schematic_group" && element.show_boundary,
+  )!
+  if (group.type !== "schematic_group")
+    throw new Error("Missing CC2340R5 boundary")
+  const ports = json.filter(
+    (element) =>
+      element.type === "schematic_port" &&
+      element.schematic_group_id === group.schematic_group_id,
+  )
+  const svg = convertCircuitJsonToSchematicSvg(json, {
+    width: 1600,
+    height: 1250,
+  })
+  expect(
+    json.filter((element) => element.type === "schematic_component"),
+  ).toHaveLength(27)
   expect(svg.match(/class="sch-group-boundary"/g)).toHaveLength(1)
-  expect(svg.match(/class="sch-group-port-terminal"/g)).toHaveLength(4)
-  expect(svg).toContain('data-source-port-id="public_in"')
+  expect(svg.match(/class="sch-group-port-terminal"/g)).toHaveLength(5)
+  for (const port of ports) {
+    if (port.type !== "schematic_port") continue
+    expect(svg).toContain(`data-source-port-id="${port.source_port_id}"`)
+    expect(svg).toContain(port.display_pin_label!)
+  }
   const bounds = getSchematicBoundsFromCircuitJson(json, 0)
-  expect(bounds.minX).toBeLessThan(1)
-  expect(bounds.maxX).toBeGreaterThan(12)
-  expect(bounds.maxY).toBeGreaterThan(-0.6)
-  expect(bounds.minY).toBeLessThan(-5.4)
+  expect(bounds.minX).toBeLessThan(group.center.x - group.width / 2 - 0.6)
+  expect(bounds.maxX).toBeGreaterThan(group.center.x + group.width / 2 + 0.6)
+  expect(bounds.maxY).toBeGreaterThan(group.center.y + group.height / 2 + 0.4)
+  expect(bounds.minY).toBeLessThan(group.center.y - group.height / 2 - 0.4)
   expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
