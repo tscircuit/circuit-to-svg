@@ -1,3 +1,4 @@
+import { getSchematicGroupPortLabel } from "./get-schematic-group-port-label"
 import {
   getNetLabelTextWidth,
   type SchematicTextWithSuperscript,
@@ -44,10 +45,40 @@ export function getSchematicBoundsFromCircuitJson(
         { width: layout.width, height: layout.height },
         0,
       )
+    } else if (
+      item.type === "schematic_group" &&
+      item.show_boundary &&
+      !item.show_as_schematic_box
+    ) {
+      updateBounds(item.center, { width: item.width, height: item.height }, 0)
     } else if (item.type === "schematic_component") {
       updateBounds(item.center, item.size, 0)
     } else if (item.type === "schematic_port") {
       updateBounds(item.center, { width: portSize, height: portSize }, 0)
+      if (
+        item.schematic_group_id &&
+        item.boundary_position &&
+        !item.schematic_component_id
+      ) {
+        updateBounds(
+          item.boundary_position,
+          { width: portSize, height: portSize },
+          0,
+        )
+        const label = getSchematicGroupPortLabel(item)
+        const width = label.text.length * label.font_size
+        const offsetX =
+          label.anchor === "left"
+            ? width / 2
+            : label.anchor === "right"
+              ? -width / 2
+              : 0
+        updateBounds(
+          { x: label.position.x + offsetX, y: label.position.y },
+          { width, height: label.font_size },
+          0,
+        )
+      }
     } else if (item.type === "schematic_debug_object") {
       if (item.shape === "rect") {
         updateBounds(item.center, item.size, 0)
