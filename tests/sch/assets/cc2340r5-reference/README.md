@@ -8,7 +8,8 @@ using `tests/fixtures/cc2340r5-reference/export-circuit.tsx`. This JSON is actua
 core output: 27 components, 16 original nets, and a proposed module interface for
 VDDS, GND, RESET_N, SWDIO, and SWCLK. Core tests verify component identities,
 values, and every net's physical pin membership against the published release.
-PCB records are omitted; schematic geometry is not postprocessed.
+PCB records are omitted; schematic geometry is not postprocessed. JSON is
+formatted with Biome after export.
 
 The root wrapper replaces the original board and fixed A4 frame. All real
 regulator, decoupling, RF/antenna, clock, reset, and SWD circuitry is retained at
@@ -20,4 +21,5 @@ Regenerate from the core companion checkout:
 ```sh
 bun tests/fixtures/cc2340r5-reference/export-circuit.tsx \
   ../circuit-to-svg/tests/sch/assets/cc2340r5-reference/circuit.json
+bunx biome format --write ../circuit-to-svg/tests/sch/assets/cc2340r5-reference/circuit.json
 ```
