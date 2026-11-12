@@ -31,7 +31,7 @@ test("CC2340R5 contents and exported interface follow schematic sheet selection"
     height: 1250,
   })
   expect(svg.match(/class="sch-group-boundary"/g)).toHaveLength(1)
-  expect(svg.match(/class="sch-group-port-terminal"/g)).toHaveLength(5)
+  expect(svg.match(/class="sch-group-port-terminal"/g)).toHaveLength(13)
   expect(svg).toContain("CC2340R52E0RGER")
   const cover = convertCircuitJsonToSchematicSvg(json, {
     schematicSheetId: "cover",
