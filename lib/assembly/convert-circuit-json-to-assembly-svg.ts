@@ -177,6 +177,62 @@ export function convertCircuitJsonToAssemblySvg(
   return stringifySvg(svgObject)
 }
 
+const PIN1_IDENTIFIERS = new Set(["1", "pin1", "pin_1", "a1"])
+
+function isPin1Identifier(value: unknown): boolean {
+  if (typeof value === "number") return value === 1
+  if (typeof value === "string") {
+    return PIN1_IDENTIFIERS.has(value.trim().toLowerCase())
+  }
+  return false
+}
+
+function findPin1Port(
+  ports: Array<{
+    pcb_port_id: string
+    source_port_id?: string
+    x: number
+    y: number
+  }>,
+  soup: AnyCircuitElement[],
+) {
+  if (ports.length <= 1) return ports[0]
+
+  const sourcePorts = su(soup).source_port.list()
+  const smtPads = su(soup).pcb_smtpad.list()
+  const platedHoles = su(soup).pcb_plated_hole.list()
+
+  for (const port of ports) {
+    const sourcePort = sourcePorts.find(
+      (sp) => sp.source_port_id === port.source_port_id,
+    )
+    if (
+      sourcePort &&
+      (isPin1Identifier(sourcePort.pin_number) ||
+        isPin1Identifier(sourcePort.name) ||
+        sourcePort.port_hints?.some((hint) => isPin1Identifier(hint)))
+    ) {
+      return port
+    }
+
+    const matchingPad = smtPads.find(
+      (pad) => pad.pcb_port_id === port.pcb_port_id,
+    )
+    if (matchingPad?.port_hints?.some((hint) => isPin1Identifier(hint))) {
+      return port
+    }
+
+    const matchingHole = platedHoles.find(
+      (hole) => hole.pcb_port_id === port.pcb_port_id,
+    )
+    if (matchingHole?.port_hints?.some((hint) => isPin1Identifier(hint))) {
+      return port
+    }
+  }
+
+  return ports[0]
+}
+
 function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
@@ -195,7 +251,7 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      const firstPort = findPin1Port(ports, soup)
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
