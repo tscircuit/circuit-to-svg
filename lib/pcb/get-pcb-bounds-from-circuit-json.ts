@@ -374,7 +374,7 @@ export function getComprehensivePcbBounds(
         anchorAlignment: circuitJsonElm.anchor_alignment as NinePointAnchor,
         ccwRotationDegrees:
           circuitJsonElm.type === "pcb_fabrication_note_text"
-            ? (circuitJsonElm.ccw_rotation ?? 1)
+            ? (circuitJsonElm.ccw_rotation ?? 0)
             : 0,
       })
     } else if (circuitJsonElm.type === "pcb_cutout") {
@@ -620,21 +620,54 @@ export function getComprehensivePcbBounds(
     const lines = text.split("\n")
     const maxLineLength = Math.max(...lines.map((line) => line.length), 0)
     const textWidth = maxLineLength * fontSize * 0.6
-    const textHeight = Math.max(lines.length, 1) * fontSize
+    const lineCount = Math.max(lines.length, 1)
+    const textHeight = lineCount * fontSize
 
-    const center = getTextCenterFromAnchorPosition({
+    // The anchor alignment positions the first line; each following line is
+    // rendered one line height below it (tspan dy="1em").
+    const firstLineCenter = getTextCenterFromAnchorPosition({
       anchorPosition,
       textWidth,
-      textHeight,
+      textHeight: fontSize,
       anchorAlignment,
     })
+    const center = {
+      x: firstLineCenter.x,
+      y: firstLineCenter.y - ((lineCount - 1) * fontSize) / 2,
+    }
 
-    updateBounds({
-      center,
-      width: textWidth,
-      height: textHeight,
-      ccwRotationDegrees,
-    })
+    if (!ccwRotationDegrees) {
+      updateBounds({ center, width: textWidth, height: textHeight })
+      return
+    }
+
+    // The renderer rotates text around its anchor position, not around the
+    // text center, so rotate the text box corners around the anchor.
+    const anchorX = distance.parse(anchorPosition.x)
+    const anchorY = distance.parse(anchorPosition.y)
+    if (anchorX === undefined || anchorY === undefined) return
+    const rotationAroundAnchor = compose(
+      translate(anchorX, anchorY),
+      rotate((ccwRotationDegrees * Math.PI) / 180),
+      translate(-anchorX, -anchorY),
+    )
+    const halfWidth = textWidth / 2
+    const halfHeight = textHeight / 2
+    for (const [dx, dy] of [
+      [-halfWidth, -halfHeight],
+      [halfWidth, -halfHeight],
+      [halfWidth, halfHeight],
+      [-halfWidth, halfHeight],
+    ] as const) {
+      updateBounds({
+        center: applyToPoint(rotationAroundAnchor, {
+          x: center.x + dx,
+          y: center.y + dy,
+        }),
+        width: 0,
+        height: 0,
+      })
+    }
   }
 
   function updateSilkscreenBounds(item: AnyCircuitElement) {
