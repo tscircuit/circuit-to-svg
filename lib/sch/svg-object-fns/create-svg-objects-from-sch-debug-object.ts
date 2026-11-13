@@ -48,32 +48,15 @@ export function createSvgObjectsFromSchDebugObject({
           "stroke-width": (0.02 * Math.abs(transform.a)).toString(),
           "stroke-dasharray": "5,5",
         },
-        children: debugObject.label
-          ? [
-              {
-                name: "text",
-                type: "element",
-                value: "",
-                attributes: {
-                  x: screenCenterX.toString(),
-                  y: (screenCenterY - 10).toString(),
-                  "text-anchor": "middle",
-                  "font-size": (0.2 * Math.abs(transform.a)).toString(),
-                  fill: "red",
-                },
-                children: [
-                  {
-                    type: "text",
-                    value: debugObject.label,
-                    name: "",
-                    attributes: {},
-                    children: [],
-                  },
-                ],
-              },
-            ]
-          : [],
+        children: [],
       },
+      // Labels must be siblings: children of <rect> are never rendered
+      ...createDebugLabel(
+        debugObject.label,
+        screenCenterX,
+        screenCenterY,
+        transform,
+      ),
     ]
   }
   if (debugObject.shape === "line") {
@@ -105,33 +88,43 @@ export function createSvgObjectsFromSchDebugObject({
           "stroke-width": (0.02 * Math.abs(transform.a)).toString(),
           "stroke-dasharray": "5,5",
         },
-        children: debugObject.label
-          ? [
-              {
-                name: "text",
-                type: "element",
-                value: "",
-                attributes: {
-                  x: screenMidX.toString(),
-                  y: (screenMidY - 10).toString(),
-                  "text-anchor": "middle",
-                  "font-size": (0.2 * Math.abs(transform.a)).toString(),
-                  fill: "red",
-                },
-                children: [
-                  {
-                    type: "text",
-                    value: debugObject.label,
-                    name: "",
-                    attributes: {},
-                    children: [],
-                  },
-                ],
-              },
-            ]
-          : [],
+        children: [],
       },
+      // Labels must be siblings: children of <line> are never rendered
+      ...createDebugLabel(debugObject.label, screenMidX, screenMidY, transform),
     ]
   }
   return []
+}
+
+function createDebugLabel(
+  label: string | undefined,
+  x: number,
+  y: number,
+  transform: Matrix,
+): SvgObject[] {
+  if (!label) return []
+  return [
+    {
+      name: "text",
+      type: "element",
+      value: "",
+      attributes: {
+        x: x.toString(),
+        y: (y - 10).toString(),
+        "text-anchor": "middle",
+        "font-size": (0.2 * Math.abs(transform.a)).toString(),
+        fill: "red",
+      },
+      children: [
+        {
+          type: "text",
+          value: label,
+          name: "",
+          attributes: {},
+          children: [],
+        },
+      ],
+    },
+  ]
 }
