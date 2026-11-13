@@ -1,5 +1,10 @@
 import type { NinePointAnchor, Point } from "circuit-json"
 
+/**
+ * Returns the center of a text box in PCB coordinates (y-up). "top_*" anchors
+ * render the text below the anchor and "bottom_*" anchors render it above,
+ * matching getSvgTextAnchorAlignment.
+ */
 export function getTextCenterFromAnchorPosition({
   anchorPosition,
   textWidth,
@@ -15,17 +20,17 @@ export function getTextCenterFromAnchorPosition({
     case "top_left":
       return {
         x: anchorPosition.x + textWidth / 2,
-        y: anchorPosition.y + textHeight / 2,
+        y: anchorPosition.y - textHeight / 2,
       }
     case "top_center":
       return {
         x: anchorPosition.x,
-        y: anchorPosition.y + textHeight / 2,
+        y: anchorPosition.y - textHeight / 2,
       }
     case "top_right":
       return {
         x: anchorPosition.x - textWidth / 2,
-        y: anchorPosition.y + textHeight / 2,
+        y: anchorPosition.y - textHeight / 2,
       }
     case "center_left":
       return {
@@ -40,17 +45,17 @@ export function getTextCenterFromAnchorPosition({
     case "bottom_left":
       return {
         x: anchorPosition.x + textWidth / 2,
-        y: anchorPosition.y - textHeight / 2,
+        y: anchorPosition.y + textHeight / 2,
       }
     case "bottom_center":
       return {
         x: anchorPosition.x,
-        y: anchorPosition.y - textHeight / 2,
+        y: anchorPosition.y + textHeight / 2,
       }
     case "bottom_right":
       return {
         x: anchorPosition.x - textWidth / 2,
-        y: anchorPosition.y - textHeight / 2,
+        y: anchorPosition.y + textHeight / 2,
       }
     case "center":
     default:
