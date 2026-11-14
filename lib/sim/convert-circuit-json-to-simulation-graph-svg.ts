@@ -30,6 +30,7 @@ import {
   createTitleNode,
 } from "./simulation-graph-svg/create-data-group"
 import { createLegend } from "./simulation-graph-svg/create-legend"
+import { getLegendBounds } from "./simulation-graph-svg/create-legend/get-legend-bounds"
 import { createScopeLegend } from "./simulation-graph-svg/create-legend/create-scope-legend"
 import { getScopeAxisGutters } from "./simulation-graph-svg/create-legend/get-scope-axis-gutters"
 import { getScopeLegendGridLayout } from "./simulation-graph-svg/create-legend/get-scope-legend-grid-layout"
@@ -154,13 +155,18 @@ export function convertCircuitJsonToSimulationGraphSvg({
   const scopeAxisGutters = usesScopeTraceDisplay
     ? getScopeAxisGutters(preparedGraphs.length)
     : { left: 0, right: 0 }
-  const outputWidth = width + scopeAxisGutters.left + scopeAxisGutters.right
+  const regularLegendBounds = usesScopeTraceDisplay
+    ? null
+    : getLegendBounds({ graphs: preparedGraphs, width, height })
+  const outputWidth =
+    regularLegendBounds?.width ??
+    width + scopeAxisGutters.left + scopeAxisGutters.right
   const scopeLegendLayout = usesScopeTraceDisplay
     ? getScopeLegendGridLayout(preparedGraphs.length, outputWidth)
     : null
   const outputHeight = scopeLegendLayout
     ? height + SCOPE_LEGEND_GAP + scopeLegendLayout.height + SCOPE_LEGEND_GAP
-    : height
+    : regularLegendBounds!.height
 
   const plotWidth = Math.max(1, width - MARGIN.left - MARGIN.right)
   const plotHeight = Math.max(1, height - MARGIN.top - MARGIN.bottom)
@@ -217,7 +223,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
     }),
     usesScopeTraceDisplay
       ? createScopeLegend(preparedGraphs, outputWidth, height)
-      : createLegend(preparedGraphs, outputWidth),
+      : createLegend(preparedGraphs, width),
     ...(titleNode ? [titleNode] : []),
   ]
 
