@@ -226,13 +226,23 @@ function getElementScreenBounds(
   }
 
   if (element.type === "schematic_component") {
+    const width =
+      typeof element.size?.width === "number" &&
+      Number.isFinite(element.size.width)
+        ? element.size.width
+        : 0
+    const height =
+      typeof element.size?.height === "number" &&
+      Number.isFinite(element.size.height)
+        ? element.size.height
+        : 0
     const topLeft = applyToPoint(transform, {
-      x: element.center.x - element.size.width / 2,
-      y: element.center.y + element.size.height / 2,
+      x: element.center.x - width / 2,
+      y: element.center.y + height / 2,
     })
     const bottomRight = applyToPoint(transform, {
-      x: element.center.x + element.size.width / 2,
-      y: element.center.y - element.size.height / 2,
+      x: element.center.x + width / 2,
+      y: element.center.y - height / 2,
     })
     return boundsFromPoints([topLeft, bottomRight])
   }
