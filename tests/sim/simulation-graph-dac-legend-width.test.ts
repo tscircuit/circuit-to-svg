@@ -41,7 +41,7 @@ test("default simulation SVG contains the full DAC legend", () => {
   const canvasWidth = Number(root.attributes.width)
   for (const item of legend.children) {
     const originX = Number(
-      item.attributes.transform.match(/translate\((\S+)/)![1],
+      item.attributes.transform!.match(/translate\((\S+)/)![1],
     )
     const text = item.children.find((node) => node.name === "text")!
     for (const line of text.children) {
