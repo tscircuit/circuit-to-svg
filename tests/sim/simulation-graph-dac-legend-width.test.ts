@@ -27,7 +27,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
   ),
 ]
 
-test("default simulation SVG contains the full DAC legend", () => {
+test("reproduces clipped DAC legend in the default viewport", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id: "dac",
@@ -39,6 +39,7 @@ test("default simulation SVG contains the full DAC legend", () => {
     (node) => node.attributes.class === "legend",
   )!
   const canvasWidth = Number(root.attributes.width)
+  const labels = []
   for (const item of legend.children) {
     const originX = Number(
       item.attributes.transform!.match(/translate\((\S+)/)![1],
@@ -47,7 +48,28 @@ test("default simulation SVG contains the full DAC legend", () => {
     for (const line of text.children) {
       const label = line.children.map((node) => node.value).join("")
       const rightEdge = originX + 20 + estimateTextWidth(label) * 11
-      expect(rightEdge).toBeLessThanOrEqual(canvasWidth - 10)
+      labels.push({
+        label,
+        estimatedRightEdge: Number(rightEdge.toFixed(3)),
+        clipped: rightEdge > canvasWidth,
+      })
     }
   }
+  expect({ canvasWidth, labels }).toMatchInlineSnapshot(`
+    {
+      "canvasWidth": 1200,
+      "labels": [
+        {
+          "clipped": true,
+          "estimatedRightEdge": 1233.481,
+          "label": "DAC output (behavioral)",
+        },
+        {
+          "clipped": true,
+          "estimatedRightEdge": 1220.852,
+          "label": "After 1k / 100nF filter",
+        },
+      ],
+    }
+  `)
 })
