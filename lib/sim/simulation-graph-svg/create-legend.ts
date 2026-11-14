@@ -4,13 +4,12 @@ import {
   createLegendItem,
 } from "./create-legend/create-legend-item"
 import { wrapLegendText } from "./create-legend/wrap-legend-text"
+import { LEGEND_MIN_SPACING } from "./create-legend/get-legend-bounds"
 import {
   MARGIN,
   type PreparedSimulationGraph,
   svgElement,
 } from "./simulation-graph-svg-shared"
-
-const LEGEND_MIN_SPACING = 24
 
 export function createLegend(
   graphs: PreparedSimulationGraph[],

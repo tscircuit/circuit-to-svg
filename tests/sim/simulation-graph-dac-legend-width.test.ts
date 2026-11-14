@@ -5,7 +5,7 @@ import { estimateTextWidth } from "lib/sch/estimate-text-width"
 import { parseSync } from "svgson"
 
 // Labels captured from the DAC8560 demo; numerical samples are reduced to keep
-// the regression small. The default 1200px viewport clips these ordinary labels.
+// the regression small. Keep both the rendered graph and its expanded legend bounds visible.
 const circuitJson: CircuitJsonWithSimulation[] = [
   {
     type: "simulation_experiment",
@@ -27,7 +27,7 @@ const circuitJson: CircuitJsonWithSimulation[] = [
   ),
 ]
 
-test("reproduces clipped DAC legend in the default viewport", () => {
+test("default simulation SVG contains the full DAC legend", () => {
   const svg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id: "dac",
@@ -48,6 +48,7 @@ test("reproduces clipped DAC legend in the default viewport", () => {
     for (const line of text.children) {
       const label = line.children.map((node) => node.value).join("")
       const rightEdge = originX + 20 + estimateTextWidth(label) * 11
+      expect(rightEdge).toBeLessThanOrEqual(canvasWidth - 10)
       labels.push({
         label,
         estimatedRightEdge: Number(rightEdge.toFixed(3)),
@@ -57,15 +58,15 @@ test("reproduces clipped DAC legend in the default viewport", () => {
   }
   expect({ canvasWidth, labels }).toMatchInlineSnapshot(`
     {
-      "canvasWidth": 1200,
+      "canvasWidth": 1271,
       "labels": [
         {
-          "clipped": true,
+          "clipped": false,
           "estimatedRightEdge": 1233.481,
           "label": "DAC output (behavioral)",
         },
         {
-          "clipped": true,
+          "clipped": false,
           "estimatedRightEdge": 1220.852,
           "label": "After 1k / 100nF filter",
         },
