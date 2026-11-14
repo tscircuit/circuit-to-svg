@@ -136,7 +136,11 @@ export function getSchematicBoundsFromCircuitJson(
       } else {
         const width = text.length * fontSize
         const height = fontSize
-        updateBounds(item.position, { width, height }, item.rotation ?? 0)
+        updateBounds(
+          item.position,
+          { width, height },
+          ((item.rotation ?? 0) * Math.PI) / 180,
+        )
       }
     } else if (item.type === "schematic_voltage_probe") {
       updateBounds(item.position, { width: 0.2, height: 0.4 }, 0) // width and height of the probe (Arrow)
@@ -226,7 +230,7 @@ export function getSchematicBoundsFromCircuitJson(
       updateBounds(
         item.center,
         { width: item.width, height: item.height },
-        item.rotation,
+        (item.rotation * Math.PI) / 180,
       )
     } else if (item.type === "schematic_arc") {
       updateBounds(
@@ -274,6 +278,7 @@ export function getSchematicBoundsFromCircuitJson(
 
   return { minX, minY, maxX, maxY }
 
+  /** `rotation` is in radians */
   function updateBounds(center: any, size: any, rotation: number) {
     const corners = [
       { x: -size.width / 2, y: -size.height / 2 },
