@@ -1,3 +1,7 @@
+import {
+  createSvgObjectsFromSchematicGroup,
+  createSvgObjectsFromSchematicGroupPort,
+} from "./svg-object-fns/create-svg-objects-from-sch-group"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type {
   AnyCircuitElement,
@@ -190,6 +194,7 @@ export function convertCircuitJsonToSchematicSvg(
   const schText: SvgObject[] = []
   const voltageProbeSvgs: SvgObject[] = []
   const schBoxSvgs: SvgObject[] = []
+  const schGroupSvgs: SvgObject[] = []
   const schTableSvgs: SvgObject[] = []
   const schPortHoverSvgs: SvgObject[] = []
   const schPortIndicatorSvgs: SvgObject[] = []
@@ -233,6 +238,14 @@ export function convertCircuitJsonToSchematicSvg(
         ...createSvgObjectsFromSchDebugObject({
           debugObject: elm,
           transform,
+        }),
+      )
+    } else if (elm.type === "schematic_group") {
+      schGroupSvgs.push(
+        ...createSvgObjectsFromSchematicGroup({
+          group: elm,
+          transform,
+          colorMap,
         }),
       )
     } else if (elm.type === "schematic_component") {
@@ -354,6 +367,13 @@ export function convertCircuitJsonToSchematicSvg(
         }),
       )
     } else if (elm.type === "schematic_port") {
+      schPortIndicatorSvgs.push(
+        ...createSvgObjectsFromSchematicGroupPort({
+          port: elm,
+          transform,
+          colorMap,
+        }),
+      )
       const sourcePort = sheetCircuitJson.find(
         (source) =>
           source.type === "source_port" &&
@@ -397,6 +417,7 @@ export function convertCircuitJsonToSchematicSvg(
     ...schGraphicSvgs,
     ...schDebugObjectSvgs,
     ...schSheetSvgs,
+    ...schGroupSvgs,
     ...schTraceBaseSvgs,
     ...schTraceOverlaySvgs,
     ...schPrimitiveSvgs,
