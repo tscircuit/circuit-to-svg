@@ -23,7 +23,11 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
     !center ||
     typeof center.x !== "number" ||
     typeof center.y !== "number" ||
-    typeof radius !== "number"
+    !Number.isFinite(center.x) ||
+    !Number.isFinite(center.y) ||
+    typeof radius !== "number" ||
+    !Number.isFinite(radius) ||
+    radius <= 0
   ) {
     console.error("Invalid PCB Silkscreen Circle data:", { center, radius })
     return []
@@ -36,7 +40,13 @@ export function createSvgObjectsFromPcbSilkscreenCircle(
 
   const transformedRadius = radius * Math.abs(transform.a)
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const baseStrokeWidth =
+    typeof stroke_width === "number" &&
+    Number.isFinite(stroke_width) &&
+    stroke_width >= 0
+      ? stroke_width
+      : 1
+  const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top

@@ -21,7 +21,11 @@ export function createSvgObjectsFromPcbCourtyardCircle(
     !center ||
     typeof center.x !== "number" ||
     typeof center.y !== "number" ||
-    typeof radius !== "number"
+    !Number.isFinite(center.x) ||
+    !Number.isFinite(center.y) ||
+    typeof radius !== "number" ||
+    !Number.isFinite(radius) ||
+    radius <= 0
   ) {
     console.error(
       `[pcb_courtyard_circle] Invalid data for "${pcb_courtyard_circle_id}": expected center {x: number, y: number}, radius: number, got center=${JSON.stringify(center)}, radius=${JSON.stringify(radius)}`,

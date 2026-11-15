@@ -25,7 +25,11 @@ export function createSvgObjectsFromPcbSilkscreenLine(
     typeof x1 !== "number" ||
     typeof y1 !== "number" ||
     typeof x2 !== "number" ||
-    typeof y2 !== "number"
+    typeof y2 !== "number" ||
+    !Number.isFinite(x1) ||
+    !Number.isFinite(y1) ||
+    !Number.isFinite(x2) ||
+    !Number.isFinite(y2)
   ) {
     debugPcb(
       `[pcb_silkscreen_line] Invalid coordinates for "${pcb_silkscreen_line_id}": expected x1, y1, x2, y2 as numbers, got x1=${JSON.stringify(x1)}, y1=${JSON.stringify(y1)}, x2=${JSON.stringify(x2)}, y2=${JSON.stringify(y2)}`,
@@ -36,7 +40,13 @@ export function createSvgObjectsFromPcbSilkscreenLine(
   const [transformedX1, transformedY1] = applyToPoint(transform, [x1, y1])
   const [transformedX2, transformedY2] = applyToPoint(transform, [x2, y2])
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const baseStrokeWidth =
+    typeof stroke_width === "number" &&
+    Number.isFinite(stroke_width) &&
+    stroke_width >= 0
+      ? stroke_width
+      : 0.1
+  const transformedStrokeWidth = baseStrokeWidth * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
