@@ -1,11 +1,12 @@
 import type {
-  PcbPlatedHole,
   PcbHoleCircularWithRectPad,
   PcbHolePillWithRectPad,
   PcbHoleRotatedPillWithRectPad,
+  PcbPlatedHole,
 } from "circuit-json"
-import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
+import { toSvgLength } from "lib/utils/to-svg-length"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getPadDataAttributes } from "./get-pad-data-attributes"
 
@@ -42,10 +43,16 @@ export function createSvgObjectsFromPcbPlatedHole(
   const solderMaskColor = colorMap.soldermaskWithCopperUnderneath.top
 
   if (hole.shape === "pill") {
-    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledOuterWidth = toSvgLength(
+      hole.outer_width * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = toSvgLength(
+      hole.outer_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHoleHeight = toSvgLength(
+      hole.hole_height * Math.abs(transform.a),
+    )
 
     const rotation = hole.ccw_rotation || 0
 
@@ -129,8 +136,8 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskWidth = scaledOuterWidth + 2 * soldermaskMargin
-      const maskHeight = scaledOuterHeight + 2 * soldermaskMargin
+      const maskWidth = toSvgLength(scaledOuterWidth + 2 * soldermaskMargin)
+      const maskHeight = toSvgLength(scaledOuterHeight + 2 * soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -204,10 +211,16 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Handle oval shape
   if (hole.shape === "oval") {
-    const scaledOuterWidth = hole.outer_width * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_height * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_width * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_height * Math.abs(transform.a)
+    const scaledOuterWidth = toSvgLength(
+      hole.outer_width * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = toSvgLength(
+      hole.outer_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = toSvgLength(hole.hole_width * Math.abs(transform.a))
+    const scaledHoleHeight = toSvgLength(
+      hole.hole_height * Math.abs(transform.a),
+    )
     const rotation = hole.ccw_rotation || 0
 
     const transformStr = rotation
@@ -269,13 +282,25 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   // Fallback to circular hole if not pill-shaped
   if (hole.shape === "circle") {
-    const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-    const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-    const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-    const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+    const scaledOuterWidth = toSvgLength(
+      hole.outer_diameter * Math.abs(transform.a),
+    )
+    const scaledOuterHeight = toSvgLength(
+      hole.outer_diameter * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = toSvgLength(
+      hole.hole_diameter * Math.abs(transform.a),
+    )
+    const scaledHoleHeight = toSvgLength(
+      hole.hole_diameter * Math.abs(transform.a),
+    )
 
-    const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-    const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+    const outerRadius = toSvgLength(
+      Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+    )
+    const innerRadius = toSvgLength(
+      Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+    )
 
     let children: SvgObject[] = [
       {
@@ -313,7 +338,7 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskRadius = outerRadius + soldermaskMargin
+      const maskRadius = toSvgLength(outerRadius + soldermaskMargin)
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -392,11 +417,18 @@ export function createSvgObjectsFromPcbPlatedHole(
   // Handle circular hole with rectangular pad (hole is circle, outer pad is rectangle)
   if (hole.shape === "circular_hole_with_rect_pad") {
     const h = hole as PcbHoleCircularWithRectPad
-    const scaledHoleDiameter = hole.hole_diameter * Math.abs(transform.a)
-    const scaledRectPadWidth = hole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight = hole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledHoleDiameter = toSvgLength(
+      hole.hole_diameter * Math.abs(transform.a),
+    )
+    const scaledRectPadWidth = toSvgLength(
+      hole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = toSvgLength(
+      hole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = toSvgLength(
+      ((hole as any).rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
     const rectCcwRotation = (hole as any).rect_ccw_rotation ?? 0
 
     const rotation = h.rect_ccw_rotation ?? 0
@@ -470,9 +502,11 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
-      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
-      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      const maskWidth = toSvgLength(scaledRectPadWidth + 2 * soldermaskMargin)
+      const maskHeight = toSvgLength(scaledRectPadHeight + 2 * soldermaskMargin)
+      const maskBorderRadius = toSvgLength(
+        scaledRectBorderRadius + soldermaskMargin,
+      )
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -597,13 +631,22 @@ export function createSvgObjectsFromPcbPlatedHole(
   }
   if (hole.shape === "pill_hole_with_rect_pad") {
     const pillHole = hole as PcbHolePillWithRectPad
-    const scaledRectPadWidth = pillHole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight = pillHole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      (pillHole.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledRectPadWidth = toSvgLength(
+      pillHole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = toSvgLength(
+      pillHole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = toSvgLength(
+      (pillHole.rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
 
-    const scaledHoleHeight = pillHole.hole_height * Math.abs(transform.a)
-    const scaledHoleWidth = pillHole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = toSvgLength(
+      pillHole.hole_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = toSvgLength(
+      pillHole.hole_width * Math.abs(transform.a),
+    )
 
     const pillHoleWithOffsets = pillHole as PcbHolePillWithRectPad &
       HoleWithRectPadOffsets
@@ -664,9 +707,11 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
-      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
-      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      const maskWidth = toSvgLength(scaledRectPadWidth + 2 * soldermaskMargin)
+      const maskHeight = toSvgLength(scaledRectPadHeight + 2 * soldermaskMargin)
+      const maskBorderRadius = toSvgLength(
+        scaledRectBorderRadius + soldermaskMargin,
+      )
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -765,15 +810,22 @@ export function createSvgObjectsFromPcbPlatedHole(
 
   if (hole.shape === "rotated_pill_hole_with_rect_pad") {
     const rotatedHole = hole as PcbHoleRotatedPillWithRectPad
-    const scaledRectPadWidth =
-      rotatedHole.rect_pad_width * Math.abs(transform.a)
-    const scaledRectPadHeight =
-      rotatedHole.rect_pad_height * Math.abs(transform.a)
-    const scaledRectBorderRadius =
-      (rotatedHole.rect_border_radius ?? 0) * Math.abs(transform.a)
+    const scaledRectPadWidth = toSvgLength(
+      rotatedHole.rect_pad_width * Math.abs(transform.a),
+    )
+    const scaledRectPadHeight = toSvgLength(
+      rotatedHole.rect_pad_height * Math.abs(transform.a),
+    )
+    const scaledRectBorderRadius = toSvgLength(
+      (rotatedHole.rect_border_radius ?? 0) * Math.abs(transform.a),
+    )
 
-    const scaledHoleHeight = rotatedHole.hole_height * Math.abs(transform.a)
-    const scaledHoleWidth = rotatedHole.hole_width * Math.abs(transform.a)
+    const scaledHoleHeight = toSvgLength(
+      rotatedHole.hole_height * Math.abs(transform.a),
+    )
+    const scaledHoleWidth = toSvgLength(
+      rotatedHole.hole_width * Math.abs(transform.a),
+    )
 
     const rotatedHoleWithOffsets =
       rotatedHole as PcbHoleRotatedPillWithRectPad & HoleWithRectPadOffsets
@@ -833,9 +885,11 @@ export function createSvgObjectsFromPcbPlatedHole(
 
     // Add soldermask if needed
     if (shouldShowSolderMask) {
-      const maskWidth = scaledRectPadWidth + 2 * soldermaskMargin
-      const maskHeight = scaledRectPadHeight + 2 * soldermaskMargin
-      const maskBorderRadius = scaledRectBorderRadius + soldermaskMargin
+      const maskWidth = toSvgLength(scaledRectPadWidth + 2 * soldermaskMargin)
+      const maskHeight = toSvgLength(scaledRectPadHeight + 2 * soldermaskMargin)
+      const maskBorderRadius = toSvgLength(
+        scaledRectBorderRadius + soldermaskMargin,
+      )
 
       // For negative margins, create a ring effect
       if (soldermaskMargin < 0) {
@@ -958,8 +1012,9 @@ export function createSvgObjectsFromPcbPlatedHole(
     // Helper function to create hole SVG object based on hole_shape
     const createHoleSvgObject = (): SvgObject => {
       if (polygonHole.hole_shape === "circle") {
-        const scaledDiameter =
-          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a)
+        const scaledDiameter = toSvgLength(
+          (polygonHole.hole_diameter ?? 0) * Math.abs(transform.a),
+        )
         const radius = scaledDiameter / 2
         return {
           name: "circle",
@@ -979,10 +1034,12 @@ export function createSvgObjectsFromPcbPlatedHole(
       }
 
       if (polygonHole.hole_shape === "oval") {
-        const scaledWidth =
-          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
-        const scaledHeight =
-          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const scaledWidth = toSvgLength(
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a),
+        )
+        const scaledHeight = toSvgLength(
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a),
+        )
         const rx = scaledWidth / 2
         const ry = scaledHeight / 2
         return {
@@ -1007,10 +1064,12 @@ export function createSvgObjectsFromPcbPlatedHole(
         polygonHole.hole_shape === "pill" ||
         polygonHole.hole_shape === "rotated_pill"
       ) {
-        const scaledWidth =
-          (polygonHole.hole_width ?? 0) * Math.abs(transform.a)
-        const scaledHeight =
-          (polygonHole.hole_height ?? 0) * Math.abs(transform.a)
+        const scaledWidth = toSvgLength(
+          (polygonHole.hole_width ?? 0) * Math.abs(transform.a),
+        )
+        const scaledHeight = toSvgLength(
+          (polygonHole.hole_height ?? 0) * Math.abs(transform.a),
+        )
 
         // Create pill path (same logic as regular pill holes)
         const isHorizontal = scaledWidth > scaledHeight
