@@ -2,7 +2,7 @@ import { ALPHABET_FONT_FAMILY } from "lib/utils/stringify-svg"
 import type { NinePointAnchor, PcbFabricationNoteText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
-import { toString as matrixToString } from "transformation-matrix"
+import { scale, toString as matrixToString } from "transformation-matrix"
 import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getSvgTextAnchorAlignment } from "../get-svg-text-anchor-alignment"
@@ -11,6 +11,10 @@ export function createSvgObjectsFromPcbFabricationNoteText(
   pcbFabNoteText: PcbFabricationNoteText,
   ctx: PcbContext,
 ): SvgObject[] {
+  if ("is_visible" in pcbFabNoteText && pcbFabNoteText.is_visible === false) {
+    return []
+  }
+
   const { transform, layer: layerFilter } = ctx
   const {
     anchor_position,
@@ -45,10 +49,14 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     anchor_alignment as NinePointAnchor,
   )
 
+  const isMirrored =
+    "is_mirrored" in pcbFabNoteText && pcbFabNoteText.is_mirrored === true
+
   // Create a composite transformation
   const textTransform = compose(
     translate(transformedX, transformedY),
     rotate((-ccw_rotation * Math.PI) / 180),
+    ...(isMirrored ? [scale(-1, 1)] : []),
   )
 
   const svgObject: SvgObject = {
