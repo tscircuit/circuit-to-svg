@@ -4,7 +4,10 @@ import { applyToPoint } from "transformation-matrix"
 import type { SvgObject } from "lib/svg-object"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createAnchorOffsetIndicators } from "../../utils/create-pcb-component-anchor-offset-indicators"
-import { getPointFromElm } from "../../utils/get-point-from-elm"
+import {
+  getOutlineBounds,
+  getPointFromElm,
+} from "../../utils/get-point-from-elm"
 
 const GROUP_COLOR_PALETTE = [
   "rgba(100, 200, 255, 0.6)", // light blue
@@ -24,6 +27,10 @@ export function createSvgObjectsFromPcbGroup(
 ): SvgObject[] {
   const { transform, circuitJson } = ctx
   const { center, width, height } = pcbGroup
+  const outline = Array.isArray((pcbGroup as { outline?: Point[] }).outline)
+    ? (pcbGroup as { outline?: Point[] }).outline
+    : undefined
+  const outlineBounds = getOutlineBounds(outline)
 
   const svgObjects: SvgObject[] = []
 
@@ -34,25 +41,23 @@ export function createSvgObjectsFromPcbGroup(
     circuitJson
   ) {
     const parentAnchorPosition = getParentAnchorPosition(pcbGroup, circuitJson)
+    const groupPosition =
+      pcbGroup.anchor_position ?? pcbGroup.center ?? outlineBounds?.center
 
-    if (parentAnchorPosition) {
+    if (parentAnchorPosition && groupPosition) {
       svgObjects.push(
         ...createAnchorOffsetIndicators({
           groupAnchorPosition: parentAnchorPosition,
-          componentPosition: pcbGroup.anchor_position ?? pcbGroup.center,
+          componentPosition: groupPosition,
           transform,
-          componentWidth: pcbGroup.width,
-          componentHeight: pcbGroup.height,
+          componentWidth: pcbGroup.width ?? outlineBounds?.width,
+          componentHeight: pcbGroup.height ?? outlineBounds?.height,
           displayXOffset: pcbGroup.display_offset_x,
           displayYOffset: pcbGroup.display_offset_y,
         }),
       )
     }
   }
-
-  const outline = Array.isArray((pcbGroup as { outline?: Point[] }).outline)
-    ? (pcbGroup as { outline?: Point[] }).outline
-    : undefined
 
   const transformedStrokeWidth = DEFAULT_STROKE_WIDTH * Math.abs(transform.a)
 
