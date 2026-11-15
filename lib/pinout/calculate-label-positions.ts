@@ -1,14 +1,14 @@
 import type { AnyCircuitElement } from "circuit-json"
-import { applyToPoint, type Matrix } from "transformation-matrix"
-import type { PinoutLabel } from "./convert-circuit-json-to-pinout-svg"
+import { type Matrix, applyToPoint } from "transformation-matrix"
 import {
-  STAGGER_OFFSET_MIN,
-  STAGGER_OFFSET_PER_PIN,
-  STAGGER_OFFSET_STEP,
   ALIGNED_OFFSET_MARGIN,
   GROUP_SEPARATION_MM,
   LABEL_RECT_HEIGHT_BASE_MM,
+  STAGGER_OFFSET_MIN,
+  STAGGER_OFFSET_PER_PIN,
+  STAGGER_OFFSET_STEP,
 } from "./constants"
+import type { PinoutLabel } from "./convert-circuit-json-to-pinout-svg"
 
 export type LabelPosition = {
   text: string
@@ -43,12 +43,21 @@ function calculateVerticalEdgeLabels(
     counts[rounded] = (counts[rounded] || 0) + 1
   }
 
-  let edge_ports
+  const sorted_x_groups = Object.entries(counts).sort((a, b) => b[1] - a[1])
+  const hasAlignedMainGroup =
+    Object.keys(counts).length > 1 &&
+    pinout_labels.length > 2 &&
+    (sorted_x_groups[0]?.[1] ?? 0) > 1
 
-  if (Object.keys(counts).length > 1 && pinout_labels.length > 2) {
-    // More than one group of x-coords, group and sort
-    const sorted_x_groups = Object.entries(counts).sort((a, b) => b[1] - a[1])
-    const primary_x = parseFloat(sorted_x_groups[0]![0])
+  let edge_ports: Array<{
+    pcb_port: PinoutLabel["pcb_port"]
+    y: number
+    aliases: string[]
+  }>
+
+  if (hasAlignedMainGroup) {
+    // More than one group of x-coords with a multi-pin primary column
+    const primary_x = Number.parseFloat(sorted_x_groups[0]![0])
 
     const primary_pins = pinout_labels.filter(
       (l) => Math.abs(l.pcb_port.x - primary_x) < 0.2,
@@ -74,11 +83,11 @@ function calculateVerticalEdgeLabels(
     const max_y_primary =
       primary_pins.length > 0
         ? Math.max(...primary_pins.map((p) => p.pcb_port.y))
-        : -Infinity
+        : Number.NEGATIVE_INFINITY
     const max_y_other =
       other_pins.length > 0
         ? Math.max(...other_pins.map((p) => p.pcb_port.y))
-        : -Infinity
+        : Number.NEGATIVE_INFINITY
 
     // A larger y-coordinate in real-world coordinates means the pin should
     // appear higher in the pinout diagram. We place the group with the
@@ -111,18 +120,9 @@ function calculateVerticalEdgeLabels(
 
   const num_labels = edge_ports.length
 
-  const x_coords_counts: { [k: string]: number } = {}
-  for (const pl of pinout_labels) {
-    const rounded = pl.pcb_port.x.toFixed(1)
-    x_coords_counts[rounded] = (x_coords_counts[rounded] || 0) + 1
-  }
-
   let main_group_pin_port_ids = new Set<string>()
-  if (Object.keys(x_coords_counts).length > 1 && pinout_labels.length > 2) {
-    const sorted_x_groups = Object.entries(x_coords_counts).sort(
-      (a, b) => b[1] - a[1],
-    )
-    const primary_x = parseFloat(sorted_x_groups[0]![0])
+  if (hasAlignedMainGroup) {
+    const primary_x = Number.parseFloat(sorted_x_groups[0]![0])
 
     const primary_pins = pinout_labels.filter(
       (l) => Math.abs(l.pcb_port.x - primary_x) < 0.2,
