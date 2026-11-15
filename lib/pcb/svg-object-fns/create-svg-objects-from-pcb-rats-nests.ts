@@ -20,16 +20,22 @@ export function createSvgObjectsForRatsNest(
   circuitJson: AnyCircuitElement[],
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, layer: layerFilter } = ctx
   // Compute connectivity using the helper from the imported package.
   const connectivity: ConnectivityMap =
     getFullConnectivityMapFromCircuitJson(circuitJson)
 
   // Filter for ports and traces that are relevant for rats nest.
-  const pcbPorts = circuitJson.filter((elm) => elm.type === "pcb_port")
+  const pcbPorts = circuitJson.filter((elm) => {
+    if (elm.type !== "pcb_port") return false
+    if (!layerFilter) return true
+    if (!Array.isArray(elm.layers) || elm.layers.length === 0) return true
+    return elm.layers.includes(layerFilter)
+  })
   const sourceTraces = circuitJson.filter((elm) => elm.type === "source_trace")
 
   const ratsNestLines: RatsNestLine[] = []
+  const drawnSegments = new Set<string>()
 
   pcbPorts.forEach((port, index) => {
     const portId = (port as any).pcb_port_id
@@ -66,9 +72,19 @@ export function createSvgObjectsForRatsNest(
       netId,
       connectivity,
       circuitJson,
+      layerFilter,
     )
 
     if (!nearestPoint) return
+
+    const endpointA = `${startPoint.x.toFixed(4)},${startPoint.y.toFixed(4)}`
+    const endpointB = `${nearestPoint.x.toFixed(4)},${nearestPoint.y.toFixed(4)}`
+    const segmentKey =
+      endpointA < endpointB
+        ? `${endpointA}->${endpointB}`
+        : `${endpointB}->${endpointA}`
+    if (drawnSegments.has(segmentKey)) return
+    drawnSegments.add(segmentKey)
 
     ratsNestLines.push({
       key: `${portId}-${index}`,
