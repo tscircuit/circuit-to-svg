@@ -85,6 +85,11 @@ import { createSvgObjectsFromPcbGroup } from "./svg-object-fns/create-svg-object
 import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
 import { sortSvgObjectsByPcbLayer } from "./sort-svg-objects-by-pcb-layer"
+import {
+  applyPcbLayerOpacity,
+  type PcbLayerOpacity,
+  type PcbSvgLayerName,
+} from "./pcb-layer-rendering"
 import { createSoldermaskOpeningMasks } from "./create-soldermask-opening-masks"
 import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 import { getComprehensivePcbBounds } from "./get-pcb-bounds-from-circuit-json"
@@ -121,6 +126,10 @@ export interface PcbSvgOptions {
   showCourtyards?: boolean
   showPcbGroups?: boolean
   layer?: LayerRef
+  /** Layers ordered from front to back. Unlisted layers keep their default priority. */
+  layerDrawingOrder?: readonly PcbSvgLayerName[]
+  /** Opacity multiplier for SVG objects on each PCB layer. */
+  layerOpacity?: PcbLayerOpacity
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
@@ -435,7 +444,13 @@ export function convertCircuitJsonToPcbSvg(
           createSvgObjects({ elm, circuitJson, ctx: context }),
       })
     : groupCopperPourMaskedTraceObjects(
-        sortSvgObjectsByPcbLayer(unsortedSvgObjects),
+        sortSvgObjectsByPcbLayer({
+      objects: applyPcbLayerOpacity({
+        objects: unsortedSvgObjects,
+        layerOpacity: options?.layerOpacity,
+      }),
+      layerDrawingOrder: options?.layerDrawingOrder,
+    }),
       )
 
   const children: SvgObject[] = [
