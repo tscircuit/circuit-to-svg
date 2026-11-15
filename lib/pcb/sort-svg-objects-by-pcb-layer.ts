@@ -55,13 +55,18 @@ const TYPE_PRIORITY: Record<string, number> = {
 
 const DEFAULT_TYPE_PRIORITY = 100
 
-export function sortSvgObjectsByPcbLayer({
-  objects,
-  layerDrawingOrder,
-}: {
-  objects: SvgObject[]
-  layerDrawingOrder?: readonly PcbSvgLayerName[]
-}): SvgObject[] {
+export function sortSvgObjectsByPcbLayer(
+  input:
+    | SvgObject[]
+    | {
+        objects: SvgObject[]
+        layerDrawingOrder?: readonly PcbSvgLayerName[]
+      },
+): SvgObject[] {
+  const objects = Array.isArray(input) ? input : input.objects
+  const layerDrawingOrder = Array.isArray(input)
+    ? undefined
+    : input.layerDrawingOrder
   const layerPriorityOverrides = getLayerPriorityOverrides(layerDrawingOrder)
 
   return objects
