@@ -445,12 +445,12 @@ export function convertCircuitJsonToPcbSvg(
       })
     : groupCopperPourMaskedTraceObjects(
         sortSvgObjectsByPcbLayer({
-      objects: applyPcbLayerOpacity({
-        objects: unsortedSvgObjects,
-        layerOpacity: options?.layerOpacity,
-      }),
-      layerDrawingOrder: options?.layerDrawingOrder,
-    }),
+          objects: applyPcbLayerOpacity({
+            objects: unsortedSvgObjects,
+            layerOpacity: options?.layerOpacity,
+          }),
+          layerDrawingOrder: options?.layerDrawingOrder,
+        }),
       )
 
   const children: SvgObject[] = [
