@@ -23,9 +23,13 @@ export function createSvgObjectsFromPcbSilkscreenOval(
   if (
     !center ||
     typeof center.x !== "number" ||
+    !Number.isFinite(center.x) ||
     typeof center.y !== "number" ||
+    !Number.isFinite(center.y) ||
     typeof radius_x !== "number" ||
-    typeof radius_y !== "number"
+    !Number.isFinite(radius_x) ||
+    typeof radius_y !== "number" ||
+    !Number.isFinite(radius_y)
   ) {
     debugPcb(
       `[pcb_silkscreen_oval] Invalid data for "${pcb_silkscreen_oval_id}": expected center {x: number, y: number}, radius_x: number, radius_y: number, got center=${JSON.stringify(center)}, radius_x=${JSON.stringify(radius_x)}, radius_y=${JSON.stringify(radius_y)}`,
@@ -41,6 +45,13 @@ export function createSvgObjectsFromPcbSilkscreenOval(
   const transformedRadiusX = radius_x * Math.abs(transform.a)
   const transformedRadiusY = radius_y * Math.abs(transform.d)
 
+  const rawStrokeWidth = (pcbSilkscreenOval as { stroke_width?: number })
+    .stroke_width
+  const strokeWidth =
+    typeof rawStrokeWidth === "number" && Number.isFinite(rawStrokeWidth)
+      ? rawStrokeWidth
+      : 0.1
+
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
 
@@ -54,7 +65,7 @@ export function createSvgObjectsFromPcbSilkscreenOval(
       ry: transformedRadiusY.toString(),
       fill: "none",
       stroke: color,
-      "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
+      "stroke-width": (strokeWidth * Math.abs(transform.a)).toString(),
       class: `pcb-silkscreen-oval pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-oval-id": pcb_silkscreen_oval_id,
       "data-type": "pcb_silkscreen_oval",

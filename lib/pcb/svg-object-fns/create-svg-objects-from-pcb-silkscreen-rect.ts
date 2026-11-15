@@ -28,9 +28,13 @@ export function createSvgObjectsFromPcbSilkscreenRect(
   if (
     !center ||
     typeof center.x !== "number" ||
+    !Number.isFinite(center.x) ||
     typeof center.y !== "number" ||
+    !Number.isFinite(center.y) ||
     typeof width !== "number" ||
-    typeof height !== "number"
+    !Number.isFinite(width) ||
+    typeof height !== "number" ||
+    !Number.isFinite(height)
   ) {
     debugPcb(
       `[pcb_silkscreen_rect] Invalid data for "${pcb_silkscreen_rect_id}": expected center {x: number, y: number}, width: number, height: number, got center=${JSON.stringify(center)}, width=${JSON.stringify(width)}, height=${JSON.stringify(height)}`,
@@ -42,15 +46,24 @@ export function createSvgObjectsFromPcbSilkscreenRect(
     center.x,
     center.y,
   ])
+  const maxCornerRadius = Math.max(0, Math.min(width, height) / 2)
   const baseCornerRadius =
-    typeof corner_radius === "number" && corner_radius > 0 ? corner_radius : 0
+    typeof corner_radius === "number" &&
+    Number.isFinite(corner_radius) &&
+    corner_radius > 0
+      ? Math.min(corner_radius, maxCornerRadius)
+      : 0
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
 
   const transformedWidth = width * Math.abs(transform.a)
   const transformedHeight = height * Math.abs(transform.d)
 
-  const transformedStrokeWidth = stroke_width * Math.abs(transform.a)
+  const resolvedStrokeWidth =
+    typeof stroke_width === "number" && Number.isFinite(stroke_width)
+      ? stroke_width
+      : 0.1
+  const transformedStrokeWidth = resolvedStrokeWidth * Math.abs(transform.a)
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top

@@ -19,6 +19,20 @@ export function createSvgObjectsFromPcbSilkscreenPill(
 
   if (layerFilter && layer !== layerFilter) return []
 
+  if (
+    !center ||
+    typeof center.x !== "number" ||
+    !Number.isFinite(center.x) ||
+    typeof center.y !== "number" ||
+    !Number.isFinite(center.y) ||
+    typeof width !== "number" ||
+    !Number.isFinite(width) ||
+    typeof height !== "number" ||
+    !Number.isFinite(height)
+  ) {
+    return []
+  }
+
   const [transformedX, transformedY] = applyToPoint(transform, [
     center.x,
     center.y,
@@ -32,6 +46,13 @@ export function createSvgObjectsFromPcbSilkscreenPill(
   const baseCornerRadius = minDimension / 2
   const transformedCornerRadiusX = baseCornerRadius * Math.abs(transform.a)
   const transformedCornerRadiusY = baseCornerRadius * Math.abs(transform.d)
+
+  const rawStrokeWidth = (pcbSilkscreenPill as { stroke_width?: number })
+    .stroke_width
+  const strokeWidth =
+    typeof rawStrokeWidth === "number" && Number.isFinite(rawStrokeWidth)
+      ? rawStrokeWidth
+      : 0.1
 
   const color =
     layer === "bottom" ? colorMap.silkscreen.bottom : colorMap.silkscreen.top
@@ -48,7 +69,7 @@ export function createSvgObjectsFromPcbSilkscreenPill(
       ry: transformedCornerRadiusY.toString(),
       fill: "none",
       stroke: color,
-      "stroke-width": (0.1 * Math.abs(transform.a)).toString(),
+      "stroke-width": (strokeWidth * Math.abs(transform.a)).toString(),
       class: `pcb-silkscreen-pill pcb-silkscreen-${layer}`,
       "data-pcb-silkscreen-pill-id": pcb_silkscreen_pill_id,
       "data-type": "pcb_silkscreen_pill",
