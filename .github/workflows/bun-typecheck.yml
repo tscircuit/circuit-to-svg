@@ -24,3 +24,7 @@ jobs:
 
       - name: Run type check
         run: bunx tsc --noEmit
+
+      - name: Publish a package preview
+        if: github.event_name == 'pull_request'
+        run: bun run build && bunx pkg-pr-new@0.0.91 publish --comment=off --previewVersion
