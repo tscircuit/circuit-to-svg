@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
+import { Fragment } from "react"
 import {
   convertCircuitJsonToAssemblySvg,
   convertCircuitJsonToPcbSvg,
@@ -71,15 +72,17 @@ test("LoRa device U1 assembly pin-1 marker disagrees with the placed pad", () =>
         pcbRotation={180}
         footprint={
           <footprint>
-            {pads.map(([pin, x, y, width, height]) => (
-              <smtpad
-                portHints={[`pin${pin}`]}
-                pcbX={x}
-                pcbY={y}
-                width={width}
-                height={height}
-                shape="rect"
-              />
+            {pads.map(([pin, x, y, width, height], index) => (
+              <Fragment key={index}>
+                <smtpad
+                  portHints={[`pin${pin}`]}
+                  pcbX={x}
+                  pcbY={y}
+                  width={width}
+                  height={height}
+                  shape="rect"
+                />
+              </Fragment>
             ))}
           </footprint>
         }
