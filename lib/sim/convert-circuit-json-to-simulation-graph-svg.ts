@@ -179,7 +179,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
   }
   const timeAxisDisplay =
     normalizedResults.xAxisTitle === "Time (ms)"
-      ? getTimeAxisDisplay({ timeAxis, timeUnit: time_unit })
+      ? getTimeAxisDisplay({ timeAxis, time_unit })
       : { timeAxis, xAxisTitle: normalizedResults.xAxisTitle }
   timeAxis = timeAxisDisplay.timeAxis
 

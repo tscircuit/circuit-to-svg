@@ -52,7 +52,7 @@ export function convertCircuitJsonToSimulationEyeDiagramSvg({
       domainMax: 2 * eye.unit_interval_ms,
       ticks: [0, 0.5, 1, 1.5, 2].map((offset) => offset * eye.unit_interval_ms),
     },
-    timeUnit: time_unit,
+    time_unit,
   })
   const valueAxis = buildAxisInfo(
     windows.flatMap((window) => window.map((point) => point.voltage)),

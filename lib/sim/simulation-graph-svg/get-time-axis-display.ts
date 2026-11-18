@@ -14,12 +14,12 @@ const millisecondsPerUnit: Record<SimulationTimeUnit, number> = {
 
 export function getTimeAxisDisplay({
   timeAxis,
-  timeUnit,
+  time_unit,
 }: {
   timeAxis: AxisInfo
-  timeUnit: SimulationTimeUnit | "auto"
+  time_unit: SimulationTimeUnit | "auto"
 }): { timeAxis: AxisInfo; xAxisTitle: string } {
-  const unit = timeUnit === "auto" ? getTimeUnit(timeAxis) : timeUnit
+  const unit = time_unit === "auto" ? getTimeUnit(timeAxis) : time_unit
   if (unit === "ms") return { timeAxis, xAxisTitle: "Time (ms)" }
 
   return {
