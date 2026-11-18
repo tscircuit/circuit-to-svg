@@ -1,6 +1,9 @@
 import type { CircuitJson } from "circuit-json"
 import { createGraphPoints } from "./simulation-graph-svg/prepare-simulation-graphs/create-graph-points"
 
+// Matches pcb-spice-pipeline's maximum complete-window count.
+const MAX_EYE_WINDOWS = 10_000
+
 export interface EyePoint {
   timeMs: number
   voltage: number
@@ -91,6 +94,12 @@ export function getSimulationEyeDiagram({
   ) {
     throw new Error(
       `Eye diagram "${eye.name}" has no complete two-UI windows in its measurement gate`,
+    )
+  }
+  const windowCount = lastBoundaryIndex - firstBoundaryIndex + 1
+  if (windowCount > MAX_EYE_WINDOWS) {
+    throw new Error(
+      `Eye diagram "${eye.name}" has ${windowCount} complete windows; the rendering limit is ${MAX_EYE_WINDOWS}`,
     )
   }
   const windows: EyePoint[][] = []

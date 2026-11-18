@@ -155,3 +155,15 @@ test("the selected eye is rendered alongside its schematic", async () => {
     }),
   ).toThrow("does not belong")
 })
+
+test("eyes beyond the native window budget fail instead of dropping windows", () => {
+  expect(() =>
+    getSimulationEyeDiagram({
+      circuitJson: [
+        { ...eye, unit_interval_ms: eye.end_time_ms! / 10_003 },
+        graph,
+      ],
+      simulation_eye_diagram_id: eye.simulation_eye_diagram_id,
+    }),
+  ).toThrow("10001 complete windows; the rendering limit is 10000")
+})
