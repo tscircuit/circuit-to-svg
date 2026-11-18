@@ -275,7 +275,12 @@ export function getSchematicBoundsFromCircuitJson(
   }
 
   // Add padding to bounds
-  if (!Number.isFinite(minX)) {
+  if (
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
     minX = -1
     minY = -1
     maxX = 1
@@ -306,11 +311,19 @@ export function getSchematicBoundsFromCircuitJson(
   return { minX, minY, maxX, maxY }
 
   function updateBounds(center: any, size: any, rotation: number) {
+    const width =
+      typeof size?.width === "number" && Number.isFinite(size.width)
+        ? size.width
+        : 0
+    const height =
+      typeof size?.height === "number" && Number.isFinite(size.height)
+        ? size.height
+        : 0
     const corners = [
-      { x: -size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: -size.height / 2 },
-      { x: size.width / 2, y: size.height / 2 },
-      { x: -size.width / 2, y: size.height / 2 },
+      { x: -width / 2, y: -height / 2 },
+      { x: width / 2, y: -height / 2 },
+      { x: width / 2, y: height / 2 },
+      { x: -width / 2, y: height / 2 },
     ]
 
     for (const corner of corners) {
@@ -318,6 +331,7 @@ export function getSchematicBoundsFromCircuitJson(
         corner.x * Math.cos(rotation) - corner.y * Math.sin(rotation) + center.x
       const rotatedY =
         corner.x * Math.sin(rotation) + corner.y * Math.cos(rotation) + center.y
+      if (!Number.isFinite(rotatedX) || !Number.isFinite(rotatedY)) continue
       minX = Math.min(minX, rotatedX)
       minY = Math.min(minY, rotatedY)
       maxX = Math.max(maxX, rotatedX)
