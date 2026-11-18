@@ -1,7 +1,7 @@
-import { stringifySvg } from "lib/utils/stringify-svg"
-import type { Point, AnyCircuitElement } from "circuit-json"
-import { type INode as SvgObject } from "svgson"
 import { su } from "@tscircuit/circuit-json-util"
+import type { AnyCircuitElement, Point } from "circuit-json"
+import { stringifySvg } from "lib/utils/stringify-svg"
+import type { INode as SvgObject } from "svgson"
 import {
   type Matrix,
   applyToPoint,
@@ -9,14 +9,14 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
+import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
+import { getSoftwareUsedString } from "../utils/get-software-used-string"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
 import { createSvgObjectsFromAssemblyPlatedHole } from "./svg-object-fns/create-svg-objects-from-assembly-plated-hole"
 import { createSvgObjectsFromAssemblySmtPad } from "./svg-object-fns/create-svg-objects-from-assembly-smt-pad"
-import { getSoftwareUsedString } from "../utils/get-software-used-string"
-import { CIRCUIT_TO_SVG_VERSION } from "../package-version"
-import { createErrorTextOverlay } from "../utils/create-error-text-overlay"
 
 const OBJECT_ORDER: AnyCircuitElement["type"][] = [
   "pcb_component",
@@ -177,6 +177,66 @@ export function convertCircuitJsonToAssemblySvg(
   return stringifySvg(svgObject)
 }
 
+const PIN1_PORT_HINTS = new Set(["1", "pin1", "pin_1", "a1"])
+
+function hasPin1Hint(hints?: readonly (string | number)[] | null): boolean {
+  if (!hints) return false
+  return hints.some((hint) =>
+    PIN1_PORT_HINTS.has(String(hint).trim().toLowerCase()),
+  )
+}
+
+function findPin1Port(
+  ports: Array<{
+    pcb_port_id: string
+    source_port_id?: string
+    x: number
+    y: number
+    port_hints?: string[]
+  }>,
+  soup: AnyCircuitElement[],
+) {
+  if (ports.length <= 1) return ports[0]
+
+  const sourcePortsById = new Map(
+    su(soup)
+      .source_port.list()
+      .map((sp) => [sp.source_port_id, sp]),
+  )
+
+  const byPinNumber = ports.find(
+    (port) =>
+      port.source_port_id !== undefined &&
+      sourcePortsById.get(port.source_port_id)?.pin_number === 1,
+  )
+  if (byPinNumber) return byPinNumber
+
+  const bySourceHint = ports.find((port) => {
+    if (!port.source_port_id) return false
+    const sp = sourcePortsById.get(port.source_port_id)
+    if (!sp) return false
+    return hasPin1Hint(sp.port_hints) || hasPin1Hint(sp.name ? [sp.name] : null)
+  })
+  if (bySourceHint) return bySourceHint
+
+  const byPcbHint = ports.find((port) => {
+    if (hasPin1Hint(port.port_hints)) return true
+    for (const item of soup) {
+      if (
+        (item.type === "pcb_smtpad" || item.type === "pcb_plated_hole") &&
+        item.pcb_port_id === port.pcb_port_id &&
+        hasPin1Hint(item.port_hints)
+      ) {
+        return true
+      }
+    }
+    return false
+  })
+  if (byPcbHint) return byPcbHint
+
+  return ports[0]
+}
+
 function createSvgObjects(
   elm: AnyCircuitElement,
   ctx: AssemblySvgContext,
@@ -195,15 +255,15 @@ function createSvgObjects(
       const ports = su(soup)
         .pcb_port.list()
         .filter((port) => port.pcb_component_id === elm.pcb_component_id)
-      const firstPort = ports[0]
+      const pin1Port = findPin1Port(ports, soup)
 
-      // Proceed only if both sourceComponent and firstPort are found
-      if (sourceComponent && firstPort) {
+      // Proceed only if both sourceComponent and pin1Port are found
+      if (sourceComponent && pin1Port) {
         const arePinsInterchangeable = sourceComponent.are_pins_interchangeable
         const obj = createSvgObjectsFromAssemblyComponent(
           {
             elm,
-            portPosition: { x: firstPort.x, y: firstPort.y },
+            portPosition: { x: pin1Port.x, y: pin1Port.y },
             name: sourceComponent.name,
             arePinsInterchangeable,
           },
