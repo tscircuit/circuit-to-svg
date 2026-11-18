@@ -60,5 +60,5 @@ function getTickLabelPrecisionForSpan(span: number): number {
   if (span >= 10) return 1
   if (span >= 1) return 2
 
-  return 3
+  return Math.min(15, Math.max(3, 2 - Math.floor(Math.log10(Math.abs(span)))))
 }

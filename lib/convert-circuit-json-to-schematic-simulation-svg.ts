@@ -5,6 +5,7 @@ import { CIRCUIT_TO_SVG_VERSION } from "./package-version"
 import { convertCircuitJsonToSchematicSvg } from "./sch/convert-circuit-json-to-schematic-svg"
 import { convertCircuitJsonToSimulationGraphSvg } from "./sim/convert-circuit-json-to-simulation-graph-svg"
 import type { AcSweepView } from "./sim/normalize-simulation-analysis-results"
+import type { SimulationTimeUnit } from "./sim/simulation-graph-svg/get-time-axis-display"
 import {
   type CircuitJsonWithSimulation,
   isSimulationAnalysisResult,
@@ -25,6 +26,7 @@ interface ConvertSchematicSimulationParams {
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
   ac_sweep_view?: AcSweepView
+  time_unit?: SimulationTimeUnit | "auto"
   width?: number
   height?: number
   schematicHeightRatio?: number
@@ -49,6 +51,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
   ac_sweep_view,
+  time_unit,
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   schematicHeightRatio = DEFAULT_SCHEMATIC_RATIO,
@@ -85,6 +88,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
     simulation_transient_voltage_graph_ids,
     simulation_result_ids,
     ac_sweep_view,
+    time_unit,
     width,
     height: simulationHeight,
     includeVersion: false,

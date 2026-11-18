@@ -2,7 +2,6 @@ import type { SimulationExperiment } from "circuit-json"
 import {
   type AxisInfo,
   type SimulationTransientGraph,
-  formatNumber,
 } from "../simulation-graph-svg-shared"
 
 export function buildAxisInfo(
@@ -105,8 +104,8 @@ export function buildTimeAxisInfo({
     domainMax: max,
     ticks,
     tickLabelOverrides: new Map([
-      [min, formatNumber(min)],
-      [max, formatNumber(max)],
+      [min, Number.parseFloat(min.toPrecision(12)).toString()],
+      [max, Number.parseFloat(max.toPrecision(12)).toString()],
     ]),
   }
 }

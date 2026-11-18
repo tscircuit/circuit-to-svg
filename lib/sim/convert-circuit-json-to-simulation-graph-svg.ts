@@ -36,6 +36,10 @@ import { getScopeAxisGutters } from "./simulation-graph-svg/create-legend/get-sc
 import { getScopeLegendGridLayout } from "./simulation-graph-svg/create-legend/get-scope-legend-grid-layout"
 import { prepareSimulationGraphs } from "./simulation-graph-svg/prepare-simulation-graphs"
 import {
+  getTimeAxisDisplay,
+  type SimulationTimeUnit,
+} from "./simulation-graph-svg/get-time-axis-display"
+import {
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
   MARGIN,
@@ -59,6 +63,8 @@ interface ConvertSimulationGraphParams {
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
   ac_sweep_view?: AcSweepView
+  /** Display unit for transient time axes; stored timestamps remain milliseconds. Defaults to ms. */
+  time_unit?: SimulationTimeUnit | "auto"
   width?: number
   height?: number
   includeVersion?: boolean
@@ -71,6 +77,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
   ac_sweep_view = "magnitude",
+  time_unit = "ms",
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
@@ -145,6 +152,12 @@ export function convertCircuitJsonToSimulationGraphSvg({
   } else {
     timeAxis = buildAxisInfo(horizontalCoordinates)
   }
+  const timeAxisDisplay =
+    normalizedResults.xAxisTitle === "Time (ms)"
+      ? getTimeAxisDisplay({ timeAxis, timeUnit: time_unit })
+      : { timeAxis, xAxisTitle: normalizedResults.xAxisTitle }
+  timeAxis = timeAxisDisplay.timeAxis
+
   const valueAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -218,7 +231,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotWidth,
       plotHeight,
       yAxisTitle: normalizedResults.yAxisTitle ?? getYAxisTitle(preparedGraphs),
-      xAxisTitle: normalizedResults.xAxisTitle,
+      xAxisTitle: timeAxisDisplay.xAxisTitle,
       usesScopeTraceDisplay,
     }),
     usesScopeTraceDisplay
