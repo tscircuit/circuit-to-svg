@@ -46,8 +46,9 @@ export function getComprehensivePcbBounds(
   let boardMaxY = Number.NEGATIVE_INFINITY
   let hasBoardBounds = false
 
-  // Process all elements to determine bounds
   for (const circuitJsonElm of circuitJson) {
+    if (!circuitJsonElm.type.startsWith("pcb_")) continue
+
     if (circuitJsonElm.type === "pcb_panel") {
       const panel = circuitJsonElm as PcbPanel
       const width = distance.parse(panel.width)

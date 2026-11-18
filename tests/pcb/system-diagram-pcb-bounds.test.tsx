@@ -20,7 +20,7 @@ const systemConnection: SystemBlockConnection = {
   ],
 }
 
-test("PCB SVG from a circuit with a system diagram route", async () => {
+test("system diagram routes do not change PCB SVG bounds", async () => {
   const { circuit } = getTestFixture()
   circuit.add(
     <board
@@ -39,5 +39,6 @@ test("PCB SVG from a circuit with a system diagram route", async () => {
   const pcb = circuit.getCircuitJson()
   const svg = convertCircuitJsonToPcbSvg([...pcb, systemConnection])
 
+  expect(svg).toBe(convertCircuitJsonToPcbSvg(pcb))
   await expect(svg).toMatchSvgSnapshot(import.meta.path)
 })
