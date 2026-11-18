@@ -16,8 +16,12 @@ export function buildAxisInfo(
     }
   }
 
-  const min = Math.min(...values)
-  const max = Math.max(...values)
+  let min = Infinity
+  let max = -Infinity
+  for (const coordinate of values) {
+    min = Math.min(min, coordinate)
+    max = Math.max(max, coordinate)
+  }
 
   if (min === max) {
     const offset = min === 0 ? 1 : Math.abs(min) * 0.1 || 1

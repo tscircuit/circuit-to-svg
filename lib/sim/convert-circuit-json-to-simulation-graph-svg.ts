@@ -15,6 +15,7 @@ import {
 } from "./normalize-simulation-analysis-results"
 export type { AcSweepView } from "./normalize-simulation-analysis-results"
 import { createAxes } from "./simulation-graph-svg/create-axes"
+import { convertCircuitJsonToSimulationEyeDiagramSvg } from "./convert-circuit-json-to-simulation-eye-diagram-svg"
 import {
   buildAxisInfo,
   buildTimeAxisInfo,
@@ -59,6 +60,7 @@ import {
 interface ConvertSimulationGraphParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
+  simulation_eye_diagram_id?: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
@@ -73,6 +75,7 @@ interface ConvertSimulationGraphParams {
 export function convertCircuitJsonToSimulationGraphSvg({
   circuitJson,
   simulation_experiment_id,
+  simulation_eye_diagram_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
@@ -82,6 +85,28 @@ export function convertCircuitJsonToSimulationGraphSvg({
   height = DEFAULT_HEIGHT,
   includeVersion,
 }: ConvertSimulationGraphParams): string {
+  if (simulation_eye_diagram_id) {
+    if (
+      !circuitJson.some(
+        (element) =>
+          element.type === "simulation_eye_diagram" &&
+          element.simulation_eye_diagram_id === simulation_eye_diagram_id &&
+          element.simulation_experiment_id === simulation_experiment_id,
+      )
+    ) {
+      throw new Error(
+        `Eye diagram "${simulation_eye_diagram_id}" does not belong to experiment "${simulation_experiment_id}"`,
+      )
+    }
+    return convertCircuitJsonToSimulationEyeDiagramSvg({
+      circuitJson,
+      simulation_eye_diagram_id,
+      width,
+      height,
+      time_unit,
+      includeVersion,
+    })
+  }
   const selectedVoltageIds = simulation_transient_voltage_graph_ids
     ? new Set(simulation_transient_voltage_graph_ids)
     : null

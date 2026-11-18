@@ -22,6 +22,7 @@ import {
 interface ConvertSchematicSimulationParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
+  simulation_eye_diagram_id?: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
@@ -47,6 +48,7 @@ const DEFAULT_SCHEMATIC_RATIO = 0.55
 export function convertCircuitJsonToSchematicSimulationSvg({
   circuitJson,
   simulation_experiment_id,
+  simulation_eye_diagram_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
@@ -84,6 +86,7 @@ export function convertCircuitJsonToSchematicSimulationSvg({
   const simulationSvg = convertCircuitJsonToSimulationGraphSvg({
     circuitJson,
     simulation_experiment_id,
+    simulation_eye_diagram_id,
     simulation_transient_current_graph_ids,
     simulation_transient_voltage_graph_ids,
     simulation_result_ids,
