@@ -71,9 +71,8 @@ test("LoRa device U1 assembly pin-1 marker disagrees with the placed pad", () =>
         pcbRotation={180}
         footprint={
           <footprint>
-            {pads.map(([pin, x, y, width, height], index) => (
+            {pads.map(([pin, x, y, width, height]) => (
               <smtpad
-                key={index}
                 portHints={[`pin${pin}`]}
                 pcbX={x}
                 pcbY={y}
