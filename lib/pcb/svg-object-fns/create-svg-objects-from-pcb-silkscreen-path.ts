@@ -9,7 +9,8 @@ export function createSvgObjectsFromPcbSilkscreenPath(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, layer: layerFilter, colorMap } = ctx
-  if (!silkscreenPath.route || !Array.isArray(silkscreenPath.route)) return []
+  if (!Array.isArray(silkscreenPath.route) || silkscreenPath.route.length < 2)
+    return []
 
   let path = silkscreenPath.route
     .map((point: any, index: number) => {
@@ -49,7 +50,9 @@ export function createSvgObjectsFromPcbSilkscreenPath(
         ).toString(),
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
-        "data-pcb-component-id": silkscreenPath.pcb_component_id,
+        ...(silkscreenPath.pcb_component_id === undefined
+          ? {}
+          : { "data-pcb-component-id": silkscreenPath.pcb_component_id }),
         "data-pcb-silkscreen-path-id": silkscreenPath.pcb_silkscreen_path_id,
         "data-type": "pcb_silkscreen_path",
         "data-pcb-layer": layer,
