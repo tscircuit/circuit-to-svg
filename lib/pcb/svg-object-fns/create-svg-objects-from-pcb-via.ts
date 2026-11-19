@@ -1,6 +1,7 @@
 import type { PCBVia, PcbViaInput } from "circuit-json"
 import Color from "color"
 import type { SvgObject } from "lib/svg-object"
+import { toSvgLength } from "lib/utils/to-svg-length"
 import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createSoldermaskOverlayElement } from "./create-soldermask-overlay-element"
@@ -27,13 +28,25 @@ export function createSvgObjectsFromPcbVia(
       ? board?.default_via_tented_on_top
       : board?.default_via_tented_on_bottom)
   const [x, y] = applyToPoint(transform, [hole.x, hole.y])
-  const scaledOuterWidth = hole.outer_diameter * Math.abs(transform.a)
-  const scaledOuterHeight = hole.outer_diameter * Math.abs(transform.a)
-  const scaledHoleWidth = hole.hole_diameter * Math.abs(transform.a)
-  const scaledHoleHeight = hole.hole_diameter * Math.abs(transform.a)
+  const scaledOuterWidth = toSvgLength(
+    hole.outer_diameter * Math.abs(transform.a),
+  )
+  const scaledOuterHeight = toSvgLength(
+    hole.outer_diameter * Math.abs(transform.a),
+  )
+  const scaledHoleWidth = toSvgLength(
+    hole.hole_diameter * Math.abs(transform.a),
+  )
+  const scaledHoleHeight = toSvgLength(
+    hole.hole_diameter * Math.abs(transform.a),
+  )
 
-  const outerRadius = Math.min(scaledOuterWidth, scaledOuterHeight) / 2
-  const innerRadius = Math.min(scaledHoleWidth, scaledHoleHeight) / 2
+  const outerRadius = toSvgLength(
+    Math.min(scaledOuterWidth, scaledOuterHeight) / 2,
+  )
+  const innerRadius = toSvgLength(
+    Math.min(scaledHoleWidth, scaledHoleHeight) / 2,
+  )
   const via: SvgObject = {
     name: "g",
     type: "element",
