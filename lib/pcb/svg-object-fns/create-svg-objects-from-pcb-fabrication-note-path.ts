@@ -8,7 +8,9 @@ export function createSvgObjectsFromPcbFabricationNotePath(
   fabNotePath: PcbFabricationNotePath,
   ctx: PcbContext,
 ): SvgObject[] {
-  const { transform } = ctx
+  const { transform, layer: layerFilter } = ctx
+  const { layer = "top" } = fabNotePath
+  if (layerFilter && layer !== layerFilter) return []
   if (!Array.isArray(fabNotePath.route) || fabNotePath.route.length < 2)
     return []
 
