@@ -2,7 +2,6 @@ import type { SimulationExperiment } from "circuit-json"
 import {
   type AxisInfo,
   type SimulationTransientGraph,
-  formatNumber,
 } from "../simulation-graph-svg-shared"
 
 export function buildAxisInfo(
@@ -17,8 +16,12 @@ export function buildAxisInfo(
     }
   }
 
-  const min = Math.min(...values)
-  const max = Math.max(...values)
+  let min = Infinity
+  let max = -Infinity
+  for (const coordinate of values) {
+    min = Math.min(min, coordinate)
+    max = Math.max(max, coordinate)
+  }
 
   if (min === max) {
     const offset = min === 0 ? 1 : Math.abs(min) * 0.1 || 1
@@ -105,8 +108,8 @@ export function buildTimeAxisInfo({
     domainMax: max,
     ticks,
     tickLabelOverrides: new Map([
-      [min, formatNumber(min)],
-      [max, formatNumber(max)],
+      [min, Number.parseFloat(min.toPrecision(12)).toString()],
+      [max, Number.parseFloat(max.toPrecision(12)).toString()],
     ]),
   }
 }

@@ -15,6 +15,7 @@ import {
 } from "./normalize-simulation-analysis-results"
 export type { AcSweepView } from "./normalize-simulation-analysis-results"
 import { createAxes } from "./simulation-graph-svg/create-axes"
+import { convertCircuitJsonToSimulationEyeDiagramSvg } from "./convert-circuit-json-to-simulation-eye-diagram-svg"
 import {
   buildAxisInfo,
   buildTimeAxisInfo,
@@ -36,6 +37,10 @@ import { getScopeAxisGutters } from "./simulation-graph-svg/create-legend/get-sc
 import { getScopeLegendGridLayout } from "./simulation-graph-svg/create-legend/get-scope-legend-grid-layout"
 import { prepareSimulationGraphs } from "./simulation-graph-svg/prepare-simulation-graphs"
 import {
+  getTimeAxisDisplay,
+  type SimulationTimeUnit,
+} from "./simulation-graph-svg/get-time-axis-display"
+import {
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
   MARGIN,
@@ -55,10 +60,13 @@ import {
 interface ConvertSimulationGraphParams {
   circuitJson: CircuitJsonWithSimulation[]
   simulation_experiment_id: string
+  simulation_eye_diagram_id?: string
   simulation_transient_current_graph_ids?: string[]
   simulation_transient_voltage_graph_ids?: string[]
   simulation_result_ids?: string[]
   ac_sweep_view?: AcSweepView
+  /** Display unit for transient time axes; stored timestamps remain milliseconds. Defaults to ms. */
+  time_unit?: SimulationTimeUnit | "auto"
   width?: number
   height?: number
   includeVersion?: boolean
@@ -67,14 +75,38 @@ interface ConvertSimulationGraphParams {
 export function convertCircuitJsonToSimulationGraphSvg({
   circuitJson,
   simulation_experiment_id,
+  simulation_eye_diagram_id,
   simulation_transient_current_graph_ids,
   simulation_transient_voltage_graph_ids,
   simulation_result_ids,
   ac_sweep_view = "magnitude",
+  time_unit = "ms",
   width = DEFAULT_WIDTH,
   height = DEFAULT_HEIGHT,
   includeVersion,
 }: ConvertSimulationGraphParams): string {
+  if (simulation_eye_diagram_id) {
+    if (
+      !circuitJson.some(
+        (element) =>
+          element.type === "simulation_eye_diagram" &&
+          element.simulation_eye_diagram_id === simulation_eye_diagram_id &&
+          element.simulation_experiment_id === simulation_experiment_id,
+      )
+    ) {
+      throw new Error(
+        `Eye diagram "${simulation_eye_diagram_id}" does not belong to experiment "${simulation_experiment_id}"`,
+      )
+    }
+    return convertCircuitJsonToSimulationEyeDiagramSvg({
+      circuitJson,
+      simulation_eye_diagram_id,
+      width,
+      height,
+      time_unit,
+      includeVersion,
+    })
+  }
   const selectedVoltageIds = simulation_transient_voltage_graph_ids
     ? new Set(simulation_transient_voltage_graph_ids)
     : null
@@ -145,6 +177,12 @@ export function convertCircuitJsonToSimulationGraphSvg({
   } else {
     timeAxis = buildAxisInfo(horizontalCoordinates)
   }
+  const timeAxisDisplay =
+    normalizedResults.xAxisTitle === "Time (ms)"
+      ? getTimeAxisDisplay({ timeAxis, time_unit })
+      : { timeAxis, xAxisTitle: normalizedResults.xAxisTitle }
+  timeAxis = timeAxisDisplay.timeAxis
+
   const valueAxis = buildAxisInfo(
     allPoints.map((point) => point.displayValue),
     true,
@@ -218,7 +256,7 @@ export function convertCircuitJsonToSimulationGraphSvg({
       plotWidth,
       plotHeight,
       yAxisTitle: normalizedResults.yAxisTitle ?? getYAxisTitle(preparedGraphs),
-      xAxisTitle: normalizedResults.xAxisTitle,
+      xAxisTitle: timeAxisDisplay.xAxisTitle,
       usesScopeTraceDisplay,
     }),
     usesScopeTraceDisplay
