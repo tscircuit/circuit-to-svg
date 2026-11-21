@@ -2,7 +2,7 @@ import {
   checkSchematicComponentMissingReferenceDesignatorText,
   runAllSchematicChecks,
 } from "@tscircuit/checks-latest"
-import { type AnyCircuitElement, schematic_component } from "circuit-json"
+import { type AnyCircuitElement, any_circuit_element } from "circuit-json"
 import { Circuit } from "tscircuit"
 
 const CUSTOM_SYMBOL_WITHOUT_REFDES = (
@@ -30,6 +30,7 @@ export async function createMissingRefdesWarningCircuit(): Promise<{
   // The latest core already emits styling warnings; regenerate them below.
   const circuitJson = circuit
     .getCircuitJson()
+    .map((element) => any_circuit_element.parse(element))
     .filter((element) => element.type !== "schematic_component_styling_warning")
   const warnings =
     checkSchematicComponentMissingReferenceDesignatorText(circuitJson)
@@ -68,12 +69,8 @@ export async function createDifferentGeneratedWarningsCircuit(): Promise<{
   // published schematic check (including is_box_with_pins).
   const circuitJson = circuit
     .getCircuitJson()
+    .map((element) => any_circuit_element.parse(element))
     .filter((element) => element.type !== "schematic_component_styling_warning")
-    .map((element) =>
-      element.type === "schematic_component"
-        ? schematic_component.parse(element)
-        : element,
-    )
   const warnings = await runAllSchematicChecks(circuitJson)
   if (warnings.length !== 4) {
     throw new Error(
