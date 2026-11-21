@@ -1,4 +1,8 @@
 import {
+  convertSchematicLengthUnits,
+  LEGACY_SCHEMATIC_LENGTH_UNIT,
+} from "circuit-json"
+import {
   createSvgObjectsFromSchematicGroup,
   createSvgObjectsFromSchematicGroupPort,
 } from "./svg-object-fns/create-svg-objects-from-sch-group"
@@ -79,6 +83,10 @@ export function convertCircuitJsonToSchematicSvg(
   circuitJson: AnyCircuitElement[],
   options?: Options,
 ): string {
+  circuitJson = convertSchematicLengthUnits(
+    circuitJson,
+    LEGACY_SCHEMATIC_LENGTH_UNIT,
+  )
   const schematicSheets = circuitJson.filter(
     (elm): elm is SchematicSheet => elm.type === "schematic_sheet",
   )

@@ -1,3 +1,7 @@
+import {
+  convertSchematicLengthUnits,
+  LEGACY_SCHEMATIC_LENGTH_UNIT,
+} from "circuit-json"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
@@ -42,6 +46,10 @@ export function convertCircuitJsonToStackedSchematicSheetsSvg(
   circuitJson: AnyCircuitElement[],
   options?: StackedSchematicSheetsSvgOptions,
 ): string {
+  circuitJson = convertSchematicLengthUnits(
+    circuitJson,
+    LEGACY_SCHEMATIC_LENGTH_UNIT,
+  )
   const sheets = circuitJson
     .filter((elm): elm is SchematicSheet => elm.type === "schematic_sheet")
     .slice()
