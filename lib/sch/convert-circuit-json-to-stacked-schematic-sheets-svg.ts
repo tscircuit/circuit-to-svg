@@ -1,7 +1,5 @@
-import {
-  convertSchematicLengthUnits,
-  LEGACY_SCHEMATIC_LENGTH_UNIT,
-} from "circuit-json"
+import { convertSchematicLengthUnits } from "@tscircuit/circuit-json-util"
+import { LEGACY_SCHEMATIC_LENGTH_UNIT } from "circuit-json"
 import { stringifySvg } from "lib/utils/stringify-svg"
 import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"

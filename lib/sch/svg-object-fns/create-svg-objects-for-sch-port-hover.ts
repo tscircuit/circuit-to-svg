@@ -1,4 +1,5 @@
-import { su } from "@tscircuit/circuit-json-util"
+import { LEGACY_SCHEMATIC_LENGTH_UNIT } from "circuit-json"
+import { getSchematicLengthUnitScale, su } from "@tscircuit/circuit-json-util"
 import type {
   AnyCircuitElement,
   SchematicComponent,
@@ -16,7 +17,14 @@ export const createSvgObjectsForSchPortHover = ({
   schPort: SchematicPort
   transform: Matrix
 }): SvgObject[] => {
-  const screenSchPortPos = applyToPoint(transform, schPort.center)
+  const scale = getSchematicLengthUnitScale(
+    schPort.schematic_length_unit ?? LEGACY_SCHEMATIC_LENGTH_UNIT,
+    LEGACY_SCHEMATIC_LENGTH_UNIT,
+  )
+  const screenSchPortPos = applyToPoint(transform, {
+    x: schPort.center.x * scale,
+    y: schPort.center.y * scale,
+  })
   const pinRadiusPx = Math.abs(transform.a) * PIN_CIRCLE_RADIUS_MM * 2
 
   return [
