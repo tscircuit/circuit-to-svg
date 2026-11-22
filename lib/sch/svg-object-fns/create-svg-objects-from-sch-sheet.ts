@@ -1,15 +1,12 @@
-import type { SchematicSheet } from "circuit-json"
+import { MM_PER_SCHEMATIC_UNIT, type SchematicSheet } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import type { ColorMap } from "lib/utils/colors"
 import { getSchScreenFontSize } from "lib/utils/get-sch-font-size"
 import { type Matrix, applyToPoint } from "transformation-matrix"
-import {
-  SCHEMATIC_UNIT_TO_MM,
-  getSchematicSheetLayout,
-} from "../schematic-sheet-utils"
+import { getSchematicSheetLayout } from "../schematic-sheet-utils"
 
-const SHEET_STROKE_WIDTH = 0.2 / SCHEMATIC_UNIT_TO_MM
-const SHEET_LABEL_FONT_SIZE = 3 / SCHEMATIC_UNIT_TO_MM
+const SHEET_STROKE_WIDTH = 0.2 / MM_PER_SCHEMATIC_UNIT
+const SHEET_LABEL_FONT_SIZE = 3 / MM_PER_SCHEMATIC_UNIT
 const SHEET_COLUMNS = ["1", "2", "3", "4", "5", "6"]
 const SHEET_ROWS = ["A", "B", "C", "D"]
 

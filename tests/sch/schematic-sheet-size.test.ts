@@ -1,10 +1,11 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement, SchematicSheet } from "circuit-json"
-import { convertCircuitJsonToSchematicSvg } from "lib/index"
 import {
-  SCHEMATIC_UNIT_TO_MM,
-  getSchematicSheetLayout,
-} from "lib/sch/schematic-sheet-utils"
+  MM_PER_SCHEMATIC_UNIT,
+  type AnyCircuitElement,
+  type SchematicSheet,
+} from "circuit-json"
+import { convertCircuitJsonToSchematicSvg } from "lib/index"
+import { getSchematicSheetLayout } from "lib/sch/schematic-sheet-utils"
 
 test("ANSI B schematic sheets render at 17 by 11 inches", () => {
   const a4Sheet: SchematicSheet = {
@@ -25,10 +26,10 @@ test("ANSI B schematic sheets render at 17 by 11 inches", () => {
   const a4 = getSchematicSheetLayout(a4Sheet)
   const ansiB = getSchematicSheetLayout(ansiBSheet)
 
-  expect(a4.width * SCHEMATIC_UNIT_TO_MM).toBeCloseTo(297)
-  expect(a4.height * SCHEMATIC_UNIT_TO_MM).toBeCloseTo(210)
-  expect(ansiB.width * SCHEMATIC_UNIT_TO_MM).toBeCloseTo(431.8)
-  expect(ansiB.height * SCHEMATIC_UNIT_TO_MM).toBeCloseTo(279.4)
+  expect(a4.width * MM_PER_SCHEMATIC_UNIT).toBeCloseTo(297)
+  expect(a4.height * MM_PER_SCHEMATIC_UNIT).toBeCloseTo(210)
+  expect(ansiB.width * MM_PER_SCHEMATIC_UNIT).toBeCloseTo(431.8)
+  expect(ansiB.height * MM_PER_SCHEMATIC_UNIT).toBeCloseTo(279.4)
 
   const circuitJson: AnyCircuitElement[] = [ansiBSheet]
 
