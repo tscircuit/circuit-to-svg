@@ -30,7 +30,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@tscircuit/alphabet": "^0.0.27",
     "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
-    "@tscircuit/circuit-json-util": "https://pkg.pr.new/tscircuit/circuit-json-util/@tscircuit/circuit-json-util@ed8f63d",
+    "@tscircuit/circuit-json-util": "^0.0.134",
     "@types/bun": "^1.2.8",
     "@types/color": "^4.2.1",
     "@types/debug": "^4.1.12",
