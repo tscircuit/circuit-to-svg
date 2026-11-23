@@ -194,6 +194,12 @@ const pcbSvg = convertCircuitJsonToPcbSvg(circuitJson, {
   Defaults to `false`.
 - `showSolderPaste` – if `true`, render `pcb_solder_paste` primitives. Defaults
   to `false`.
+- `showDifferentialPairPhaseSkew` – color routed differential pairs by their
+  local length difference. Blue means the trace is ahead, red means it is
+  behind, white means it is in step, and gray means the skew is unknown.
+  Defaults to `false`.
+- `phaseSkewColors` – override any of `positive`, `negative`, `zero`, and
+  `unknown` using hex or numeric `rgb()` colors.
 - `shouldDrawErrors` – if `true`, display visual error indicators (red diamonds with text) for error elements in the circuit JSON. Supports:
   - `pcb_trace_error` – errors related to PCB traces
   - `pcb_footprint_overlap_error` – errors for overlapping pads, plated holes, and holes (displays error indicators at each affected element with connecting lines)
