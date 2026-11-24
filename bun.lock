@@ -28,7 +28,7 @@
         "bun-match-svg": "^0.0.12",
         "circuit-json": "^0.0.561",
         "circuit-json-to-connectivity-map": "^0.0.23",
-        "circuit-json-to-differential-pair-phase-skew": "https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.4/circuit-json-to-differential-pair-phase-skew-0.0.4.tgz",
+        "circuit-json-to-differential-pair-phase-skew": "https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.5/circuit-json-to-differential-pair-phase-skew-0.0.5.tgz",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.12",
         "performance-now": "^2.1.0",
@@ -511,7 +511,7 @@
 
     "circuit-json-to-connectivity-map": ["circuit-json-to-connectivity-map@0.0.23", "", { "dependencies": { "@tscircuit/math-utils": "^0.0.9" }, "peerDependencies": { "typescript": "^5.9.3" } }, "sha512-DSOiXaXOTvjU+7et8ITXb2LjgKto6cQzLv3hReYdXuUNtLw2GVnpOly1G83VcIBcSQ4hRVHI4VMKRyZB3XVzdg=="],
 
-    "circuit-json-to-differential-pair-phase-skew": ["circuit-json-to-differential-pair-phase-skew@https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.4/circuit-json-to-differential-pair-phase-skew-0.0.4.tgz", { "dependencies": { "@tscircuit/circuit-json-util": "0.0.135" }, "peerDependencies": { "circuit-json": ">=0.0.561" } }, "sha512-+Z5yeDgJYCkQcbZpUm1cusfV3DvB8Zza/yBDTVEVRgM8CILIk7HAimd7SdFB5/QvJSX7xUmkxG1Pz0Rfp9wL4w=="],
+    "circuit-json-to-differential-pair-phase-skew": ["circuit-json-to-differential-pair-phase-skew@https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.5/circuit-json-to-differential-pair-phase-skew-0.0.5.tgz", { "dependencies": { "@tscircuit/circuit-json-util": "0.0.135" }, "peerDependencies": { "circuit-json": ">=0.0.561" } }, "sha512-LA5Jf91PLMZujxYAhpGh+HkGfjAi+vkBsE13ROtbC697Af3dljnMYcDZbDls9JbWeRWZ7XW4uD057DrZeauUgw=="],
 
     "circuit-json-to-gltf": ["circuit-json-to-gltf@0.0.128", "", { "dependencies": { "@jscad/modeling": "^2.12.6", "@tscircuit/alphabet": "^0.0.25", "earcut": "^3.0.2", "jscad-electronics": "^0.0.159", "jscad-planner": "^0.0.14", "jscad-to-gltf": "^0.0.5", "occt-import-js": "^0.0.23" }, "peerDependencies": { "@resvg/resvg-js": "2", "@resvg/resvg-wasm": "2", "@tscircuit/circuit-json-util": "*", "circuit-json": "*", "circuit-to-svg": ">=0.0.422", "typescript": "^5" }, "optionalPeers": ["@resvg/resvg-js", "@resvg/resvg-wasm"] }, "sha512-EqXVwW9lXL4oNBFayWdmskoct9EMgjVjdUL6zllzadMxS6PW0hmKsk4+yW2Xd6j9Hky+SVyTyTKTjSzheODyAA=="],
 
