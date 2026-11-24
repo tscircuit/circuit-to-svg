@@ -55,11 +55,11 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/alphabet": "*",
-    "@tscircuit/circuit-json-util": "*",
-    "circuit-json": "*",
-    "circuit-json-to-connectivity-map": "*",
-    "schematic-symbols": "*"
+    "@tscircuit/alphabet": ">=0.0.22",
+    "@tscircuit/circuit-json-util": ">=0.0.134",
+    "circuit-json": ">=0.0.560",
+    "circuit-json-to-connectivity-map": ">=0.0.6",
+    "schematic-symbols": ">=0.0.101"
   },
   "dependencies": {
     "@types/node": "^22.5.5",
