@@ -23,11 +23,12 @@ export function createSvgObjectsFromSchematicArc({
   const startAngleRad = (schArc.start_angle_degrees * Math.PI) / 180
   const endAngleRad = (schArc.end_angle_degrees * Math.PI) / 180
 
-  // Calculate start and end points
+  // Calculate start and end points. Circuit JSON angles use +Y up, while the
+  // schematic transform flips Y for screen space, so the sine term is negated.
   const startX = center.x + transformedRadius * Math.cos(startAngleRad)
-  const startY = center.y + transformedRadius * Math.sin(startAngleRad)
+  const startY = center.y - transformedRadius * Math.sin(startAngleRad)
   const endX = center.x + transformedRadius * Math.cos(endAngleRad)
-  const endY = center.y + transformedRadius * Math.sin(endAngleRad)
+  const endY = center.y - transformedRadius * Math.sin(endAngleRad)
 
   // Calculate if arc is large (> 180 degrees)
   let angleDiff = schArc.end_angle_degrees - schArc.start_angle_degrees
