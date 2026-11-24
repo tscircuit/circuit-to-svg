@@ -23,7 +23,12 @@ if (!existsSync("dist/index.js")) {
   const root = process.cwd()
   const buildDir = mkdtempSync(join(tmpdir(), "circuit-to-svg-build-"))
   try {
-    for (const file of ["lib", "package.json", "tsconfig.json"])
+    for (const file of [
+      "lib",
+      "package.json",
+      "tsconfig.json",
+      "tsup.config.ts",
+    ])
       cpSync(join(root, file), join(buildDir, file), { recursive: true })
     symlinkSync(
       join(root, "node_modules"),
