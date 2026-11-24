@@ -5,7 +5,7 @@ export default defineConfig({
   format: ["esm"],
   sourcemap: true,
   external: ["tscircuit"],
-  // Bundle the preview until the phase skew library has an npm release.
+  // Bundle the phase skew dev dependency for production installs.
   noExternal: ["circuit-json-to-differential-pair-phase-skew"],
   dts: { resolve: ["circuit-json-to-differential-pair-phase-skew"] },
 })

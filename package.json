@@ -39,7 +39,7 @@
     "bun-match-svg": "^0.0.12",
     "circuit-json": "^0.0.561",
     "circuit-json-to-connectivity-map": "^0.0.23",
-    "circuit-json-to-differential-pair-phase-skew": "https://pkg.pr.new/tscircuit/circuit-json-to-differential-pair-phase-skew@ac6e557",
+    "circuit-json-to-differential-pair-phase-skew": "https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.4/circuit-json-to-differential-pair-phase-skew-0.0.4.tgz",
     "esbuild": "^0.20.2",
     "format-si-unit": "^0.0.12",
     "performance-now": "^2.1.0",
