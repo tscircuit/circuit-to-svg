@@ -47,46 +47,45 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
 
     for (const trace of [element.positive_trace, element.negative_trace]) {
       const peaks = getPhaseSkewPeaks(trace)
-      for (const run of getPhaseSkewRuns({ segments: trace.segments })) {
-        const first = run[0]!
+      const getSpan = (segment: PcbDifferentialPairPhaseSkewSegment) => ({
+        start: applyToPoint(transform, segment.start),
+        end: applyToPoint(transform, segment.end),
+        radius:
+          (segment.width *
+            PHASE_SKEW_STROKE_WIDTH_MULTIPLIER *
+            Math.abs(transform.a) || FALLBACK_STROKE_WIDTH_SVG_PX) / 2,
+        startColor: getPhaseSkewColor({
+          lengthDifferenceMm: segment.start_length_difference_mm,
+          peaks,
+        }),
+        endColor: getPhaseSkewColor({
+          lengthDifferenceMm: segment.end_length_difference_mm,
+          peaks,
+        }),
+      })
+      for (const [first, ...rest] of getPhaseSkewRuns(trace.segments)) {
         if (layer && first.layer !== layer) continue
 
-        const spans = run.map((segment) => ({
-          start: applyToPoint(transform, segment.start),
-          end: applyToPoint(transform, segment.end),
-          radius:
-            (segment.width *
-              PHASE_SKEW_STROKE_WIDTH_MULTIPLIER *
-              Math.abs(transform.a) || FALLBACK_STROKE_WIDTH_SVG_PX) / 2,
-          startColor: getPhaseSkewColor({
-            lengthDifferenceMm: segment.start_length_difference_mm,
-            peaks,
-          }),
-          endColor: getPhaseSkewColor({
-            lengthDifferenceMm: segment.end_length_difference_mm,
-            peaks,
-          }),
-        }))
-        if (run.length > 1) {
+        const span = getSpan(first)
+        if (rest.length > 0) {
           strokes.push(
-            createPhaseSkewRun({
-              spans,
-              defs,
-              attributes: {
+            createPhaseSkewRun(
+              [span, ...rest.map(getSpan)],
+              {
                 class: "pcb-differential-pair-phase-skew",
                 "data-type": element.type,
                 "data-pcb-layer": first.layer,
               },
-            }),
+              defs,
+            ),
           )
           continue
         }
 
-        const span = spans[0]!
         const color =
           span.startColor === span.endColor
             ? span.startColor
-            : addPhaseSkewGradient({ ...span, defs })
+            : addPhaseSkewGradient(span.start, span.end, span, defs)
         strokes.push(
           createPcbTraceStroke(
             {
@@ -113,31 +112,33 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
   }
 }
 
-function getPhaseSkewRuns({
-  segments,
-}: {
-  segments: PcbDifferentialPairPhaseSkewSegment[]
-}): PcbDifferentialPairPhaseSkewSegment[][] {
-  const runs: PcbDifferentialPairPhaseSkewSegment[][] = []
-  for (const segment of segments) {
-    const run = runs.at(-1)
-    const previous = run?.at(-1)
-    if (run && previous && canJoinPhaseSkewSegments({ previous, segment })) {
-      run.push(segment)
+function* getPhaseSkewRuns([
+  first,
+  ...rest
+]: PcbDifferentialPairPhaseSkewTrace["segments"]) {
+  if (first === undefined) return
+
+  let run: [
+    PcbDifferentialPairPhaseSkewSegment,
+    ...PcbDifferentialPairPhaseSkewTrace["segments"],
+  ] = [first]
+  let previous = first
+  for (const segment of rest) {
+    if (!canJoinPhaseSkewSegments(previous, segment)) {
+      yield run
+      run = [segment]
     } else {
-      runs.push([segment])
+      run.push(segment)
     }
+    previous = segment
   }
-  return runs
+  yield run
 }
 
-function canJoinPhaseSkewSegments({
-  previous,
-  segment,
-}: {
-  previous: PcbDifferentialPairPhaseSkewSegment
-  segment: PcbDifferentialPairPhaseSkewSegment
-}): boolean {
+function canJoinPhaseSkewSegments(
+  previous: PcbDifferentialPairPhaseSkewSegment,
+  segment: PcbDifferentialPairPhaseSkewSegment,
+): boolean {
   if (
     previous.layer !== segment.layer ||
     previous.end.x !== segment.start.x ||

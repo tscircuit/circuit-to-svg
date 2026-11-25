@@ -1,129 +1,96 @@
-import type { Point } from "circuit-json"
+import type { PcbDifferentialPairPhaseSkewSegment, Point } from "circuit-json"
 import { svgElement } from "lib/sim/simulation-graph-svg/simulation-graph-svg-shared"
 import type { SvgObject } from "lib/svg-object"
 
-export interface PhaseSkewSpan {
-  start: Point
-  end: Point
+type PhaseSkewSpan = Pick<
+  PcbDifferentialPairPhaseSkewSegment,
+  "start" | "end"
+> & {
   radius: number
   startColor: string
   endColor: string
 }
 
-interface Cut {
-  left: Point
-  right: Point
-}
+type Cut = ReturnType<typeof getCut>
 
 // Extend the color polygons past the outline so the clip alone antialiases
 // the silhouette. Their shared cuts are rasterized without antialiasing.
 const COLOR_OVERHANG_SVG_PX = 1
 const MITER_LIMIT = 4 // SVG default miter limit
 
-export function createPhaseSkewRun({
-  spans,
-  attributes,
-  defs,
-}: {
-  spans: PhaseSkewSpan[]
-  attributes: Record<string, string>
-  defs: SvgObject[]
-}): SvgObject {
-  const normals = spans.map(({ start, end }) => {
-    const dx = end.x - start.x
-    const dy = end.y - start.y
-    const length = Math.hypot(dx, dy)
-    return { x: -dy / length, y: dx / length, length }
-  })
-  const offsets: Point[] = [normals[0]!]
-  for (let i = 1; i < spans.length; i++) {
-    const before = normals[i - 1]!
-    const after = normals[i]!
-    const sum = { x: before.x + after.x, y: before.y + after.y }
-    const projection = sum.x * before.x + sum.y * before.y
-    const along = Math.abs(sum.x * before.y - sum.y * before.x)
+export function createPhaseSkewRun(
+  spans: [PhaseSkewSpan, ...PhaseSkewSpan[]],
+  attributes: SvgObject["attributes"],
+  defs: SvgObject["children"],
+): SvgObject {
+  const [first, ...rest] = spans
+  const clipId = `pcb-phase-skew-run-${defs.length}`
+  const clipAttributes = { d: "" }
+  defs.push(
+    svgElement("clipPath", { id: clipId }, [
+      svgElement("path", clipAttributes),
+    ]),
+  )
+
+  const leftEdge: string[] = []
+  const rightEdge: string[] = []
+  let previous = first
+  let normal = getNormal(first)
+  let startOffset: Point = normal
+  const startCap = getCut(first.start, normal, first.radius)
+  const fills = [createCapFill(first, normal, "start")]
+
+  const appendSpan = (
+    span: PhaseSkewSpan,
+    startOffset: Point,
+    endOffset: Point,
+  ) => {
+    const start = getCut(span.start, startOffset, span.radius)
+    const end = getCut(span.end, endOffset, span.radius)
+    leftEdge.push(svgPoint(start.left), svgPoint(end.left))
+    rightEdge.push(svgPoint(start.right), svgPoint(end.right))
+
+    const radius = span.radius + COLOR_OVERHANG_SVG_PX
+    fills.push(
+      ...createSpanFills(
+        getCut(span.start, startOffset, radius),
+        getCut(span.end, endOffset, radius),
+        span,
+        defs,
+      ),
+    )
+  }
+
+  for (const next of rest) {
+    const nextNormal = getNormal(next)
+    const sum = { x: normal.x + nextNormal.x, y: normal.y + nextNormal.y }
+    const projection = sum.x * normal.x + sum.y * normal.y
+    const along = Math.abs(sum.x * normal.y - sum.y * normal.x)
     const radius =
-      Math.max(spans[i - 1]!.radius, spans[i]!.radius) + COLOR_OVERHANG_SVG_PX
+      Math.max(previous.radius, next.radius) + COLOR_OVERHANG_SVG_PX
     // Bound the miter and keep cuts from crossing on short spans.
     const scale = Math.min(
       1 / projection,
       MITER_LIMIT / Math.hypot(sum.x, sum.y),
-      Math.min(before.length, after.length) / (2 * along * radius),
+      Math.min(normal.length, nextNormal.length) / (2 * along * radius),
     )
-    offsets.push({ x: sum.x * scale, y: sum.y * scale })
+    const endOffset = { x: sum.x * scale, y: sum.y * scale }
+    appendSpan(previous, startOffset, endOffset)
+    previous = next
+    startOffset = endOffset
+    normal = nextNormal
   }
-  offsets.push(normals.at(-1)!)
+  appendSpan(previous, startOffset, normal)
 
-  const outline = spans.map(({ start, end, radius }, i) => ({
-    start: getCut({ point: start, offset: offsets[i]!, radius }),
-    end: getCut({ point: end, offset: offsets[i + 1]!, radius }),
-  }))
-  const first = outline[0]!
-  const last = outline.at(-1)!
-  const startRadius = spans[0]!.radius
-  const endRadius = spans.at(-1)!.radius
-  const leftEdge = outline.flatMap(({ start, end }) => [start.left, end.left])
-  const rightEdge = outline
-    .flatMap(({ start, end }) => [start.right, end.right])
-    .reverse()
-  const clipId = `pcb-phase-skew-run-${defs.length}`
-  defs.push(
-    svgElement("clipPath", { id: clipId }, [
-      svgElement("path", {
-        d: [
-          `M ${leftEdge.map(svgPoint).join(" L ")}`,
-          `A ${endRadius} ${endRadius} 0 0 0 ${svgPoint(last.end.right)}`,
-          `L ${rightEdge.slice(1).map(svgPoint).join(" L ")}`,
-          `A ${startRadius} ${startRadius} 0 0 0 ${svgPoint(first.start.left)} Z`,
-        ].join(" "),
-      }),
-    ]),
-  )
+  const endCap = getCut(previous.end, normal, previous.radius)
+  fills.push(createCapFill(previous, normal, "end"))
 
-  const fills = spans.flatMap(
-    ({ start, end, radius, startColor, endColor }, i) => {
-      const wideRadius = radius + COLOR_OVERHANG_SVG_PX
-      const startCut = getCut({
-        point: start,
-        offset: offsets[i]!,
-        radius: wideRadius,
-      })
-      const endCut = getCut({
-        point: end,
-        offset: offsets[i + 1]!,
-        radius: wideRadius,
-      })
-      const patches = createSpanFills({
-        startCut,
-        endCut,
-        startColor,
-        endColor,
-        defs,
-      })
-      if (i === 0) {
-        patches.unshift(
-          createCapFill({
-            cut: startCut,
-            normal: normals[i]!,
-            extension: -wideRadius,
-            color: startColor,
-          }),
-        )
-      }
-      if (i === spans.length - 1) {
-        patches.push(
-          createCapFill({
-            cut: endCut,
-            normal: normals[i]!,
-            extension: wideRadius,
-            color: endColor,
-          }),
-        )
-      }
-      return patches
-    },
-  )
-
+  clipAttributes.d = [
+    `M ${leftEdge.join(" L ")}`,
+    `A ${previous.radius} ${previous.radius} 0 0 0 ${svgPoint(endCap.right)}`,
+    `L ${rightEdge.slice(0, -1).reverse().join(" L ")}`,
+    `A ${first.radius} ${first.radius} 0 0 0 ${svgPoint(startCap.left)} Z`,
+  ].join(" ")
   return svgElement(
     "g",
     { ...attributes, "clip-path": `url(#${clipId})` },
@@ -131,11 +98,14 @@ export function createPhaseSkewRun({
   )
 }
 
-function getCut({
-  point,
-  offset,
-  radius,
-}: { point: Point; offset: Point; radius: number }): Cut {
+function getNormal({ start, end }: Pick<PhaseSkewSpan, "start" | "end">) {
+  const dx = end.x - start.x
+  const dy = end.y - start.y
+  const length = Math.hypot(dx, dy)
+  return { x: -dy / length, y: dx / length, length }
+}
+
+function getCut(point: Point, offset: Point, radius: number) {
   return {
     left: { x: point.x + offset.x * radius, y: point.y + offset.y * radius },
     right: { x: point.x - offset.x * radius, y: point.y - offset.y * radius },
@@ -146,10 +116,7 @@ function svgPoint({ x, y }: Point): string {
   return `${x},${y}`
 }
 
-function createFill({
-  points,
-  color,
-}: { points: Point[]; color: string }): SvgObject {
+function createFill(points: Point[], color: string): SvgObject {
   return svgElement("polygon", {
     points: points.map(svgPoint).join(" "),
     fill: color,
@@ -157,23 +124,23 @@ function createFill({
   })
 }
 
-function createCapFill({
-  cut,
-  normal,
-  extension,
-  color,
-}: { cut: Cut; normal: Point; extension: number; color: string }): SvgObject {
+function createCapFill(
+  span: PhaseSkewSpan,
+  normal: Point,
+  end: "start" | "end",
+) {
+  const radius = span.radius + COLOR_OVERHANG_SVG_PX
+  const cut = getCut(span[end], normal, radius)
+  const extension = end === "start" ? -radius : radius
+  const color = end === "start" ? span.startColor : span.endColor
   const extended = [cut.right, cut.left].map(({ x, y }) => ({
     x: x + normal.y * extension,
     y: y - normal.x * extension,
   }))
-  return createFill({ points: [cut.left, cut.right, ...extended], color })
+  return createFill([cut.left, cut.right, ...extended], color)
 }
 
-function projectOntoCut({
-  point,
-  cut: { left, right },
-}: { point: Point; cut: Cut }): Point {
+function projectOntoCut(point: Point, { left, right }: Cut): Point {
   const dx = right.x - left.x
   const dy = right.y - left.y
   const along =
@@ -181,62 +148,37 @@ function projectOntoCut({
   return { x: left.x + along * dx, y: left.y + along * dy }
 }
 
-function createSpanFills({
-  startCut,
-  endCut,
-  startColor,
-  endColor,
-  defs,
-}: {
-  startCut: Cut
-  endCut: Cut
-  startColor: string
-  endColor: string
-  defs: SvgObject[]
-}): SvgObject[] {
-  const points = [startCut.left, startCut.right, endCut.right, endCut.left]
-  if (startColor === endColor)
-    return [createFill({ points, color: startColor })]
+function createSpanFills(
+  startCut: Cut,
+  endCut: Cut,
+  span: PhaseSkewSpan,
+  defs: SvgObject["children"],
+) {
+  const { left: startLeft, right: startRight } = startCut
+  const { left: endLeft, right: endRight } = endCut
+  if (span.startColor === span.endColor) {
+    return [
+      createFill([startLeft, startRight, endRight, endLeft], span.startColor),
+    ]
+  }
 
-  // A linear gradient can match both end colors across a triangle. Two
-  // triangles let each end have its own cut angle and agree on the diagonal.
+  // Two triangles let the gradient match both cut angles and meet on the diagonal.
+  const firstStart = projectOntoCut(endRight, startCut)
+  const secondEnd = projectOntoCut(startLeft, endCut)
+  const firstColor = addPhaseSkewGradient(firstStart, endRight, span, defs)
+  const secondColor = addPhaseSkewGradient(startLeft, secondEnd, span, defs)
   return [
-    createFill({
-      points: points.slice(0, 3),
-      color: addPhaseSkewGradient({
-        start: projectOntoCut({ point: endCut.right, cut: startCut }),
-        end: endCut.right,
-        startColor,
-        endColor,
-        defs,
-      }),
-    }),
-    createFill({
-      points: [startCut.left, endCut.right, endCut.left],
-      color: addPhaseSkewGradient({
-        start: startCut.left,
-        end: projectOntoCut({ point: startCut.left, cut: endCut }),
-        startColor,
-        endColor,
-        defs,
-      }),
-    }),
+    createFill([startLeft, startRight, endRight], firstColor),
+    createFill([startLeft, endRight, endLeft], secondColor),
   ]
 }
 
-export function addPhaseSkewGradient({
-  start,
-  end,
-  startColor,
-  endColor,
-  defs,
-}: {
-  start: Point
-  end: Point
-  startColor: string
-  endColor: string
-  defs: SvgObject[]
-}): string {
+export function addPhaseSkewGradient(
+  start: Point,
+  end: Point,
+  { startColor, endColor }: Pick<PhaseSkewSpan, "startColor" | "endColor">,
+  defs: SvgObject["children"],
+): string {
   const id = `pcb-phase-skew-gradient-${defs.length}`
   defs.push(
     svgElement(
