@@ -1,4 +1,8 @@
 import { Resvg } from "@resvg/resvg-js"
+import base64Font from "@tscircuit/alphabet/base64font"
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import type { CircuitJson } from "circuit-json"
 import {
   convertCircuitJsonTo3D,
@@ -23,18 +27,37 @@ export async function renderFabricationText3dSnapshot(
   })
   const boardMesh = scene.boxes[0]!
   const textures: { top?: string; bottom?: string } = {}
-  for (const layer of ["top", "bottom"] as const) {
-    const svg = convertCircuitJsonToPcbSvg(circuitJson, {
-      layer,
-      width: 1200,
-      matchBoardAspectRatio: true,
-      drawPaddingOutsideBoard: false,
-      backgroundColor: "#14583e",
-      showFabricationNotes: true,
-      includeVersion: false,
-    })
-    const png = new Resvg(svg).render().asPng()
-    textures[layer] = `data:image/png;base64,${png.toString("base64")}`
+  const fontDirectory = mkdtempSync(
+    join(tmpdir(), "fabrication-snapshot-font-"),
+  )
+  const fontPath = join(fontDirectory, "tscircuit-alphabet.otf")
+  try {
+    writeFileSync(fontPath, Buffer.from(base64Font, "base64"))
+    for (const layer of ["top", "bottom"] as const) {
+      const svg = convertCircuitJsonToPcbSvg(circuitJson, {
+        layer,
+        width: 1200,
+        matchBoardAspectRatio: true,
+        drawPaddingOutsideBoard: false,
+        backgroundColor: "#14583e",
+        showFabricationNotes: true,
+        includeVersion: false,
+      })
+      // Embedded PNGs are compared across machines; use the bundled font rather
+      // than whichever fallback font happens to be installed on the host.
+      const png = new Resvg(svg, {
+        font: {
+          loadSystemFonts: false,
+          fontFiles: [fontPath],
+          defaultFontFamily: "TscircuitAlphabet",
+        },
+      })
+        .render()
+        .asPng()
+      textures[layer] = `data:image/png;base64,${png.toString("base64")}`
+    }
+  } finally {
+    rmSync(fontDirectory, { recursive: true, force: true })
   }
   boardMesh.texture = textures
   const glb = await convertSceneToGLTF(scene, { binary: true })
