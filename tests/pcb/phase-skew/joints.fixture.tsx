@@ -1,5 +1,5 @@
 import { Resvg, type RenderedImage } from "@resvg/resvg-js"
-import { Circuit } from "@tscircuit/core"
+import { cju } from "@tscircuit/circuit-json-util"
 import { expect } from "bun:test"
 import type {
   PcbDifferentialPairPhaseSkew,
@@ -9,6 +9,7 @@ import type {
 import type { PcbSvgOptions } from "lib"
 import { getPcbTraceSegments } from "lib/pcb/get-pcb-trace-segments"
 import { parseSync } from "svgson"
+import { Circuit } from "tscircuit"
 import {
   isPhaseSkewStroke,
   renderPhaseSkewSvg,
@@ -60,7 +61,7 @@ export async function renderPhaseSkewRoute({
   )
   await circuit.renderUntilSettled()
   const circuitJson = circuit.getCircuitJson()
-  const trace = circuitJson.find((element) => element.type === "pcb_trace")
+  const [trace] = cju(circuitJson).pcb_trace.list()
   if (!trace) throw new Error("Core did not render the fixture trace")
 
   // Seed a continuous ramp over the copper Core rendered. This fixture tests
