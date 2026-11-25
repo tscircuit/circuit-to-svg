@@ -3,6 +3,7 @@ import type {
   PcbDifferentialPairPhaseSkewSegment,
   PcbDifferentialPairPhaseSkewTrace,
 } from "circuit-json"
+import { svgElement } from "lib/sim/simulation-graph-svg/simulation-graph-svg-shared"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -40,7 +41,7 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
     if (element.type !== "pcb_differential_pair_phase_skew") continue
 
     for (const trace of [element.positive_trace, element.negative_trace]) {
-      const peaks = getPhaseSkewPeaks({ trace })
+      const peaks = getPhaseSkewPeaks(trace)
       for (const segment of trace.segments) {
         if (layer && segment.layer !== layer) continue
 
@@ -89,38 +90,22 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
   if (gradients.length === 0) return { strokes }
   return {
     strokes,
-    defs: {
-      name: "defs",
-      type: "element",
-      value: "",
-      attributes: {},
-      children: gradients,
-    },
+    defs: svgElement("defs", {}, gradients),
   }
 }
 
 /** Find the endpoints that set the positive and negative scales for a trace. */
 function getPhaseSkewPeaks({
-  trace,
-}: {
-  trace: PcbDifferentialPairPhaseSkewTrace
-}): PhaseSkewPeaks {
+  segments,
+}: PcbDifferentialPairPhaseSkewTrace): PhaseSkewPeaks {
   let positivePeakMm = 0
   let negativePeakMm = 0
   for (const {
-    start_length_difference_mm,
-    end_length_difference_mm,
-  } of trace.segments) {
-    positivePeakMm = Math.max(
-      positivePeakMm,
-      start_length_difference_mm,
-      end_length_difference_mm,
-    )
-    negativePeakMm = Math.min(
-      negativePeakMm,
-      start_length_difference_mm,
-      end_length_difference_mm,
-    )
+    start_length_difference_mm: startDifference,
+    end_length_difference_mm: endDifference,
+  } of segments) {
+    positivePeakMm = Math.max(positivePeakMm, startDifference, endDifference)
+    negativePeakMm = Math.min(negativePeakMm, startDifference, endDifference)
   }
   return { positivePeakMm, negativePeakMm }
 }
@@ -162,11 +147,9 @@ function createPhaseSkewGradient({
 }): SvgObject {
   const svgStart = applyToPoint(transform, start)
   const svgEnd = applyToPoint(transform, end)
-  return {
-    name: "linearGradient",
-    type: "element",
-    value: "",
-    attributes: {
+  return svgElement(
+    "linearGradient",
+    {
       id,
       gradientUnits: "userSpaceOnUse",
       x1: String(svgStart.x),
@@ -174,12 +157,8 @@ function createPhaseSkewGradient({
       x2: String(svgEnd.x),
       y2: String(svgEnd.y),
     },
-    children: [startColor, endColor].map((color, offset) => ({
-      name: "stop",
-      type: "element",
-      value: "",
-      attributes: { offset: String(offset), "stop-color": color },
-      children: [],
-    })),
-  }
+    [startColor, endColor].map((color, offset) =>
+      svgElement("stop", { offset: String(offset), "stop-color": color }),
+    ),
+  )
 }

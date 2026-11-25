@@ -1,5 +1,6 @@
 import { Circuit } from "@tscircuit/core"
 import type { CircuitJson } from "circuit-json"
+import { convertCircuitJsonToPcbSvg, type PcbSvgOptions } from "lib"
 import type { SvgObject } from "lib/svg-object"
 import { Fragment, type ComponentProps } from "react"
 
@@ -17,6 +18,17 @@ export const LAYER_CHANGE: PcbPath = [
 ]
 
 export const PHASE_SKEW_SVG_SIZE = { width: 800, height: 260 }
+
+export function renderPhaseSkewSvg(
+  circuitJson: CircuitJson,
+  options?: PcbSvgOptions,
+): string {
+  return convertCircuitJsonToPcbSvg(circuitJson, {
+    ...PHASE_SKEW_SVG_SIZE,
+    showDifferentialPairPhaseSkew: true,
+    ...options,
+  })
+}
 
 /** Render the matched pair or add waypoints to either trace. */
 export async function renderDifferentialPair({

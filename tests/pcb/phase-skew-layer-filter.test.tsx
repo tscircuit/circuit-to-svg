@@ -1,11 +1,10 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
 import {
   isPhaseSkewStroke,
   LAYER_CHANGE,
-  PHASE_SKEW_SVG_SIZE,
   renderDifferentialPair,
+  renderPhaseSkewSvg,
   TUNING_BUMP,
 } from "./phase-skew/differential-pair.fixture"
 
@@ -15,15 +14,8 @@ test("phase skew follows copper layer visibility and stays below via drills", as
     negativePath: LAYER_CHANGE,
     loadLayer: "bottom",
   })
-  const options = {
-    ...PHASE_SKEW_SVG_SIZE,
-    showDifferentialPairPhaseSkew: true,
-  }
-  const allLayers = convertCircuitJsonToPcbSvg(circuitJson, options)
-  const topLayer = convertCircuitJsonToPcbSvg(circuitJson, {
-    ...options,
-    layer: "top",
-  })
+  const allLayers = renderPhaseSkewSvg(circuitJson)
+  const topLayer = renderPhaseSkewSvg(circuitJson, { layer: "top" })
   const objects = parseSync(allLayers).children
   const strokes = objects.filter(isPhaseSkewStroke)
   expect(

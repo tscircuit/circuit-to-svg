@@ -1,18 +1,14 @@
 import { expect, test } from "bun:test"
-import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
 import {
   isPhaseSkewStroke,
-  PHASE_SKEW_SVG_SIZE,
   renderDifferentialPair,
+  renderPhaseSkewSvg,
 } from "./phase-skew/differential-pair.fixture"
 
 test("matched differential pair traces are white", async () => {
   const circuitJson = await renderDifferentialPair({})
-  const svg = convertCircuitJsonToPcbSvg(circuitJson, {
-    ...PHASE_SKEW_SVG_SIZE,
-    showDifferentialPairPhaseSkew: true,
-  })
+  const svg = renderPhaseSkewSvg(circuitJson)
   const objects = parseSync(svg).children
   const strokes = objects.filter(isPhaseSkewStroke)
   expect(strokes.length).toBeGreaterThan(0)

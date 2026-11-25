@@ -5,6 +5,7 @@ import {
   isPhaseSkewStroke,
   PHASE_SKEW_SVG_SIZE,
   renderDifferentialPair,
+  renderPhaseSkewSvg,
   TUNING_BUMP,
 } from "./phase-skew/differential-pair.fixture"
 
@@ -13,15 +14,9 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
     positivePath: TUNING_BUMP,
   })
   const before = convertCircuitJsonToPcbSvg(circuitJson, PHASE_SKEW_SVG_SIZE)
-  const after = convertCircuitJsonToPcbSvg(circuitJson, {
-    ...PHASE_SKEW_SVG_SIZE,
-    showDifferentialPairPhaseSkew: true,
-  })
+  const after = renderPhaseSkewSvg(circuitJson)
   expect(
-    convertCircuitJsonToPcbSvg(circuitJson, {
-      ...PHASE_SKEW_SVG_SIZE,
-      showDifferentialPairPhaseSkew: false,
-    }),
+    renderPhaseSkewSvg(circuitJson, { showDifferentialPairPhaseSkew: false }),
   ).toBe(before)
   expect(parseSync(before).children.filter(isPhaseSkewStroke)).toHaveLength(0)
 
