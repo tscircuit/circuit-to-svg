@@ -628,6 +628,8 @@ export function getComprehensivePcbBounds(
     anchorAlignment?: NinePointAnchor
     ccwRotationDegrees?: number
     isMirrored?: boolean
+    // Fabrication text uses SVG baselines; pcb_note_text keeps its existing
+    // PCB-space anchor convention.
     isFabricationText?: boolean
   }) {
     if (!text || !anchorPosition) return
