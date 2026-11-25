@@ -8,6 +8,7 @@ import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createPcbTraceStroke } from "./create-pcb-trace-stroke"
 
+/** Overlay strokes are drawn 10% wider than the copper, as KiCad does (diff_phase_skew_tool.cpp), so the colour fully covers the trace edges. */
 const PHASE_SKEW_STROKE_WIDTH_MULTIPLIER = 1.1
 const FULL_RGB_PERCENT = 100
 const ZERO_COLOR = "rgb(255, 255, 255)"
