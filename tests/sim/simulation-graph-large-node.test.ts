@@ -31,33 +31,28 @@ test("Node renders a saved 200,001-sample waveform", async () => {
       const voltageLevels = Array.from({ length: count }, (_, i) => 5 * i / (count - 1));
       voltageLevels[90_000] = -2;
       voltageLevels[150_000] = 7;
-      try {
-        const svg = convertCircuitJsonToSimulationGraphSvg({
-          width: 1000, height: 480, includeVersion: false,
+      const svg = convertCircuitJsonToSimulationGraphSvg({
+        width: 1000, height: 480, includeVersion: false,
+        simulation_experiment_id: "saved_waveform",
+        circuitJson: [{
+          type: "simulation_experiment",
           simulation_experiment_id: "saved_waveform",
-          circuitJson: [{
-            type: "simulation_experiment",
-            simulation_experiment_id: "saved_waveform",
-            name: "VOUT: all samples, including narrow extrema",
-            experiment_type: "spice_transient_analysis",
-            start_time_ms: 0, end_time_ms: 10,
-          }, {
-            type: "simulation_transient_voltage_graph",
-            simulation_transient_voltage_graph_id: "vout",
-            simulation_experiment_id: "saved_waveform",
-            name: "VOUT", start_time_ms: 0, end_time_ms: 10,
-            time_per_step: 0.00005, voltage_levels: voltageLevels,
-          }],
-        });
-        writeFileSync(${JSON.stringify(svgPath)}, svg);
-        console.log(JSON.stringify({
-          samples: (svg.match(/class="simulation-point"/g) ?? []).length,
-          invalidCoordinates: /NaN|Infinity/.test(svg),
-        }));
-      } catch (error) {
-        if (!(error instanceof RangeError)) throw error;
-        console.log(JSON.stringify({ error: error.name + ": " + error.message }));
-      }
+          name: "VOUT: all samples, including narrow extrema",
+          experiment_type: "spice_transient_analysis",
+          start_time_ms: 0, end_time_ms: 10,
+        }, {
+          type: "simulation_transient_voltage_graph",
+          simulation_transient_voltage_graph_id: "vout",
+          simulation_experiment_id: "saved_waveform",
+          name: "VOUT", start_time_ms: 0, end_time_ms: 10,
+          time_per_step: 0.00005, voltage_levels: voltageLevels,
+        }],
+      });
+      writeFileSync(${JSON.stringify(svgPath)}, svg);
+      console.log(JSON.stringify({
+        samples: (svg.match(/class="simulation-point"/g) ?? []).length,
+        invalidCoordinates: /NaN|Infinity/.test(svg),
+      }));
     `
     const child = Bun.spawn(["node", "--input-type=module", "-e", script], {
       stdout: "pipe",
@@ -70,11 +65,11 @@ test("Node renders a saved 200,001-sample waveform", async () => {
     expect(stderr).toBe("")
     const result = JSON.parse(stdout)
     expect(result).toEqual({
-      error: "RangeError: Maximum call stack size exceeded",
+      samples: 200_001,
+      invalidCoordinates: false,
     })
 
-    let graph = `<text x="40" y="240" fill="#b91c1c" font-size="22">${result.error}</text>`
-    if (!result.error) graph = await readFile(svgPath, "utf8")
+    const graph = await readFile(svgPath, "utf8")
     const preview = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="590">
       <rect width="1000" height="590" fill="white"/>
       <g font-family="TscircuitAlphabet" fill="#111827">
