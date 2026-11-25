@@ -11,6 +11,7 @@ import {
 } from "circuit-json-to-gltf"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { renderGLTFToPNGFromGLB } from "poppygl"
+import { renderAnchorCrosshair } from "./render-fabrication-text-anchor-snapshot"
 
 /**
  * Test-only fabrication overlay. The normal 3D exporter hides fabrication
@@ -26,6 +27,13 @@ export async function renderFabricationText3dSnapshot(
     showBoundingBoxes: false,
   })
   const boardMesh = scene.boxes[0]!
+  const board = circuitJson.find((element) => element.type === "pcb_board")
+  if (!board || board.width === undefined || board.height === undefined) {
+    throw new Error(
+      "Fabrication snapshots require a board with explicit dimensions",
+    )
+  }
+  const { width, height, center } = board
   const textures: { top?: string; bottom?: string } = {}
   const fontDirectory = mkdtempSync(
     join(tmpdir(), "fabrication-snapshot-font-"),
@@ -43,9 +51,24 @@ export async function renderFabricationText3dSnapshot(
         showFabricationNotes: true,
         includeVersion: false,
       })
+      const scale = 1200 / width
+      const markers = circuitJson
+        .filter(
+          (element) =>
+            element.type === "pcb_fabrication_note_text" &&
+            element.layer === layer,
+        )
+        .map((element) => {
+          if (element.type !== "pcb_fabrication_note_text") return ""
+          return renderAnchorCrosshair(
+            (element.anchor_position.x - center.x + width / 2) * scale,
+            (center.y + height / 2 - element.anchor_position.y) * scale,
+          )
+        })
+        .join("")
       // Embedded PNGs are compared across machines; use the bundled font rather
       // than whichever fallback font happens to be installed on the host.
-      const png = new Resvg(svg, {
+      const png = new Resvg(svg.replace("</svg>", `${markers}</svg>`), {
         font: {
           loadSystemFonts: false,
           fontFiles: [fontPath],
@@ -85,7 +108,7 @@ export async function renderFabricationText3dSnapshot(
     })
     const left = column * 800
     panels.push(
-      `<text x="${left + 24}" y="28">3D ${view.layer} · fabrication overlay enabled</text>`,
+      `<text x="${left + 24}" y="28">3D ${view.layer} · FAB overlay · amber: input anchor</text>`,
       `<image x="${left}" y="44" width="800" height="620" href="data:image/png;base64,${Buffer.from(png).toString("base64")}"/>`,
     )
   }

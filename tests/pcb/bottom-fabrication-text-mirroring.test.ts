@@ -1,54 +1,63 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement } from "circuit-json"
+import type { AnyCircuitElement, PcbFabricationNoteText } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
 import { fromString } from "transformation-matrix"
 import { renderFabricationText3dSnapshot } from "tests/fixtures/render-fabrication-text-3d-snapshot"
+import { renderFabricationTextAnchorSnapshot } from "tests/fixtures/render-fabrication-text-anchor-snapshot"
+
+const angles = [0, 90, 180, 270]
+const texts: PcbFabricationNoteText[] = ["top", "bottom"].flatMap(
+  (layer, row) =>
+    angles.map((angle, column) => ({
+      type: "pcb_fabrication_note_text" as const,
+      pcb_fabrication_note_text_id: `${layer}_${angle}`,
+      pcb_component_id: "component",
+      layer: layer as "top" | "bottom",
+      anchor_position: { x: -9 + column * 6, y: 4 - row * 8 },
+      anchor_alignment: "center" as const,
+      text: `${layer[0]!.toUpperCase()}${angle}:R2`,
+      color: "#ffffff",
+      font: "tscircuit2024" as const,
+      font_size: 1.2,
+      ccw_rotation: angle,
+    })),
+)
+const circuitJson: AnyCircuitElement[] = [
+  {
+    type: "pcb_board",
+    pcb_board_id: "board",
+    width: 28,
+    height: 18,
+    center: { x: 0, y: 0 },
+    num_layers: 2,
+    material: "fr4",
+    thickness: 1.6,
+  },
+  ...texts,
+]
+test("bottom fabrication text rotation snapshots show the input anchors", async () => {
+  const svg = convertCircuitJsonToPcbSvg(circuitJson, { includeVersion: false })
+  await expect(svg).toMatchSvgSnapshot(import.meta.path)
+
+  await expect(
+    await renderFabricationText3dSnapshot(circuitJson),
+  ).toMatchSvgSnapshot(import.meta.path, "bottom-fabrication-text-mirroring-3d")
+
+  for (const note of texts.filter((note) => note.layer === "bottom")) {
+    await expect(renderFabricationTextAnchorSnapshot(note)).toMatchSvgSnapshot(
+      import.meta.path,
+      `bottom-fabrication-text-mirroring-${note.ccw_rotation}-anchors`,
+    )
+  }
+})
 
 test.failing(
   "bottom fabrication text mirrors around its anchor at every cardinal angle",
-  async () => {
-    const angles = [0, 90, 180, 270]
-    const texts: AnyCircuitElement[] = ["top", "bottom"].flatMap((layer, row) =>
-      angles.map((angle, column) => ({
-        type: "pcb_fabrication_note_text" as const,
-        pcb_fabrication_note_text_id: `${layer}_${angle}`,
-        pcb_component_id: "component",
-        layer: layer as "top" | "bottom",
-        anchor_position: { x: -9 + column * 6, y: 4 - row * 8 },
-        anchor_alignment: "center" as const,
-        text: `${layer[0]!.toUpperCase()}${angle}:R2`,
-        color: "#ffffff",
-        font: "tscircuit2024" as const,
-        font_size: 1.2,
-        ccw_rotation: angle,
-      })),
-    )
-    const circuitJson: AnyCircuitElement[] = [
-      {
-        type: "pcb_board",
-        pcb_board_id: "board",
-        width: 28,
-        height: 18,
-        center: { x: 0, y: 0 },
-        num_layers: 2,
-        material: "fr4",
-        thickness: 1.6,
-      },
-      ...texts,
-    ]
+  () => {
     const svg = convertCircuitJsonToPcbSvg(circuitJson, {
       includeVersion: false,
     })
-    await expect(svg).toMatchSvgSnapshot(import.meta.path)
-
-    await expect(
-      await renderFabricationText3dSnapshot(circuitJson),
-    ).toMatchSvgSnapshot(
-      import.meta.path,
-      "bottom-fabrication-text-mirroring-3d",
-    )
-
     const renderedTexts = parseSync(svg).children.filter(
       (node) => node.attributes["data-type"] === "pcb_fabrication_note_text",
     )
