@@ -17,7 +17,7 @@ describe("PCB vias in non-overlapping trace checks", () => {
             "y": -0.2570257931526771,
           },
           "error_type": "pcb_via_trace_clearance_error",
-          "message": "Via unnamed via and trace .R1 > .pin2 to .C1 > .pin2 are too close (clearance: 0.086mm, minimum: 0.1mm)",
+          "message": "Via pcb_via[#pcb_via_0] and trace trace[source_trace_0_0] are too close (clearance: 0.086mm, minimum: 0.1mm)",
           "minimum_clearance": 0.1,
           "pcb_trace_id": "source_trace_0_0",
           "pcb_via_id": "pcb_via_0",
