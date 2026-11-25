@@ -48,7 +48,6 @@
     "react-dom": "19.1.0",
     "schematic-symbols": "^0.0.246",
     "tscircuit": "^0.0.2629",
-    "tscircuit-phase-skew-fixtures": "npm:tscircuit@0.0.3285",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.0.1"
