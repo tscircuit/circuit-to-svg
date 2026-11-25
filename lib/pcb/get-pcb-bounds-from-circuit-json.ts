@@ -386,6 +386,7 @@ export function getComprehensivePcbBounds(
         isMirrored:
           circuitJsonElm.type === "pcb_fabrication_note_text" &&
           circuitJsonElm.layer === "bottom",
+        isFabricationText: circuitJsonElm.type === "pcb_fabrication_note_text",
       })
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
@@ -619,6 +620,7 @@ export function getComprehensivePcbBounds(
     anchorAlignment = "center",
     ccwRotationDegrees = 0,
     isMirrored = false,
+    isFabricationText = false,
   }: {
     text?: string
     anchorPosition?: Point
@@ -626,6 +628,7 @@ export function getComprehensivePcbBounds(
     anchorAlignment?: NinePointAnchor
     ccwRotationDegrees?: number
     isMirrored?: boolean
+    isFabricationText?: boolean
   }) {
     if (!text || !anchorPosition) return
 
@@ -644,7 +647,9 @@ export function getComprehensivePcbBounds(
       compose(
         translate(anchorPosition.x, anchorPosition.y),
         rotate((ccwRotationDegrees * Math.PI) / 180),
-        scale(isMirrored ? -1 : 1, 1),
+        // SVG text-before-edge places glyphs below the anchor (+SVG Y),
+        // which is negative PCB Y. Reflect that local offset before rotation.
+        scale(isMirrored ? -1 : 1, isFabricationText ? -1 : 1),
       ),
       localCenter,
     )
