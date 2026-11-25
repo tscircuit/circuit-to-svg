@@ -52,6 +52,7 @@ import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create
 import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
 import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
+import { createSvgObjectsFromDifferentialPairPhaseSkew } from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
@@ -121,6 +122,8 @@ export interface PcbSvgOptions {
   showCourtyards?: boolean
   showPcbGroups?: boolean
   layer?: LayerRef
+  /** Color differential pair copper by its stored phase skew. Defaults to false. */
+  showDifferentialPairPhaseSkew?: boolean
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
@@ -398,6 +401,12 @@ export function convertCircuitJsonToPcbSvg(
     ? []
     : circuitJson.flatMap((elm) => createSvgObjects({ elm, circuitJson, ctx }))
 
+  const phaseSkew =
+    !xRayActive && options?.showDifferentialPairPhaseSkew
+      ? createSvgObjectsFromDifferentialPairPhaseSkew({ circuitJson, ctx })
+      : undefined
+  if (phaseSkew) unsortedSvgObjects.push(...phaseSkew.strokes)
+
   if (!xRayActive) {
     unsortedSvgObjects.push(
       ...createSoldermaskOpeningLayers({
@@ -465,6 +474,8 @@ export function convertCircuitJsonToPcbSvg(
   if (gridObjects.defs) {
     children.push(gridObjects.defs)
   }
+
+  if (phaseSkew?.defs) children.push(phaseSkew.defs)
 
   // Check if there are any keepouts and add pattern defs if needed
   const hasKeepouts = circuitJson.some((elm) => elm.type === "pcb_keepout")
