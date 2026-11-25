@@ -21,16 +21,33 @@ test("shows the phase skew fade joints on the KiCad forum board", async () => {
   })
 
   const image = new Resvg(svg).render()
-  // At the negative trace's zero-skew join, the old round cap extended
-  // backwards over the preceding ramp and left a visible edge here.
-  const before = readRgb({ image, x: 753, y: 467 })
-  const atEdge = readRgb({ image, x: 754, y: 466 })
-  const after = readRgb({ image, x: 755, y: 465 })
-  expect(before[2]).toBe(255)
-  for (const index of [0, 1, 2] as const) {
-    const channel = before[index]
-    expect(Math.abs(channel - atEdge[index])).toBeLessThanOrEqual(2)
-    expect(Math.abs(channel - after[index])).toBeLessThanOrEqual(2)
+  const sampleTriples = [
+    // The old zero-skew cap extended backwards and left an edge on the ramp.
+    [
+      { x: 753, y: 467 },
+      { x: 754, y: 466 },
+      { x: 755, y: 465 },
+    ],
+    // The same trace changes direction here with matching endpoint skew.
+    [
+      { x: 422, y: 796 },
+      { x: 424, y: 796 },
+      { x: 425, y: 795 },
+    ],
+  ] as const
+  for (const [before, center, after] of sampleTriples) {
+    const beforeRgb = readRgb({ image, ...before })
+    const centerRgb = readRgb({ image, ...center })
+    const afterRgb = readRgb({ image, ...after })
+    expect(beforeRgb[2]).toBe(255)
+    for (const index of [0, 1, 2] as const) {
+      expect(Math.abs(beforeRgb[index] - centerRgb[index])).toBeLessThanOrEqual(
+        2,
+      )
+      expect(Math.abs(beforeRgb[index] - afterRgb[index])).toBeLessThanOrEqual(
+        2,
+      )
+    }
   }
 
   await expect(svg).toMatchSvgSnapshot(import.meta.path)
