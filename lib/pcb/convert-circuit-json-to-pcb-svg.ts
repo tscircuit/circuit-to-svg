@@ -37,7 +37,6 @@ import { createSvgObjectsFromPcbNoteRect } from "./svg-object-fns/create-svg-obj
 import { createSvgObjectsFromPcbNotePath } from "./svg-object-fns/create-svg-objects-from-pcb-note-path"
 import { createSvgObjectsFromPcbNoteLine } from "./svg-object-fns/create-svg-objects-from-pcb-note-line"
 import { createSvgObjectsFromPcbBend } from "./svg-object-fns/create-svg-objects-from-pcb-bend"
-import { createSvgObjectsFromDifferentialPairPhaseSkew } from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
 import { createSvgObjectsFromPcbPlatedHole } from "./svg-object-fns/create-svg-objects-from-pcb-plated-hole"
 import { createSvgObjectsFromPcbSilkscreenPath } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-path"
 import { createSvgObjectsFromPcbSilkscreenGraphic } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-graphic"
@@ -131,14 +130,6 @@ export interface PcbSvgOptions {
   showPcbNotes?: boolean
   /** Draw finite pcb_bend centerlines as dashed overlays. Defaults to false. */
   showBendLines?: boolean
-  /** Color routed differential pairs by local phase skew in the PCB view. Defaults to false. */
-  showDifferentialPairPhaseSkew?: boolean
-  phaseSkewColors?: {
-    positive?: string
-    negative?: string
-    zero?: string
-    unknown?: string
-  }
   /** Render fabrication notes and include them in bounds. Defaults to true. */
   showFabricationNotes?: boolean
   /** Draw pcb_debug_object overlays. Defaults to false. */
@@ -416,15 +407,6 @@ export function convertCircuitJsonToPcbSvg(
           createSvgObjects({ elm, circuitJson, ctx: context }),
       }),
     )
-    if (options?.showDifferentialPairPhaseSkew) {
-      unsortedSvgObjects = unsortedSvgObjects.concat(
-        createSvgObjectsFromDifferentialPairPhaseSkew(
-          circuitJson,
-          ctx,
-          options.phaseSkewColors,
-        ),
-      )
-    }
   }
 
   let strokeWidth = String(0.05 * scaleFactor)

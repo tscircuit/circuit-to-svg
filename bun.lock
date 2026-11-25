@@ -28,7 +28,6 @@
         "bun-match-svg": "^0.0.12",
         "circuit-json": "^0.0.561",
         "circuit-json-to-connectivity-map": "^0.0.23",
-        "circuit-json-to-differential-pair-phase-skew": "https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.5/circuit-json-to-differential-pair-phase-skew-0.0.5.tgz",
         "esbuild": "^0.20.2",
         "format-si-unit": "^0.0.12",
         "performance-now": "^2.1.0",
@@ -510,8 +509,6 @@
     "circuit-json-to-bpc": ["circuit-json-to-bpc@0.0.13", "", { "peerDependencies": { "bpc-graph": "*", "circuit-json": "*", "typescript": "^5" } }, "sha512-3wSMtPa6tJkiBQN4tsm7f0Mb7Wp90X2c8dNbULoDVE4mGGoFqP1DXqBlyvvZZl+4SjqznzQQ0EioLe2SCQTOcg=="],
 
     "circuit-json-to-connectivity-map": ["circuit-json-to-connectivity-map@0.0.23", "", { "dependencies": { "@tscircuit/math-utils": "^0.0.9" }, "peerDependencies": { "typescript": "^5.9.3" } }, "sha512-DSOiXaXOTvjU+7et8ITXb2LjgKto6cQzLv3hReYdXuUNtLw2GVnpOly1G83VcIBcSQ4hRVHI4VMKRyZB3XVzdg=="],
-
-    "circuit-json-to-differential-pair-phase-skew": ["circuit-json-to-differential-pair-phase-skew@https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v0.0.5/circuit-json-to-differential-pair-phase-skew-0.0.5.tgz", { "dependencies": { "@tscircuit/circuit-json-util": "0.0.135" }, "peerDependencies": { "circuit-json": ">=0.0.561" } }, "sha512-LA5Jf91PLMZujxYAhpGh+HkGfjAi+vkBsE13ROtbC697Af3dljnMYcDZbDls9JbWeRWZ7XW4uD057DrZeauUgw=="],
 
     "circuit-json-to-gltf": ["circuit-json-to-gltf@0.0.128", "", { "dependencies": { "@jscad/modeling": "^2.12.6", "@tscircuit/alphabet": "^0.0.25", "earcut": "^3.0.2", "jscad-electronics": "^0.0.159", "jscad-planner": "^0.0.14", "jscad-to-gltf": "^0.0.5", "occt-import-js": "^0.0.23" }, "peerDependencies": { "@resvg/resvg-js": "2", "@resvg/resvg-wasm": "2", "@tscircuit/circuit-json-util": "*", "circuit-json": "*", "circuit-to-svg": ">=0.0.422", "typescript": "^5" }, "optionalPeers": ["@resvg/resvg-js", "@resvg/resvg-wasm"] }, "sha512-EqXVwW9lXL4oNBFayWdmskoct9EMgjVjdUL6zllzadMxS6PW0hmKsk4+yW2Xd6j9Hky+SVyTyTKTjSzheODyAA=="],
 
@@ -1348,8 +1345,6 @@
     "calculate-cell-boundaries/react-dom": ["react-dom@18.3.1", "", { "dependencies": { "loose-envify": "^1.1.0", "scheduler": "^0.23.2" }, "peerDependencies": { "react": "^18.3.1" } }, "sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw=="],
 
     "circuit-json-to-connectivity-map/@tscircuit/math-utils": ["@tscircuit/math-utils@0.0.9", "", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-sPzfXndijet8z29X6f5vnSZddiso2tRg7m6rB+268bVj60mxnxUMD14rKuMlLn6n84fMOpD/X7pRTZUfi6M+Tg=="],
-
-    "circuit-json-to-differential-pair-phase-skew/@tscircuit/circuit-json-util": ["@tscircuit/circuit-json-util@0.0.135", "", { "dependencies": { "@flatten-js/core": "^1.6.14", "parsel-js": "^1.1.2" }, "peerDependencies": { "circuit-json": ">=0.0.560", "transformation-matrix": "*", "zod": "3" } }, "sha512-4sQvqHpeh5m4YTjUHSWP0pBzw0u29m/+AXTLEKOqNGR7qlGinUyQKI8s+7y9V37YbYOuuwfhny9KO6FU4T2u8Q=="],
 
     "circuit-json-to-gltf/@tscircuit/alphabet": ["@tscircuit/alphabet@0.0.25", "", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-PWLjptI6AlLEtF/wjN1N8uC+n3G7vtg0j3xKE1fgWHDhahtnlQRqHDrtPSLlkIR9aJjRfjplzLuaUEaCRvJmZA=="],
 
