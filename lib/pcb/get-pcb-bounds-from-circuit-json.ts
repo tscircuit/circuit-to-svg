@@ -10,7 +10,13 @@ import type {
   Point,
 } from "circuit-json"
 import { distance } from "circuit-json"
-import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
+import {
+  applyToPoint,
+  compose,
+  rotate,
+  scale,
+  translate,
+} from "transformation-matrix"
 import {
   getPcbTracePoints,
   type PcbTraceRoutePoint,
@@ -375,8 +381,11 @@ export function getComprehensivePcbBounds(
         anchorAlignment: circuitJsonElm.anchor_alignment as NinePointAnchor,
         ccwRotationDegrees:
           circuitJsonElm.type === "pcb_fabrication_note_text"
-            ? (circuitJsonElm.ccw_rotation ?? 1)
+            ? (circuitJsonElm.ccw_rotation ?? 0)
             : 0,
+        isMirrored:
+          circuitJsonElm.type === "pcb_fabrication_note_text" &&
+          circuitJsonElm.layer === "bottom",
       })
     } else if (circuitJsonElm.type === "pcb_cutout") {
       const cutout = circuitJsonElm as PcbCutout
@@ -609,12 +618,14 @@ export function getComprehensivePcbBounds(
     fontSize = 1,
     anchorAlignment = "center",
     ccwRotationDegrees = 0,
+    isMirrored = false,
   }: {
     text?: string
     anchorPosition?: Point
     fontSize?: number
     anchorAlignment?: NinePointAnchor
     ccwRotationDegrees?: number
+    isMirrored?: boolean
   }) {
     if (!text || !anchorPosition) return
 
@@ -623,12 +634,20 @@ export function getComprehensivePcbBounds(
     const textWidth = maxLineLength * fontSize * 0.6
     const textHeight = Math.max(lines.length, 1) * fontSize
 
-    const center = getTextCenterFromAnchorPosition({
-      anchorPosition,
+    const localCenter = getTextCenterFromAnchorPosition({
+      anchorPosition: { x: 0, y: 0 },
       textWidth,
       textHeight,
       anchorAlignment,
     })
+    const center = applyToPoint(
+      compose(
+        translate(anchorPosition.x, anchorPosition.y),
+        rotate((ccwRotationDegrees * Math.PI) / 180),
+        scale(isMirrored ? -1 : 1, 1),
+      ),
+      localCenter,
+    )
 
     updateBounds({
       center,

@@ -3,7 +3,13 @@ import type { NinePointAnchor, PcbFabricationNoteText } from "circuit-json"
 import { debugPcb } from "lib/utils/debug"
 import type { INode as SvgObject } from "svgson"
 import { toString as matrixToString } from "transformation-matrix"
-import { applyToPoint, compose, rotate, translate } from "transformation-matrix"
+import {
+  applyToPoint,
+  compose,
+  rotate,
+  scale,
+  translate,
+} from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { getSvgTextAnchorAlignment } from "../get-svg-text-anchor-alignment"
 
@@ -45,10 +51,12 @@ export function createSvgObjectsFromPcbFabricationNoteText(
     anchor_alignment as NinePointAnchor,
   )
 
-  // Create a composite transformation
+  // Mirror glyphs in their local frame before rotating around the text anchor,
+  // matching bottom silkscreen text viewed from the top of the board.
   const textTransform = compose(
     translate(transformedX, transformedY),
     rotate((-ccw_rotation * Math.PI) / 180),
+    scale(layer === "bottom" ? -1 : 1, 1),
   )
 
   const svgObject: SvgObject = {
