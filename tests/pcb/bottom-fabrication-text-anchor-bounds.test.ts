@@ -50,17 +50,21 @@ test("bottom fabrication text anchor snapshots show the input and reference poin
 test.failing(
   "bottom fabrication text bounds follow its mirrored anchor",
   () => {
-    const bounds = getComprehensivePcbBounds([note])
-    expect(bounds.minX).toBeLessThan(-4)
-    expect(bounds.maxX).toBeCloseTo(0, 8)
-    expect(bounds.minY).toBeCloseTo(-1, 8)
-    expect(bounds.maxY).toBeCloseTo(0, 8)
-    const rotatedBounds = getComprehensivePcbBounds([
-      { ...note, ccw_rotation: 90 },
-    ])
-    expect(rotatedBounds.minY).toBeLessThan(-4)
-    expect(rotatedBounds.maxY).toBeCloseTo(0, 8)
-    expect(rotatedBounds.minX).toBeCloseTo(0, 8)
-    expect(rotatedBounds.maxX).toBeCloseTo(1, 8)
+    // Explicit PCB-space extents for this 5.4 mm by 1 mm label.
+    // Each rotation must keep the same input anchor at the correct corner.
+    for (const [angle, minX, minY, maxX, maxY] of [
+      [0, -5.4, -1, 0, 0],
+      [90, 0, -5.4, 1, 0],
+      [180, 0, 0, 5.4, 1],
+      [270, -1, 0, 0, 5.4],
+    ] as const) {
+      const bounds = getComprehensivePcbBounds([
+        { ...note, ccw_rotation: angle },
+      ])
+      expect(bounds.minX).toBeCloseTo(minX, 8)
+      expect(bounds.minY).toBeCloseTo(minY, 8)
+      expect(bounds.maxX).toBeCloseTo(maxX, 8)
+      expect(bounds.maxY).toBeCloseTo(maxY, 8)
+    }
   },
 )
