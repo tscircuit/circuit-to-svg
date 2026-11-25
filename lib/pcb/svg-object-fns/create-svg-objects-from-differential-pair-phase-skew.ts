@@ -5,12 +5,17 @@ import type {
 } from "circuit-json"
 import { svgElement } from "lib/sim/simulation-graph-svg/simulation-graph-svg-shared"
 import type { SvgObject } from "lib/svg-object"
-import { applyToPoint, type Matrix } from "transformation-matrix"
+import { applyToPoint } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
 import { createPcbTraceStroke } from "./create-pcb-trace-stroke"
+import {
+  addPhaseSkewGradient,
+  createPhaseSkewRun,
+} from "./create-phase-skew-run"
 
 /** Overlay strokes are drawn 10% wider than the copper, as KiCad does (diff_phase_skew_tool.cpp), so the colour fully covers the trace edges. */
 const PHASE_SKEW_STROKE_WIDTH_MULTIPLIER = 1.1
+const FALLBACK_STROKE_WIDTH_SVG_PX = 0.3
 const FULL_RGB_PERCENT = 100
 const ZERO_COLOR = "rgb(255, 255, 255)"
 const POSITIVE_PEAK_COLOR = "rgb(0, 0, 255)"
@@ -35,44 +40,58 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
   ctx: Pick<PcbContext, "layer" | "transform">
 }): PhaseSkewSvgObjects {
   const strokes: SvgObject[] = []
-  const gradients: SvgObject[] = []
+  const defs: SvgObject[] = []
 
   for (const element of circuitJson) {
     if (element.type !== "pcb_differential_pair_phase_skew") continue
 
     for (const trace of [element.positive_trace, element.negative_trace]) {
       const peaks = getPhaseSkewPeaks(trace)
-      for (const segment of trace.segments) {
-        if (layer && segment.layer !== layer) continue
+      for (const run of getPhaseSkewRuns({ segments: trace.segments })) {
+        const first = run[0]!
+        if (layer && first.layer !== layer) continue
 
-        const startColor = getPhaseSkewColor({
-          lengthDifferenceMm: segment.start_length_difference_mm,
-          peaks,
-        })
-        const endColor = getPhaseSkewColor({
-          lengthDifferenceMm: segment.end_length_difference_mm,
-          peaks,
-        })
-        let color = startColor
-        if (startColor !== endColor) {
-          const id = `pcb-phase-skew-gradient-${gradients.length}`
-          gradients.push(
-            createPhaseSkewGradient({
-              id,
-              segment,
-              transform,
-              startColor,
-              endColor,
+        const spans = run.map((segment) => ({
+          start: applyToPoint(transform, segment.start),
+          end: applyToPoint(transform, segment.end),
+          radius:
+            (segment.width *
+              PHASE_SKEW_STROKE_WIDTH_MULTIPLIER *
+              Math.abs(transform.a) || FALLBACK_STROKE_WIDTH_SVG_PX) / 2,
+          startColor: getPhaseSkewColor({
+            lengthDifferenceMm: segment.start_length_difference_mm,
+            peaks,
+          }),
+          endColor: getPhaseSkewColor({
+            lengthDifferenceMm: segment.end_length_difference_mm,
+            peaks,
+          }),
+        }))
+        if (run.length > 1) {
+          strokes.push(
+            createPhaseSkewRun({
+              spans,
+              defs,
+              attributes: {
+                class: "pcb-differential-pair-phase-skew",
+                "data-type": element.type,
+                "data-pcb-layer": first.layer,
+              },
             }),
           )
-          color = `url(#${id})`
+          continue
         }
 
+        const span = spans[0]!
+        const color =
+          span.startColor === span.endColor
+            ? span.startColor
+            : addPhaseSkewGradient({ ...span, defs })
         strokes.push(
           createPcbTraceStroke(
             {
-              ...segment,
-              width: segment.width * PHASE_SKEW_STROKE_WIDTH_MULTIPLIER,
+              ...first,
+              width: first.width * PHASE_SKEW_STROKE_WIDTH_MULTIPLIER,
             },
             transform,
             {
@@ -87,11 +106,54 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
     }
   }
 
-  if (gradients.length === 0) return { strokes }
+  if (defs.length === 0) return { strokes }
   return {
     strokes,
-    defs: svgElement("defs", {}, gradients),
+    defs: svgElement("defs", {}, defs),
   }
+}
+
+function getPhaseSkewRuns({
+  segments,
+}: {
+  segments: PcbDifferentialPairPhaseSkewSegment[]
+}): PcbDifferentialPairPhaseSkewSegment[][] {
+  const runs: PcbDifferentialPairPhaseSkewSegment[][] = []
+  for (const segment of segments) {
+    const run = runs.at(-1)
+    const previous = run?.at(-1)
+    if (run && previous && canJoinPhaseSkewSegments({ previous, segment })) {
+      run.push(segment)
+    } else {
+      runs.push([segment])
+    }
+  }
+  return runs
+}
+
+function canJoinPhaseSkewSegments({
+  previous,
+  segment,
+}: {
+  previous: PcbDifferentialPairPhaseSkewSegment
+  segment: PcbDifferentialPairPhaseSkewSegment
+}): boolean {
+  if (
+    previous.layer !== segment.layer ||
+    previous.end.x !== segment.start.x ||
+    previous.end.y !== segment.start.y
+  )
+    return false
+
+  const incomingX = previous.end.x - previous.start.x
+  const incomingY = previous.end.y - previous.start.y
+  const outgoingX = segment.end.x - segment.start.x
+  const outgoingY = segment.end.y - segment.start.y
+  const incomingLength = Math.hypot(incomingX, incomingY)
+  const outgoingLength = Math.hypot(outgoingX, outgoingY)
+  const dot = incomingX * outgoingX + incomingY * outgoingY
+  // A zero-length span or reversal has no shared cross-section.
+  return dot / (incomingLength * outgoingLength) > -1 + Number.EPSILON
 }
 
 /** Find the endpoints that set the positive and negative scales for a trace. */
@@ -129,36 +191,4 @@ function getPhaseSkewColor({
   return isAhead
     ? `rgb(${fade}%, ${fade}%, 100%)`
     : `rgb(100%, ${fade}%, ${fade}%)`
-}
-
-/** Create an sRGB gradient aligned with the segment in SVG coordinates. */
-function createPhaseSkewGradient({
-  id,
-  segment: { start, end },
-  transform,
-  startColor,
-  endColor,
-}: {
-  id: string
-  segment: PcbDifferentialPairPhaseSkewSegment
-  transform: Matrix
-  startColor: string
-  endColor: string
-}): SvgObject {
-  const svgStart = applyToPoint(transform, start)
-  const svgEnd = applyToPoint(transform, end)
-  return svgElement(
-    "linearGradient",
-    {
-      id,
-      gradientUnits: "userSpaceOnUse",
-      x1: String(svgStart.x),
-      y1: String(svgStart.y),
-      x2: String(svgEnd.x),
-      y2: String(svgEnd.y),
-    },
-    [startColor, endColor].map((color, offset) =>
-      svgElement("stop", { offset: String(offset), "stop-color": color }),
-    ),
-  )
 }
