@@ -1,7 +1,7 @@
+import { Circuit } from "@tscircuit/core"
 import type { CircuitJson } from "circuit-json"
 import type { SvgObject } from "lib/svg-object"
 import { Fragment, type ComponentProps } from "react"
-import { Circuit } from "tscircuit"
 
 type PcbPath = NonNullable<ComponentProps<"trace">["pcbPath"]>
 
