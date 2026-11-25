@@ -2,6 +2,20 @@ import type { SvgObject } from "../../svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { PcbTraceSegment } from "../get-pcb-trace-segments"
 
+const FALLBACK_TRACE_STROKE_WIDTH_SVG_PX = 0.3
+
+export function getPcbTraceStrokeWidth({
+  width,
+  transform,
+}: {
+  width: PcbTraceSegment["width"]
+  transform: Matrix
+}): number {
+  return width
+    ? width * Math.abs(transform.a)
+    : FALLBACK_TRACE_STROKE_WIDTH_SVG_PX
+}
+
 export function createPcbTraceStroke(
   {
     start,
@@ -35,9 +49,7 @@ export function createPcbTraceStroke(
       stroke: color,
       fill: "none",
       d: `M ${x1} ${y1} L ${x2} ${y2}`,
-      "stroke-width": width
-        ? (width * Math.abs(transform.a)).toString()
-        : "0.3",
+      "stroke-width": String(getPcbTraceStrokeWidth({ width, transform })),
       "stroke-linecap": "round",
       "stroke-linejoin": "round",
       "shape-rendering": shapeRendering,

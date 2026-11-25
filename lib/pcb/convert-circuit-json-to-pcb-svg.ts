@@ -124,6 +124,8 @@ export interface PcbSvgOptions {
   layer?: LayerRef
   /** Color differential pair copper by its stored phase skew. Defaults to false. */
   showDifferentialPairPhaseSkew?: boolean
+  /** Namespace phase-skew gradient IDs when inlining copies of the same SVG. */
+  phaseSkewIdPrefix?: string
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
@@ -403,7 +405,11 @@ export function convertCircuitJsonToPcbSvg(
 
   const phaseSkew =
     !xRayActive && options?.showDifferentialPairPhaseSkew
-      ? createSvgObjectsFromDifferentialPairPhaseSkew({ circuitJson, ctx })
+      ? createSvgObjectsFromDifferentialPairPhaseSkew({
+          circuitJson,
+          ctx,
+          phaseSkewIdPrefix: options.phaseSkewIdPrefix,
+        })
       : undefined
   if (phaseSkew) unsortedSvgObjects.push(...phaseSkew.strokes)
 
