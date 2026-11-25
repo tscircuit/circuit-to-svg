@@ -15,7 +15,6 @@ const TYPE_PRIORITY: Record<string, number> = {
   pcb_trace: 30,
   pcb_smtpad: 30,
   pcb_copper_pour: 35,
-  pcb_differential_pair_phase_skew: 35.5,
   pcb_via: 36,
   pcb_soldermask: 40,
   pcb_soldermask_opening: 25,
