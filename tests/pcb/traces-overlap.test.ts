@@ -16,7 +16,7 @@ describe("PCB traces in non-overlapping trace checks", () => {
             "y": -0.07159251656145789,
           },
           "error_type": "pcb_trace_error",
-          "message": "PCB trace trace[.R1 > port.pos, .C1 > port.pos] is too close to trace[.R1 > port.neg, .C1 > port.neg] (gap: 0.016mm)",
+          "message": "PCB trace .R1 > .pin1 to .C1 > .pin1 is too close to .R1 > .pin2 to .C1 > .pin2 (gap: 0.016mm)",
           "pcb_component_ids": [],
           "pcb_port_ids": [
             "pcb_port_0",
