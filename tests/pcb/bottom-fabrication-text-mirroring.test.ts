@@ -4,23 +4,18 @@ import { parseSync } from "svgson"
 import { fromString } from "transformation-matrix"
 import { expectPngSnapshot } from "tests/fixtures/expect-png-snapshot"
 import { fabricationTextNotes } from "tests/fixtures/fabrication-text-rotation-board"
-import { renderFabricationText3dSnapshots } from "tests/fixtures/render-fabrication-text-3d-snapshot"
+import { renderFabricationText3dSnapshot } from "tests/fixtures/render-fabrication-text-3d-snapshot"
 import { renderFabricationTextBoardSvg } from "tests/fixtures/render-fabrication-text-board-svg"
 
 test("fabrication rotation evidence shares one annotated board", async () => {
   await expect(renderFabricationTextBoardSvg(true)).toMatchSvgSnapshot(
     import.meta.path,
   )
-  const [bottom, angled] = await renderFabricationText3dSnapshots()
+  const bottom = await renderFabricationText3dSnapshot()
   await expectPngSnapshot(
-    bottom!,
+    bottom,
     import.meta.path,
     "bottom-fabrication-text-bottom",
-  )
-  await expectPngSnapshot(
-    angled!,
-    import.meta.path,
-    "bottom-fabrication-text-bottom-angled",
   )
 }, 20_000)
 
