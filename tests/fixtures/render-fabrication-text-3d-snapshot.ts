@@ -20,9 +20,7 @@ import { renderFabricationTextBoardSvg } from "./render-fabrication-text-board-s
  * under test onto its real board mesh, with independent input annotations.
  * Camera directions use glTF coordinates, where +Y is above the board.
  */
-export async function renderFabricationText3dSnapshots(): Promise<
-  Uint8Array[]
-> {
+export async function renderFabricationText3dSnapshot(): Promise<Uint8Array> {
   const scene = await convertCircuitJsonTo3D(fabricationTextCircuit, {
     renderBoardTextures: false,
     showBoundingBoxes: false,
@@ -52,33 +50,24 @@ export async function renderFabricationText3dSnapshots(): Promise<
   if (!(glb instanceof ArrayBuffer)) {
     throw new Error("Expected a GLB for the fabrication-overlay snapshot")
   }
-  const snapshots: Uint8Array[] = []
   // The exporter uses a tiny tilt to avoid a singular bottom-up camera fit.
-  for (const direction of [
-    [0, -1, 0.001],
-    [0.12, -1, 0.55],
-  ] as const) {
-    // Text bounds must not affect framing: the board is the fixed reference.
-    const camera = getBestCameraPosition([fabricationTextBoard], {
-      direction,
-      aspectRatio: 1800 / 1200,
-      fov: 40,
-    })
-    snapshots.push(
-      await renderGLTFToPNGFromGLB(glb, {
-        width: 1800,
-        height: 1200,
-        ...camera,
-        camPos: [
-          camera.camPos[0] * 0.8,
-          camera.camPos[1] * 0.8,
-          camera.camPos[2] * 0.8,
-        ],
-        up: "z+",
-        ambient: 0.95,
-        backgroundColor: "#edf1f5",
-      }),
-    )
-  }
-  return snapshots
+  // Text bounds must not affect framing: the board is the fixed reference.
+  const camera = getBestCameraPosition([fabricationTextBoard], {
+    direction: [0, -1, 0.001],
+    aspectRatio: 1800 / 1200,
+    fov: 40,
+  })
+  return renderGLTFToPNGFromGLB(glb, {
+    width: 1800,
+    height: 1200,
+    ...camera,
+    camPos: [
+      camera.camPos[0] * 0.8,
+      camera.camPos[1] * 0.8,
+      camera.camPos[2] * 0.8,
+    ],
+    up: "z+",
+    ambient: 0.95,
+    backgroundColor: "#edf1f5",
+  })
 }
