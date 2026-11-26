@@ -48,6 +48,7 @@ import { createSvgObjectsFromPcbSilkscreenLine } from "./svg-object-fns/create-s
 import { createSvgObjectsFromPcbSilkscreenPill } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-pill"
 import { createSvgObjectsFromPcbSilkscreenOval } from "./svg-object-fns/create-svg-objects-from-pcb-silkscreen-oval"
 import { createSvgObjectsFromPcbCourtyardRect } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-rect"
+import { createSvgObjectsFromPcbCourtyardPill } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-pill"
 import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-polygon"
 import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
 import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
@@ -280,7 +281,11 @@ export function convertCircuitJsonToPcbSvg(
   }
 
   const circuitJsonForBounds = circuitJson.filter((element) => {
-    if (element.type === "pcb_courtyard_rect" && !options?.showCourtyards)
+    if (
+      (element.type === "pcb_courtyard_rect" ||
+        element.type === "pcb_courtyard_pill") &&
+      !options?.showCourtyards
+    )
       return false
     if (element.type === "pcb_soldermask_opening") {
       return (
@@ -709,6 +714,9 @@ function createSvgObjects({
     case "pcb_courtyard_rect":
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardRect(elm, ctx)
+    case "pcb_courtyard_pill":
+      if (!ctx.showCourtyards) return []
+      return createSvgObjectsFromPcbCourtyardPill(elm, ctx)
     case "pcb_courtyard_polygon":
       if (!ctx.showCourtyards) return []
       return createSvgObjectsFromPcbCourtyardPolygon(elm, ctx)
