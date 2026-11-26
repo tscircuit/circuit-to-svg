@@ -1,4 +1,5 @@
 import { Resvg } from "@resvg/resvg-js"
+import { fileURLToPath } from "node:url"
 import type { SchematicText } from "circuit-json"
 import { createSvgSchText } from "lib/sch/svg-object-fns/create-svg-objects-for-sch-text"
 import { colorMap } from "lib/utils/colors"
@@ -48,7 +49,21 @@ export function getLabelInkClearance(text: SchematicText): number {
     children: [label],
     value: "",
   })
-  const rendered = new Resvg(svg).render()
+  const rendered = new Resvg(svg, {
+    font: {
+      loadSystemFonts: false,
+      defaultFontFamily: "Noto Sans",
+      sansSerifFamily: "Noto Sans",
+      fontFiles: [
+        fileURLToPath(
+          new URL(
+            "./assets/inline-label-clearance/NotoSans-Regular.ttf",
+            import.meta.url,
+          ),
+        ),
+      ],
+    },
+  }).render()
   const pixels = rendered.pixels
   const screenToLabel = compose(
     translate(256, 256),
