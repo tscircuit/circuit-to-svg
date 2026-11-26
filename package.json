@@ -31,7 +31,7 @@
     "@tscircuit/alphabet": "^0.0.27",
     "@tscircuit/checks-latest": "npm:@tscircuit/checks@0.0.179",
     "@tscircuit/circuit-json-util": "^0.0.134",
-    "@tscircuit/core": "0.0.2478",
+    "@tscircuit/core": "0.0.2483",
     "@types/bun": "^1.2.8",
     "@types/color": "^4.2.1",
     "@types/debug": "^4.1.12",
