@@ -10,9 +10,9 @@
     <text transform="translate(1746 558) scale(-1 1)">+X</text>
     <text transform="translate(882 162) scale(-1 1)">+Y</text>
   </g><g transform="translate(1770 36) scale(-1 1)" font-family="TscircuitAlphabet" fill="#ffffff">
-    <text font-size="23">Bottom FAB: centered anchors / top-left anchors</text>
-    <text y="32" font-size="17">Amber = input anchor; cyan = text bounds; white axes = board coordinates (mm). Bottom view: +X points left.</text>
-    <text y="58" font-size="17">ccw_rotation is the board angle; the apparent bottom-view angle is reversed.</text>
+    <text font-size="23">circuit-to-svg: BOTTOM layer, viewed from BELOW; center / top_left</text>
+    <text y="32" font-size="17">Amber = input anchor; cyan = text bounds; white axes = board coordinates (mm). +X points left.</text>
+    <text y="58" font-size="17">ccw_rotation is the board angle. Expected view angles come from native KiCad; glyphs are circuit-to-svg output.</text>
   </g><g>
       <rect x="203.39999999999995" y="387" width="97.2000000000001" height="18" fill="none" stroke="#62dfff" stroke-width="1.5"/>
       <g transform="translate(252 396)" stroke="#ffb62e" fill="none" stroke-width="2">
@@ -20,7 +20,7 @@
       </g>
       <g transform="translate(441 198) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":0,</text><text x="0" y="40">"anchor_alignment":"center",</text><text x="0" y="60">"anchor_position":{"x":-36,"y":10}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 0 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 0 deg CCW</text>
       </g>
     </g><g>
       <rect x="675" y="347.40000000000003" width="18" height="97.19999999999997" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -29,7 +29,7 @@
       </g>
       <g transform="translate(873 198) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":90,</text><text x="0" y="40">"anchor_alignment":"center",</text><text x="0" y="60">"anchor_position":{"x":-12,"y":10}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 270 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 270 deg CCW</text>
       </g>
     </g><g>
       <rect x="1067.3999999999999" y="387" width="97.19999999999997" height="18" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -38,7 +38,7 @@
       </g>
       <g transform="translate(1305 198) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":180,</text><text x="0" y="40">"anchor_alignment":"center",</text><text x="0" y="60">"anchor_position":{"x":12,"y":10}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 180 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 180 deg CCW</text>
       </g>
     </g><g>
       <rect x="1539" y="347.40000000000003" width="18" height="97.19999999999997" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -47,7 +47,7 @@
       </g>
       <g transform="translate(1737 198) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":270,</text><text x="0" y="40">"anchor_alignment":"center",</text><text x="0" y="60">"anchor_position":{"x":36,"y":10}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 90 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 90 deg CCW</text>
       </g>
     </g><g>
       <rect x="154.7999999999999" y="864" width="97.2000000000001" height="18" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -56,7 +56,7 @@
       </g>
       <g transform="translate(441 666) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":0,</text><text x="0" y="40">"anchor_alignment":"top_left",</text><text x="0" y="60">"anchor_position":{"x":-36,"y":-16}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 0 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 0 deg CCW</text>
       </g>
     </g><g>
       <rect x="684" y="864" width="18" height="97.19999999999997" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -65,7 +65,7 @@
       </g>
       <g transform="translate(873 666) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":90,</text><text x="0" y="40">"anchor_alignment":"top_left",</text><text x="0" y="60">"anchor_position":{"x":-12,"y":-16}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 270 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 270 deg CCW</text>
       </g>
     </g><g>
       <rect x="1116" y="846" width="97.19999999999997" height="18" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -74,7 +74,7 @@
       </g>
       <g transform="translate(1305 666) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":180,</text><text x="0" y="40">"anchor_alignment":"top_left",</text><text x="0" y="60">"anchor_position":{"x":12,"y":-16}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 180 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 180 deg CCW</text>
       </g>
     </g><g>
       <rect x="1530" y="766.8000000000001" width="18" height="97.19999999999997" fill="none" stroke="#62dfff" stroke-width="1.5"/>
@@ -83,6 +83,6 @@
       </g>
       <g transform="translate(1737 666) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         <text x="0" y="0">{"text":"R2 bottom",</text><text x="0" y="20">"layer":"bottom","ccw_rotation":270,</text><text x="0" y="40">"anchor_alignment":"top_left",</text><text x="0" y="60">"anchor_position":{"x":36,"y":-16}}</text>
-        <text x="0" y="82" fill="#ffffff">Expected view: 90 deg CCW</text>
+        <text x="0" y="82" fill="#ffffff">Expected (KiCad): 90 deg CCW</text>
       </g>
     </g></g></svg>
