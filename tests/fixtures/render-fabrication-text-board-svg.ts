@@ -11,8 +11,8 @@ const scale = width / fabricationTextBoard.width!
 const xSvg = (x: number) => (x + 50) * scale
 const ySvg = (y: number) => (32 - y) * scale
 
-/** Put independent input captions and anchor markers on the board texture. */
-export function renderFabricationTextBoardSvg(fromBottom = false): string {
+/** Show input captions and independent anchor markers on the bottom SVG. */
+export function renderFabricationTextBoardSvg(): string {
   const svg = convertCircuitJsonToPcbSvg(fabricationTextCircuit, {
     layer: "bottom",
     width,
@@ -50,8 +50,7 @@ export function renderFabricationTextBoardSvg(fromBottom = false): string {
     <text y="32" font-size="17">Amber = input anchor; cyan = calculated text bounds. Coordinates in mm.</text>
   </g>`
   const annotated = svg.replace("</svg>", `${heading}${annotations}</svg>`)
-  if (!fromBottom) return annotated
-  // The texture uses PCB coordinates. Flip the whole view to look from below.
+  // Flip PCB coordinates to view the board from below.
   return annotated
     .replace(
       /(<svg[^>]*>)/,
