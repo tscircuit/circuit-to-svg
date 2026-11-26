@@ -1,74 +1,55 @@
 import { expect, test } from "bun:test"
-import type { AnyCircuitElement, PcbFabricationNoteText } from "circuit-json"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
 import { fromString } from "transformation-matrix"
-import { renderFabricationText3dSnapshot } from "tests/fixtures/render-fabrication-text-3d-snapshot"
-import { renderFabricationTextAnchorSnapshot } from "tests/fixtures/render-fabrication-text-anchor-snapshot"
+import { expectPngSnapshot } from "tests/fixtures/expect-png-snapshot"
+import { fabricationTextNotes } from "tests/fixtures/fabrication-text-rotation-board"
+import { renderFabricationText3dSnapshots } from "tests/fixtures/render-fabrication-text-3d-snapshot"
+import { renderFabricationTextBoardSvg } from "tests/fixtures/render-fabrication-text-board-svg"
 
-const angles = [0, 90, 180, 270]
-const texts: PcbFabricationNoteText[] = ["top", "bottom"].flatMap(
-  (layer, row) =>
-    angles.map((angle, column) => ({
-      type: "pcb_fabrication_note_text" as const,
-      pcb_fabrication_note_text_id: `${layer}_${angle}`,
-      pcb_component_id: "component",
-      layer: layer as "top" | "bottom",
-      anchor_position: { x: -9 + column * 6, y: 4 - row * 8 },
-      anchor_alignment: "center" as const,
-      text: `${layer[0]!.toUpperCase()}${angle}:R2`,
-      color: "#ffffff",
-      font: "tscircuit2024" as const,
-      font_size: 1.2,
-      ccw_rotation: angle,
-    })),
-)
-const circuitJson: AnyCircuitElement[] = [
-  {
-    type: "pcb_board",
-    pcb_board_id: "board",
-    width: 28,
-    height: 18,
-    center: { x: 0, y: 0 },
-    num_layers: 2,
-    material: "fr4",
-    thickness: 1.6,
-  },
-  ...texts,
-]
-test("bottom fabrication text rotation snapshots show the input anchors", async () => {
-  const svg = convertCircuitJsonToPcbSvg(circuitJson, { includeVersion: false })
-  await expect(svg).toMatchSvgSnapshot(import.meta.path)
-
-  await expect(
-    await renderFabricationText3dSnapshot(circuitJson),
-  ).toMatchSvgSnapshot(import.meta.path, "bottom-fabrication-text-mirroring-3d")
-
-  for (const note of texts.filter((note) => note.layer === "bottom")) {
-    await expect(renderFabricationTextAnchorSnapshot(note)).toMatchSvgSnapshot(
-      import.meta.path,
-      `bottom-fabrication-text-mirroring-${note.ccw_rotation}-anchors`,
-    )
-  }
-})
-
-test("bottom fabrication text mirrors around its anchor at every cardinal angle", () => {
-  const svg = convertCircuitJsonToPcbSvg(circuitJson, { includeVersion: false })
-  const renderedTexts = parseSync(svg).children.filter(
-    (node) => node.attributes["data-type"] === "pcb_fabrication_note_text",
+test("fabrication rotation evidence shares one annotated board", async () => {
+  await expect(renderFabricationTextBoardSvg(true)).toMatchSvgSnapshot(
+    import.meta.path,
   )
-  const topBaselineDirections = [
+  const [bottom, angled] = await renderFabricationText3dSnapshots()
+  await expectPngSnapshot(
+    bottom!,
+    import.meta.path,
+    "bottom-fabrication-text-bottom",
+  )
+  await expectPngSnapshot(
+    angled!,
+    import.meta.path,
+    "bottom-fabrication-text-bottom-angled",
+  )
+}, 20_000)
+
+test("fabrication text preserves handedness and direction on both sides", () => {
+  const baselineDirections = [
     [1, 0],
     [0, -1],
     [-1, 0],
     [0, 1],
   ]
-  for (const [index, node] of renderedTexts.entries()) {
-    const matrix = fromString(node.attributes.transform!)
-    const [x, y] = topBaselineDirections[index % 4]!
-    const direction = index < 4 ? 1 : -1
-    expect(matrix.a).toBeCloseTo(x! * direction, 8)
-    expect(matrix.b).toBeCloseTo(y! * direction, 8)
-    expect(matrix.a * matrix.d - matrix.b * matrix.c).toBeCloseTo(direction, 8)
+  for (const layer of ["top", "bottom"] as const) {
+    const svg = convertCircuitJsonToPcbSvg(
+      fabricationTextNotes.map((note) => ({ ...note, layer })),
+      { includeVersion: false },
+    )
+    const renderedTexts = parseSync(svg).children.filter(
+      (node) => node.attributes["data-type"] === "pcb_fabrication_note_text",
+    )
+    expect(renderedTexts).toHaveLength(fabricationTextNotes.length)
+    const handedness = layer === "top" ? 1 : -1
+    for (const [index, node] of renderedTexts.entries()) {
+      const matrix = fromString(node.attributes.transform!)
+      const [x, y] = baselineDirections[index % 4]!
+      expect(matrix.a).toBeCloseTo(x! * handedness, 8)
+      expect(matrix.b).toBeCloseTo(y! * handedness, 8)
+      expect(matrix.a * matrix.d - matrix.b * matrix.c).toBeCloseTo(
+        handedness,
+        8,
+      )
+    }
   }
 })
