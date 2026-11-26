@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test"
-import { renderFabricationTextBoardSvg } from "tests/fixtures/render-fabrication-text-board-svg"
+import { renderFabricationTextRotationComparison } from "tests/fixtures/render-fabrication-text-rotation-comparison"
 
-test("fabrication rotation evidence shares one annotated board", async () => {
-  await expect(renderFabricationTextBoardSvg()).toMatchSvgSnapshot(
+test("fixed-origin top and bottom views distinguish 90 from 270 degrees", async () => {
+  await expect(renderFabricationTextRotationComparison()).toMatchSvgSnapshot(
     import.meta.path,
-    "bottom-fabrication-text-mirroring",
+    "bottom-fabrication-text-rotation-comparison",
   )
 })
