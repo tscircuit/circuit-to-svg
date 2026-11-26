@@ -4,7 +4,7 @@ import {
   fabricationTextBoard,
   fabricationTextCircuit,
   fabricationTextNotes,
-} from "./fabrication-text-rotation-board"
+} from "./fabrication-text-board"
 
 const width = 1800
 const scale = width / fabricationTextBoard.width!
@@ -40,14 +40,15 @@ export function renderFabricationTextBoardSvg(): string {
       </g>
       <g transform="translate(${xSvg(x + 10.5)} ${ySvg(y + 11)}) scale(-1 1)" font-family="TscircuitAlphabet" font-size="17" fill="#b4eaff">
         ${lines.map((line, index) => `<text x="0" y="${index * 20}">${line}</text>`).join("")}
+        <text x="0" y="82" fill="#ffffff">Expected view: ${(360 - (note.ccw_rotation ?? 0)) % 360} deg CCW</text>
       </g>
     </g>`
     })
     .join("")
   // One shared board coordinate frame; anchor markers are not local origins.
   const axes = `<g stroke="#c1d9ce" stroke-width="1.5" fill="none">
-    <path d="M ${xSvg(-46)} ${ySvg(0)} H ${xSvg(46)} M ${xSvg(0)} ${ySvg(-28)} V ${ySvg(26)}"/>
-    <path d="M ${xSvg(46) - 8} ${ySvg(0) - 5} L ${xSvg(46)} ${ySvg(0)} L ${xSvg(46) - 8} ${ySvg(0) + 5} M ${xSvg(0) - 5} ${ySvg(26) + 8} L ${xSvg(0)} ${ySvg(26)} L ${xSvg(0) + 5} ${ySvg(26) + 8}"/>
+    <path d="M ${xSvg(-46)} ${ySvg(0)} H ${xSvg(46)} M ${xSvg(0)} ${ySvg(-28)} V ${ySvg(23)}"/>
+    <path d="M ${xSvg(46) - 8} ${ySvg(0) - 5} L ${xSvg(46)} ${ySvg(0)} L ${xSvg(46) - 8} ${ySvg(0) + 5} M ${xSvg(0) - 5} ${ySvg(23) + 8} L ${xSvg(0)} ${ySvg(23)} L ${xSvg(0) + 5} ${ySvg(23) + 8}"/>
     <circle cx="${xSvg(0)}" cy="${ySvg(0)}" r="4" fill="#c1d9ce"/>
     ${[-36, -12, 12, 36].map((x) => `<path d="M ${xSvg(x)} ${ySvg(0) - 5} V ${ySvg(0) + 5}"/><text transform="translate(${xSvg(x)} ${ySvg(0) + 26}) scale(-1 1)" text-anchor="middle" stroke="none" fill="#c1d9ce" font-family="TscircuitAlphabet" font-size="17">${x}</text>`).join("")}
     ${[10, -16].map((y) => `<path d="M ${xSvg(0) - 5} ${ySvg(y)} H ${xSvg(0) + 5}"/><text transform="translate(${xSvg(-1)} ${ySvg(y) + 6}) scale(-1 1)" stroke="none" fill="#c1d9ce" font-family="TscircuitAlphabet" font-size="17">${y}</text>`).join("")}
@@ -55,11 +56,12 @@ export function renderFabricationTextBoardSvg(): string {
   <g font-family="TscircuitAlphabet" font-size="18" fill="#ffffff">
     <text transform="translate(${xSvg(-1)} ${ySvg(1)}) scale(-1 1)">board (0,0)</text>
     <text transform="translate(${xSvg(47)} ${ySvg(1)}) scale(-1 1)">+X</text>
-    <text transform="translate(${xSvg(-1)} ${ySvg(26)}) scale(-1 1)">+Y</text>
+    <text transform="translate(${xSvg(-1)} ${ySvg(23)}) scale(-1 1)">+Y</text>
   </g>`
   const heading = `<g transform="translate(${width - 30} 36) scale(-1 1)" font-family="TscircuitAlphabet" fill="#ffffff">
     <text font-size="23">Bottom FAB: centered anchors / top-left anchors</text>
     <text y="32" font-size="17">Amber = input anchor; cyan = text bounds; white axes = board coordinates (mm). Bottom view: +X points left.</text>
+    <text y="58" font-size="17">ccw_rotation is the board angle; the apparent bottom-view angle is reversed.</text>
   </g>`
   const annotated = svg.replace(
     "</svg>",

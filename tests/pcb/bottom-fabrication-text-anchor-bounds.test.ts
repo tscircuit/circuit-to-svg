@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import { getComprehensivePcbBounds } from "lib/pcb/get-pcb-bounds-from-circuit-json"
-import { fabricationTextNotes } from "tests/fixtures/fabrication-text-rotation-board"
+import { fabricationTextNotes } from "tests/fixtures/fabrication-text-board"
 
 test.failing(
   "bottom fabrication text bounds follow its mirrored anchor",
