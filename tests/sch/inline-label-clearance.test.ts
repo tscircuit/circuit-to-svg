@@ -92,18 +92,15 @@ for (const anchor of [
 ] as const) {
   for (const rotation of [0, -90]) {
     for (const font_size of [0.18, 0.36]) {
-      test(
-        `adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`,
-        () => {
-          const label = { ...boards[0]!.label, anchor, rotation, font_size }
-          const clearance = getLabelInkClearance(label)
-          expect(clearance).toBeCloseTo(
-            getLabelInkClearance(getLegacyTextPlacement(label), label.position),
-            3,
-          )
-          expect(clearance).toBeGreaterThan(1)
-        },
-      )
+      test(`adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`, () => {
+        const label = { ...boards[0]!.label, anchor, rotation, font_size }
+        const clearance = getLabelInkClearance(label)
+        expect(clearance).toBeCloseTo(
+          getLabelInkClearance(getLegacyTextPlacement(label), label.position),
+          3,
+        )
+        expect(clearance).toBeGreaterThan(1)
+      })
     }
   }
 }
