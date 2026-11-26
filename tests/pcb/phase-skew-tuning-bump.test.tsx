@@ -20,13 +20,18 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
   ).toBe(before)
   expect(parseSync(before).children.filter(isPhaseSkewStroke)).toHaveLength(0)
 
-  const objects = parseSync(after).children
-  const gradients = objects
-    .filter(({ name }) => name === "defs")
-    .flatMap(({ children }) =>
-      children.filter(({ name }) => name === "linearGradient"),
-    )
+  const gradients = getSvgGradients(after)
   expect(gradients.length).toBeGreaterThan(0)
+  const gradientIds = new Set(gradients.map(({ attributes }) => attributes.id))
+  expect(gradientIds.size).toBe(gradients.length)
+  expect(renderPhaseSkewSvg(circuitJson)).toBe(after)
+  for (const options of [{ width: 850 }, { phaseSkewIdPrefix: "second" }]) {
+    const otherSvg = renderPhaseSkewSvg(circuitJson, options)
+    const otherIds = new Set(
+      getSvgGradients(otherSvg).map(({ attributes }) => attributes.id),
+    )
+    expect([...gradientIds].filter((id) => otherIds.has(id))).toEqual([])
+  }
   for (const { attributes, children } of gradients) {
     expect(attributes.gradientUnits).toBe("userSpaceOnUse")
     expect(children.map(({ attributes }) => attributes.offset)).toEqual([
@@ -50,3 +55,11 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
     "phase-skew-tuning-bump-after",
   )
 })
+
+function getSvgGradients(svg: string) {
+  return parseSync(svg)
+    .children.filter(({ name }) => name === "defs")
+    .flatMap(({ children }) =>
+      children.filter(({ name }) => name === "linearGradient"),
+    )
+}
