@@ -9,7 +9,18 @@ import { identity } from "transformation-matrix"
 import {
   createLabelDetail,
   getLabelInkClearance,
+  getLegacyTextPlacement,
 } from "./inline-label-clearance-helpers"
+
+const legacyTexts = JSON.parse(
+  readFileSync(
+    new URL(
+      "./assets/inline-label-clearance/legacy-text-positions.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+) as SchematicText[]
 
 const boards = [
   {
@@ -39,7 +50,11 @@ const boards = [
       element.schematic_text_id === board.labelId,
   )
   if (!label) throw new Error(`Missing source label in ${board.name}`)
-  return { ...board, circuitJson, label }
+  const legacyText = legacyTexts.find(
+    (text) => text.schematic_text_id === board.labelId,
+  )
+  if (!legacyText) throw new Error(`Missing original text in ${board.name}`)
+  return { ...board, circuitJson, label, legacyText }
 })
 
 test.each(boards)("snapshots the original $name schematic", (board) => {
@@ -57,12 +72,13 @@ test.each(boards)("snapshots the original $name schematic", (board) => {
 })
 
 test.failing.each(boards)(
-  "keeps the original $name label clear of its wire",
-  ({ label }) => {
-    const ordinaryText = { ...label, source_trace_id: undefined }
+  "preserves the original $name label's visual clearance",
+  ({ label, legacyText }) => {
     const clearance = getLabelInkClearance(label)
-    // Compare actual ink using the same font, with a 40px normalized font size.
-    expect(clearance).toBeGreaterThan(getLabelInkClearance(ordinaryText) + 3)
+    expect(clearance).toBeCloseTo(
+      getLabelInkClearance(legacyText, label.position),
+      3,
+    )
     expect(clearance).toBeGreaterThan(1)
   },
 )
@@ -80,10 +96,10 @@ for (const anchor of [
         `adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`,
         () => {
           const label = { ...boards[0]!.label, anchor, rotation, font_size }
-          const ordinaryText = { ...label, source_trace_id: undefined }
           const clearance = getLabelInkClearance(label)
-          expect(clearance).toBeGreaterThan(
-            getLabelInkClearance(ordinaryText) + 3,
+          expect(clearance).toBeCloseTo(
+            getLabelInkClearance(getLegacyTextPlacement(label), label.position),
+            3,
           )
           expect(clearance).toBeGreaterThan(1)
         },
@@ -125,5 +141,11 @@ test("preserves ordinary text and legacy centered trace annotations", () => {
       colorMap,
     })
     expect(rendered.attributes.dy).toBeUndefined()
+  }
+})
+
+test("renders the original board labels with fixed font metrics", () => {
+  for (const { label, legacyText } of boards) {
+    expect(getLabelInkClearance(legacyText, label.position)).toBeGreaterThan(1)
   }
 })

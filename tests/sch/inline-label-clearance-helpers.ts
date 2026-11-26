@@ -1,4 +1,5 @@
 import { Resvg } from "@resvg/resvg-js"
+import { fileURLToPath } from "node:url"
 import type { SchematicText } from "circuit-json"
 import { createSvgSchText } from "lib/sch/svg-object-fns/create-svg-objects-for-sch-text"
 import { colorMap } from "lib/utils/colors"
@@ -29,12 +30,15 @@ export function createLabelDetail(svg: string, labelId: string): string {
 }
 
 // Measure actual rendered glyphs perpendicular to the wire, including rotation.
-export function getLabelInkClearance(text: SchematicText): number {
+export function getLabelInkClearance(
+  text: SchematicText,
+  attachment = text.position,
+): number {
   const pixelsPerUnit = 40 / text.font_size
   const transform = compose(
-    translate(256, 256),
+    translate(512, 512),
     scale(pixelsPerUnit, -pixelsPerUnit),
-    translate(-text.position.x, -text.position.y),
+    translate(-attachment.x, -attachment.y),
   )
   const label = createSvgSchText({ elm: text, transform, colorMap })
   const svg = stringifySvg({
@@ -42,20 +46,33 @@ export function getLabelInkClearance(text: SchematicText): number {
     type: "element",
     attributes: {
       xmlns: "http://www.w3.org/2000/svg",
-      width: "512",
-      height: "512",
+      width: "1024",
+      height: "1024",
     },
     children: [label],
     value: "",
   })
-  const rendered = new Resvg(svg).render()
+  const rendered = new Resvg(svg, {
+    font: {
+      loadSystemFonts: false,
+      defaultFontFamily: "Noto Sans",
+      sansSerifFamily: "Noto Sans",
+      fontFiles: [
+        fileURLToPath(
+          new URL(
+            "./assets/inline-label-clearance/NotoSans-Regular.ttf",
+            import.meta.url,
+          ),
+        ),
+      ],
+    },
+  }).render()
   const pixels = rendered.pixels
   const screenToLabel = compose(
-    translate(256, 256),
+    translate(512, 512),
     rotateDEG(-text.rotation),
-    translate(-256, -256),
+    translate(-512, -512),
   )
-  let minY = Number.POSITIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
   for (let offset = 0; offset < pixels.length; offset += 4) {
     if (pixels[offset + 3]! < 32) continue
@@ -64,9 +81,27 @@ export function getLabelInkClearance(text: SchematicText): number {
       x: pixelIndex % rendered.width,
       y: Math.floor(pixelIndex / rendered.width),
     })
-    minY = Math.min(minY, point.y)
     maxY = Math.max(maxY, point.y)
   }
-  if (!Number.isFinite(minY)) throw new Error("Label rendered no visible ink")
-  return text.anchor.startsWith("bottom") ? 256 - maxY : minY - 256
+  if (!Number.isFinite(maxY)) throw new Error("Label rendered no visible ink")
+  return 512 - maxY
+}
+
+export function getLegacyTextPlacement(text: SchematicText): SchematicText {
+  return {
+    ...text,
+    anchor: text.anchor.endsWith("left")
+      ? "left"
+      : text.anchor.endsWith("right")
+        ? "right"
+        : "center",
+    position: applyToPoint(
+      compose(
+        translate(text.position.x, text.position.y),
+        rotateDEG(-text.rotation),
+        translate(0, text.font_size / 2),
+      ),
+      { x: 0, y: 0 },
+    ),
+  }
 }
