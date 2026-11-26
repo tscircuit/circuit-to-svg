@@ -85,10 +85,6 @@ export const createSvgSchText = ({
   }
 
   const lines = elm.text.split("\n")
-  // Center the font's text cell above the wire without moving its attachment.
-  const dominantBaseline = isInlineBottomLabel
-    ? "middle"
-    : dominantBaselineMap[elm.anchor]
   const styledLines = createSvgTextPartLines(elm.text_parts ?? [])
 
   const children: SvgObject[] =
@@ -134,7 +130,7 @@ export const createSvgSchText = ({
         "",
         elm.display_superscript,
         getSchScreenFontSize(transform, "reference_designator", elm.font_size),
-        dominantBaseline,
+        dominantBaselineMap[elm.anchor],
       ).slice(1),
     )
   }
@@ -148,10 +144,11 @@ export const createSvgSchText = ({
       "data-schematic-text-id": elm.schematic_text_id,
       x: center.x.toString(),
       y: center.y.toString(),
-      ...(isInlineBottomLabel ? { dy: "-0.5em" } : {}),
+      // Offset only visible ink; keep the electrical and rotation origins fixed.
+      ...(isInlineBottomLabel ? { dy: "-0.1em" } : {}),
       fill: elm.color ?? colorMap.schematic.sheet_label,
       "text-anchor": textAnchorMap[elm.anchor],
-      "dominant-baseline": dominantBaseline,
+      "dominant-baseline": dominantBaselineMap[elm.anchor],
       "font-family": "sans-serif",
       "font-size": `${getSchScreenFontSize(transform, "reference_designator", elm.font_size)}px`,
       transform: `rotate(${elm.rotation}, ${center.x}, ${center.y})`,

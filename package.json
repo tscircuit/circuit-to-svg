@@ -54,9 +54,9 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@tscircuit/alphabet": "*",
-    "@tscircuit/circuit-json-util": "*",
-    "circuit-json": "*",
+    "@tscircuit/alphabet": ">=0.0.27",
+    "@tscircuit/circuit-json-util": ">=0.0.134",
+    "circuit-json": ">=0.0.560",
     "circuit-json-to-connectivity-map": "*",
     "schematic-symbols": "*"
   },
