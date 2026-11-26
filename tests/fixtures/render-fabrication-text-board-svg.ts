@@ -34,7 +34,6 @@ export function renderFabricationTextBoardSvg(): string {
         `"anchor_position":{"x":${x},"y":${y}}}`,
       ]
       return `<g>
-      <path d="M ${xSvg(x - 7)} ${ySvg(y)} H ${xSvg(x + 7)} M ${xSvg(x)} ${ySvg(y - 7)} V ${ySvg(y + 7)}" stroke="#66977e" stroke-width="1"/>
       <rect x="${xSvg(bounds.minX)}" y="${ySvg(bounds.maxY)}" width="${(bounds.maxX - bounds.minX) * scale}" height="${(bounds.maxY - bounds.minY) * scale}" fill="none" stroke="#62dfff" stroke-width="1.5"/>
       <g transform="translate(${xSvg(x)} ${ySvg(y)})" stroke="#ffb62e" fill="none" stroke-width="2">
         <path d="M -9 0 H 9 M 0 -9 V 9"/><circle r="3"/>
@@ -45,11 +44,27 @@ export function renderFabricationTextBoardSvg(): string {
     </g>`
     })
     .join("")
+  // One shared board coordinate frame; anchor markers are not local origins.
+  const axes = `<g stroke="#c1d9ce" stroke-width="1.5" fill="none">
+    <path d="M ${xSvg(-46)} ${ySvg(0)} H ${xSvg(46)} M ${xSvg(0)} ${ySvg(-28)} V ${ySvg(26)}"/>
+    <path d="M ${xSvg(46) - 8} ${ySvg(0) - 5} L ${xSvg(46)} ${ySvg(0)} L ${xSvg(46) - 8} ${ySvg(0) + 5} M ${xSvg(0) - 5} ${ySvg(26) + 8} L ${xSvg(0)} ${ySvg(26)} L ${xSvg(0) + 5} ${ySvg(26) + 8}"/>
+    <circle cx="${xSvg(0)}" cy="${ySvg(0)}" r="4" fill="#c1d9ce"/>
+    ${[-36, -12, 12, 36].map((x) => `<path d="M ${xSvg(x)} ${ySvg(0) - 5} V ${ySvg(0) + 5}"/><text transform="translate(${xSvg(x)} ${ySvg(0) + 26}) scale(-1 1)" text-anchor="middle" stroke="none" fill="#c1d9ce" font-family="TscircuitAlphabet" font-size="17">${x}</text>`).join("")}
+    ${[10, -16].map((y) => `<path d="M ${xSvg(0) - 5} ${ySvg(y)} H ${xSvg(0) + 5}"/><text transform="translate(${xSvg(-1)} ${ySvg(y) + 6}) scale(-1 1)" stroke="none" fill="#c1d9ce" font-family="TscircuitAlphabet" font-size="17">${y}</text>`).join("")}
+  </g>
+  <g font-family="TscircuitAlphabet" font-size="18" fill="#ffffff">
+    <text transform="translate(${xSvg(-1)} ${ySvg(1)}) scale(-1 1)">board (0,0)</text>
+    <text transform="translate(${xSvg(47)} ${ySvg(1)}) scale(-1 1)">+X</text>
+    <text transform="translate(${xSvg(-1)} ${ySvg(26)}) scale(-1 1)">+Y</text>
+  </g>`
   const heading = `<g transform="translate(${width - 30} 36) scale(-1 1)" font-family="TscircuitAlphabet" fill="#ffffff">
     <text font-size="23">Bottom FAB: centered anchors / top-left anchors</text>
-    <text y="32" font-size="17">Amber = input anchor; cyan = calculated text bounds. Coordinates in mm.</text>
+    <text y="32" font-size="17">Amber = input anchor; cyan = text bounds; white axes = board coordinates (mm). Bottom view: +X points left.</text>
   </g>`
-  const annotated = svg.replace("</svg>", `${heading}${annotations}</svg>`)
+  const annotated = svg.replace(
+    "</svg>",
+    `${axes}${heading}${annotations}</svg>`,
+  )
   // Flip PCB coordinates to view the board from below.
   return annotated
     .replace(
