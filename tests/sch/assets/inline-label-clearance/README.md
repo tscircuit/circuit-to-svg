@@ -25,9 +25,3 @@ Serialize the complete conversion output with `JSON.stringify(circuitJson, null,
 and gzip it. Compression keeps the complete board geometry without a large JSON diff.
 Detail snapshots only change the SVG viewport; they use the same full schematic
 and preserve all underlying Circuit JSON coordinates.
-
-The isolated glyph-clearance measurements load the included, unmodified
-`NotoSans-Regular.ttf` with system-font loading disabled. This makes their pixel
-measurements consistent across developer machines and CI. The font is distributed
-under the included `OFL.txt`; it does not change the board fixtures or their SVG
-font declarations.

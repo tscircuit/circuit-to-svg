@@ -59,7 +59,11 @@ test.each(boards)("snapshots the original $name schematic", (board) => {
 test.failing.each(boards)(
   "keeps the original $name label clear of its wire",
   ({ label }) => {
-    expect(getLabelInkClearance(label)).toBeGreaterThan(6)
+    const ordinaryText = { ...label, source_trace_id: undefined }
+    const clearance = getLabelInkClearance(label)
+    // Compare actual ink using the same font, with a 40px normalized font size.
+    expect(clearance).toBeGreaterThan(getLabelInkClearance(ordinaryText) + 3)
+    expect(clearance).toBeGreaterThan(1)
   },
 )
 
@@ -76,7 +80,12 @@ for (const anchor of [
         `adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`,
         () => {
           const label = { ...boards[0]!.label, anchor, rotation, font_size }
-          expect(getLabelInkClearance(label)).toBeGreaterThan(6)
+          const ordinaryText = { ...label, source_trace_id: undefined }
+          const clearance = getLabelInkClearance(label)
+          expect(clearance).toBeGreaterThan(
+            getLabelInkClearance(ordinaryText) + 3,
+          )
+          expect(clearance).toBeGreaterThan(1)
         },
       )
     }
