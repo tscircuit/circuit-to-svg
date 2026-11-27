@@ -1,9 +1,9 @@
 import type {
   AnyCircuitElement,
   PcbDifferentialPairPhaseSkewSegment,
-  PcbDifferentialPairPhaseSkewTrace,
   Point,
 } from "circuit-json"
+import Color from "color"
 import type { SvgObject } from "lib/svg-object"
 import { applyToPoint, type Matrix } from "transformation-matrix"
 import type { PcbContext } from "../convert-circuit-json-to-pcb-svg"
@@ -13,22 +13,21 @@ import {
 } from "./create-pcb-trace-stroke"
 
 /** Overlay strokes are drawn 10% wider than the copper, as KiCad does (diff_phase_skew_tool.cpp), so the colour fully covers the trace edges. */
-const PHASE_SKEW_STROKE_WIDTH_MULTIPLIER = 1.1
+const OVERLAY_WIDTH_FACTOR = 1.1
 const JOINT_TOLERANCE_MM = 1e-6
+export const DEFAULT_PHASE_SKEW_FULL_SCALE_MM = 2
 const PHASE_SKEW_CLASS = "pcb-differential-pair-phase-skew"
 const PHASE_SKEW_TYPE = "pcb_differential_pair_phase_skew"
 const FNV_OFFSET_BASIS = 0xcbf29ce484222325n
 const FNV_PRIME = 0x100000001b3n
 const HASH_BITS = 64
-const FULL_RGB_PERCENT = 100
-const ZERO_COLOR = "rgb(255, 255, 255)"
-const POSITIVE_PEAK_COLOR = "rgb(0, 0, 255)"
-const NEGATIVE_PEAK_COLOR = "rgb(255, 0, 0)"
-
-interface PhaseSkewPeaks {
-  positivePeakMm: number
-  negativePeakMm: number
+const DEFAULT_PHASE_SKEW_COLORS = {
+  positive: "rgb(0, 0, 255)",
+  negative: "rgb(255, 0, 0)",
+  zero: "rgb(255, 255, 255)",
 }
+
+export type PhaseSkewColors = Partial<typeof DEFAULT_PHASE_SKEW_COLORS>
 
 interface PhaseSkewSvgObjects {
   strokes: SvgObject[]
@@ -36,30 +35,38 @@ interface PhaseSkewSvgObjects {
 }
 
 /** Draw stored phase skew segments above their layer's copper. */
-export function createSvgObjectsFromDifferentialPairPhaseSkew({
-  circuitJson,
+export function getPhaseSkewStrokes({
+  elements,
+  colors,
   ctx: { layer, transform },
-  phaseSkewIdPrefix = "",
 }: {
-  circuitJson: AnyCircuitElement[]
+  elements: readonly AnyCircuitElement[]
+  colors?: PhaseSkewColors
   ctx: Pick<PcbContext, "layer" | "transform">
-  phaseSkewIdPrefix?: string
 }): PhaseSkewSvgObjects {
   const fills: SvgObject[] = []
   const strokes: SvgObject[] = []
   const gradients: SvgObject[] = []
+  const fullScaleMmBySourceBusId = getPhaseSkewFullScaleMmBySourceBusId({
+    elements,
+  })
 
-  for (const element of circuitJson) {
+  for (const element of elements) {
     if (element.type !== PHASE_SKEW_TYPE) continue
+    const fullScaleMm =
+      fullScaleMmBySourceBusId[element.source_bus_id] ??
+      DEFAULT_PHASE_SKEW_FULL_SCALE_MM
 
     for (const polarity of ["positive_trace", "negative_trace"] as const) {
       const trace = element[polarity]
-      const peaks = getPhaseSkewPeaks(trace)
-      for (const [index, segment] of trace.segments.entries()) {
+      const segments = trace.segments.flatMap((segment) =>
+        splitPhaseSkewSegmentAtFullScale({ segment, fullScaleMm }),
+      )
+      for (const [index, segment] of segments.entries()) {
         if (layer && segment.layer !== layer) continue
 
-        const previous = trace.segments[index - 1]
-        const next = trace.segments[index + 1]
+        const previous = segments[index - 1]
+        const next = segments[index + 1]
         const joinsPrevious =
           previous !== undefined && canJoinSegments({ previous, next: segment })
         const joinsNext =
@@ -69,21 +76,33 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
         const { end } = segment
         const svgStart = applyToPoint(transform, start)
         const svgEnd = applyToPoint(transform, end)
-        const width = segment.width * PHASE_SKEW_STROKE_WIDTH_MULTIPLIER
+        const width = segment.width * OVERLAY_WIDTH_FACTOR
 
+        const {
+          start_length_difference_mm: startDifference,
+          end_length_difference_mm: endDifference,
+        } = segment
+        // At zero full scale, any nonzero part of the segment is saturated.
         const startColor = getPhaseSkewColor({
-          lengthDifferenceMm: segment.start_length_difference_mm,
-          peaks,
+          lengthDifferenceMm:
+            fullScaleMm === 0
+              ? startDifference || endDifference
+              : startDifference,
+          fullScaleMm,
+          colors,
         })
         const endColor = getPhaseSkewColor({
-          lengthDifferenceMm: segment.end_length_difference_mm,
-          peaks,
+          lengthDifferenceMm:
+            fullScaleMm === 0
+              ? endDifference || startDifference
+              : endDifference,
+          fullScaleMm,
+          colors,
         })
         let color = startColor
         if (startColor !== endColor) {
           const { id, gradient } = createPhaseSkewGradient({
             identity: [
-              phaseSkewIdPrefix,
               element.pcb_differential_pair_phase_skew_id,
               polarity,
               trace.pcb_trace_id,
@@ -104,7 +123,7 @@ export function createSvgObjectsFromDifferentialPairPhaseSkew({
             ? Math.max(
                 strokeWidth,
                 getPcbTraceStrokeWidth({
-                  width: previous.width * PHASE_SKEW_STROKE_WIDTH_MULTIPLIER,
+                  width: previous.width * OVERLAY_WIDTH_FACTOR,
                   transform,
                 }),
               )
@@ -199,41 +218,98 @@ function createPhaseSkewDisc({
   })
 }
 
-/** Find the endpoints that set the positive and negative scales for a trace. */
-function getPhaseSkewPeaks({
-  segments,
-}: PcbDifferentialPairPhaseSkewTrace): PhaseSkewPeaks {
-  let positivePeakMm = 0
-  let negativePeakMm = 0
-  for (const {
-    start_length_difference_mm: startDifference,
-    end_length_difference_mm: endDifference,
-  } of segments) {
-    positivePeakMm = Math.max(positivePeakMm, startDifference, endDifference)
-    negativePeakMm = Math.min(negativePeakMm, startDifference, endDifference)
+export function getPhaseSkewFullScaleMmBySourceBusId({
+  elements,
+}: {
+  elements: readonly AnyCircuitElement[]
+}): Record<string, number> {
+  const limits: Record<string, number> = Object.create(null)
+  for (const element of elements) {
+    if (
+      element.type === "source_bus" &&
+      element.max_length_skew !== undefined
+    ) {
+      limits[element.source_bus_id] = element.max_length_skew
+    }
   }
-  return { positivePeakMm, negativePeakMm }
+  return limits
 }
 
-/** Interpolate from white to blue or red against this trace's peak of the same sign. */
-function getPhaseSkewColor({
+export function splitPhaseSkewSegmentAtFullScale({
+  segment,
+  fullScaleMm,
+}: {
+  segment: PcbDifferentialPairPhaseSkewSegment
+  fullScaleMm: number
+}): PcbDifferentialPairPhaseSkewSegment[] {
+  const {
+    start,
+    end,
+    start_length_difference_mm: startDifference,
+    end_length_difference_mm: endDifference,
+  } = segment
+  const startMagnitude = Math.abs(startDifference)
+  const endMagnitude = Math.abs(endDifference)
+  if (
+    Math.min(startMagnitude, endMagnitude) >= fullScaleMm ||
+    Math.max(startMagnitude, endMagnitude) <= fullScaleMm
+  ) {
+    return [segment]
+  }
+
+  const fraction =
+    (fullScaleMm - startMagnitude) / (endMagnitude - startMagnitude)
+  const crossing = {
+    x: start.x + (end.x - start.x) * fraction,
+    y: start.y + (end.y - start.y) * fraction,
+  }
+  const crossingDifference =
+    Math.sign(endDifference || startDifference) * fullScaleMm
+  return [
+    { ...segment, end: crossing, end_length_difference_mm: crossingDifference },
+    {
+      ...segment,
+      start: crossing,
+      start_length_difference_mm: crossingDifference,
+    },
+  ]
+}
+
+export function getPhaseSkewColor({
   lengthDifferenceMm,
-  peaks: { positivePeakMm, negativePeakMm },
+  fullScaleMm,
+  colors,
 }: {
   lengthDifferenceMm: number
-  peaks: PhaseSkewPeaks
+  fullScaleMm: number
+  colors?: PhaseSkewColors
 }): string {
-  if (lengthDifferenceMm === 0) return ZERO_COLOR
-  const isAhead = lengthDifferenceMm > 0
-  const peakMm = isAhead ? positivePeakMm : negativePeakMm
-  if (lengthDifferenceMm === peakMm) {
-    return isAhead ? POSITIVE_PEAK_COLOR : NEGATIVE_PEAK_COLOR
+  const zero = colors?.zero ?? DEFAULT_PHASE_SKEW_COLORS.zero
+  if (lengthDifferenceMm === 0) return zero
+  const polarity = lengthDifferenceMm > 0 ? "positive" : "negative"
+  const saturated = colors?.[polarity] ?? DEFAULT_PHASE_SKEW_COLORS[polarity]
+  if (fullScaleMm === 0 || Math.abs(lengthDifferenceMm) >= fullScaleMm) {
+    return saturated
   }
-  // SVG 1.1 rgb() accepts fractional channels in percentage form.
-  const fade = FULL_RGB_PERCENT * (1 - lengthDifferenceMm / peakMm)
-  return isAhead
-    ? `rgb(${fade}%, ${fade}%, 100%)`
-    : `rgb(100%, ${fade}%, ${fade}%)`
+
+  const fraction = Math.abs(lengthDifferenceMm) / fullScaleMm
+  const from = Color(zero.trim()).rgb()
+  const to = Color(saturated.trim()).rgb()
+  const toChannels = to.unitArray()
+  // Use percentages to retain fractional channels in SVG 1.1.
+  const rgb = from
+    .unitArray()
+    .slice(0, 3)
+    .map((channel, index) => {
+      const percent =
+        (channel + (toChannels[index]! - channel) * fraction) * 100
+      return `${Number(percent.toFixed(6))}%`
+    })
+    .join(", ")
+  const alpha = from.alpha() + (to.alpha() - from.alpha()) * fraction
+  return alpha === 1
+    ? `rgb(${rgb})`
+    : `rgba(${rgb}, ${Number(alpha.toFixed(6))})`
 }
 
 /** Create an sRGB gradient aligned with the segment in SVG coordinates. */

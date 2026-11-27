@@ -52,7 +52,10 @@ import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create
 import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
 import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
-import { createSvgObjectsFromDifferentialPairPhaseSkew } from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
+import {
+  getPhaseSkewStrokes,
+  type PhaseSkewColors,
+} from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
@@ -124,8 +127,8 @@ export interface PcbSvgOptions {
   layer?: LayerRef
   /** Color differential pair copper by its stored phase skew. Defaults to false. */
   showDifferentialPairPhaseSkew?: boolean
-  /** Namespace phase-skew gradient IDs when inlining copies of the same SVG. */
-  phaseSkewIdPrefix?: string
+  /** Override the positive, negative, or zero phase-skew color. */
+  phaseSkewColors?: PhaseSkewColors
   matchBoardAspectRatio?: boolean
   backgroundColor?: string
   drawPaddingOutsideBoard?: boolean
@@ -405,10 +408,10 @@ export function convertCircuitJsonToPcbSvg(
 
   const phaseSkew =
     !xRayActive && options?.showDifferentialPairPhaseSkew
-      ? createSvgObjectsFromDifferentialPairPhaseSkew({
-          circuitJson,
+      ? getPhaseSkewStrokes({
+          elements: circuitJson,
+          colors: options.phaseSkewColors,
           ctx,
-          phaseSkewIdPrefix: options.phaseSkewIdPrefix,
         })
       : undefined
   if (phaseSkew) unsortedSvgObjects.push(...phaseSkew.strokes)

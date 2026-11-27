@@ -18,7 +18,7 @@ test("phase skew covers the outside of a 170 degree turn", async () => {
     svg,
     copper,
     sample: { x: 204, y: 211 },
-    expectedChannel: 128,
+    expectedChannel: 191,
   })
   expect(overlay.map(({ name }) => name)).toEqual([
     "circle",

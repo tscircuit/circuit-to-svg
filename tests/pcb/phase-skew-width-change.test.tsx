@@ -17,7 +17,7 @@ test("phase skew covers the wider trace at a neck-down", async () => {
     svg,
     copper,
     sample: { x: 224, y: 214 },
-    expectedChannel: 128,
+    expectedChannel: 191,
   })
   const joint = overlay.find(
     ({ name, attributes }) =>
