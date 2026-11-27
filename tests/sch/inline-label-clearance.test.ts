@@ -71,7 +71,7 @@ test.each(boards)("snapshots the original $name schematic", (board) => {
   )
 })
 
-test.failing.each(boards)(
+test.each(boards)(
   "preserves the original $name label's visual clearance",
   ({ label, legacyText }) => {
     const clearance = getLabelInkClearance(label)
@@ -92,18 +92,15 @@ for (const anchor of [
 ] as const) {
   for (const rotation of [0, -90]) {
     for (const font_size of [0.18, 0.36]) {
-      test.failing(
-        `adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`,
-        () => {
-          const label = { ...boards[0]!.label, anchor, rotation, font_size }
-          const clearance = getLabelInkClearance(label)
-          expect(clearance).toBeCloseTo(
-            getLabelInkClearance(getLegacyTextPlacement(label), label.position),
-            3,
-          )
-          expect(clearance).toBeGreaterThan(1)
-        },
-      )
+      test(`adds visual clearance for ${anchor}, ${rotation}°, ${font_size}`, () => {
+        const label = { ...boards[0]!.label, anchor, rotation, font_size }
+        const clearance = getLabelInkClearance(label)
+        expect(clearance).toBeCloseTo(
+          getLabelInkClearance(getLegacyTextPlacement(label), label.position),
+          3,
+        )
+        expect(clearance).toBeGreaterThan(1)
+      })
     }
   }
 }
