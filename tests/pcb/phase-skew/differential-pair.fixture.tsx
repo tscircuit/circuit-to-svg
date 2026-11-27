@@ -26,6 +26,7 @@ export function renderPhaseSkewSvg(
   return convertCircuitJsonToPcbSvg(circuitJson, {
     ...PHASE_SKEW_SVG_SIZE,
     showDifferentialPairPhaseSkew: true,
+    phaseSkewFullScaleMm: 2,
     ...options,
   })
 }
@@ -35,10 +36,12 @@ export async function renderDifferentialPair({
   positivePath = [],
   negativePath = [],
   loadLayer = "top",
+  pairYPositions = [0],
 }: {
   positivePath?: PcbPath
   negativePath?: PcbPath
   loadLayer?: "top" | "bottom"
+  pairYPositions?: number[]
 }): Promise<CircuitJson> {
   const circuit = new Circuit({ platform: { drcChecksDisabled: true } })
   const legs = [
@@ -47,40 +50,47 @@ export async function renderDifferentialPair({
   ]
   circuit.add(
     <board width={28} height={8} routeRemaining={false}>
-      {legs.map(({ name, y, path }) => (
-        <Fragment key={name}>
-          <testpoint
-            name={`${name}_SRC`}
-            footprintVariant="pad"
-            padDiameter={0.65}
-            doNotPlace
-            pcbX={-12}
-            pcbY={y}
-          />
-          <testpoint
-            name={`${name}_LOAD`}
-            footprintVariant="pad"
-            padDiameter={0.65}
-            doNotPlace
-            pcbX={12}
-            pcbY={y}
-            layer={loadLayer}
-          />
-          <trace
-            name={name}
-            from={`.${name}_SRC > .pin1`}
-            to={`.${name}_LOAD > .pin1`}
-            thickness="0.24mm"
-            pcbPath={path}
-          />
-        </Fragment>
-      ))}
-      <differentialpair
-        name="PAIR"
-        positiveConnection="P"
-        negativeConnection="N"
-        pcbTraceGap="0.96mm"
-      />
+      {pairYPositions.map((pairY, index) => {
+        const suffix = index === 0 ? "" : `_${index}`
+        return (
+          <Fragment key={index}>
+            {legs.map(({ name, y, path }) => (
+              <Fragment key={name}>
+                <testpoint
+                  name={`${name}${suffix}_SRC`}
+                  footprintVariant="pad"
+                  padDiameter={0.65}
+                  doNotPlace
+                  pcbX={-12}
+                  pcbY={pairY + y}
+                />
+                <testpoint
+                  name={`${name}${suffix}_LOAD`}
+                  footprintVariant="pad"
+                  padDiameter={0.65}
+                  doNotPlace
+                  pcbX={12}
+                  pcbY={pairY + y}
+                  layer={loadLayer}
+                />
+                <trace
+                  name={`${name}${suffix}`}
+                  from={`.${name}${suffix}_SRC > .pin1`}
+                  to={`.${name}${suffix}_LOAD > .pin1`}
+                  thickness="0.24mm"
+                  pcbPath={path}
+                />
+              </Fragment>
+            ))}
+            <differentialpair
+              name={`PAIR${suffix}`}
+              positiveConnection={`P${suffix}`}
+              negativeConnection={`N${suffix}`}
+              pcbTraceGap="0.96mm"
+            />
+          </Fragment>
+        )
+      })}
     </board>,
   )
 

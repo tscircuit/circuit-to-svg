@@ -20,7 +20,7 @@ test("phase skew ends and restarts with round caps at a via", async () => {
     "top",
   ])
   for (const { attributes } of caps) {
-    expect(attributes.fill).toBe("rgb(50%, 50%, 100%)")
+    expect(attributes.fill).toBe("rgb(75%, 75%, 100%)")
     expect(Number(attributes.r)).toBeCloseTo(22)
   }
   await expect(svg).toMatchSvgSnapshot(import.meta.path)

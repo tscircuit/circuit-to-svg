@@ -42,9 +42,11 @@ export function wire({
 export async function renderPhaseSkewRoute({
   route,
   secondStartJitterMm = 0,
+  options,
 }: {
   route: PcbTrace["route"]
   secondStartJitterMm?: number
+  options?: Pick<PcbSvgOptions, "phaseSkewFullScaleMm" | "phaseSkewColors">
 }) {
   const circuit = new Circuit({ platform: { drcChecksDisabled: true } })
   circuit.add(
@@ -88,7 +90,10 @@ export async function renderPhaseSkewRoute({
     negative_trace: { pcb_trace_id: "fixture_unused_trace", segments: [] },
   }
 
-  const svg = renderPhaseSkewSvg([...circuitJson, skew], ROUTE_OPTIONS)
+  const svg = renderPhaseSkewSvg([...circuitJson, skew], {
+    ...ROUTE_OPTIONS,
+    ...options,
+  })
   const copper = renderPhaseSkewSvg(circuitJson, ROUTE_OPTIONS)
   const overlay = parseSync(svg).children.filter(isPhaseSkewStroke)
   return { svg, copper, overlay }

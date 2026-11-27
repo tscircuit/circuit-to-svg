@@ -52,7 +52,7 @@ import { createSvgObjectsFromPcbCourtyardPolygon } from "./svg-object-fns/create
 import { createSvgObjectsFromPcbCourtyardOutline } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-outline"
 import { createSvgObjectsFromPcbCourtyardCircle } from "./svg-object-fns/create-svg-objects-from-pcb-courtyard-circle"
 import { createSvgObjectsFromPcbTrace } from "./svg-object-fns/create-svg-objects-from-pcb-trace"
-import { createSvgObjectsFromDifferentialPairPhaseSkew } from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
+import { getPhaseSkewStrokes } from "./svg-object-fns/create-svg-objects-from-differential-pair-phase-skew"
 import { createSvgObjectsFromSmtPad } from "./svg-object-fns/create-svg-objects-from-smt-pads"
 import { createSvgObjectsFromPcbBoard } from "./svg-object-fns/create-svg-objects-from-pcb-board"
 import { createSvgObjectsFromPcbPanel } from "./svg-object-fns/create-svg-objects-from-pcb-panel"
@@ -103,7 +103,32 @@ interface PointObjectNotation {
   y: number
 }
 
-export interface PcbSvgOptions {
+export type PhaseSkewColors = {
+  positive?: string
+  negative?: string
+  zero?: string
+}
+
+export type PhaseSkewRenderOptions =
+  | {
+      showDifferentialPairPhaseSkew?: false
+      phaseSkewFullScaleMm?: number
+      phaseSkewFullScaleMmBySourceBusId?: Record<string, number>
+      phaseSkewColors?: PhaseSkewColors
+    }
+  | {
+      /** Color differential pair copper by its stored phase skew. Defaults to false. */
+      showDifferentialPairPhaseSkew: true
+      /** |skew| in mm at which a trace reaches full color, for any pair not in phaseSkewFullScaleMmBySourceBusId. 0 means any nonzero skew is full color. */
+      phaseSkewFullScaleMm: number
+      /** Per-pair full scale in mm, keyed by the phase skew element's source_bus_id. */
+      phaseSkewFullScaleMmBySourceBusId?: Record<string, number>
+      phaseSkewColors?: PhaseSkewColors
+    }
+
+export type PcbSvgOptions = BasePcbSvgOptions & PhaseSkewRenderOptions
+
+interface BasePcbSvgOptions {
   /** Overlay one completed PCB return-current result. Rendering remains opt-in. */
   simulationResultId?: string
   returnCurrent?: PcbReturnCurrentOptions
@@ -122,8 +147,6 @@ export interface PcbSvgOptions {
   showCourtyards?: boolean
   showPcbGroups?: boolean
   layer?: LayerRef
-  /** Color differential pair copper by its stored phase skew. Defaults to false. */
-  showDifferentialPairPhaseSkew?: boolean
   /** Namespace phase-skew gradient IDs when inlining copies of the same SVG. */
   phaseSkewIdPrefix?: string
   matchBoardAspectRatio?: boolean
@@ -193,6 +216,23 @@ export function convertCircuitJsonToPcbSvg(
   circuitJson: AnyCircuitElement[],
   options?: PcbSvgOptions,
 ): string {
+  if (options?.showDifferentialPairPhaseSkew) {
+    if (
+      !Number.isFinite(options.phaseSkewFullScaleMm) ||
+      options.phaseSkewFullScaleMm < 0
+    ) {
+      throw new Error("phaseSkewFullScaleMm must be a finite number >= 0")
+    }
+    for (const [sourceBusId, scale] of Object.entries(
+      options.phaseSkewFullScaleMmBySourceBusId ?? {},
+    )) {
+      if (!Number.isFinite(scale) || scale < 0) {
+        throw new Error(
+          `phaseSkewFullScaleMmBySourceBusId[${JSON.stringify(sourceBusId)}] must be a finite number >= 0`,
+        )
+      }
+    }
+  }
   if (options?.showFabricationNotes === false) {
     // Exclude hidden drawing annotations from both rendering and bounds.
     circuitJson = circuitJson.filter(
@@ -405,8 +445,11 @@ export function convertCircuitJsonToPcbSvg(
 
   const phaseSkew =
     !xRayActive && options?.showDifferentialPairPhaseSkew
-      ? createSvgObjectsFromDifferentialPairPhaseSkew({
-          circuitJson,
+      ? getPhaseSkewStrokes({
+          elements: circuitJson,
+          fullScaleMm: options.phaseSkewFullScaleMm,
+          fullScaleMmBySourceBusId: options.phaseSkewFullScaleMmBySourceBusId,
+          colors: options.phaseSkewColors,
           ctx,
           phaseSkewIdPrefix: options.phaseSkewIdPrefix,
         })

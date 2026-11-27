@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test"
+import Color from "color"
 import { convertCircuitJsonToPcbSvg } from "lib"
 import { parseSync } from "svgson"
 import {
@@ -39,12 +40,13 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
       "1",
     ])
   }
-  const colors = gradients.flatMap(({ children }) =>
+  const stops = gradients.flatMap(({ children }) =>
     children.map(({ attributes }) => attributes["stop-color"]),
   )
-  expect(colors).toContain("rgb(255, 255, 255)")
-  expect(colors).toContain("rgb(0, 0, 255)")
-  expect(colors).toContain("rgb(255, 0, 0)")
+  expect(stops).toContain("rgb(255, 255, 255)")
+  const colors = stops.map((stop) => Color(stop))
+  expect(colors.some((color) => color.blue() > color.red())).toBe(true)
+  expect(colors.some((color) => color.red() > color.blue())).toBe(true)
 
   await expect(before).toMatchSvgSnapshot(
     import.meta.path,
