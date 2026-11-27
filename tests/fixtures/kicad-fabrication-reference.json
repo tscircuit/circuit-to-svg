@@ -1,0 +1,17 @@
+{
+  "kicad_version": "10.0.7",
+  "method": "Basis measured from native SVG R glyph strokes; matrices are [a,b,c,d] in SVG coordinates.",
+  "cases_per_view": 8,
+  "font_note": "Native KiCad stroke font verifies directions and mirroring, not font metrics.",
+  "board_angles": [0, 90, 180, 270],
+  "views": {
+    "top": [[1, 0, 0, 1], [0, -1, 1, 0], [-1, 0, 0, -1], [0, 1, -1, 0]],
+    "bottom_from_top": [
+      [-1, 0, 0, 1],
+      [0, 1, 1, 0],
+      [1, 0, 0, -1],
+      [0, -1, -1, 0]
+    ],
+    "bottom": [[1, 0, 0, 1], [0, 1, -1, 0], [-1, 0, 0, -1], [0, -1, 1, 0]]
+  }
+}
