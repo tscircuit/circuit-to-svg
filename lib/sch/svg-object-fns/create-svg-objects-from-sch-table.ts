@@ -38,17 +38,20 @@ export const createSvgObjectsFromSchematicTable = ({
   let topLeftX = anchor_position.x
   let topLeftY = anchor_position.y
 
+  const [verticalAnchor, horizontalAnchor] =
+    anchor === "center" ? ["center", "center"] : anchor.split("_")
+
   // Horizontal alignment
-  if (anchor.includes("center")) {
+  if (horizontalAnchor === "center") {
     topLeftX -= totalWidth / 2
-  } else if (anchor.includes("right")) {
+  } else if (horizontalAnchor === "right") {
     topLeftX -= totalWidth
   }
 
   // Vertical alignment
-  if (anchor.includes("center")) {
+  if (verticalAnchor === "center") {
     topLeftY += totalHeight / 2
-  } else if (anchor.includes("bottom")) {
+  } else if (verticalAnchor === "bottom") {
     topLeftY += totalHeight
   }
 
