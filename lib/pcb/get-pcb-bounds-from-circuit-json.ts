@@ -89,6 +89,12 @@ export function getComprehensivePcbBounds(
         height: circuitJsonElm.height,
         ccwRotationDegrees: circuitJsonElm.ccw_rotation,
       })
+    } else if (circuitJsonElm.type === "pcb_courtyard_pill") {
+      updateBounds({
+        center: circuitJsonElm.center,
+        width: circuitJsonElm.width,
+        height: circuitJsonElm.height,
+      })
     } else if (circuitJsonElm.type === "pcb_soldermask_opening") {
       if (circuitJsonElm.shape === "polygon") {
         updateTraceBounds(circuitJsonElm.points)
