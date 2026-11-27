@@ -49,14 +49,12 @@ export function createSvgObjectsFromAssemblyComponent(
 
   if (!arePinsInterchangeable) {
     children.push(
-      createPin1Indicator(
+      createPin1Indicator({
         scaledWidth,
         scaledHeight,
-        rotation,
-        layer,
         isPinTop,
         isPinLeft,
-      ),
+      }),
     )
   }
 
@@ -144,14 +142,15 @@ function createComponentLabel(
   }
 }
 
-function createPin1Indicator(
-  scaledWidth: number,
-  scaledHeight: number,
-  rotation: number,
-  layer: LayerRef,
-  isPinTop: boolean,
-  isPinLeft: boolean,
-): SvgObject {
+interface Pin1IndicatorOptions {
+  scaledWidth: number
+  scaledHeight: number
+  isPinTop: boolean
+  isPinLeft: boolean
+}
+
+function createPin1Indicator(options: Pin1IndicatorOptions): SvgObject {
+  const { scaledWidth, scaledHeight, isPinTop, isPinLeft } = options
   const w = scaledWidth / 2
   const h = scaledHeight / 2
   const indicatorSize = Math.min(w, h) * 0.5
@@ -198,7 +197,6 @@ function createPin1Indicator(
       points: pointsString,
       fill: "#333",
       stroke: "none",
-      transform: `rotate(${-rotation})`,
     },
     value: "",
     children: [],

@@ -9,6 +9,7 @@ import {
   scale,
   translate,
 } from "transformation-matrix"
+import { findPin1Port } from "./find-pin1-port"
 import { createSvgObjectsFromAssemblyBoard } from "./svg-object-fns/create-svg-objects-from-assembly-board"
 import { createSvgObjectsFromAssemblyComponent } from "./svg-object-fns/create-svg-objects-from-assembly-component"
 import { createSvgObjectsFromAssemblyHole } from "./svg-object-fns/create-svg-objects-from-assembly-hole"
@@ -199,11 +200,12 @@ function createSvgObjects(
 
       // Proceed only if both sourceComponent and firstPort are found
       if (sourceComponent && firstPort) {
+        const pin1Port = findPin1Port({ ports, soup, fallbackPort: firstPort })
         const arePinsInterchangeable = sourceComponent.are_pins_interchangeable
         const obj = createSvgObjectsFromAssemblyComponent(
           {
             elm,
-            portPosition: { x: firstPort.x, y: firstPort.y },
+            portPosition: { x: pin1Port.x, y: pin1Port.y },
             name: sourceComponent.name,
             arePinsInterchangeable,
           },
