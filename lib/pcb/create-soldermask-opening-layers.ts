@@ -35,10 +35,23 @@ export function createSoldermaskOpeningLayers({
     if (openings.length === 0) continue
     const shapes = openings.map((opening) => createOpeningShape(opening, ctx))
     const clipId = `pcb-soldermask-openings-${layer}`
-    const copperContext = { ...ctx, layer, showSolderMask: false }
-    const copper = circuitJson.flatMap((element) =>
-      COPPER_TYPES.has(element.type) ? create(element, copperContext) : [],
-    )
+    const copperContext: PcbContext = {
+      ...ctx,
+      layer,
+      showSolderMask: false,
+      showSolderPaste: false,
+      showPinNumbers: false,
+      showAnchorOffsets: false,
+      // Via and plated-hole geometry reads top copper when soldermask is disabled.
+      colorMap: {
+        ...ctx.colorMap,
+        copper: { ...ctx.colorMap.copper, top: ctx.colorMap.copper[layer]! },
+      },
+    }
+    const copper = circuitJson.flatMap((element) => {
+      const prepared = prepareExposedCopperElement(element, layer)
+      return prepared ? create(prepared, copperContext) : []
+    })
 
     objects.push({
       name: "g",
@@ -88,6 +101,22 @@ export function createSoldermaskOpeningLayers({
     })
   }
   return objects
+}
+
+function prepareExposedCopperElement(
+  element: AnyCircuitElement,
+  layer: "top" | "bottom",
+): AnyCircuitElement | null {
+  if (!COPPER_TYPES.has(element.type)) return null
+  if (
+    (element.type === "pcb_via" || element.type === "pcb_plated_hole") &&
+    !element.layers.includes(layer)
+  ) {
+    return null
+  }
+  return element.type === "pcb_plated_hole"
+    ? { ...element, layers: [layer] }
+    : element
 }
 
 function createOpeningShape(
