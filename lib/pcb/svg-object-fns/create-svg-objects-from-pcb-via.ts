@@ -10,6 +10,7 @@ export function createSvgObjectsFromPcbVia(
   ctx: PcbContext,
 ): SvgObject[] {
   const { transform, colorMap } = ctx
+  if (ctx.layer && !hole.layers.includes(ctx.layer)) return []
   const layer = ctx.layer ?? "top"
   const showSolderMask =
     ctx.showSolderMask && (layer === "top" || layer === "bottom")
