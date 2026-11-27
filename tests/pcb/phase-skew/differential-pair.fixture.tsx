@@ -35,10 +35,12 @@ export async function renderDifferentialPair({
   positivePath = [],
   negativePath = [],
   loadLayer = "top",
+  maxLengthSkew,
 }: {
   positivePath?: PcbPath
   negativePath?: PcbPath
   loadLayer?: "top" | "bottom"
+  maxLengthSkew?: number
 }): Promise<CircuitJson> {
   const circuit = new Circuit({ platform: { drcChecksDisabled: true } })
   const legs = [
@@ -80,6 +82,7 @@ export async function renderDifferentialPair({
         positiveConnection="P"
         negativeConnection="N"
         pcbTraceGap="0.96mm"
+        maxLengthSkew={maxLengthSkew}
       />
     </board>,
   )

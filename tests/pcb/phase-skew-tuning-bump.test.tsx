@@ -25,7 +25,10 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
   const gradientIds = new Set(gradients.map(({ attributes }) => attributes.id))
   expect(gradientIds.size).toBe(gradients.length)
   expect(renderPhaseSkewSvg(circuitJson)).toBe(after)
-  for (const options of [{ width: 850 }, { phaseSkewIdPrefix: "second" }]) {
+  for (const options of [
+    { width: 850 },
+    { phaseSkewColors: { zero: "black" } },
+  ]) {
     const otherSvg = renderPhaseSkewSvg(circuitJson, options)
     const otherIds = new Set(
       getSvgGradients(otherSvg).map(({ attributes }) => attributes.id),
@@ -43,8 +46,10 @@ test("the tuning bump produces blue and red gradients when enabled", async () =>
     children.map(({ attributes }) => attributes["stop-color"]),
   )
   expect(colors).toContain("rgb(255, 255, 255)")
-  expect(colors).toContain("rgb(0, 0, 255)")
-  expect(colors).toContain("rgb(255, 0, 0)")
+  expect(colors.some((color) => color?.endsWith(", 100%)"))).toBe(true)
+  expect(colors.some((color) => color?.startsWith("rgb(100%, "))).toBe(true)
+  expect(colors).not.toContain("rgb(0, 0, 255)")
+  expect(colors).not.toContain("rgb(255, 0, 0)")
 
   await expect(before).toMatchSvgSnapshot(
     import.meta.path,

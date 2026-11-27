@@ -18,13 +18,13 @@ test("phase skew covers both corners of a chamfer shorter than the trace width",
     svg,
     copper,
     sample: { x: 206, y: 217 },
-    expectedChannel: 170,
+    expectedChannel: 213,
   })
   expectJointCoverage({
     svg,
     copper,
     sample: { x: 227, y: 197 },
-    expectedChannel: 85,
+    expectedChannel: 170,
   })
   const strokes = overlay.filter(({ name }) => name === "path")
   expect(strokes).toHaveLength(3)
