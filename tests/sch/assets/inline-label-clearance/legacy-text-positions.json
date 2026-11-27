@@ -1,0 +1,32 @@
+[
+  {
+    "type": "schematic_text",
+    "anchor": "center",
+    "color": "rgb(132, 0, 0)",
+    "font_size": 0.1665657177468201,
+    "position": {
+      "x": 7.245608721986676,
+      "y": -0.41641429436704946
+    },
+    "rotation": 0,
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "schematic_text_id": "schematic_inline_net_label_altium_31",
+    "source_trace_id": "source_trace_altium_12",
+    "text": "UHS_GATE"
+  },
+  {
+    "type": "schematic_text",
+    "anchor": "center",
+    "color": "rgb(132, 0, 0)",
+    "font_size": 0.1,
+    "position": {
+      "x": -3.1281047105953874,
+      "y": -6.075673435557397
+    },
+    "rotation": 0,
+    "schematic_sheet_id": "schematic_sheet_altium",
+    "schematic_text_id": "schematic_inline_net_label_altium_28",
+    "source_trace_id": "source_trace_altium_2",
+    "text": "SoC_I2C1_SCL"
+  }
+]
