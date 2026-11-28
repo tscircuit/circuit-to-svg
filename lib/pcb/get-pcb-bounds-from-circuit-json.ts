@@ -414,10 +414,11 @@ export function getComprehensivePcbBounds(
         })
       } else if (keepout.shape === "circle") {
         // radius is a number, not a Distance type
-        const radius =
+        const parsedRadius =
           typeof keepout.radius === "number"
             ? keepout.radius
             : (distance.parse(keepout.radius) ?? 0)
+        const radius = Number.isFinite(parsedRadius) ? parsedRadius : 0
         if (radius > 0) {
           updateBounds({
             center: keepout.center,
